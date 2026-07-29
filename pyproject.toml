@@ -1,0 +1,21 @@
+[project]
+name = "citco-report"
+version = "0.1.0"
+description = "SMU MCDA Major Project Automated Report Generation Pipeline"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pdf2docx>=0.5.13",
+    "pypdf>=6.14.2",
+    "python-docx>=1.2.0",
+    "structlog>=26.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "src"]
+testpaths = ["tests"]

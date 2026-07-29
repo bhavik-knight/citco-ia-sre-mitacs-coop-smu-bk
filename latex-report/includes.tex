@@ -1,0 +1,116 @@
+% ------------------------------------------------------
+% CENTRALIZED LATEX STYLING & PACKAGES (SMU MCDA REPORT)
+% ------------------------------------------------------
+
+% --- FONT ENCODING & TYPOGRAPHY ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{kpfonts}
+
+% Default Font: Charter (bch) with Latin Modern Teletype for code
+\renewcommand*{\rmdefault}{bch}
+\renewcommand*{\sfdefault}{cmss}
+\renewcommand*{\ttdefault}{lmtt}
+
+\usepackage{latexsym} 
+\usepackage{booktabs} % Professional tables
+
+% --- COLOR PALETTE DEFINITIONS ---
+\usepackage{xcolor}
+\definecolor{smumaroon}{RGB}{138, 0, 39}  % Official Saint Mary's University Maroon (#8A0027)
+\definecolor{smugray}{RGB}{100, 100, 100}  % Neutral Gray for subtitles and footers
+\definecolor{codebg}{RGB}{245, 245, 245}   % Light background for code listings
+
+% --- DOCUMENT LAYOUT & MARGINS ---
+\usepackage[letterpaper,hmargin=2.5cm,vmargin=2.0cm,includeheadfoot]{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{parskip}
+
+\setlength{\headheight}{14.5pt}
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.8em}
+
+% --- TABLES AND FIGURES ---
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{wrapfig}
+\usepackage{subfig}
+
+% --- CODE HIGHLIGHTING ---
+\usepackage{listings}
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{smumaroon}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{teal},
+    backgroundcolor=\color{codebg},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=6pt,
+    frame=single,
+    rulecolor=\color{smumaroon},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4
+}
+
+% --- BIBLIOGRAPHY & HYPERLINKS ---
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage[backend=biber, backref=true, sorting=nyt, style=numeric]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage[pdftex,hypertexnames=true,colorlinks]{hyperref}
+\hypersetup{
+    pdftitle={MCDA Major Project Report - Bhavik Bhagat},
+    pdfauthor={Bhavik Kantilal Bhagat},
+    pdfsubject={Master of Science in Computing and Data Analytics},
+    pdfkeywords={Site Reliability Engineering, Intelligent Automation, Machine Learning, Financial Services, Citco},
+    colorlinks=true,
+    citecolor=smumaroon,
+    filecolor=black,
+    linkcolor=smumaroon,
+    urlcolor=smumaroon
+}
+
+% --- HEADER AND FOOTER STYLE ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\nouppercase{\leftmark}}
+\fancyhead[L]{MCDA 5585 / 5586 Major Project Report}
+\fancyfoot[C]{\thepage~of~\pageref{LastPage}}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\captionsetup{margin=10pt,font=small,labelfont=bf}
+
+
+% --- CUSTOM CHAPTER HEADING OVERRIDES (SMU MAROON THEME) ---
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{10\p@}%
+  {\parindent \z@ \raggedright
+    \interlinepenalty\@M
+    \Huge \bfseries \textcolor{smumaroon}{\thechapter \space #1}\par\nobreak
+    \vskip 20\p@
+  }}
+
+\def\@makeschapterhead#1{%
+  \vspace*{10\p@}%
+  {\parindent \z@ \raggedright
+    \interlinepenalty\@M
+    \Huge \bfseries \textcolor{smumaroon}{#1}\par\nobreak
+    \vskip 20\p@
+  }}
+\makeatother

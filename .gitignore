@@ -1,0 +1,31 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.pytest_cache/
+
+# Virtual environments
+.venv/
+
+# AI Agent Context
+.ai-agent/
+
+# Confidential / Local Paperwork
+citco-internship-paperwork/
+
+# LaTeX Intermediate Build Artifacts
+latex-report/*.aux
+latex-report/*.log
+latex-report/*.out
+latex-report/*.toc
+latex-report/*.bbl
+latex-report/*.blg
+latex-report/*.fdb_latexmk
+latex-report/*.fls
+latex-report/*.synctex.gz
+
+# Generated Build Outputs
+output/

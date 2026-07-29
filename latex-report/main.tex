@@ -1,0 +1,66 @@
+\documentclass[12pt,oneside,letterpaper]{report}
+
+\input{includes}
+
+\begin{document}
+
+% Title Page
+\input{pages/title_page}
+
+% Front Matter Preamble Pages
+\pagenumbering{roman}
+\input{pages/acknowledgements}
+\input{pages/certificate}
+\input{pages/abstract}
+
+% Table of Contents & Lists
+\clearpage
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+% Main Body Chapters (Neeyati Mehta Standard Structure)
+\pagenumbering{arabic}
+
+\input{chapters/about_company}
+\clearpage
+
+\input{chapters/project_overview}
+\clearpage
+
+\input{chapters/learning_goals}
+\clearpage
+
+\input{chapters/tools_technologies}
+\clearpage
+
+\input{chapters/requirements_elicitation}
+\clearpage
+
+\input{chapters/methodologies}
+\clearpage
+
+\input{chapters/implementation}
+\clearpage
+
+\input{chapters/weekly_breakdown}
+\clearpage
+
+\input{chapters/challenges_achievements}
+\clearpage
+
+\input{chapters/conclusion}
+\clearpage
+
+% Appendices
+\appendix
+\input{appendices/work_logs}
+\clearpage
+
+% Bibliography
+\printbibliography[heading=bibintoc, title={References}]
+
+\end{document}
