@@ -13,6 +13,9 @@ wheels/
 # AI Agent Context
 .ai-agent/
 
+# Application Script Execution Logs (structlog runtime logs)
+logs/
+
 # Confidential / Local Paperwork
 citco-internship-paperwork/
 
