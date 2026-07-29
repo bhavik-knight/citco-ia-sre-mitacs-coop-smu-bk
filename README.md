@@ -11,9 +11,7 @@
 - **University**: Department of Mathematics & Computing Science, Saint Mary's University, Halifax, NS
 - **Academic Supervisor**: Dr. Pawan Lingras
 - **Industry Partner**: **Citco Technology Management Canada Limited (CTM)**
-- **Industry Lead / Manager**: Mr. Kishor Deotale
-- **Office Location**: 5151 George St, Halifax, NS B3J 1M5
-- **Funding & Award**: Mitacs Business Strategy Internship (BSI) Application `IT49539` ($150,000 Award)
+- **Industry Supervisor / Manager**: Mr. Kishor Deotale
 - **Official Project Title**: *Intelligent Automation and Reliability Engineering for Financial Services*
 - **Internship Duration & Scope**: March 15, 2026 – August 31, 2026 (Total 900 Hours)
 
