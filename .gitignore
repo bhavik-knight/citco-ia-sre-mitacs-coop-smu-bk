@@ -16,6 +16,9 @@ wheels/
 # Application Script Execution Logs (structlog runtime logs)
 logs/
 
+# Backup Archives
+*.zip
+
 # Confidential / Local Paperwork
 citco-internship-paperwork/
 

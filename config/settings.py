@@ -15,6 +15,10 @@ TEMPLATES_DIR = ROOT_DIR / "templates"
 APP_LOGS_DIR = ROOT_DIR / "logs"          # Runtime application execution logs (structlog)
 WORK_LOGS_DIR = ROOT_DIR / "work-logs"     # User internship timesheets & activity logs
 
+# Active Report Type Toggle: "major_project" or "internship"
+# Toggle this setting depending on Dr. Pawan's confirmation.
+REPORT_TYPE = "major_project"
+
 # Ensure runtime directories exist
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 APP_LOGS_DIR.mkdir(parents=True, exist_ok=True)
