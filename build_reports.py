@@ -20,13 +20,14 @@ from config import (
     SUBMISSION_COVER_LETTER_PDF,
     SUBMISSION_REPORT_PDF,
     SUBMISSION_REPORT_DOCX,
+    REPORT_TYPE,
 )
-from src.report_pipeline import LaTeXBuilder, DocxConverter, get_logger
+from src.report_pipeline import LaTeXBuilder, DocxConverter, get_logger, generate_all_logs
 
 logger = get_logger("MainPipeline")
 
 def main():
-    logger.info("pipeline_started", root_dir=str(ROOT_DIR), output_dir=str(OUTPUT_DIR))
+    logger.info("pipeline_started", root_dir=str(ROOT_DIR), output_dir=str(OUTPUT_DIR), report_type=REPORT_TYPE)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     
     # 1. Instantiate LaTeX Builder
@@ -52,7 +53,11 @@ def main():
         logger.info("step_convert_docx")
         DocxConverter.convert_pdf_to_docx(SUBMISSION_REPORT_PDF, SUBMISSION_REPORT_DOCX)
 
-    # 5. Output Summary
+    # 5. Generate and Sync Work Logs
+    logger.info("step_generate_work_logs")
+    generate_all_logs(OUTPUT_DIR, active_type=REPORT_TYPE)
+
+    # 6. Output Summary
     logger.info("pipeline_completed", output_directory=str(OUTPUT_DIR))
     for artifact in sorted(OUTPUT_DIR.iterdir()):
         if artifact.is_file():
