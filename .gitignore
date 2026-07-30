@@ -10,9 +10,6 @@ wheels/
 # Virtual environments
 .venv/
 
-# AI Agent Context
-.ai-agent/
-
 # Application Script Execution Logs (structlog runtime logs)
 logs/
 
