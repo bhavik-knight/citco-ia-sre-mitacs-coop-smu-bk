@@ -30,6 +30,7 @@ class MeetingsCSVExporter:
     # Specific events not attended (date_str UTC, start_time UTC)
     SKIPPED_EVENTS: set[tuple[str, str]] = {
         ("2026-06-04", "01:30"),  # CTM Town Hall overflow (10:30 PM ADT Jun 3) - not attended
+        ("2026-05-18", "16:00"),  # Victoria Day holiday - Daily Standup not attended
     }
 
     HEADER = [
@@ -41,7 +42,6 @@ class MeetingsCSVExporter:
         "End (ADT)",
         "Duration (hrs)",
         "Meeting Title",
-        "Source",
     ]
 
     # Estimated meetings for weeks 1-6 (part-time, no calendar data)
@@ -78,28 +78,28 @@ class MeetingsCSVExporter:
     PROJECTED_DAILY_MEETINGS: dict[str, list[tuple[str, str, str, float]]] = {
         # day: [(start_adt, end_adt, title, duration_hrs), ...]
         "Monday": [
-            ("09:00", "09:30", "SRE Weekly Call", 0.5),
-            ("09:00", "09:30", "Innovation IT - AWS Centralized Dashboard Planning", 0.5),
-            ("09:30", "10:00", "Daily Standup - Innovation IT", 0.5),
+            ("9:00 AM", "9:30 AM", "SRE Weekly Call", 0.5),
+            ("9:00 AM", "9:30 AM", "Innovation IT - AWS Centralized Dashboard Planning", 0.5),
+            ("9:30 AM", "10:00 AM", "Daily Standup - Innovation IT", 0.5),
         ],
         "Tuesday": [
-            ("09:00", "09:30", "SRE Weekly Call", 0.5),
-            ("09:30", "10:00", "Daily Standup - Innovation IT", 0.5),
-            ("09:30", "10:00", "BPM Flight Control - Platform & Dev", 0.5),
+            ("9:00 AM", "9:30 AM", "SRE Weekly Call", 0.5),
+            ("9:30 AM", "10:00 AM", "Daily Standup - Innovation IT", 0.5),
+            ("9:30 AM", "10:00 AM", "BPM Flight Control - Platform & Dev", 0.5),
         ],
         "Wednesday": [
-            ("09:00", "09:30", "SRE Weekly Call", 0.5),
-            ("09:00", "09:30", "Innovation IT - AWS Centralized Dashboard Planning", 0.5),
-            ("09:30", "10:00", "Daily Standup - Innovation IT", 0.5),
+            ("9:00 AM", "9:30 AM", "SRE Weekly Call", 0.5),
+            ("9:00 AM", "9:30 AM", "Innovation IT - AWS Centralized Dashboard Planning", 0.5),
+            ("9:30 AM", "10:00 AM", "Daily Standup - Innovation IT", 0.5),
         ],
         "Thursday": [
-            ("09:00", "09:30", "SRE Weekly Call", 0.5),
-            ("09:30", "10:00", "Daily Standup - Innovation IT", 0.5),
+            ("9:00 AM", "9:30 AM", "SRE Weekly Call", 0.5),
+            ("9:30 AM", "10:00 AM", "Daily Standup - Innovation IT", 0.5),
         ],
         "Friday": [
-            ("09:00", "09:30", "SRE Weekly Call", 0.5),
-            ("09:00", "09:30", "Innovation IT - AWS Centralized Dashboard Planning", 0.5),
-            ("09:30", "10:00", "Daily Standup - Innovation IT", 0.5),
+            ("9:00 AM", "9:30 AM", "SRE Weekly Call", 0.5),
+            ("9:00 AM", "9:30 AM", "Innovation IT - AWS Centralized Dashboard Planning", 0.5),
+            ("9:30 AM", "10:00 AM", "Daily Standup - Innovation IT", 0.5),
         ],
     }
 
@@ -145,7 +145,7 @@ class MeetingsCSVExporter:
             week_dates = f"{mon} to {fri}"
             for title, hrs in meetings:
                 rows.append(
-                    [week_num, week_dates, "", "", "", "", hrs, title, "estimated"]
+                    [week_num, week_dates, "", "", "", "", hrs, title]
                 )
 
         # Phase 2: Calendar-sourced events (output in ADT)
@@ -181,7 +181,6 @@ class MeetingsCSVExporter:
                     event.end_time_local,
                     event.duration_hours,
                     title,
-                    "calendar",
                 ])
 
         # Phase 3: Projected future weeks (day-by-day breakdown)
@@ -205,7 +204,6 @@ class MeetingsCSVExporter:
                             end_t,
                             hrs,
                             title,
-                            "projected",
                         ])
 
         # Sort by week, then date, then start time

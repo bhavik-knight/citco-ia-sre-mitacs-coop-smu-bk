@@ -1,0 +1,304 @@
+[2026-07-24]
+
+
+What's done:
+
+.kiro/steering/ folder created with 6 steering files (project-overview, coding-conventions, data-flow, modification-guide, tech, structure, product)
+.kiro/specs/ecs-adot-sidecar-tracing/design.md — fully written and saved
+.kiro/specs/ecs-adot-sidecar-tracing/.config.kiro — spec config file
+What's remaining:
+
+.kiro/specs/ecs-adot-sidecar-tracing/requirements.md — I have the content ready, need to write the file
+.kiro/specs/ecs-adot-sidecar-tracing/tasks.md — I have the content ready, need to write the file
+The spec is for IISS-839 — Adding AWS X-Ray tracing to this ECS service via ADOT sidecar + OpenTelemetry SDK. Design-first workflow. No code changes, just spec documentation.
+
+
+
+[2026-07-23]
+TraceID => Meridian => 1-6a620a2a-431b91912f74e71c2a7a64b8
+
+
+## Context & Background
+
+We are investigating why X-Ray trace group filters for the "meridian" group are not consistently 
+capturing traces involving Bedrock AgentCore services in AWS (eu-west-1).
+
+---
+
+## Trace Evidence
+
+We analyzed trace ID: 1-6a620a2a-431b91912f74e71c2a7a64b8
+
+This trace represents a multi-agent Bedrock AgentCore workflow. Here is a partial segment document 
+from the trace:
+
+{
+    "Id": "1-6a620a2a-431b91912f74e71c2a7a64b8",
+    "Duration": 68.474,
+    "Segments": [
+        {
+            "Id": "bda2e687044129bf",
+            "Document": {
+                "id": "bda2e687044129bf",
+                "name": "meridian_config_learning_agent.DEFAULT",
+                "start_time": 1784810032.223,
+                "trace_id": "1-6a620a2a-431b91912f74e71c2a7a64b8",
+                "end_time": 1784810065.683,
+                "parent_id": "c229befad5a6b171",
+                "http": {
+                    "request": { "method": "POST" },
+                    "response": { "status": 200 }
+                },
+                "aws": {
+                    "service.type": "gen_ai_agent",
+                    "account.id": "442645024664",
+                    "operation.name": "InvokeAgentRuntime",
+                    "endpoint.name": "DEFAULT",
+                    "agent.id": "meridian_config_learning_agent-2k3RbG3iEC",
+                    "span.kind": "SERVER",
+                    "xray.origin": "AWS::BedrockAgentCore::Runtime",
+                    "resource.arn": "arn:aws:bedrock-agentcore:eu-west-1:442645024664:runtime/meridian_config_learning_agent-2k3RbG3iEC",
+                    "resource.type": "AWS::BedrockAgentCore::Runtime",
+                    "region": "eu-west-1",
+                    "request.id": "93357c62-6de7-43fd-be0e-382d2e066c5c"
+                }
+            }
+        }
+    ]
+}
+
+Services confirmed in this trace:
+- meridian_collateral_orchestrator_agent.DEFAULT  → AWS::BedrockAgentCore::Runtime (ROOT orchestrator)
+- meridian_config_learning_agent.DEFAULT          → AWS::BedrockAgentCore::Runtime (child)
+- meridian_pdf_data_extractor_agent.DEFAULT       → AWS::BedrockAgentCore::Runtime (child)
+- BedrockRuntime                                  → AWS::BedrockRuntime (8 calls, 65s)
+- S3                                              → AWS::S3 (16 calls)
+- SQS                                             → AWS::SQS (2 calls)
+- BedrockAgentCore                                → AWS::BedrockAgentCore
+
+---
+
+## Current X-Ray Group Configuration (eu-west-1, account: 442645024664)
+
+Group Name:        meridian
+Filter Expression: service("*meridian*")
+Insights:          Enabled
+ARN:               arn:aws:xray:eu-west-1:442645024664:group/meridian/4WXUA5BJRLH7TYBOX3P4YT77OTEGIJ3AIOODG2RZLUU4WY5IUH3A
+
+Other groups for reference (same account):
+- automationhub  → service("*uipath*") OR service("*automationhub*") OR service("*AUTOMATIONHUB*")
+- bpm            → service("*bpm*") OR service("*BPM*")
+- citcoworks     → service("*citcoworks*") OR service("*CITCOWORKS*")
+- ia-bpo         → service("*IA-BPO*") OR service("*ia-bpo*") OR service("*dataSrvc*")
+
+---
+
+## Problem Statement
+
+The "meridian" trace group only captures Meridian traces OCCASIONALLY — not consistently.
+
+When querying traces using the "meridian" group filter in the CloudWatch X-Ray console, 
+trace ID 1-6a620a2a-431b91912f74e71c2a7a64b8 does NOT appear, even though it clearly 
+involves multiple meridian-named services.
+
+---
+
+## Root Cause (Already Identified)
+
+The segment document reveals that meridian_config_learning_agent.DEFAULT has a "parent_id" 
+field ("parent_id": "c229befad5a6b171"), meaning the Meridian agents are NOT always the 
+root/entry-point segment of the trace.
+
+AWS X-Ray group filter expressions using service() are evaluated at ingestion time against 
+the ROOT segment of the trace (the segment with no parent_id). 
+
+When an upstream service (e.g., a CTI service or another orchestrator) initiates the trace 
+and calls into the Meridian agents as downstream children, the root segment name does NOT 
+contain "meridian" — so the filter service("*meridian*") does NOT match, and the trace is 
+never indexed under the meridian group.
+
+The Meridian agents only appear consistently in the group when they themselves are the 
+root/entry-point of the trace (i.e., invoked directly, not via an upstream caller).
+
+---
+
+## What I Need From You
+
+Please perform the following:
+
+### 1. RCA (Root Cause Analysis)
+- Confirm and document the root cause based on the trace evidence above
+- Explain the X-Ray group ingestion evaluation mechanism and why service() on child 
+  segments is insufficient
+- Identify any secondary causes (e.g., sampling, instrumentation gaps, BedrockAgentCore 
+  trace propagation behavior)
+
+### 2. Gap Analysis
+- Identify all gaps in the current observability setup:
+  * Group filter strategy gap (service() vs annotation-based filtering)
+  * Instrumentation gap: are Bedrock AgentCore runtimes emitting X-Ray annotations 
+    that can be used for filtering?
+  * Trace propagation gap: is the X-Ray trace header (X-Amzn-Trace-Id) being correctly 
+    propagated from the upstream caller into the Meridian AgentCore runtimes?
+  * Coverage gap: which Meridian traces are being missed vs captured today?
+
+### 3. Fix
+Implement the recommended fix. The preferred approach is annotation-based filtering:
+
+  a) In the Meridian AgentCore agent code (all three agents: 
+     meridian_collateral_orchestrator_agent, meridian_config_learning_agent, 
+     meridian_pdf_data_extractor_agent), add an X-Ray annotation to each segment:
+       Key:   "team"
+       Value: "meridian"
+
+  b) Update the X-Ray group filter expression from:
+       service("*meridian*")
+     To:
+       annotation.team = "meridian"
+
+  c) If annotation injection is not possible due to BedrockAgentCore runtime constraints 
+     (since these are managed runtimes, not custom Lambda/EC2 code), propose and implement 
+     an alternative fix — for example:
+       - Updating the group filter to also include the upstream root service name 
+         (e.g., the CTI service that calls Meridian)
+       - Using resource.arn based filtering if supported
+       - Using edge() filter: edge("*cti*", "*meridian*")
+
+  d) Ensure the fix accounts for ALL invocation patterns:
+       - Meridian called directly (already works)
+       - Meridian called via CTI or other upstream orchestrators (currently broken)
+       - Meridian called via async/event-driven patterns (SQS, etc.)
+
+  e) After implementing the fix, provide:
+       - The exact updated filter expression to use in the meridian X-Ray group
+       - AWS CLI command to update the group:
+           aws xray update-group --group-name "meridian" \
+             --filter-expression "<new expression>" \
+             --region eu-west-1
+       - Verification steps to confirm the fix is working using trace ID 
+         1-6a620a2a-431b91912f74e71c2a7a64b8 as a baseline test case
+
+---
+
+## Constraints & Notes
+
+- AWS Account: 442645024664
+- Region: eu-west-1
+- Services involved: AWS Bedrock AgentCore (AWS::BedrockAgentCore::Runtime) — these are 
+  MANAGED runtimes, not custom Lambda functions. Direct code instrumentation may be limited.
+- The fix must not break existing group filters for other groups (automationhub, bpm, 
+  citcoworks, ia-bpo)
+- Prefer non-breaking, additive changes
+- The group already has Insights enabled — ensure the fix preserves CloudWatch Insights 
+  metric generation for the meridian group
+
+
+
+
+
+
+----------------------
+For Kiro new session
+
+Pending for next session:
+
+Investigate alarm_notifier Lambda — initial [WARNING] notifications not arriving despite SNS action executing successfully. Check Lambda logs for errors.
+
+Reprovision alarms — live alarms use period: 60 (old config). Need to invoke provisioner to update all alarms to period: 300 from current thresholds.yaml.
+
+Remove stale datapoints from [ONGOING] emails — re-notifications show the same frozen datapoints from initial trigger. Should only show "Since: " without stale data.
+
+Current branch: release/IISS-487-sre-observability at tag v2.19.3
+
+What was accomplished this session:
+
+v2.16.6 → v2.19.3 (removed trace links, fixed variables, converted resource tables to Infinity, threshold sync, X-Ray improvements, 38 alarm definitions, env-aware config, warning suppression, escalation context, comprehensive confluence docs, updated limitations)
+=================
+
+
+[2026-07-16]
+
+- Now I want to check how far we are in this specs `xray-tracing`
+- Please take changes from release into xray branch
+- I see we have trace ids table. I see so many columns, some of them are blank can you explain me what those are, and I don't want to see the traceids with blank responses
+When I click on it, it asks shows two link clicking on either takes to the same page, but not on the new page, it opens on the current page. I want it to be opened on the new page.
+- In that page, I see node graphs and traces all good. Can you explain me what they are in details? 
+
+
+{"result":
+	{
+		"jwtToken":"eyJraWQiOiJNaUFoZkxoZThvOG5wc2N0cURSTjdJeDFNT1Q4ZkdpSWhGQ00rZy96Y3VNPSIsImFsZyI6IlJTMjU2In0.eyJjdXN0b206b3duZXJuYW1lIjoidWlkPUtEZW90YWxlLG91PVBlb3BsZSxvPUNGUyxvPUludGVybmFsLGRjPWNpdGNvLGRjPWNvbSIsInN1YiI6ImI0YWEyOWVmLWI4YjgtNGMwNC1hMDg3LTkzYTk0MDhjZDhkNCIsImlzcyI6Imh0dHBzOi8vY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb20vZXUtd2VzdC0xX3JjemRTRlk1SiIsImN1c3RvbTpvd25lcmVtYWlsIjoiS2Rlb3RhbGVAY2l0Y28uY29tIiwiY29nbml0bzp1c2VybmFtZSI6InMtcnBhLWF1dG9tYXRpb24tZGV2IiwiY3VzdG9tOmFwcG5hbWUiOiJpYS1icG8tcnBhIiwiYXVkIjoiMmI0cHZpdHR2NjlwMGMzOW5rbmNsbXJqZmsiLCJldmVudF9pZCI6ImE4ODIwZTQ4LThjODktNDVmYS1hM2MzLTliYjJmOTg5YTgwYiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzg0MjIzNTAzLCJleHAiOjE3ODQyMjcxMDMsImlhdCI6MTc4NDIyMzUwM30.Qr5VMNKI7A9Xv2E9KMrGieWuJiKNFi6AMFnxiPAQBXkAV5fQlYAjhojJ_8YFLEAp0C6jeil3dIhwH9JoYkX7aIgASOczl6TpK1NdLrA_4LRk81frJpGeTaUmmiz59f_YIRbxmq-Mea3zB7oVbiPcIwZ0YSiYhybtpa85fncei1Qai8UYcJXNs7wnS1X0k5Mzaa8GBaPm8bQrSzLPdNiqDbL0VSKxySHM_wK6PoF3YJoxUUpKVwdPqJLUsZmGfsGyUwlIn0-KtvQ4i6-i4l8wFErDGW8qE8LFKMROsc2fc8XV-X0s2uSN8Y6e5SwFZZVlB9w4h8N_HfiJFXdYqnzzLQ",
+	"payload":{"custom:ownername":"uid=KDeotale,ou=People,o=CFS,o=Internal,dc=citco,dc=com","sub":"b4aa29ef-b8b8-4c04-a087-93a9408cd8d4","iss":"https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_rczdSFY5J","custom:owneremail":"Kdeotale@citco.com","cognito:username":"s-rpa-automation-dev","custom:appname":"ia-bpo-rpa","aud":"2b4pvittv69p0c39nknclmrjfk","event_id":"a8820e48-8c89-45fa-a3c3-9bb2f989a80b","token_use":"id","auth_time":1784223503,"exp":1784227103,"iat":1784223503}}}
+
+
+========================================
+TODOs [2026-07-15]
+
+Kishor asked
+
+- Convert 4 API endpoints for backend to lambdas (for live data)
+- Create documentation:
+	- Grafana vs X-Ray
+		- What grafana can do that xray cannot, and what xray can do that grafana cannot to achieve something like dynatrace
+		- Cost associated with only grafana, only xray, if we need both grafana + xray for something like dynatrace
+	- What else we need (profiling - to find problem in code and autohealing)
+		- on grafana side, for equivalent to dynatrace
+		
+		
+=======================================================================================================================
+
+
+# Time wrapper - measure process_time in millisecond
+
+
+def time_operation(func):
+    """Decorator to measure execution time of a function in milliseconds."""
+    from time import process_time_ns
+
+    def wrapper(*args, **kwargs):
+        start = process_time_ns()
+        time_result = func(*args, **kwargs)
+        end = process_time_ns()
+        return time_result, (end - start) / 10**6  # milliseconds
+
+    return wrapper
+
+
+
+=======================================================================================================================
+
+[2026-07-09]
+
+TODOs for dashboard:
+
+1. ECS 5xx health panel: check with cluster name + load balancer to get better data in CW Query
+2. rds health panel: try rds clustername / instance id both, and then group by
+3. document db instance health panel: same as rds - try clustername/instance id both
+4. neptune db instance health panel: same as above
+
+
+Deep links on time-series:
+rows => ec2, ecr, eks, ecs/infra, ecs/api
+
+Fix all db row panels as above, and apply deep links for time series
+
+
+backend api:
+we can benefits from having name in reponses as clustername if type: cluster, and clustername/instance if type: instance
+1. rds to show instances as well, not just cluster, and if its engine is docdb => it's not rds-aurora, we can use that for docdb
+2. docdb - response should be similar to rds, having engine (docdb) means that's for docdb, and type: instance means that's an instance not cluster itself
+
+3. redis/valkey - redis 2 instances, valkey - 3
+- we need both of them, and having description is helpful to distinguish redis/valkey
+- similar to other two dbs, pleases add type, engine in the response, and having name following this - type: cluster, and clustername/instance if type: instance is good
+
+4. neptune db - similar to rds, docdb, can we have neptune db name showing cluster/instance?
+
+have in the reponse engine, type, etc that can be helpful distinguish cluster from instance
+also url patterns: "url": "https://eu-west-1.console.aws.amazon.com/elasticache/home?region=eu-west-1#/replication-groups/dev-meridian-redis-cluster"
+https://442645024664-bbto4mio.eu-west-1.console.aws.amazon.com/elasticache/home?region=eu-west-1#/redis/meridian-cache-redis-cluster
+
+https://442645024664-bbto4mio.eu-west-1.console.aws.amazon.com/neptune/home?region=eu-west-1#database-details:id=neptunedbinstance-isbcy7p9ecxx;resource-type=db;tab=connectivity
+
+
+

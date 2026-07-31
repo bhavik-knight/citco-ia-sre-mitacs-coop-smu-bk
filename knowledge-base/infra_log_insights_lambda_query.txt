@@ -1,0 +1,65 @@
+fields @timestamp, @log, @logStream
+| parse @log "/aws/lambda/*" as lambdaName
+| filter lambdaName like /^lda-rpacfs1-/
+      or lambdaName like /^lda-IA-BPO-/
+      or lambdaName like /^lda-ia-bpo-/
+      or lambdaName like /^rpacfs1-DEV-/
+| filter @message like /(?i)(error|exception|failed|timeout|out of memory|Runtime.ExitError|Task timed out)/
+| display @timestamp, @message, lambdaName, @log, @logStream
+| sort @timestamp desc
+
+
+log insights query for lambdas
+
+
+====
+
+All resources Query:
+
+via BudgetCodeTag
+aws resourcegroupstaggingapi get-resources --tag-filters Key=budget,Values=rpacfs1,ia-bpo --resources-per-page 100 --output json > tagged_resources.json
+
+via resource groups
+aws resource-groups search-resources --resource-query '{"Type":"TAG_FILTERS_1_0","Query":"{\"ResourceTypeFilters\":[\"AWS::AllSupported\"],\"TagFilters\":[{\"Key\":\"budget\",\"Values\":[\"rpacfs1\",\"ia-bpo\"]}]}"}' --output json > all_tagged_resources.json
+
+
+
+shell-script:
+
+#!/bin/bash
+# Script to get resources from all regions
+regions=$(aws ec2 describe-regions --query 'Regions[].RegionName' --output text)
+echo '{"resources": [' > all_resources.json
+
+first=true
+for region in $regions; do
+    echo "Checking region: $region"
+    resources=$(aws resourcegroupstaggingapi get-resources \
+        --region $region \
+        --tag-filters Key=budget,Values=rpacfs1,ia-bpo \
+        --output json)
+    
+    if [ "$first" = true ]; then
+        echo "$resources" | jq -r '.ResourceTagMappingList[]' >> all_resources.json
+        first=false
+    else
+        echo "," >> all_resources.json
+        echo "$resources" | jq -r '.ResourceTagMappingList[]' >> all_resources.json
+    fi
+done
+
+echo ']}' >> all_resources.json
+
+
+
+aws resourcegroupstaggingapi get-resources --region eu-west-1 --tag-filters Key=BudgetCode,Values=rpacfs1,IA-BPO --output json
+
+aws eks describe-cluster --name uipath-eks-cluster-01 --region eu-west-1
+
+aws eks list-nodegroups --cluster-name uipath-eks-cluster-01 --region eu-west-1
+
+aws eks list-addons --cluster-name uipath-eks-cluster-01 --region eu-west-1
+
+aws eks describe-nodegroup --cluster-name uipath-eks-cluster-01 --nodegroup-name uipath-computer-vision-eks-nodegroup --region eu-west-1 --query 'nodegroup.{InstanceType:instanceTypes, Min:scalingConfig.minSize, Max:scalingConfig.maxSize, Desired:scalingConfig.desiredSize, DiskSize:diskSize, Status:status}'
+
+for ng in uipath-asr-eks-nodegroup uipath-computer-vision-eks-nodegroup uipath-eks-nodegroup uipath-task-mining-eks-nodegroup; do echo "=== $ng ===" aws eks describe-nodegroup --cluster-name uipath-eks-cluster-01 --nodegroup-name $ng --region eu-west-1 --query 'nodegroup.{InstanceType:instanceTypes, Min:scalingConfig.minSize, Max:scalingConfig.maxSize, Desired:scalingConfig.desiredSize, Status:status}' done

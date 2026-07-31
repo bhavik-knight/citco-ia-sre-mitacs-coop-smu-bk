@@ -60,13 +60,13 @@ class CalendarEvent:
 
     @property
     def start_time_local(self) -> str:
-        """Start time in ADT HH:MM (for CSV output)."""
-        return self.start_local.strftime("%H:%M")
+        """Start time in ADT h:MM AM/PM (for CSV output)."""
+        return self.start_local.strftime("%I:%M %p").lstrip("0")
 
     @property
     def end_time_local(self) -> str:
-        """End time in ADT HH:MM (for CSV output)."""
-        return self.end_local.strftime("%H:%M")
+        """End time in ADT h:MM AM/PM (for CSV output)."""
+        return self.end_local.strftime("%I:%M %p").lstrip("0")
 
     @property
     def date_str(self) -> str:
