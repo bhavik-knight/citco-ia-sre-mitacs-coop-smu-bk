@@ -15,6 +15,7 @@ logs/
 
 # Backup Archives
 *.zip
+!citco-report.zip
 
 # Confidential / Local Paperwork
 citco-internship-paperwork/
