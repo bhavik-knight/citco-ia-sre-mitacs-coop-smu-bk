@@ -38,3 +38,6 @@ output/
 
 # Original SMU folder (consolidated into knowledge-base/)
 smu/
+
+# avoid kiro settings
+.kiro/settings
