@@ -1,0 +1,2083 @@
+Mayli-8 Bhavill RPA Support
+April
+2026-04-13
+Monday
+add
+Citco
+HOJIRA SRE
+My presentat feed back
+Into Three More Tags:
+CFSBPM; 3)Citco works
+it was good Error & tast, log
+Jeanney
+Meridian
+IA-BPO; RPACFS1
+by. landa
+Log Errors: Dashboard; (Data not pulling)
+bars
+Export exces as
+Performance
+Top 10 landa
+Health Dashboard:
+Dashboard
+Confluence Page
+landa list
+Overview
+RPA Support:=
+lue Prism
+BPM
+E binder
+mover dote- deekstating
+RPAsite RPA we process daily;menthy; Quarterly
+we handle
+add new 60/5 if needed.
+VPL check:= frequency
+(tight deadlive)
+closing stack price.
+5 PM EST; start
+Monitor.
++ 3 bots handling the job
++ 3 more bots of
+5 PM
+managing que
+EST
+Make Notes from Confluence Page
+Corporate Act processes:
+Mandatory ; volunteer Op Transfer
+Two izma ops trasfess.
+Mayli-8
+Bhavill
+RPA
+Support
+HOJIRA
+SRE
+presentat
+feed
+back
+Into
+Three
+More
+Tags:
+CFSBPM;
+3)Citco works
+it was
+good
+Error
+tast,
+log
+IA-BPO;
+RPACFS1
+by.
+landa
+Log
+Errors:
+Dashboard;
+(Data
+not
+pulling)
+Export
+exces
+Top
+Health
+Dashboard:
+Confluence
+Page
+list
+Support:=
+lue
+Prism
+binder
+mover
+dote-
+deekstating
+RPAsite
+process
+daily;menthy;
+Quarterly
+handle
+new
+60/5
+needed.
+VPL
+check:=
+frequency
+(tight
+deadlive)
+closing
+stack
+price.
+EST;
+start
+bots
+handling
+the
+job
+more
+managing
+que
+Make
+Notes
+from
+Corporate
+Act
+processes:
+Mandatory
+volunteer
+Transfer
+Two
+izma
+ops
+trasfess.
+they can add 1 job e a time Livitor
+Longest job 30 mine
+Migrath Trackers
+Blue Prism
+UI Path Ave
+Mew
+Where it is
+Cloud
+amprom
+Most
+hosted?
+FA Audit
+Aws VPC
+UIPath Orchestrator
+Rentime - Nodes
+M/C
+API Calls
+nodes
+neter
+Citco Infrad trutues
+MySuLServer.
+Sear
+01 Path daid
+On Prem.
+they
+can
+time
+Livitor
+Longest
+mine
+Migrath
+Trackers
+Blue
+Path
+Ave
+Where
+Audit
+Aws
+VPC
+UIPath
+Orchestrator
+Rentime
+Nodes
+API
+Calls
+Infrad
+trutues
+daid
+Prem.
+Broad Cast
+UI P-th
+Sends. to channel,
+Rustime
+Node
+Heartbeat
+Orch
+this way only
+Orch: Schedule Triggers,
+status update
+Eventy
+Config.
+sas
+Brodeate kind
+Asks for instruct to follow.
+Requests.
+DB gives instruct
+Axi
+Axeo
+Process Rus
+on our
+infr
+Even
+UI Path
+Template
+Blue PASA POOL (Enep
+(Group of regources)
+Nod 1+2 group
+rode x;y group
+Broad
+Cast
+P-th
+Sends.
+channel,
+this
+way
+only
+Orch:
+Schedule
+Triggers,
+status
+update
+Brodeate
+kind
+Asks
+for
+instruct
+follow.
+gives
+Process
+Rus
+our
+PASA
+POOL
+(Enep
+(Group
+regources)
+Nod
+1+2
+group
+rode
+x;y
+factor lovet i Permissions.
+subs
+coe
+tub2
+Bout
+Subz
+M/C folder
+Fouldrals
+subh
+sub folder
+how many
+an/c folder pert
+10mly ? Risk
+Folders
+Prod UAT
+similar to product)
+COE
+Date ofs
+(Pa... P20}
+Ma,Ms,Mei
+- processes Pv)
+- -Assets
+Logs to troubleshoot
+Generic Trigger.
+(sas, cipat, c/op)
+Real-Time
+API dreeks who is recipient
+where should the reg H? be
+SQS
+listenes.
+Generic Thigger
+UI/PA
+processor
+ANS Lambda
+Vipate
+API gleway
+Current Tables
+Service source
+turget.
+which Q
+folder)
+IA-Meso
+Json/file
+/A-Anditat RA
+Vipath 4 path cloud
+CA-IRAS
+cas
+( need permission to
+push to target Perport
+AI can retrigger
+MESO: was or Maero
+grab data
+create ISV
+and push to UCM.
+derectly push mean (json) to $QS via API
+Generic
+Trigger.
+(sas,
+cipat,
+c/op)
+dreeks
+who
+recipient
+where
+should
+reg
+Thigger
+ANS
+Lambda
+gleway
+Current
+Tables
+Service
+source
+which
+/A-Anditat
+Vipath
+path
+cloud
+( need
+permission
+push
+target
+Perport
+retrigger
+MESO:
+was
+Maero
+grab
+data
+create
+ISV
+and
+UCM.
+derectly
+mean
+(json)
+$QS
+via
+file
+file storage gateway
+filedrop
+Event trigger
+Meridiento event Senia
+read from doc Service
+if file size
+or pass file id.
+is large
+pass ID to
+listener (foread dated
+Fx- clise out: how it works
+retrigger by generic trigger
+depend on use case : if user uses
+maero- faile 13 created & saved to UCM
+To process Send file URL tOADI
+storage
+gateway
+Event
+trigger
+Meridiento
+event
+Senia
+read
+doc
+size
+pass
+id.
+large
+listener
+(foread
+dated
+Fx-
+clise out:
+how
+it works
+generic
+depend
+use
+case
+user
+uses
+maero-
+faile
+created
+saved
+UCM
+To process
+Send
+URL
+tOADI
+Chery
+select * from public
+in-garanc_trg-mp
+ageneric-tragger ingenenc trigger
+200 records data size:
+VBA Mairo
+file trigger
+Via email stdreply. std reply
+Applicatn
+1A support
+dont provide
+Support via email
+Ast Citco
+CTM data hub
+RPA Support ask Q
+take screet. =]
+make em use it
+Virtual
+kickos world
+OP Transfer
+Repo details.
+Culler
+(Support Agent-haling)
+select
+public
+ageneric-tragger
+ingenenc
+200
+records
+size:
+VBA
+Mairo
+Via
+email
+stdreply.
+std
+reply
+dont
+provide
+CTM
+hub
+ask
+take
+screet.
+make
+kickos
+world
+Repo
+details.
+(Support
+Agent-haling)
+Meso:-
+(Middle office = Month End Sign Out)
+E-binders E- 2 Bs, 26 , because of redesign
+Recar team
+FATean
+Start
+User
+Macro
+Cash Reg:
+AXEO report Criteria.
+all pending (17-18) report (Tay tay) today to)
+Gen Trigger (An)
+Confluence Page Document:
+MESO Processor
+Reporting Server (asyne).
+-update DB-0
+Generation of
+-Shareft (pull data)
+(doarlood
+feed into report Criteria.
+via SP- API
+Citco Rees
+SP List
+transacth
+enail
+SP API
+Email
+if every
+thing
+correct
+all ready reports (XML)
+Hemor
+sevrat
+SP.
+cannot process
+Success. emai
+Consolidate (XML-XSV)
+CITCO Rees,
+Transat
+TIP
+all SV
+rus (mutiple tabs)
+orchestrator
+Completeness check
+Cash
+Reg.
+Pusition
+Reg
+(Middle
+office
+Month
+End
+Sign
+Out)
+E-binders
+Bs,
+because
+redesign
+Recar
+team
+Reg:
+AXEO
+report
+Criteria.
+all
+pending
+(17-18)
+(Tay tay)
+today
+to)
+Gen
+Trigger
+(An)
+Document:
+MESO
+Processor
+Reporting
+Server
+(asyne).
+-update
+DB-0
+Generation
+-Shareft
+(pull
+data)
+into
+SP-
+Rees
+List
+every
+ready
+reports
+(XML)
+cannot
+Success.
+emai
+Consolidate
+(XML-XSV)
+CITCO
+Rees,
+rus
+(mutiple
+tabs)
+Completeness
+check
+Completeness Cheet for Client reg.
+eg. Tasla share currency, which stock duy ex
+Position Reg: (More Cash reports)
+Similar to cash reg.
+Recon 4 FA
+Pre-Meso: Soft Sign UP based on
+Pre meso.
+Recon
+Pre-Reg of FA :=
+if we are good tostant
+based on pre-meso.
+current April (premen-) May
+Before Month Ends do next
+month activity
+SQS Based
+MESO Architecture:
+ECS (20 req)
+SQS.
+ECS (20 neq)
+Challanges'
+Size of report 600 mb per report
+Consolidatn 5 GB easily.
+pandas Unitation
+Auto scaling
+80.M CPU
+601. Memory
+if usage become normal;
+because of forefull killing aenuities.
+whatever IS running
+Cheet
+Client
+reg.
+eg.
+Tasla
+share
+currency,
+stock
+duy
+Position
+(More
+reports)
+Similar
+cash
+Pre-Meso:
+Soft
+based on
+Pre
+meso.
+Pre-Reg
+are
+tostant
+based
+pre-meso.
+current
+(premen-)
+May
+Before
+Ends
+next
+month
+activity
+Based
+Architecture:
+ECS
+(20 req)
+(20
+neq)
+Size
+600 mb
+per
+Consolidatn
+easily.
+pandas
+Unitation
+Auto
+scaling
+80.M
+CPU
+601.
+Memory
+usage
+become
+normal;
+forefull
+killing
+aenuities.
+whatever
+running
+Lambda 15 mins.
+EC2 - Can have 2 hours Coding pasal
+Furget 5 nine.
+Coding period of ECS farget is the
+problem (code is handling the
+ming task time) to have the task complete)
+Have to kill the instance
+Why it is consuming lots of Memory?
+- consolidate to complete is calprete
+- more memory consuming
+Limit concurrency of consolidation
+8 G8. Memory
+R6 and
+above Except crst
+andividual file size
+> 100/200 mb. (don't use consolidate)
+limit process for (2-3 neq.)
+Box 7 position report 600 orb per report
+Csv.
+494 96 +
+Exepth list
+dont consolidate
+send CSU files
+put in CSK
+folder,
+15 mins.
+EC2
+Can
+have
+hours
+Coding
+pasal
+Furget
+nine.
+period
+farget
+problem
+(code
+ming
+task
+time)
+complete)
+Have
+kill
+instance
+Why
+consuming
+lots
+Memory?
+consolidate
+complete
+calprete
+memory
+Limit
+concurrency
+consolidation
+G8.
+above
+Except
+crst
+andividual
+100/200
+mb.
+(don't
+consolidate)
+limit
+(2-3
+neq.)
+Box
+position
+600
+orb
+494
+Exepth
+send
+CSU
+files
+put
+CSK
+LoB = Line of Business
+Query Complexity is too high
+So we canot use OPM
+like SQE AL chang
+we have to So with native SOL query.
+/A-MESO-Process Code Repo:-
+Apr 14, 2026 Tuesday Citco Works
+(fund admin /a/c, Loan) + Client Products/workflows
+- It Solves business workflows:
+- Meridien Platforms
+(layered)
+Foundatn Layer:
+Knowledge Graph
+responsible
+run?
+manual?
+System?
+attrib
+attached
+fund.
+tasks
+processes
+optics
+replacement
+Products
+SLAM
+may
+process.
+dependencies
+Captionals
+Sub
+optionals.
+Tasks
+act
+item
+(they
+dispendancies
+Who is desiding what is
+dependence
+process / subprocess
+tast
+sub task?
+relatiships
+on on K.G. K.G.
+loader ?
+is deciding ?
+How
+are those relath re are added?
+DA product
+$ : Task Process.
+L2: Process
+L5 : Cubtrates Pask
+13 supprocess
+Li: Product
+L4: Process
+Ls: Task
+nomenclature
+(5)
+L4 L5
+noman
+Process task ?
+KG is coming from optics.
+synced
+Who
+desiding
+what
+subprocess
+sub
+task?
+on K.G.
+K.G.
+loader
+deciding
+those
+relath
+added?
+product
+$ :
+Task
+Process.
+L2:
+L5 :
+Cubtrates
+Pask
+supprocess
+Li:
+Product
+L4:
+Ls:
+coming
+optics.
+knowledge Graph
+has
+communication loyer.
+Event Service
+Cobserver of
+system
+Attrib.
+Notifican
+Events Routing
+Tenent (B.U)
+Services.
+Area
+Mapping tablex
+process event.
+Subject
+it is config
+Source
+for dis.systen
+actn processors)
+Code down Stream
+sys
+downstream sys
+needs to
+perform some act based on events
+business Logic
+Other apps MESO)
+needs to gets notified based on
+some ant trigers,
+based on rub
+Tenant
+subject
+code
+knowledge
+Graph
+communication
+loyer.
+Cobserver
+Events
+Routing
+Tenent
+(B.U)
+Mapping
+tablex
+event.
+it is
+config
+dis.systen
+actn
+processors)
+Code
+down
+Stream
+downstream
+needs
+perform
+some
+events
+business
+Logic
+Other
+apps
+MESO)
+gets
+notified
+ant
+trigers,
+rub
+In citcoworks; Actn processor
+service
+Schedules.
+Aetn processor eg. register product
+Citco works
+processes.
+Schoeluler
+15 ming
+schedules (pushes). events
+Stores events.
+Event services
+emits event
+for event
+routing Service,
+Where does event Services store
+events?
+the role of
+what event services)
+as of now event Services is a
+dumping ground.
+lot events api
+pulls
+list active
+from db
+dynamg
+Where Which mapping is hosted 7
+API for being used 7
+citcoworks;
+Actn
+Aetn
+register
+works
+schedules
+(pushes).
+Stores
+events.
+services
+emits
+routing
+Service,
+does
+Services
+store
+role
+services)
+now
+dumping
+ground.
+lot
+api
+active
+Which
+mapping
+hosted
+being
+used
+Down Stream System:-
+Business Logic
+Citcow
+Small components.
+Act process
+Event ronting Services have
+multiple APIS,
+CRUD operath,
+Postman
+evant_ uvid.
+get
+event -
+void
+area
+type
+messag
+post
+add- raute. - map downstream system,
+t ID :
+consumer TID
+ronte
+- name
+- event -
+Tel
+advanced- math
+- -id
+- instance-type
+- domain
+filter selected data data to add to
+the que ue for downstreansys
+Down
+System:-
+Business
+Small
+components.
+ronting
+multiple
+APIS,
+CRUD
+operath,
+evant_
+uvid.
+add-
+raute.
+map
+system,
+ID :
+consumer
+TID
+name
+advanced-
+math
+-id
+instance-type
+domain
+filter
+selected
+the que ue
+downstreansys
+filters: metadata
+ids
+is TID of router (con sumer)
+stored somewhere?
+Downstream Sys
+AP. (B).
+consumes
+Sacth processor (name)
+handle_soc1 cheebs (name).
+- dynamic - attrib.
+(consumer g. (B) wants the data)
+What
+that is payload
+if we want payload as it is ?
+and not the mapped data
+we can do with ( without
+mapping ?
+filters:
+metadata
+router
+(con
+sumer)
+stored
+somewhere?
+Downstream
+Sys
+AP.
+(B).
+Sacth
+(name)
+handle_soc1
+cheebs
+(name).
+dynamic
+attrib.
+(consumer g.
+(B)
+wants
+that
+payload
+want
+mapped
+with
+without
+Can routing Service do a
+pass through?
+- can we send pay load as is,
+X - IDS
+chita
+4 = -
+routhing.
+ACF
+processor.
+w/o mapping cannot be
+passed?
+if data is missing in saurce
+field. it will send \
+if advaned - matching has mysing data.
+It will fail.
+post-
+set- active-vision
+through?
+pay
+load
+is,
+IDS
+w/o
+missing
+saurce
+field.
+will
+advaned
+matching
+mysing
+data.
+fail.
+set-
+active-vision
+care
+list- ist-tenant-rates tenant- routes
+(iD destribut
+-lut of the Toutes A.P that this tenant
+has.
+I receive an cvent. Whose responsibility
+transfering msg to AP?
+listens to
+Kafka consumer
+medages
+puthed to Q
+Event,
+subject.
+Actn Processor.
+soure
+type SYSEM,
+-metadab, cock
+source -fpt
+- -ids fL
+sub: MEJO
+-data.
+dyn-attib:
+-k.v. par.
+client=
+data 11
+fund =
+data.kr.
+Val = datak3
+How event get passed to Actn processor?
+-through J routing.
+Source is sending event via
+event service?
+How routing Service passing
+source event to aet processor)
+list-
+ist-tenant-rates
+tenant-
+routes
+(iD
+destribut
+-lut
+Toutes
+A.P
+tenant
+receive
+cvent.
+Whose
+responsibility
+transfering
+msg
+AP?
+listens
+Kafka
+puthed
+Processor.
+SYSEM,
+-metadab,
+cock
+-fpt
+-ids
+sub:
+MEJO
+-k.v.
+par.
+fund
+Val
+datak3
+passed
+processor?
+-through
+routing.
+sending
+service?
+passing
+aet
+processor)
+Saire
+event service
+Receive
+ODL
+Save.
+Redis
+Elasticache
+push to
+Kafba Q? name?
+kafkaQ
+or sas
+end.
+Kafba
+name?
+routing. (listener to Qs (afka)
+Kafka Q Instrer.
+Bham
+What's arch
+behind
+event routing
+Ser vice
+Aetn processor listener
+Actn process
+Static Attrib (hard coded)
+teaches to act
+How the message processors ?
+(listener
+(afka)
+Instrer.
+What's
+arch
+Ser
+vice
+Static
+Attrib
+(hard
+coded)
+teaches
+message
+processors
+Notificatn Service:
+other events needs to be notified
+based on some\
+Next layer.
+kg Communicati
+app
+Execut layer
+Task Mgmt
+Collab layer
+Business aeth worklow
+Integrath
+are registered here
+services,
+task,
+supporting Layer
+reference data service
+config Service
+Task assignment
+Schoduling Service
+Notificatn
+Service:
+other
+some\
+Wes\
+Next
+layer.
+Communicati
+Execut
+layer
+Mgmt
+Collab
+aeth
+worklow
+registered
+here
+supporting
+Layer
+reference
+assignment
+Schoduling
+assigned to
+Preparerer-
+task mgmt. service
+How user get onborded to sitcoworks)
+through tenant roles auth master.
+user needs a role through auth master
+havpreparer
+is a persona,
+- - Skillsets
+out of
+users not all
+wers have skill sets to do
+of (nav) preparer persona.?
+- Who gives that- business
+sends that info of user
+that have skill set to do this
+persona.
+assigned
+mgmt.
+onborded
+sitcoworks)
+through
+roles
+auth
+master.
+master
+persona,
+- Skillsets
+out
+users
+wers
+skill
+sets
+(nav)
+preparer
+persona.?
+that-
+sends
+info
+set
+Task mgmt Service
+we create persona
+persona
+stad Std skill Sets.
+eg. SRE -python
+- inonitoring
+we define persona
+business people define skill sets
+template
+must be perform by persona,
+we Sync that to K.G using
+task mgmt service,
+multiple. has multiple lben
+users do tasks bard
+on tast mognt service
+mgmt
+stad
+Std
+Sets.
+-python
+define
+people
+must
+Sync
+K.G
+using
+service,
+multiple.
+lben
+bard
+mognt
+C.P.: Citco Words Apl Reference
+How user is getting added to
+persona ?
+Tasz Assign meat
+Create persona
+Management Persona.
+Ciro
+post manage users
+bur
+optic ness
+IDs?
+Ask
+=we
+maintain
+table
+Sequences:-
+star
+PROCESS
+STARTED
+COMPLETED
+defined
+why
+/ME
+when
+include
+project
+tied
+nap
+Event-store
+talk
+Retrogring
+Fx closeant agent by using UM
+IRA
+like there
+poe
+W vent service dashbaard JIAA
+all tenant
+askid SODL?SRidhar
+How many project
+filters
+# of events < injected per project per day
+How may projects missing completon
+each has
+process ranid
+PROCIS-STAETO
+PRO ESS_COMPLETOR
+Time to complete the RUN.
+all events are saved in ODL
+we will use event service aprs
+to get date from ODL.
+event subject project code>
+Query based on Open search
+based on project code run ID
+meteclets
+Message
+status - value
+closeant
+agent
+using UM
+like
+there
+vent
+dashbaard
+JIAA
+askid
+SODL?SRidhar
+many
+injected
+day
+projects
+completon
+each
+ranid
+PRO
+ESS_COMPLETOR
+Time
+RUN.
+aprs
+date
+ODL.
+code>
+Query
+Open
+search
+run
+value
+Create JIRA
+JIRA
+LLM
+latest event
+run ID
+all events
+filter Based on project; client;
+dates
+progress. of event.
+Dash Board:
+currently access
+of events received per day
+phase2
+of actn taken,
+Monitort
+Alerts
+# of clients processed.
+miss- 1 max. 1 Time.
+process / clients
+ODL accessis
+given for only
+one benant.
+Create
+latest
+project;
+client;
+progress.
+Dash
+Board:
+currently
+access
+received
+taken,
+clients
+processed.
+miss-
+max.
+Time.
+accessis
+given
+one
+benant.
+if there are no events for
+the process for a month,
+Task Mgmt Service
+1 Reference data Service (Catalogue)
+Config Service,
+Task assign ment
+Scheduling Service
+Scheduding services.
+SLAS
+calculator
+Interact service: text/attatchmont
+Whese are files 60ing Storet?
+Would be helpful debugging the issue_ -
+- A - if task moved to different state
+a month,
+Reference
+(Catalogue)
+Config
+assign
+ment
+Scheduling
+Scheduding
+services.
+Interact
+service:
+text/attatchmont
+Whese
+60ing
+Storet?
+Would
+helpful
+debugging
+issue_
+- A
+moved
+different
+state
+2026-4-20 Monday.
+- Presented deschboard
+- export atv CSV; abs files. - priority
+- centratized dishboard for all resources. #2
+-currently lambda ; West EC2, ECS, EKS.
+- 00M; Timeout :- better Logging
+- Current logging := (- error, info; warnings etc.
+fall back to error only)
+- Time out emors:= Can we have better logging
+OOM: logg except stadndard.
+out of Memory \
+Time out Emor : \
+- Applying \
+- Export Granularity 1 day ( ory day)
+168h (defalt pend?
+1 API endpoint should export data by
+Selecting a date range
+2026-4-20
+Monday.
+Presented
+deschboard
+export
+atv
+CSV;
+abs
+files.
+- priority
+centratized
+dishboard
+resources.
+-currently
+lambda
+West
+EC2,
+ECS,
+EKS.
+00M;
+Timeout
+better
+Logging
+logging
+error,
+info;
+warnings
+etc.
+fall
+error
+only)
+Time out
+emors:=
+OOM:
+logg
+except
+stadndard.
+Emor :
+Applying
+dynamically
+Granularity
+1 day
+( ory day)
+168h
+(defalt
+pend?
+endpoint
+Selecting
+range
+2026-4-14
+Config Services :=
+Hust of all config)
+- app - env have conflys
+- we can use for SLAS.
+Metadala
+free text
+Type : system Env spearfied
+Area : ACTION- PROESSOR, SERVICES, MESO
+Subject : SOCI CHECKS, TASK-MGMT RPA
+- Tenant ID: CBU specific)
+- Lable: descript
+Data:
+- Sections:
+list of dicts
+- Config
+EPIC
+Centralized Config for
+2026- 4-15 Wed
+MESO config in share point
+premess
+Client; fund group Fund (list if funds)
+others
+database nine
+Ui Pice Taken
+dailyweekin)
+we are buiding for
+monthy
+all processes; not just
+quarterly
+Hust
+config)
+env
+conflys
+SLAS.
+free
+text
+Type
+Env
+spearfied
+ACTION-
+PROESSOR,
+SERVICES,
+SOCI
+CHECKS,
+TASK-MGMT
+ID:
+CBU
+specific)
+Lable:
+descript
+Sections:
+dicts
+Centralized
+2026-
+4-15
+Wed
+point
+Client;
+Fund
+(list
+funds)
+database
+nine
+Pice
+Taken
+buiding
+processes;
+just
+Config VI
+Build Antomatn
+from config
+Build
+Antomatn
+Bhanu: AP: solves problem based on
+event trigger routing
+AP can be any thing that needs to be done
+to the event.
+template that update task based on
+the event.
+task]
+Route
+(apdate statusof task)
+Event Event Envice. Service.
+Ronting Service
+E.S.
+E.R.S.
+ERS-AP.
+Kafka listener
+injested
+save
+or forward to
+topic subscriber
+downstreem
+sys.
+- check db for route config
+- frame act msg
+- call Kafka topic subscriber
+- AP perform business logic
+eg. tast updates
+task register
+handle socl-cheek
+How ERSRP registry is being done.
+deployment- spes. your (pytomL-libiory)
+Bhanu:
+AP:
+solves
+any
+done
+(apdate
+statusof
+task)
+Event Envice.
+Service.
+Ronting
+forward to
+topic
+subscriber
+route
+frame
+call
+logic
+updates
+socl-cheek
+ERSRP
+registry
+done.
+deployment-
+spes.
+your
+(pytomL-libiory)
+Where the event
+Schedular is defined 1 ranning?
+hour Lb. & those olj are being Saved @ dynano
+We are creating instances of kg each
+saved in ODL
+saved in Dynamodb
+tasks.
+Cypher
+Queries
+on some hourly
+- He- uarterly
+Monthly
+ADIC
+Task Interact Service :=
+Gateway Tasks
+capability in
+last task M the chair
+for each interact tasks there is
+our event
+Schedular
+ranning?
+hour
+Lb.
+olj
+Saved
+dynano
+creating
+instances
+Dynamodb
+hourly
+He-
+uarterly
+Gateway
+capability
+last
+chair
+interact
+AXI
+Axco
+Investment
+A/C tool
+Consume from Meridian
+notificat service 2
+rules
+What are the capabilities of
+notificate services?
+ef- can n.s. send email ?
+push msg to SQS SNS
+Voluntary Corp AT.
+BP Share - Voluntary Corporate acth
+INPUT
+atterproces
+ip/filenane + process filename
+are filename first
+if not find
+ask to resend.
+processed w/ summary & Inggened file
+A/C
+tool
+Consume
+notificat
+capabilities
+notificate
+services?
+ef-
+n.s.
+SNS
+Voluntary
+Corp
+AT.
+Share
+acth
+ip/filenane
+filename
+first
+find
+resend.
+processed
+summary
+Inggened
+RPA Support Horace
+Sridhar ticket
+RPA- CAIS Except
+CAIS Pricing Pack.
+Intelligent Anto mation.
+need
+-CAIS Pricing pack.
+auth name/deted
+logs- locath ucm.
+Select * from history. CAISRUM
+CAIS WB- PROD
+Search Query,
+dient n. process
+log.
+Save to local machine
+check log - errors.
+Copy Zip to local- unzio Closeout
+VI puth prod 1 dataops fxsettle soln
+drop
+UCM drive
+Not
+choext 1-given
+Suipath Prod
+remove
+BPShare locath: - our pwd
+Citcoext \\bbhagat
+drek first.
+Both
+CA - volutary Mandatory ops transfer]
+Horace
+Sridhar
+ticket
+RPA-
+CAIS
+Pricing
+Pack.
+Intelligent
+Anto
+mation.
+-CAIS
+pack.
+name/deted
+logs-
+locath
+ucm.
+Select
+history.
+CAISRUM
+WB-
+PROD
+Search
+Query,
+dient
+Save
+local
+machine
+errors.
+Copy
+Zip
+local-
+unzio
+Closeout
+puth
+prod
+dataops
+fxsettle
+soln
+drive
+choext
+1-given
+Suipath
+Prod
+BPShare
+locath:
+pwd
+Citcoext
+\\bbhagat
+volutary
+transfer]
+One notes
+Queuemgnt
+paydow process
+- -AVCAB AV CAB
+- VCA client list.
+( Corporate acty
+Two Sigma
+BpShare Op IP
+TWO sigma
+ops from sfer
+ask them
+stratagy 0 ) Non Streety
+if moves from BPshare ofs transfer to
+(BPthere Twesigma ops Trugg)
+Client will send filetochat
+VPL- Daily - SPMEST (NYSE)
+VIL - check which one have jobs
+ES Esantstore
+4.5 jobs
+One
+notes
+paydow
+-AVCAB
+CAB
+VCA
+client
+list.
+acty
+Sigma
+BpShare
+TWO
+sigma
+sfer
+them
+stratagy
+Non
+Streety
+moves
+BPshare
+ofs
+transfer
+(BPthere
+Twesigma
+Trugg)
+filetochat
+VPL-
+Daily
+SPMEST
+(NYSE)
+VIL
+jobs
+Esantstore
+4.5
+PROD- RM - Slue prism.
+Mandeting Corp AcM. s/r 1 pacess pricess
+Emorlog
+GTL - Intermediate Emmloy
+UPs Transfer
+Tigger Blue Prism.
+AVCAR Project vzzty
+Sesssion mgmt.
+Voluntary QPS
+tremks Lej
+- Voluntary - voluntary Ops Tranks
+- Mandatory
+ofs transfer
+set ourbl fand.
+Today
+etinder mgmt
+OTCK
+Newpooll
+(afters).
+NOWPOOLZ
+No ebinder
+- because of time zure
+VCA Opstruns
+some times it doesn't pick up
+it must be today
+processed one have Summary- don't use
+ask for new file
+PROD-
+Slue
+prism.
+Mandeting
+AcM.
+s/r
+pacess
+pricess
+GTL
+Intermediate
+Emmloy
+UPs
+Tigger
+Prism.
+AVCAR
+Project
+vzzty
+Sesssion
+QPS
+tremks
+Lej
+voluntary
+Ops
+Tranks
+ourbl
+fand.
+etinder
+ebinder
+zure
+Opstruns
+times
+doesn't
+pick
+Summary-
+don't
+W binder
+email Quane-Status
+Sasson might
+Consolpavel
+e binder
+pending requsts in Quen
+due 20 pending.
+el-moder
+Queryt Connect
+web Service
+e binderchack.
+ILL
+from d-vil
+add Gots
+Monthyjob
+& start.
+if recon then recon
+ebinder Initiate check
+run VII? bot
+Meritery
+Quane-Status
+Sasson
+might
+requsts
+Quen
+due
+pending.
+Queryt
+Connect
+web
+binderchack.
+d-vil
+Gots
+start.
+recon
+then
+Initiate
+VII?
+bot
+RPA-CA Mandatory (Corniak act)
+(Saturobys)
+How to know which to are
+byox
+BP Share / UI Path
+BP BPSin Sum
+Mayleen
+assignae
+Payten
+Cash-Sweep
+fx close out
+DYMN- - ASIA
+adming
+Skiplang
+commt
+QRT
+RPA Support:
+Citco IT
+Case by case basis
+Hand Over Conthence Page
+Queese status
+Path Cloud : Except Support Page
+portfulio Data of
+dyman ASA
+- - Fx close out
+fx 10300/-
+pays
+start Parameter
+Skip Comploading
+act - DYMON- Arit
+Nerjup
+Skip
+sump True
+RPA-CA
+(Corniak
+act)
+know
+BPSin
+Sum
+close out
+DYMN-
+ASIA
+Support:
+Case
+basis
+Hand
+Over
+Conthence
+Queese
+portfulio
+Data
+dyman
+ASA
+10300/-
+Parameter
+Comploading
+DYMON-
+Arit
+sump
+True
+non-doud Ui Puth.
+-sso
+Processes
+Data Ops
+Fx-settled
+Status
+argument In client -
+to PL- ReRun 1 Daily
+VPL Run.
+if would placed
+[ Blue, Prism / Vell Bigger- FILE
+Goy Kay sumproces here
+Request alkans Ledged
+we need to redrop files for users. They Camet
+do it.
+non-doud
+Puth.
+argument
+PL-
+ReRun
+Run.
+would
+placed
+Blue,
+Vell
+Bigger-
+FILE
+Goy
+Kay
+sumproces
+Request
+alkans
+Ledged
+redrop
+users.
+They
+Camet
+it.
+MESO Support.
+New Page
+Axeo Reporting DB avery.
+Miso - Query
+ia 16/shared/warter / shared mesule worder
+lyre
+client, fun, runid
+Support.
+New
+avery.
+Miso
+16/shared/warter
+shared
+mesule
+worder
+client,
+fun,
+runid
