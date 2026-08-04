@@ -1,0 +1,261 @@
+[2026-07-01]
+
+
+savid > sudhampalwar > mibautista - retrigger cash completenss.
+
+
+
+AMaske
+AMaske
+svandeburg
+
+
+
+Due to the MESO process has been marked as failed, could you please retrigger for the client INNOCAP fund SAMLMOS with cash / positions ALL ALL?
+
+
+
+[2026-06-30]
+
+=> SD Ticket# 15113393 
+Onboard a new client for Corporate Actions (Mandatory, Voluntary, Ops Transfer)
+- Checked Confluence page - Corporate Actions Processes
+- It says process been migrated to UI Path
+- Check Confluence page for UI Path - Exception Handling - Voluntary Ops Transfer
+- Not enough information on the UI Path page
+- Asked Horace for confirmation if we use BPShare Templates as per the original document
+- Couldn't find the document for UI Path for this to be handled
+- UI Path Cloud: CoE / HedgeFunds / VoluntaryCorporateAction
+- UI Path checked folder location - only Voluntary Corporate Action has this template/FileMasks as needed
+- Manadatory; OPs Trasnfer is not there in UI Path
+- Checked BP Share location as per the original Coporate Actions Confluence page
+- They all are available and updated today morning (All 3 locations)
+- Copied original file from the location to local; created a backup in the backup folder 
+- Serach by the client `ORCHID_TREE`; no client found
+- added at the end the client `ORCHID_TREE` and mask `OrchidTree_trades_HFXCA` (SourceFile - Mandatory - Column B/G)
+- put the file back to original position
+- Followed the same for Voluntary, and Ops Transfer w/ FileMasks file.
+
+---
+
+=> SD Ticket# 15111049 (PreMeso Config - Sharepoint)
+
+
+
+[2026-06-29]
+
+=> SD Ticket #15103842 
+Onboard a new client for Corporate Actions (Mandatory, Voluntary, Ops Transfer)
+- Checked Confluence page - Corporate Actions Processes
+- It says process been migrated to UI Path
+- Check Confluence page for UI Path - Exception Handling - Voluntary Ops Transfer
+- Not enough information on the UI Path page
+- Asked Horace for confirmation if we use BPShare Templates as per the original document
+- Couldn't find the document for UI Path for this to be handled
+- UI Path Cloud: CoE / HedgeFunds / VoluntaryCorporateAction
+- UI Path checked folder location - only Voluntary Corporate Action has this template/FileMasks as needed
+- Manadatory; OPs Trasnfer is not there in UI Path
+- Checked BP Share location as per the original Coporate Actions Confluence page
+- They all are available and updated today morning (All 3 locations)
+- Copied original file from the location to local; created a backup in the backup folder 
+- Serach by the client `Leeside`; no client found
+- added at the end the client `Leeside` and mask `LEESIDE_Trades_HFXCA` (SourceFile - Mandatory - Column B/G)
+- put the file back to original position
+- Followed the same for Voluntary, and Ops Transfer w/ FileMasks file.
+
+
+=> SD Ticket# 15102495 
+Subject: Add Equity Fund Product Funds to OTC Process for Lumyna
+
+- Checked confluence page - OTC Confirmations - Documentation and Support Guide
+- Checked confluence page - Exception Handling - OTC Confirmations
+- Checked confluence page - OTC Confirmation Solution design Document
+- There is nothing about adding Equity Funds in the documentation
+- Checked my notes for OTC process
+- Noticed that config related changes to be handled by MNL team; handover support has not been provided
+- Emailed to Miko/Daniel regarding this.
+
+
+
+
+
+[2026-06-03]
+
+=> Horace gave a KT on this last week in daily stand updates
+- checked my notes
+- checked confluence page
+- checked UIPath location: CITCORECS_AUTO_REC_DOWNLOAD\SCRIPT
+- Copied config.ini file to create a backup, and renamed it according to the other convention: config-backup-2026-06-03.ini
+- Copied config.ini file to local document folder to edit
+- Added `;CAPULA2` to add_remove row; saved
+- Copied edited file back to orignial location
+
+- checked `Rec_Download_Auto` folder for columns update
+- followed the backup steps for the file `gridview.py` - backed up file name `gridview-backup-2026-06-03.py`
+- followed the steps to edit by coping to local document folder
+- added view, position, transaction columns by copying from LMR client 
+- copied the edited file `gridview.py` back to the original location
+
+=> SD Ticket #14941234
+- Checked MESO documentation - Confluence Page
+- Checked MESO FAQ - Confluence Page 
+- Seems like #3 - some funds are not getting reflected in reprots; partial filesystem
+- Root cause - checke sharepoint config for spaces/line feed
+- Run DB query for client `DIVISADERO_STREET`
+- It shows monthly; checked monthly SharePoint link; couldn't find client
+- Check CW Logs w/ first two run ID - no errors
+- Contacted Horace for what to invesigate next
+- Horace suggested to ask `which report is missing`
+- Pradeep/Mayur didn't respond
+- Kept checking more CW logs w/ other run IDs
+- Found a warning and an error on run id `a502580b-d380-421c-bd52-9448f2fe75d6` : db_service - ERROR - [ad3d9402-6289-45a5-98e1-45f830a53f05] - a502580b-d380-421c-bd52-9448f2fe75d6 [EXCEPTION FUND] No record found for the client DIVISADERO_STREET funds ['DSPLP', 'DSPOFF']
+- Horace mentioned we could check S3 buckets also for missing reports, but first Horace suggested to asked them to retrigger w/ ALL, ALL
+- Contacted Pradeep again to re-trigger w/ ALL/ALL; he's in a meeting, to waiting for them now
+- Once they re-trigger will again check the logs for errors
+
+---
+
+=> SD Ticket #14951717 
+GTL Not generated - Voluntary Corporate Actions
+
+- Checked Confluence Page for Exception Handling - Corporate Actions 
+- Checked VCA Section; BPShare Location
+- From AVCAB Queue triggered the process with -LOG suffix (updated in the document now)
+- Replied Helen about the same
+- Next day, when started the shift, saw the message of Helen regarding this error
+- I asked if Horace was able to fix it who was covering for me 5-7 PM EST
+- Helen mentioned it was fixed on her end, however she would like to investigate the cause
+- Earlier that day I had a KT with Jay regarding this process
+- The problem was file mask was missing that is indicated by checking `intermediate output` folder BFAM client files, summary tab - status columns
+- The error was `GTL` related - but not excatly as per the confluence page
+- Jay asked to follow the step 2 of remediation regarding the file mask, and ask the client for the same.
+- I asked Helen about the client mask and added in the relevant file under voluntary corporate actions/template folder
+- Checked under mandatory corporate action, file mask already existed in the source file - updated it
+- Checked OPs transfer folder file masks file, it was missing here, added it here. 
+- For consistecy across all kept client name `BFAM_partners` and File mask `BFAM_trades_hfxca` in the relevant file; However created a backup of existing file in the folder before this edit where applicable
+- Updated Helen about the investigation
+
+
+---
+
+=> SD Ticket #14952147
+- Triggerted the AVCAB queue - process with -LOG suffix as per the document
+- Updated end user regarding this
+- Sridhar contacted me to check if it failed (through his event servieces dashboard he saw it failed)
+- Checked the process - completed in Blue Prism
+- Checked AVCAB from control panel DailyVCAQueue / showed exception
+- Checked VCAClietnList - was able to find error status
+- Checked the Confluence page for date related error
+- Checked the folder Voluntary Corporate Action in BP Share from Jay's previous KT
+- Checked Error Log folder / Errors doesn't seem to have today's date when sorting by date; to latest error of today, lastest is from 2026-06-02
+- Checked python scripts to check for date related exception
+- It was taking too much time, so tried to reach out to Jay as its' his code for quick resolution
+- Shared all screenshots and steps I have taken w/ Jay
+- Jay told to request user to trigger again with corrected date, they seem to have wrong format, amend it and trigger with correct format
+- Jay also emphasised to contact first Horace, and then Kishor and if both cannot resolve, then only ping him
+- I acknowledged Jay's request on this
+- Reached out to Mankar, Martand Mahesh via chat as he was asking for the update - and I mentioned him it ran into exception
+- Asked Mahesh to retrigger with correct date format
+- Mahesh is not reponsing and now is showing offline
+- Putting this as `Awaiting End User Response`
+
+---
+
+=> SD Ticket #14950335 
+
+- Checked Confluence Page for VPL
+- Checked Blue Prism for VPL Checks - PAAMCO runs shows completed / No exception
+- Told Sangram about that it completed w/ exception; so need to check logs
+- Sangram shared multiple screenshots about different clients
+- Soundarya contacted me briefing the issue occured last month regarding this; where resolution was for Sangram to have manual fix things
+- Soundarya put me in a group chat w/ Sangram
+- I asked Sangram if they had a ticket or if they don't I will need to create a ticket for them
+- Created a ticket with putting as much as I could understand and attaching all the screenshots
+- Updated Sagnram about the ticket number, and mentioned them that I am investigating
+- Now, I ask RPA bot for the status. It showed run completed like it was showing in Blue Prism
+- I the understood that VPL IPV and VPL checks are different and VPL - IPV is in UI path
+- Checked UI-path cloud for this, couldn't find anything
+- The current confluence page for exception handling is under the maintenance (Log in with Atlassian account)
+- Then checked UI path non-cloud, found the process/queue, etc, and when I try checking logs in UI path, it's not showing anything for FA-IPV.
+- I tried Transaction details for the process. but I don't know how to handle this further. 
+- Horace is in a meeting
+- I shold contact Clarisa or Pennylaine as they'er dev/team lead
+- Before that, I check w/ Sridhar from his event-store UI
+- Sridhar told it's in exception for that client, then he shared Blue Prism to UI Path migration page (Bookmaked / added to notes)
+- I checked UI path, tried to get logs for FA-IPV, but it shows empty section
+- I checked the VPL IPV page for this, read all the documentation available
+- The link of bitbucket repo - I don't have access.
+- Checked all the things that are available on the page one by one; even sample python scripts; .msg templates etc.
+- No help on this without Exception Handling page.
+- Decided to ask RPA bot to explain as much as it can to me before I assign to dev team.
+- Messaged Horace, regarding my research, before contacting dev
+
+===
+
+RPA BOT response:=
+
+Exception of type 'UiPath.Core.Activities.CheckpointException' was thrown.
+at source: OpenValuationAnalysis - Invoke Workflow File 
+(Utilities\OpenValuationAnalysis.xaml): Retry Scope - Wait for Pricing Window
+🧠 In CS/Math terms:
+Think of it as a retry loop with a timeout condition. The bot was waiting inside a while(window_not_ready) { retry() } loop, and after exhausting all retries, it threw a CheckpointException — essentially a hard stop because a required precondition was never satisfied.
+
+📖 What each part means:
+Component	Meaning
+CheckpointException	The bot hit a defined checkpoint it could not pass — a gate that never opened
+OpenValuationAnalysis.xaml	The RPA sub-workflow responsible for opening the Valuation Analysis window in AExeo
+Retry Scope	The bot tried multiple times to find/open the window before giving up
+Wait for Pricing Window	The specific step waiting for the AExeo Pricing/Valuation window to become available
+🔍 Root Causes (Most Likely):
+AExeo Pricing Window wasn't open / didn't load in time — the application may have been slow, locked, or not yet available for PAAMCO / MOL_MST
+Valuation for MOL_MST hasn't been opened yet in AExeo — a prerequisite manual step may be pending
+AExeo session timeout or login issue — the bot's session may have expired
+Trigger file was dropped too early — before Middle Office completed sign-off and opened the valuation
+✅ What You Can Do:
+Check AExeo — Verify that the Valuation Analysis window for PAAMCO / MOL_MST is open and accessible
+Re-drop the trigger file — Once AExeo is ready, re-drop the trigger file to restart the process
+Check if MO has signed off — The process requires Middle Office sign-off before the pricing window is available
+
+===
+
+- Okay, so I don't know if I have AExeo link - I is not in my notes on how to check AExeo related things
+- If I have code, I can understand, but the current sample is not enough for me to understand; if I can have bit-bucket repo; can check w/ Kiro
+- I checked UI path, all the options, found process digram, click on the related exception file `Utilities\OpenValuationAnalysis.xaml`
+- This doesn't show any details, they're just block w/ messages they'd throw
+- Horace is offline
+- Will need to assign to Clarisa / Pennylaine to update the docs or KT
+
+
+
+---
+
+SD Ticket #14777852 
+
+- Checked Previous email thread w/ Soundarya; Kishor
+- Checked SD ticket, they didn't add more details about process name; so which process to investigate?
+- Checked confluence page for the report number mentioned in the ticket - AExeo, MESO 
+- Checked the MESO confluence page for this, I don't see the FAQ here
+- Checked Sharepoint config from MESO page anyways
+- Checked AExeo report confluence page - this is dev guide; not support
+- Asked RPA to explain what those reports are about - Monthly/Daily 
+- Asked processes that are related to or involved w/ these report numbers
+- It gave FA Audit Pack process as well
+- Check this process related confluence page
+- Not much here as well, but something related to date, can make and break for yearly/montly
+- Checked user guide docs, and found the trigger file instructions for the date
+- Updated them via email to check the date of the trigger file that is used for that convention; attacted user guide as well
+- If that's all good, happy to follow up - putting awaiting-end-user-response
+
+----
+
+SD Ticket #14961043 
+
+- Checked MESO db query
+- Checked CW logs
+- Updated email regarding process is running
+- Someone from their team reached out regarding update urgently
+- Updated email reponse stating the process completed (2+ hours)
+- Asked if they receieved all reports as needed
+- putting awaiting-end-user-response
+
+

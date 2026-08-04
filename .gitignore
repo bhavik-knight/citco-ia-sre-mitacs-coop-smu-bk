@@ -33,3 +33,12 @@ latex-report/*.synctex.gz
 
 # Generated Build Outputs
 output/
+
+# Personal calendar exports
+*.ics
+
+# Original SMU folder (consolidated into knowledge-base/)
+smu/
+
+# avoid kiro settings
+.kiro/settings

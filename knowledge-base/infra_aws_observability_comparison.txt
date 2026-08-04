@@ -1,0 +1,366 @@
+📄 Observability Platform — CloudFormation Design Template
+
+# 🧾 Observability Platform Design (AWS + Grafana + Pyroscope)
+---
+
+## 1. Overview
+### 1.1 ObjectiveDesign and deploy a centralized observability platform on AWS using CloudFormation to provide:
+- Metrics monitoring
+- Distributed tracing
+- Continuous profiling
+- Centralized dashboards
+- Alerting
+
+The system must support **4 Golden Signals**:
+- Latency
+- Traffic
+- Errors
+- Saturation
+
+---
+
+## 2. Architecture OverviewShow more lines
++---------------------+
+| Grafana (Dashboard) |
++----------+----------+
+|
+| | | |
+CloudWatch X-Ray Pyroscope Logs
+(Metrics) (Tracing) (Profiling) (CW Logs)
+
+---
+
+## 3. Infrastructure Components
+
+### 3.1 AWS Services
+
+| Service | Purpose |
+|--------|--------|
+| CloudWatch | Metrics & logging |
+| X-Ray | Distributed tracing |
+| EC2 / ECS | Host application & Pyroscope |
+| IAM | Permissions |
+| VPC | Network isolation |
+| ALB / API Gateway | Traffic entry |
+
+---
+
+### 3.2 External Components
+
+| Component | Purpose |
+|----------|--------|
+| Grafana | Unified observability dashboards |
+| Pyroscope | Continuous profiling backend |
+
+---
+
+## 4. CloudFormation Stack Design
+
+---
+
+### 4.1 Stack Structure
+
+
+root-stack.yaml
+├── network.yaml
+├── compute.yaml
+├── observability.yaml
+└── grafana.yaml
+
+---
+
+### 4.2 Network Stack (network.yaml)
+
+#### Resources:
+- VPC
+- Public/Private Subnets
+- Internet Gateway
+- Security Groups
+
+#### Requirements:
+- Allow inbound:
+  - Grafana (3000)
+  - Pyroscope (4040)
+- Allow internal service communication
+
+---
+
+### 4.3 Compute Stack (compute.yaml)
+
+#### Resources:
+- EC2 / ECS Services
+- Auto Scaling Group
+
+#### Configuration:
+- Application deployment
+- Attach IAM roles
+- Enable CloudWatch agent
+
+---
+
+### 4.4 Observability Stack (observability.yaml)
+
+---
+
+#### ✅ CloudWatch
+
+**Resources:**
+- Log Groups
+- Metric Filters
+- Alarms
+
+**Metrics to enable:**
+- CPUUtilization
+- Memory usage
+- RequestCount
+- Error count
+
+---
+
+#### ✅ X-Ray
+
+**Resources:**
+- X-Ray Daemon (if EC2/ECS)
+- IAM Role:
+  - `AWSXrayWriteOnlyAccess`
+
+**Configuration:**
+- Enable tracing for:
+  - Lambda
+  - API Gateway
+  - Services
+
+---
+
+#### ✅ Pyroscope
+
+**Deployment:**
+- EC2 or container service
+
+**Ports:**
+- 4040 (UI/API)
+
+**Configuration:**
+- Enable CPU & memory profiling
+- Attach persistent storage (optional)
+
+---
+
+#### ✅ Logging
+
+**Resources:**
+- CloudWatch Log Groups
+
+**Requirements:**
+- Structured logs (JSON)
+- Retention policy (e.g., 30 days)
+
+---
+
+### 4.5 Grafana Stack (grafana.yaml)
+
+---
+
+#### Deployment Options:
+- EC2 instance OR
+- Managed Grafana (AWS Managed Grafana)
+
+---
+
+#### Resources:
+- Grafana Server
+- Security Group
+
+---
+
+#### Data Source Configuration:
+
+| Data Source | Config |
+|------------|--------|
+| CloudWatch | IAM role |
+| X-Ray | Enabled tracing |
+| Pyroscope | HTTP endpoint |
+
+Example:
+
+Pyroscope URL: http://pyroscope:4040
+
+---
+
+## 5. Dashboard Design
+
+---
+
+### 5.1 System Overview Dashboard
+
+**Panels:**
+- CPU utilization
+- Memory usage
+- Network traffic
+- Request rate
+
+---
+
+### 5.2 Service Health Dashboard
+
+**Panels:**
+- API latency
+- Request distribution
+- Service availability
+
+---
+
+### 5.3 Tracing Dashboard (X-Ray)
+
+**Panels:**
+- Service map
+- Trace list
+- Error traces
+
+---
+
+### 5.4 Profiling Dashboard (Pyroscope)
+
+**Panels:**
+- Flame graph
+- CPU usage by function
+- Memory allocation trends
+
+---
+
+## 6. Alerting Design
+
+---
+
+### Alerts:
+
+| Condition | Action |
+|----------|--------|
+| High latency | Notify (Slack/Email) |
+| Error rate spike | Trigger alert |
+| High CPU | Auto-scale or notify |
+
+---
+
+### Tools:
+- CloudWatch Alarms
+- Grafana Alerts
+
+---
+
+## 7. Tagging Strategy
+
+All resources must include:
+
+
+Key: service
+Key: environment
+Key: region
+
+---
+
+## 8. Security Design
+
+---
+
+### IAM Roles:
+- EC2 role for:
+  - CloudWatch
+  - X-Ray
+- Grafana role for:
+  - CloudWatch read
+  - X-Ray read
+
+---
+
+### Network Security:
+- Restrict ports:
+  - Grafana (3000)
+  - Pyroscope (4040)
+- Use private subnets where possible
+
+---
+
+## 9. Data Flow
+
+
+Application
+│
+├── Metrics → CloudWatch
+├── Logs → CloudWatch Logs
+├── Traces → X-Ray
+└── Profiles → Pyroscope
+↓
+Grafana Dashboards
+
+---
+
+## 10. Implementation Phases
+
+---
+
+### Phase 1:
+- Deploy network + compute
+- Enable CloudWatch
+
+---
+
+### Phase 2:
+- Enable X-Ray tracing
+
+---
+
+### Phase 3:
+- Deploy Pyroscope
+
+---
+
+### Phase 4:
+- Deploy Grafana
+- Configure dashboards
+
+---
+
+### Phase 5:
+- Configure alerts
+
+---
+
+## 11. Success Criteria
+
+---
+
+- Latency issues detected within 1 minute
+- Root cause identified within 5 minutes
+- All Golden Signals visible
+- Unified dashboards operational
+
+---
+
+## 12. Future Enhancements
+
+---
+
+- Add OpenTelemetry collector
+- Add Loki for advanced logging
+- Add Tempo for tracing alternative
+- Automate dashboards via Terraform/CDK
+
+---
+
+## ✅ End of Document
+
+
+🚀 How to use this
+You can now:
+✅ Give this to:
+
+DevOps engineer
+Platform team
+AI agent (like Copilot, Terraform bot, etc.)
+
+✅ Ask them to:
+
+Generate CloudFormation templates
+Deploy the stack
+Build dashboards
