@@ -1,0 +1,846 @@
+AMG Dashboard Panels verification w/ Cloudwatch
+
+=======================================================================================================================
+1. SQS
+=======================================================================================================================
+Region: eu-west-1
+
+Env: DEV
+	Platform: automationhub
+		Total Queues 0 = 0 dlq + 0 Normal 
+
+	Platform: bpm
+		Total Queues 0 = 0 dlq + 0 Normal SQS
+
+	Platform: citcoworks
+		Total Queues 7 = 5 dlq + 2 Normal SQS
+
+	Platform: ia-bpo (doesn't show on the dashboard as expected)
+		Total Queues 39 = 19 dlq + 20 Normal SQS
+
+	Platform: meridian
+		Total Queues 37 =  17 dlq + 20 Normal SQS
+
+	Platform: rpacfs1
+		Total Queues 22 = 11 dlq + 11 Normal SQS
+
+Env: UAT 
+	Platform: automationhub
+		Total Queues 0 = 0 dlq + 0 Normal 
+
+	Platform: bpm
+		Total Queues 0 = 0 dlq + 0 Normal SQS
+
+	Platform: citcoworks
+		Total Queues 7 = 5 dlq + 2 Normal SQS
+
+	Platform: ia-bpo (doesn't show on the dashboard as expected)
+		Total Queues 39 = 19 dlq + 20 Normal SQS
+
+	Platform: meridian
+		Total Queues 37 =  17 dlq + 20 Normal SQS
+
+	Platform: rpacfs1
+		Total Queues 22 = 11 dlq + 11 Normal SQS
+
+=======================================================================================================================
+	
+=======================================================================================================================
+2. Lambdas
+=======================================================================================================================
+Region: eu-west-1
+Env: DEV
+
+Platform: meridian 
+36 (13 showing)
+
+Platform: rpacfs1 
+52 (6 showing)
+	
+Platform: ia-bpo 
+57 (1 showing)
+	
+Platform: bpm 
+1 (no showing)
+
+Platform: citcoworks 
+5 (no showing)
+
+Platform: automationhub 
+9 (no showing)
+=======================================================================================================================
+
+{
+  "platform": "meridian",
+  "environment": "DEV",
+  "region": "eu-west-1",
+  "service_type": "lambda",
+  "count": 36,
+  "emitting_metrics": 19,
+  "profile": "cr_dev",
+  "resources": [
+    {
+      "name": "lda-meridian-cache-cross-region-sync-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-cache-cross-region-sync-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-cache-cross-region-sync-function",
+      "runtime": "python3.11",
+      "memory_mb": 512,
+      "timeout_seconds": 900,
+      "last_modified": "2026-03-04T06:57:07.910+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-grafana-provisioner-function-dev",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-grafana-provisioner-function-dev",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-grafana-provisioner-function-dev",
+      "runtime": "python3.12",
+      "memory_mb": 256,
+      "timeout_seconds": 300,
+      "last_modified": "2026-06-10T20:00:19.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-interactions-opensearch-consumer-function-dev",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-interactions-opensearch-consumer-function-dev",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-interactions-opensearch-consumer-function-dev",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 120,
+      "last_modified": "2026-04-20T00:47:33.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-compute-metrics-processor-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-compute-metrics-processor-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-compute-metrics-processor-function",
+      "runtime": "python3.9",
+      "memory_mb": 128,
+      "timeout_seconds": 60,
+      "last_modified": "2026-06-01T06:07:05.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-events-submitter-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-events-submitter-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-events-submitter-function",
+      "runtime": "python3.11",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2026-03-06T06:56:33.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-tms-instance-replicator-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-tms-instance-replicator-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-tms-instance-replicator-function",
+      "runtime": "python3.11",
+      "memory_mb": 256,
+      "timeout_seconds": 180,
+      "last_modified": "2026-03-05T22:00:27.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-odl-access-token-refresher-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-odl-access-token-refresher-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-odl-access-token-refresher-function",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 900,
+      "last_modified": "2026-06-23T08:37:33.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-ec2-health-monitor-and-recovery-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-ec2-health-monitor-and-recovery-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-ec2-health-monitor-and-recovery-function",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 120,
+      "last_modified": "2026-06-23T08:37:32.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-events-opensearch-consumer-function-dev",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-events-opensearch-consumer-function-dev",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-events-opensearch-consumer-function-dev",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 120,
+      "last_modified": "2026-04-17T13:02:27.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-data-validation-processor-metrics-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-data-validation-processor-metrics-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-data-validation-processor-metrics-function",
+      "runtime": "python3.12",
+      "memory_mb": 128,
+      "timeout_seconds": 60,
+      "last_modified": "2024-08-27T08:21:14.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-tms-instance-cdc-streamer-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-tms-instance-cdc-streamer-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-tms-instance-cdc-streamer-function",
+      "runtime": "python3.11",
+      "memory_mb": 256,
+      "timeout_seconds": 120,
+      "last_modified": "2026-02-18T13:26:10.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-opensearch-backup-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-opensearch-backup-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-opensearch-backup-function",
+      "runtime": "python3.9",
+      "memory_mb": 128,
+      "timeout_seconds": 600,
+      "last_modified": "2026-05-28T12:17:56.509+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-events-scheduled-trigger-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-events-scheduled-trigger-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-events-scheduled-trigger-function",
+      "runtime": "python3.11",
+      "memory_mb": 128,
+      "timeout_seconds": 30,
+      "last_modified": "2024-11-19T23:51:49.179+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-storage-gateway-log-collector-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-storage-gateway-log-collector-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-storage-gateway-log-collector-function",
+      "runtime": "python3.11",
+      "memory_mb": 256,
+      "timeout_seconds": 300,
+      "last_modified": "2026-05-29T07:49:30.757+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-cloudwatch-alerts-consumer-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-cloudwatch-alerts-consumer-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-cloudwatch-alerts-consumer-function",
+      "runtime": "python3.11",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2026-02-06T00:42:39.345+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "cwa-eu-west-1-dev-IA-SRE-meridian-alarm-re-notifier",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:cwa-eu-west-1-dev-IA-SRE-meridian-alarm-re-notifier",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/cwa-eu-west-1-dev-IA-SRE-meridian-alarm-re-notifier",
+      "runtime": "python3.12",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2026-05-29T15:56:44.176+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-events-routing-actions-processor-metrics-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-events-routing-actions-processor-metrics-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-events-routing-actions-processor-metrics-function",
+      "runtime": "python3.9",
+      "memory_mb": 128,
+      "timeout_seconds": 60,
+      "last_modified": "2024-11-30T06:06:28.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-interactions-opensearch-retry-processor-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-interactions-opensearch-retry-processor-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-interactions-opensearch-retry-processor-function",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 120,
+      "last_modified": "2026-01-29T03:55:35.710+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-custom-resource-util-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-custom-resource-util-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-custom-resource-util-function",
+      "runtime": "python3.9",
+      "memory_mb": 128,
+      "timeout_seconds": 900,
+      "last_modified": "2025-10-29T03:32:20.151+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-storage-gateway-pending-processor-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-storage-gateway-pending-processor-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-storage-gateway-pending-processor-function",
+      "runtime": "python3.11",
+      "memory_mb": 256,
+      "timeout_seconds": 60,
+      "last_modified": "2026-05-29T07:49:18.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-utils-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-utils-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-utils-function",
+      "runtime": "python3.9",
+      "memory_mb": 2048,
+      "timeout_seconds": 900,
+      "last_modified": "2026-06-23T08:37:34.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-interactions-streamer-function-dev",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-interactions-streamer-function-dev",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-interactions-streamer-function-dev",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 15,
+      "last_modified": "2026-06-19T03:44:12.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-events-opensearch-retry-processor-function-dev",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-events-opensearch-retry-processor-function-dev",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-events-opensearch-retry-processor-function-dev",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 120,
+      "last_modified": "2026-01-29T08:40:58.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-salesforce-events-processor-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-salesforce-events-processor-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-salesforce-events-processor-function",
+      "runtime": "python3.12",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2025-09-02T09:01:56.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "meridian-agents-custom-resource-util",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:meridian-agents-custom-resource-util",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/meridian-agents-custom-resource-util",
+      "runtime": "python3.11",
+      "memory_mb": 128,
+      "timeout_seconds": 900,
+      "last_modified": "2026-04-07T11:37:17.630+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-interactions-submitter-function-dev",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-interactions-submitter-function-dev",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-interactions-submitter-function-dev",
+      "runtime": "python3.11",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2026-02-23T08:58:47.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-notifications-rule-sync-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-notifications-rule-sync-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-notifications-rule-sync-function",
+      "runtime": "python3.11",
+      "memory_mb": 128,
+      "timeout_seconds": 900,
+      "last_modified": "2025-09-25T02:35:17.425+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-events-streamer-function-dev",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-events-streamer-function-dev",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-events-streamer-function-dev",
+      "runtime": "python3.9",
+      "memory_mb": 512,
+      "timeout_seconds": 120,
+      "last_modified": "2026-06-10T09:50:41.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-notifications-retry-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-notifications-retry-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-notifications-retry-function",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 900,
+      "last_modified": "2026-02-25T17:03:52.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-opensearch-bulk-processor-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-opensearch-bulk-processor-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-opensearch-bulk-processor-function",
+      "runtime": "python3.12",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2025-07-04T03:59:00.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-interactions-file-uploader-function-dev",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-interactions-file-uploader-function-dev",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-interactions-file-uploader-function-dev",
+      "runtime": "python3.9",
+      "memory_mb": 256,
+      "timeout_seconds": 300,
+      "last_modified": "2024-02-21T06:49:29.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-events-routing-actions-reprocessor-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-events-routing-actions-reprocessor-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-events-routing-actions-reprocessor-function",
+      "runtime": "python3.12",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2025-08-22T13:45:04.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "lda-meridian-dynamodb-data-replicator-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-dynamodb-data-replicator-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-dynamodb-data-replicator-function",
+      "runtime": "python3.11",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2025-10-27T04:26:04.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-s3-manager-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-s3-manager-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-s3-manager-function",
+      "runtime": "python3.12",
+      "memory_mb": 256,
+      "timeout_seconds": 900,
+      "last_modified": "2025-12-17T05:13:19.000+0000",
+      "has_metrics": false
+    },
+    {
+      "name": "cwa-eu-west-1-dev-IA-SRE-meridian-alarm-state-publisher",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:cwa-eu-west-1-dev-IA-SRE-meridian-alarm-state-publisher",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/cwa-eu-west-1-dev-IA-SRE-meridian-alarm-state-publisher",
+      "runtime": "python3.12",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2026-06-09T14:49:46.000+0000",
+      "has_metrics": true
+    },
+    {
+      "name": "lda-meridian-authorizations-consumer-function",
+      "arn": "arn:aws:lambda:eu-west-1:442645024664:function:lda-meridian-authorizations-consumer-function",
+      "url": "https://eu-west-1.console.aws.amazon.com/lambda/home?region=eu-west-1#/functions/lda-meridian-authorizations-consumer-function",
+      "runtime": "python3.11",
+      "memory_mb": 128,
+      "timeout_seconds": 120,
+      "last_modified": "2025-02-03T09:17:02.993+0000",
+      "has_metrics": false
+    }
+  ]
+}
+
+
+=======================================================================================================================
+3. EC2
+=======================================================================================================================
+Region: eu-west-1
+Env: DEV
+
+Platform: meridian 1 
+{IAM Role: , InstanceID:, Name:}
+
+Platform: rpacfs1 1 
+{IAM Role: DEV-rpacfs1-ireland-app, InstanceID: i-02b486c498fa78855, Name: ec2-eu-west-1-rpacfs1-server-1}
+	
+Platform: ia-bpo 0 
+{IAM Role: , InstanceID:, Name:}
+	
+Platform: bpm 0 
+{IAM Role: , InstanceID:, Name:}
+
+Platform: citcoworks 0 
+{IAM Role: , InstanceID:, Name:}
+
+Platform: automationhub 1 
+{IAM Role: automationhub-dev-storage-ec2-role-eu-west-1, InstanceID:i-069f3851064659471, Name: DEV-automationhub-StorageGateway}
+=======================================================================================================================
+
+
+=======================================================================================================================
+4. ECS 
+=======================================================================================================================
+Region: eu-west-1
+Env: DEV
+
+Platform: meridian
+
+Platform: rpacfs1
+	
+Platform: ia-bpo
+	
+Platform: bpm
+
+Platform: citcoworks
+
+Platform: automationhub
+
+=======================================================================================================================
+
+Build completed successfully (28 top-level panels — the rest are nested inside collapsed row panels). Now let me validate
+
+======================
+
+aws cloudtrail lookup-events '
+  --lookup-attributes AttributeKey=EventName,AttributeValue=ListMetrics '
+  --start-time $(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%SZ) '
+  --region eu-west-1 '
+  --query 'Events[].CloudTrailEvent' '
+  --output text | python -m json.tool | grep -A5 "RecentlyActive"
+
+===
+
+https://eu-west-1.console.aws.amazon.com/msk/home?region=eu-west-1#/cluster/
+%7Barn%3Aaws%3Akafka%3Aeu-west-1%3A442645024664%3Acluster%2Fdev-meridian-cluster-01%2F6c739e64-8b2f-45d8-b08e-70ead02bd099-3%7D/view?tabId=metrics
+
+
+====
+
+https://eu-west-1.console.aws.amazon.com/msk/home?region=eu-west-1#/cluster/
+arn%3Aaws%3Akafka%3Aeu-west-1%3A442645024664%3Acluster%2Fdev-meridian-cluster-01%2F6c739e64-8b2f-45d8-b08e-70ead02bd099-3/view?tabId=metrics
+
+=========
+
+
+{
+  "platform": "meridian",
+  "environment": "DEV",
+  "region": "eu-west-1",
+  "service_type": "ecs-services",
+  "count": 29,
+  "emitting_metrics": 29,
+  "resources": [
+    {
+      "name": "meridian-websocket-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-cluster-services/meridian-websocket-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-cluster-services/services/meridian-websocket-service?region=eu-west-1",
+      "cluster": "meridian-cluster-services",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "meridian-mrdn-ui-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-cluster-services/meridian-mrdn-ui-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-cluster-services/services/meridian-mrdn-ui-service?region=eu-west-1",
+      "cluster": "meridian-cluster-services",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "meridian-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-cluster-services/meridian-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-cluster-services/services/meridian-service?region=eu-west-1",
+      "cluster": "meridian-cluster-services",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "meridian-query-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-cluster-services/meridian-query-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-cluster-services/services/meridian-query-service?region=eu-west-1",
+      "cluster": "meridian-cluster-services",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "meridian-api-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-api-cluster/meridian-api-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-api-cluster/services/meridian-api-service?region=eu-west-1",
+      "cluster": "meridian-api-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 3,
+      "running_count": 3,
+      "has_metrics": true
+    },
+    {
+      "name": "interactions-opensearch-consumer-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/interactions-opensearch-consumer-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/interactions-opensearch-consumer-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "notifications-events-notifier-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/notifications-events-notifier-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/notifications-events-notifier-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "email-processor-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/email-processor-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/email-processor-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 0,
+      "running_count": 0,
+      "has_metrics": true
+    },
+    {
+      "name": "text-extractor-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/text-extractor-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/text-extractor-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "excel-processor-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/excel-processor-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/excel-processor-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "data-validation-processor-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/data-validation-processor-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/data-validation-processor-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "pdf-processor-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/pdf-processor-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/pdf-processor-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 0,
+      "running_count": 0,
+      "has_metrics": true
+    },
+    {
+      "name": "events-routing-actions-processor-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/events-routing-actions-processor-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/events-routing-actions-processor-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "events-opensearch-consumer-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/events-opensearch-consumer-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/events-opensearch-consumer-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "notifications-events-consumer-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-compute-cluster/notifications-events-consumer-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-compute-cluster/services/notifications-events-consumer-service?region=eu-west-1",
+      "cluster": "meridian-compute-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "reference-data-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/reference-data-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/reference-data-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 3,
+      "running_count": 3,
+      "has_metrics": true
+    },
+    {
+      "name": "tasks-management-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/tasks-management-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/tasks-management-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 3,
+      "running_count": 3,
+      "has_metrics": true
+    },
+    {
+      "name": "scheduling-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/scheduling-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/scheduling-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "notifications-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/notifications-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/notifications-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "config-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/config-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/config-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "interactions-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/interactions-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/interactions-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "data-load-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/data-load-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/data-load-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "events-routing-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/events-routing-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/events-routing-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "websocket-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/websocket-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/websocket-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "events-integration-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/events-integration-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/events-integration-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "excel-sniffer",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/excel-sniffer",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/excel-sniffer?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "data-validation-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/data-validation-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/data-validation-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "events-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-services-cluster/events-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-services-cluster/services/events-service?region=eu-west-1",
+      "cluster": "meridian-services-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    },
+    {
+      "name": "meridian-ui-service",
+      "arn": "arn:aws:ecs:eu-west-1:442645024664:service/meridian-ui-cluster/meridian-ui-service",
+      "url": "https://eu-west-1.console.aws.amazon.com/ecs/v2/clusters/meridian-ui-cluster/services/meridian-ui-service?region=eu-west-1",
+      "cluster": "meridian-ui-cluster",
+      "status": "ACTIVE",
+      "launch_type": "FARGATE",
+      "desired_count": 1,
+      "running_count": 1,
+      "has_metrics": true
+    }
+  ]
+}
+Response headers

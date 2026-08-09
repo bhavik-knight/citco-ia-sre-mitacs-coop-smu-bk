@@ -1,0 +1,404 @@
+Env: UAT
+
+
+Lambdas:
+	Platform:
+		automationhub		(total 1)
+			1. lda-TEST-eu-west-1-ia-secrets
+		===
+		bpm					(total 0)		
+		===
+		citcoworks			(total 3)
+			1. lda-citcoworks-graph-factory-function
+			2. lda-citcoworks-cfn-custom-resource-function
+			3. lda-citcoworks-cache-cross-region-sync-function
+		===
+		ia-bpo				(total 39)
+			1. lda-ia-bpo-cais-schedule-trigger
+			2. mercator-filing-agent-kong-api-lda
+			3. lda-IA-BPO-Loans-Trade-Main-Processing-uat
+			4. lda-IA-BPO-event-trigger-harvard-uat
+			5. lda-IA-BPO-Processor-Ra-Doc-uat
+			6. lda-IA-BPO-MW-Expense-uat
+			7. lda-IA-BPO-Outbound-Ra-Doc-uat
+			8. lda-ia-bpo-cais-s3-event-based
+			9. lda-IA-BPO-Event-Srvc-PullData-Investran-uat
+			10. lda-IA-BPO-ZZ-Audit-Processing-uat
+			11. lda-ia-ir-investor-letter
+			12. lda-IA-BPO-Event-Srvc-PullData-Cosec-uat
+			13. lda-IA-BPO-listener-ra-doc-processing-uat
+			14. lda-IA-BPO-tradeCapture-loaderOutbound
+			15. lda-IA-BPO-Json-Pull-Reconcile-Mos-uat
+			16. lda-IA-BPO-TR-Test-Connect-Ses-uat
+			17. lda-ia-bpo-cais-json-pull
+			18. lda-IA-BPO-cdi-trigger-mos-uat
+			19. lda-IA-BPO-iconiq-mgt-perf-fee-cdi-verified-handler-uat
+			20. lda-IA-BPO-tradeCapture-fileAccess
+			21. lda-IA-BPO-Event-Srvc-Investran-uat
+			22. lda-IA-BPO-Event-Srvc-Credit-Loans-Reporting-uat
+			23. lda-IA-BPO-ia-cdi-connector-event-listener-uat
+			24. lda-IA-BPO-Event-Srvc-PullData-Credit-Loans-uat
+			25. lda-IA-BPO-iconiq-mgt-perf-fee-event-handler-uat
+			26. lda-IA-BPO-tradeCapture-JsonProcessor
+			27. lda-IA-BPO-ZZ-Audit-UCM-FileList-uat
+			28. lda-IA-BPO-Event-Srvc-Credit-Loans-uat
+			29. lda-ia-bpo-cais-event-based-trigger
+			30. lda-IA-BPO-Event-Srvc-Cosec-uat
+			31. lda-IA-BPO-ZZ-Audit-Extractionid-uat
+			32. test-eu-west-1-IA-BPO-meso-process-populate-sqs-lda
+			33. lda-ia-bpo-cais-deadline-upload-file-processor
+			34. lda-IA-BPO-tradeCapture-event-listener-uat
+			35. lda-IA-BPO-TR-POC-CTI-lambda-uat
+			36. lda-IA-BPO-Enhance-lookup-event-listener-uat
+			37. lda-IA-BPO-iconiq-mgt-perf-fee-data-exporter-uat
+			38. QA-translation-ai-doc-handler
+			39. lda-IA-BPO-Loans-Trade-uat
+		===
+		meridian			(total 31)
+			1. lda-meridian-storage-gateway-log-collector-function
+			2. lda-meridian-data-validation-processor-metrics-function
+			3. lda-meridian-interactions-submitter-function-uat
+			4. lda-meridian-interactions-streamer-function-uat
+			5. lda-meridian-cache-cross-region-sync-function
+			6. lda-meridian-events-streamer-function-uat
+			7. lda-meridian-dynamodb-data-replicator-function
+			8. lda-meridian-ec2-health-monitor-and-recovery-function
+			9. lda-meridian-odl-access-token-refresher-function
+			10. lda-meridian-utils-function
+			11. lda-meridian-events-submitter-function
+			12. lda-meridian-events-scheduled-trigger-function
+			13. lda-meridian-notifications-rule-sync-function
+			14. lda-meridian-storage-gateway-pending-processor-function
+			15. lda-meridian-events-opensearch-retry-processor-function-uat
+			16. lda-meridian-opensearch-backup-function
+			17. lda-meridian-tms-instance-replicator-function
+			18. lda-meridian-cloudwatch-alerts-consumer-function
+			19. lda-meridian-interactions-opensearch-consumer-function-uat
+			20. lda-meridian-opensearch-bulk-processor-function
+			21. lda-meridian-events-routing-actions-processor-metrics-function
+			22. lda-meridian-interactions-opensearch-retry-processor-function
+			23. lda-meridian-s3-manager-function
+			24. lda-meridian-tms-instance-cdc-streamer-function
+			25. lda-meridian-events-opensearch-consumer-function-uat
+			26. lda-meridian-authorizations-consumer-function
+			27. lda-meridian-compute-metrics-processor-function
+			28. lda-meridian-notifications-retry-function
+			29. lda-meridian-events-routing-actions-reprocessor-function
+			30. lda-meridian-custom-resource-util-function
+			31. lda-meridian-interactions-file-uploader-function-uat
+		===
+		rpacfs1				(total 21)
+			1. rpacfs1-UAT-email-jira-failed-ingestion-progress-tracker
+			2. lda-rpacfs1-cais-pricing-extract-pds-data-lookup
+			3. lda-rpacfs1-cais-pricing-extract-feedback-loop
+			4. lda-rpacfs1-cais-pricing-extract-file-transfer
+			5. lda-rpacfs1-cais-pricing-extract-filtering-documents-genai
+			6. lda-rpacfs1-cais-pricing-extract-pds-data-lookup-genai
+			7. lda-rpacfs1-cais-pricing-extract-file-transfer-genai
+			8. lda-rpacfs1-cais-pricing-extract-post-processing-genai
+			9. lda-rpacfs1-UAT-bank-rpa-email-categorization-extract-email
+			10. lda-rpacfs1-ec2-maintenance-alarm-monitoring-sam
+			11. lda-rpacfs1-cais-pricing-extract-post-processing
+			12. lda-rpacfs1-UAT-bank-rpa-email-categ-wklysummary
+			13. lda-rpacfs1-cais-pricing-extract-pull-documents-genai
+			14. lda-rpacfs1-cais-pricing-extract-pull-documents
+			15. lda-rpacfs1-UAT-bank-rpa-ejfi-jira-creator
+			16. lda-rpacfs1-UAT-bank-email-jira-failed-ingestion-main
+			17. lda-rpacfs1-cais-pricing-extract-filtering-documents
+			18. lda-rpacfs1-Trigger-PP-Deadline-uat
+			19. rpacfs1-UAT-progress-tracker
+			20. lda-rpacfs1-UAT-bank-rpa-ejfi-mailbox-processor
+			21. lda-rpacfs1-UAT-bank-rpa-email-categorization-main
+		===
+
+
+SQS:
+	Platform:
+		automationhub	(total 0)
+		===
+		bpm				(total 0)
+		===
+		citcoworks 		(total 2 = 1 + 1 dlq)
+			1. citcoworks-graph-factory-queue
+			---
+			1. citcoworks-graph-factory-dlq
+		===
+		ia-bpo 			(total 50 = 25 + 25 dlq)
+			1. IA-BPO-CAIS-tradeCapture-fa-fileProcessing-uat
+			2. IA-BPO-CAIS-tradeCapture-fa-uat
+			3. IA-BPO-Event-Srvc-Cosec-Queue-uat
+			4. IA-BPO-Event-Srvc-Credit-Loans-Queue-uat
+			5. IA-BPO-Event-Srvc-Investran-Queue-uat
+			6. IA-BPO-Iconiq-Mgt-Perf-Fee-Queue-uat
+			7. IA-BPO-Mos-DataOps-LongForm-Queue-uat
+			8. IA-BPO-RA-Doc-Outbound-uat
+			9. IA-BPO-RA-Doc-Processing-uat
+			10. IA-BPO-ZZ-Audit-Queue-UCM-FileList-uat
+			11. IA-BPO-ZZ-Audit-Queue-uat
+			12. IA-BPO-harvard-metadata-update-Queue-uat
+			13. IA-BPO-loans-Queue-UCM-FileList-uat
+			14. IA-BPO-tr-poc-cti-analyze-notification-queue
+			15. test-sqs-ia_meso-IA-BPO-ingestion-queue
+			16. uat-ia-bpo-cais-trade-capture-sqs-queue
+			17. rpacfs1-Deadlines-WP-Queue-Uat.fifo
+			18. test_com_citco_cfs_ebinder_document_bulk_download_fifo
+			19. test_com_citco_cfs_pgt_cfs_timecard_loader_fifo
+			20. test_com_citco_cfs_bpo_ebinder_transfer_files_fifo
+			21. test_com_citco_cfs_nav_checklist_quarterly_request_fifo
+			22. test_com_citco_cfs_nav_checklist_daily_weekly_request_fifo
+			23. test_com_citco_cfs_nav_checklist_monthly_request_fifo
+			24. test_com_citco_cfs_ebs_timesheet_submit_fifo
+			25. test_com_citco_cfs_rec_checklist_request_fifo
+			---
+			1. IA-BPO-CAIS-tradeCapture-fa-fileProcessing-uat-dlq
+			2. IA-BPO-CAIS-tradeCapture-fa-uat-dlq
+			3. IA-BPO-Event-Srvc-Cosec-Queue-uat-dlq
+			4. IA-BPO-Event-Srvc-Credit-Loans-Queue-uat-dlq
+			5. IA-BPO-Event-Srvc-Investran-Queue-uat-dlq
+			6. IA-BPO-Iconiq-Mgt-Perf-Fee-Queue-uat-dlq
+			7. IA-BPO-Mos-DataOps-LongForm-Queue-uat-dlq
+			8. IA-BPO-RA-Doc-Outbound-uat-dlq
+			9. IA-BPO-RA-Doc-Processing-uat-dlq
+			10. IA-BPO-ZZ-Audit-Queue-UCM-FileList-uat-dlq
+			11. IA-BPO-ZZ-Audit-Queue-uat-dlq
+			12. IA-BPO-harvard-metadata-update-Queue-uat-dlq
+			13. IA-BPO-loans-Queue-UCM-FileList-uat-dlq
+			14. IA-BPO-tr-poc-cti-analyze-notification-queue-dlq
+			15. test-sqs-ia_meso-IA-BPO-ingestion-queue-dlq
+			16. uat-ia-bpo-cais-trade-capture-sqs-queue-dlq
+			17. rpacfs1-Deadlines-WP-Queue-dlq-Uat.fifo
+			18. test_com_citco_cfs_ebinder_document_bulk_download_dlq
+			19. test_com_citco_cfs_pgt_cfs_timecard_loader_dlq
+			20. test_com_citco_cfs_bpo_ebinder_transfer_files_dlq
+			21. test_com_citco_cfs_nav_checklist_quarterly_request_dlq
+			22. test_com_citco_cfs_nav_checklist_daily_weekly_request_dlq
+			23. test_com_citco_cfs_nav_checklist_monthly_request_dlq
+			24. test_com_citco_cfs_ebs_timesheet_submit_dlq
+			25. test_com_citco_cfs_rec_checklist_request_dlq
+		===
+		Meridian 		(Total 37 = 20 + 17 dlq)
+			1. meridian-authorizations-queue
+			2. meridian-cloudwatch-alerts-queue
+			3. meridian-data-validation-processor-queue
+			4. meridian-dynamodb-failed-replication-queue
+			5. meridian-events-failed-index-queue
+			6. meridian-events-routing-actions-processor-queue
+			7. meridian-events-routing-actions-reprocessor-queue
+			8. meridian-events-routing-actions-router-queue
+			9. meridian-events-routing-notifications-queue
+			10. meridian-events-streamer-queue
+			11. meridian-events-submitter-queue
+			12. meridian-interactions-failed-index-queue
+			13. meridian-interactions-file-uploader-queue
+			14. meridian-interactions-streamer-queue
+			15. meridian-interactions-submitter-queue
+			16. meridian-notifications-consumer-failed-queue
+			17. meridian-notifications-notifier-failed-queue
+			18. meridian-notifications-retry-queue
+			19. meridian-opensearch-bulk-processor-queue
+			20. meridian-tms-instance-cdc-streamer-queue.fifo
+			---
+			1. meridian-authorizations-dlq
+			2. meridian-cloudwatch-alerts-dlq
+			3. meridian-data-validation-processor-dlq
+			4. meridian-dynamodb-failed-replication-dlq
+			5. meridian-events-failed-index-dlq
+			6. meridian-events-routing-actions-processor-dlq
+			7. meridian-events-routing-actions-reprocessor-dlq
+			8. meridian-events-routing-actions-router-dlq
+			9. meridian-events-routing-notifications-dlq
+			10. meridian-events-streamer-dlq
+			11. meridian-events-submitter-dlq
+			12. meridian-interactions-failed-index-dlq
+			13. meridian-interactions-file-uploader-dlq
+			14. meridian-interactions-streamer-dlq
+			15. meridian-interactions-submitter-dlq
+			16. meridian-opensearch-bulk-processor-dlq
+			17. meridian-tms-instance-cdc-streamer-dlq.fifo
+		===
+		rpacfs1			(total 20 = 10 + 10 dlq)
+			1. rpacfs1-cais-pricing-extract-cti-analyze-notification-queue
+			2. rpacfs1-cais-pricing-extract-cti-analyze-notification-queue-genai
+			3. rpacfs1-cais-pricing-extract-cti-ner-job-notification-queue
+			4. rpacfs1-cais-pricing-extract-cti-ner-job-notification-queue-genai
+			5. rpacfs1-cais-pricing-extract-pds-email-queue
+			6. rpacfs1-cais-pricing-extract-pds-email-queue-genai
+			7. rpacfs1-cais-pricing-extract-pds-input-source-genai-queue-genai
+			8. rpacfs1-cais-pricing-extract-post-processing-email-queue
+			9. rpacfs1-cais-pricing-extract-post-processing-email-queue-genai
+			10. rpacfs1-Deadlines-WP-Queue-Uat.fifo
+			---
+			1. rpacfs1-cais-pricing-extract-cti-analyze-notification-queue-dlq
+			2. rpacfs1-cais-pricing-extract-cti-analyze-notification-queue-genai-dlq
+			3. rpacfs1-cais-pricing-extract-cti-ner-job-notification-queue-dlq
+			4. rpacfs1-cais-pricing-extract-cti-ner-job-notification-queue-genai-dlq
+			5. rpacfs1-cais-pricing-extract-pds-email-queue-dlq
+			6. rpacfs1-cais-pricing-extract-pds-email-queue-genai-dlq
+			7. rpacfs1-cais-pricing-extract-pds-input-source-genai-queue-genai-dlq
+			8. rpacfs1-cais-pricing-extract-post-processing-email-queue-dlq
+			9. rpacfs1-cais-pricing-extract-post-processing-email-queue-genai-dlq
+			10. rpacfs1-Deadlines-WP-Queue-dlq-Uat.fifo
+		===
+
+
+EC2:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+		
+
+ECR:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+		
+
+ECS:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+		
+
+EKS:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+		
+
+MSK-Kafka:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+		
+
+
+DocumentDB:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+		
+
+
+RDS:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+		
+
+
+Redis:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+		
+
+OpenSearch:
+	Platform:
+		automationhub		(total 0)
+		===
+		bpm					(total 0)
+		===
+		citcoworks			(total 0)
+		===
+		ia-bpo				(total 0)
+		===
+		meridian			(total 0)
+		===
+		rpacfs1				(total 0)
+		===
+
+
+
+03. Lambda
+04. SQS
+05. MSK-Kafka
+06. EC2
+07. ECR
+08. EKS
+09. ECS-Services
+10. ECS-APIs
+11. RDS-Aurora
+12. DocumentDB
+13. Redis-Valkey
+14. NeptuneDB
+15. OpenSearch
