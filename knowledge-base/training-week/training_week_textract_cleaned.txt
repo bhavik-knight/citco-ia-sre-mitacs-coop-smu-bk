@@ -442,73 +442,248 @@ Communication Layer
 - **How routing service passes source event to AP** → via Kafka topic subscriber
 
 ### Event Service Internal Flow
+*(From notebook diagram — Screenshots 1 & 2)*
 
 ```
-Source System → Event Service
-                    ↓
-              Receive → Save to Redis Elasticache
-                    ↓
-              Push to Kafka Q (name?)
-                    ↓
-              Routing Service (listener to Kafka Q)
-                    ↓
-              Kafka Q Listener (Instrer / Bhanu)
+Source System
+      ↓  (event)
+Event Service
+      ↓
+   Receive
+      ↓
+    Save  ──────────→  WHERE: ODL
+                              Redis Elasticache
+      ↓
+Push to Kafka Q          ←── Open Q: "Kafka Q — name?"
+    (or SQS)
+      ↓
+     End
 ```
+
+**Storage on Save:** events saved to **ODL** and **Redis Elasticache** (confirmed from notebook)
+**Transport:** pushed to **Kafka Q** (or SQS — still open: exact queue name unknown at time of training)
 
 **What's behind Event Routing Service?**
-- AP listener → Kafka listener
-- AP process → Static Attributes (hardcoded) → teaches AP how to handle messages
+*(From notebook Screenshot 3 — "routing, listener to Qs? Kafka")*
+
+```
+Kafka Q listener (R)
+        ↓
+       DB  ────────────── Q: "What is arch behind event routing service?"
+        ↓                    (Bhanu — action required)
+      [?]  ──→ WHERE: Action Processor listener
+                        ↓
+             Static Attrib (hard coded)
+                        ↓
+              ★ How does message reach Action Processors?
+```
+
+- **Routing service** = Kafka Q listener that reads from DB for route config
+- **AP listener** listens to Kafka topic; AP process has **Static Attributes (hardcoded)** that define how to handle messages
+- Open question at time of training: exact internal architecture behind ERS still being clarified with Bhanu
 
 ### CitcoWorks Full Layered Architecture
+*(From notebook Screenshot 4 — confirmed layer order)*
 
 ```
-┌─────────────────────────────────────────────┐
-│  KG Communication Layer                     │
-│    ↓                                        │
-│  Execution Layer → Task Management          │
-│  Collaboration Layer                        │
-│    → Business Action Workflow               │
-│    → Integration Services (registered)      │
-│  Supporting Layer                           │
-│    → Reference Data Service (Catalogue)     │
-│    → Config Service                         │
-│    → Task Assignment Service                │
-│    → Scheduling Service                     │
-│    → Notification Service                   │
-│    → Interaction Service (text/attachment)  │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  KG Layer         ✓ (confirmed)                  │
+│  Communication Layer  ✓ (confirmed)              │
+│       ↓                                          │
+│  Execution Layer → Task Management               │
+│       ↓                                          │
+│  Collaboration Layer                             │
+│    → Task Mgmt / Services                        │
+│    → Business Action Workflow (registered here)  │
+│    → Integration Services                        │
+│       ↓                                          │
+│  Supporting Layer                                │
+│    1. Reference Data Service (Catalogue)         │
+│    2. Config Service                             │
+│    3. Task Assignment Service                    │
+│    4. Scheduling Service                         │
+│    5. Notification Service                       │
+│    6. Interaction Service (text/attachment)      │
+└──────────────────────────────────────────────────┘
 ```
+
+- **Meridian app** sits at this layer (confirmed in screenshot)
+- **Business Action Workflows are registered** in the Collaboration layer
+- KG ✓ and Communication ✓ layers were explicitly confirmed during the session
 
 **Notification Service:**
-- Other events that need to be notified based on some trigger → Next Layer
-- Sends via email, SQS, SNS
+*(From notebook Screenshot 4)*
+- Triggered when **other events need to be notified based on some "rules"**
+- Rules-based: not all events → notification, only those matching configured rules
+- Sends via: **email**, **SQS**, **SNS** (confirmed Apr 16 with Bhanu)
 
 ### User Onboarding to CitcoWorks
+*(From notebook Screenshots 5, 8, 9)*
 
 - Users get added through **Tenant Roles / Auth Master**
-- User needs a **role** via Auth Master → role = Preparer (persona)
-- **AuthMaster team**: Bhanu knows a contact in Hyderabad
-- **Preparer** = a persona with defined **Skill Sets** (e.g., SRE → Python, Monitoring)
-- Not all users have the skill sets for every (navigator) preparer persona
-- **Business** sends info about which users have skill sets for which persona
-- **Role-based / persona-based feature visibility**: features hidden based on role and persona
-- **Persona onboarding process**: tracked in Citco-Works; synced from Optics to confirm persona exists in both systems
+- User needs a **role** via Auth Master → role determines persona
+- **"nav preparer"** = a persona with defined **Skill Sets** (e.g., SRE → Python, Monitoring)
+- Not all users (out of e.g. 10) have the skill sets to fulfil the nav-preparer persona
+- **Business** sends the info: which users have the skill set to do this persona
+- **AuthMaster team**: Bhanu knows a contact in Hyderabad (action required)
+- **Persona onboarding process**: tracked in CitcoWorks; confirm persona exists in both CitcoWorks and Optics
 - **Process IDs**: AskCitco maintains a table of all process IDs
+- ⚠️ Potential **onboarding problem**: if role/persona alignment is off, features may be incorrectly hidden/shown
 
 ### Task Management Service
+*(From notebook Screenshots 5 & 6)*
 
-- Create persona → define standard skill sets (e.g., SRE: Python, Monitoring)
-- Business people define skill sets via template
-- Must be performed by the persona
-- Sync to **Knowledge Graph** using task management service
-- Multiple business lines (lben) — users do tasks based on task mgmt service
+**How tasks get assigned:**
+```
+task → assigned to → Preparer → by → task mgmt service
+```
 
-### CitcoWorks API Reference (Task Assignment + Persona Management)
+**Creating a persona:**
+- Task Mgmt Service is where we **create personas**
+- A persona has **standard skill sets** defined by the SRE team
+  - e.g., SRE persona → skill sets: Python, Monitoring
+- **Business people define the skill sets** (via template) — must be performed by that persona
+- We **sync persona definitions to KG** using the task management service
+- One persona → **multiple users** can do tasks based on task mgmt service
 
-**User → Persona flow:**
-- `POST manage-users` → Citco → optical IDs
-- `Task Assignment`: Create persona → Management Persona
-- Maintain a table of persona → user mappings
+**User–Persona relationship:**
+- `persona = usergroups = roles` — CitcoWorks does **not** use the concept of "roles" directly
+- Multiple users share one persona; tasks are distributed across them
+- Out of (e.g.) 10 users, **not all have the skill sets** to fulfil the (nav) preparer persona
+- **Who grants skill sets?** → Business sends that info — specifying which users can fulfil this persona
+
+**Feature visibility (hide/show):**
+- Pages/features are **shown or hidden based on role**
+- Open question: is hiding based on **role** or **persona**? → potential **onboarding problem** if misconfigured
+- CitcoWorks roles are **static**: `user`, `tenant admin`, `read-only`
+- Roles are **requested by business** and **defined by Auth-Master**
+
+### CitcoWorks API Reference — Persona & User Management
+*(From notebook Screenshot 7 — "C.P.: CitcoWorks API Reference")*
+
+**How is a user added to a persona?**
+
+```
+AD (Active Directory)
+        ↓
+Task Assignment Service
+        ↓
+  POST create-persona       ← creates the persona definition
+  POST management-persona   ← manages persona assignment
+  POST manage-users         ← adds user → Citco → Optics IDs
+        ↓
+    role → persona
+    (source: business / Optics)
+```
+
+**Key API endpoints (Task Assignment Service):**
+
+| Endpoint | Purpose |
+|----------|---------|
+| `POST create-persona` | Create a new persona definition |
+| `POST management-persona` | Manage persona (update, assign) |
+| `POST manage-users` | Add/map users → Citco + Optics IDs |
+
+**Persona model:**
+- `persona = usergroups = roles` — CitcoWorks does not have a traditional "roles" concept
+- Users are grouped under a persona; persona is the unit of access
+- Role data comes from **business** (who can do what) and **Optics** (source of truth for process hierarchy)
+
+**Feature visibility:**
+- Pages are **shown or hidden based on role**
+- Q: Is hiding based on **role** or **persona**? → open question, potential **onboarding problem** if not aligned
+
+### Auth Master — Login Flow & Architecture
+*(From notebook Screenshots 9, 10, 11)*
+
+**Login flow:**
+```
+Users
+  ↓
+Citco-Works UI
+  ↓
+Login
+  ├── AD (Active Directory)
+  └── Ping Identity → token for UI
+        ↓
+  Login Success
+        ↓
+  Meridian Auth Service  (our service)
+        │
+        ├── sends: user ID, app name, service name (C.W.)
+        │
+        └── real-time call to AuthMaster
+                  ↓
+            AuthMaster
+              → returns: 1) persona
+                         2) roles
+        ↓
+  Caching (C.W. service-name level)
+```
+
+**CitcoWorks roles (static — 3 types):**
+- `user`
+- `tenant admin`
+- `read-only`
+- Roles are **requested by business** and **defined by AuthMaster**
+
+**Open questions / risks noted in session:**
+- ⚠️ **Who is AuthMaster team?** → Bhanu knows one contact @Hyderabad (action required)
+- ❓ How is data synced from AuthMaster? Real-time? API-based? How frequently?
+- ❓ How does Meridian API call AuthMaster — and how often?
+- ⚠️ **If AuthMaster is down → users cannot perform any action** (critical dependency)
+- ❓ TTL for cache — how long? How often is cache flushed?
+- ❓ What happens if cache is flushed (e.g., on service restart)?
+- ⚠️ **If a user is deleted in AuthMaster → what happens to the cache?** → potential problem (stale cache entry)
+- ❓ Do users receive their persona on every login, or is it cached?
+
+**Cache behaviour (what we know):**
+- CitcoWorks caches persona + roles after login via Meridian Auth Service
+- Cache is keyed at the service-name (C.W.) level
+- Cache flush scenario (restart) — behaviour undefined at time of training
+
+---
+
+### Task Assignment Service & Task Lifecycle
+*(From notebook Screenshots 12)*
+
+**How tasks get assigned to users:**
+```
+Login Success
+      ↓
+Task Assignment Service
+      ↓
+  "My Tasks" view  (tasks allocated to this user)
+      ↓
+  Open / In-Progress
+```
+
+- Task Assignment Service assigns **new tasks to the least-occupied user** (load balancing)
+- **What if a user is on vacation?** → **HIL (Human-In-the-Loop)** — Manager assigns to a group
+
+**Task lifecycle — high-level (open → offered → completed):**
+```
+open → offered → completed
+```
+
+**Task lifecycle — detailed states (from notebook):**
+
+| Dimension | States | Description |
+|-----------|--------|-------------|
+| **State** (system/ours) | `1. initiated` | From KG, initiated into system |
+| | `2. ready / running` | Task is active |
+| | `3. in-except / in-progress` | Processing or exception |
+| | `4. completed` | Done |
+| **Status** (user-visible) | `1. empty / open` | Task created (ADM: task created) |
+| | `2. open` | User is assigned to task (ADM: user assigned) |
+| | `3. in-progress` | User is working on it |
+| | `4. failed` | Leads to Exception state |
+
+- **ADM** (admin view): tracks task creation and user assignment events separately
+- **Clone** action exists on tasks (noted in screenshot — exact use case not elaborated)
+- Task Assignment API drives the lifecycle transitions
+
+---
 
 ### Event Store — Sequences (Discussion with Sridhar)
 
