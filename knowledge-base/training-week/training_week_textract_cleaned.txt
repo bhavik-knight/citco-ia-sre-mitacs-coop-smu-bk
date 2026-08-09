@@ -214,10 +214,148 @@ Python API calling ComAPIs
 - **JS → multiple requests to ComAPI on a single rule**
 - Python wraps these via the Reporting Server REST API
 
-### COMAPI Libraries (from Confluence PDFs — for context)
-- **Aexeo Active PnL - COMAPI** — calls `ActivePnLComApi` installed on machine, receives Report Criteria, creates JSON payload, invokes COMAPI JavaScript, waits for report, saves to UiPath Share
-- **Aexeo Report Generation - COMAPI** — builds JSON payload, invokes `ReporterAPIv1.0.8.JS`, retries 3x on `.err` files, saves to UiPath Share
-- **Aexeo Reporter Server - HTTP Request** — generates report via HTTP request to Aexeo Reporter Server (Python `reporter_requests.py`), `in_SourceSystem` arg tracks which process called (e.g., `RECON_EBINDER`)
+### COMAPI Libraries (from Confluence PDFs)
+
+#### 1. Aexeo Active PnL - COMAPI (`COMAPI-090826-030119`)
+- **Library**: `IA_Aexeo.ActivePnl.ComApi` v1.0.3 | **Jira**: IA-7727 | **Developer**: Daniel Estrella
+- **Flow**: Receives Report Criteria → Creates JSON Payload → Invokes `ActivePnLComApi.js` → Waits for report → Saves to UiPath Share
+- **Pre-requisite**: `ActivePnLComApi-2021.08.421.00.Installer.exe` must be installed on the bot machine
+
+**Arguments:**
+
+| Argument | Direction | Type | Required | Description | Default/Sample |
+|---|---|---|---|---|---|
+| `in_dt_ReportCriteria` | In | DataTable | Y | Report Criteria for P&L | — |
+| `in_ClientName` | In | String | Y | Name of Client in Aexeo | `CS_HEDGING_GRIFFO4` |
+| `in_FileName` | In | String | Y | File name without extension | `CS_HEDGING_GRIFFO4_ActivePnl_YYYYMMDD` |
+| `in_SaveLocation` | In | String | Y | Directory to save report | UiPath Share path |
+| `in_ComApiTimeout` | In | Int32 | N | Timeout in **minutes** | `60` |
+| `in_ComApiGridviewType` | In | String | N | Grid view type | `"global"` or `"client"` |
+| `in_ComApiSaveCsvMethod` | In | String | N | CSV save method | `SaveAsRawCSV` or `SaveAsCSV` |
+| `out_ComApiMessage` | Out | String | N/A | Message from COMAPI run | — |
+| `out_bool_ComApiSuccess` | Out | Boolean | N/A | Success flag | `True` / `False` |
+
+**Orchestrator Assets:**
+
+| Asset Name | Type | Description |
+|---|---|---|
+| `Aexeo.ActivePnl.ComApi.UiPathShare` | Text | UiPath Share Drive root |
+| `Aexeo.ActivePnl.ComApi.Timeout` | Integer | Default API timeout |
+| `Aexeo.ActivePnl.ComApi.Script` | Text | JavaScript used for COMAPI |
+| `Aexeo.ActivePnl.ComApi.Credentials` | Credentials | Encoded credentials for Aexeo |
+
+**Directories on UiPath Share:**
+- `\LOGS` — one log file per execution (`_COMPLETED_` or `_FAILED_`)
+- `\REQUESTS` — request files (`.end`, `.json`, `_ErrorLog.err`)
+- `\SCRIPTS` — contains `ActivePnlComApi.js`
+- `\OUTPUTS` — generated report output files
+
+---
+
+#### 2. Aexeo Report Generation - COMAPI (`COMAPI-090826-030241`)
+- **Library**: `AexeoReporter-COMAPI` | **Developer**: Nova Katrina Gomez
+- **Flow**: Build JSON payload → Invoke `ReporterAPIv1.0.8.JS` → Wait for report → Move to save location → Retry 3x on `.err` files
+- **Pre-requisite**: `AexeoReporterComApi-2021.08.421.00.Installer.exe` must be installed; `COMAPI JavaScript` at `\Scripts\AEXEO_COMAPI\ReporterAPIv1.0.8.JS`
+
+**Arguments:**
+
+| Argument | Direction | Type | Required | Description | Default/Sample |
+|---|---|---|---|---|---|
+| `in_ClientName` | In | String | YES | Client name in Aexeo | `WT_CAPITAL` |
+| `in_FileName` | In | String | YES | Report filename | `WT_CAPITAL_RPA_11400_yyyyMMdd` |
+| `in_ReportID` | In | String | YES | Aexeo Report ID | `100011400` |
+| `in_GridviewType` | In | String | NO | Gridview type | Default: `Global client` |
+| `in_SaveLocation` | In | String | YES | Save location path | UiPath Share path |
+| `in_dt_ReportCriteria` | In | DataTable | YES | Customized report criteria | — |
+| `in_APICredentialsName` | In | String | NO | Orchestrator credential asset | `"Aexeo_COMAPI_Credential"` |
+| `in_AexeoCOMAPITimeout` | In | Integer | NO | Timeout in seconds | `300` (default 3000s/50min) |
+| `in_AexeoComapiInvokeCode` | In | String | NO | Custom COMAPI JS path (overrides default) | `ReporterAPIv1.0.8.JS` |
+| `in_blnWaitReportPerFund` | In | Boolean | NO | Wait per fund (only if custom JS used) | `True` |
+| `out_ReportCriteriaJSON` | Out | String | N/A | Report criteria JSON (audit log) | — |
+| `out_blnSuccessfullyDownloaded` | Out | Boolean | N/A | Download success flag | — |
+
+**Orchestrator Assets:**
+
+| Asset Name | Type | Description |
+|---|---|---|
+| `Aexeo_COMAPI_Credential` | Credential | Username + password for Aexeo |
+| `AexeoReporter_COMAPI_Timeout` | Integer | Timeout threshold (default 3000s / 50min) |
+| `Env_Root_SharedFolder` | Text | Root folder path |
+
+**Sample JSON Payload:**
+```json
+{
+  "Value date": "20240405",
+  "Gridview": "AEXEODB_11400",
+  "Fund": "",
+  "bG9naW51c2Vy": "username",
+  "ZW5jcnlQYXNz": "password",
+  "Save Location": "\\\\uipath-file-share...\\SOURCE\\",
+  "ReportID": "100011400",
+  "File Name": "WT_CAPITAL_RPA_11400_20240405",
+  "Client": "WT_CAPITAL",
+  "GVType": "global"
+}
+```
+
+> **Key difference vs Active PnL**: Report Generation also accepts `in_AexeoComapiInvokeCode` (custom JS) and `in_blnWaitReportPerFund`, and outputs `out_ReportCriteriaJSON` for audit logging. Active PnL is specifically for P&L reports and uses named `in_ComApiTimeout` in **minutes** (not seconds).
+
+---
+
+#### 3. Aexeo Reporter Server - HTTP Request (`090826-030459`)
+- **Library**: `IA_AexeoReporterServer_HTTP_Request` | **Developer**: Nova Katrina Gomez
+- **Flow**: Build JSON payload → HTTP POST to Aexeo Reporter Server → Wait for report → Download to UiPath Share
+- **Script**: `reporter_requests.py` at `\Scripts\AexeoReporterServer-HTTPRequest\`
+- **Pre-requisite**: `windowsdesktop-runtime-6.0.0-win-x64.exe`; `pip install requests`
+- **Enhancement (Jan 2025, IA-11432)**: Added `in_SourceSystem` optional param to track which process called the API
+
+**Arguments:**
+
+| Argument | Direction | Type | Required | Description | Default/Sample |
+|---|---|---|---|---|---|
+| `in_ClientName` | In | String | YES | Client name in Aexeo | `WT_CAPITAL` |
+| `in_FileName` | In | String | YES | Report filename | `WT_CAPITAL_RPA_11400_yyyyMMdd` |
+| `in_ReportID` | In | String | YES | Aexeo Report ID | `100011400` |
+| `in_GridviewType` | In | String | NO | Gridview type | Default: `Global client` |
+| `in_SaveLocation` | In | String | YES | Save location (must be UiPath Share) | UiPath Share path |
+| `in_dt_ReportCriteria` | In | DataTable | YES | Customized report criteria | — |
+| `in_AexeoReporterServerTimeout` | In | Integer | NO | Timeout in seconds | `300` (default 3000s/50min) |
+| `in_APICredentialsName` | In | String | NO | Orchestrator credential asset | `"Aexeo_COMAPI_Credential"` |
+| `in_SourceSystem` | In | String | NO | Which process called the API (audit) | `RECON_EBINDER` |
+| `out_blnSuccessfullyDownloaded` | Out | Boolean | — | Download success flag | — |
+
+**Orchestrator Assets:**
+
+| Asset Name | Type | Description |
+|---|---|---|
+| `Aexeo_COMAPI_Credential` | Credential | Username + password |
+| `AexeoReporterServer_HTTPRequest_Timeout` | Integer | Timeout (default 3000s/50min) |
+| `Env_Root_SharedFolder` | Text | Root folder |
+| `AexeoReporterServer_HostURL` | Text | Reporter Server endpoint URL |
+
+**Sample HTTP Request URL:**
+```
+https://rpacfs1-aexeoreporterservice-uat.int.coreprod01.citcosvc.com/arguments?argument=
+{"Start Date":"20240510","End Date":"20240510","Gridview":"AEXEODB_11400",
+ "bG9naW51c2Vy":"username","ZW5jcnlQYXNz":"password",
+ "Save Location":"\\\\server\\BPShare\\","ReportID":"100011400",
+ "File Name":"EIP_RPA_11400_20240405","Client":"EIP","GVType":"global"}
+```
+
+> **Key difference vs COMAPI**: HTTP Request uses the Aexeo **Reporter Server REST endpoint** (no local COMAPI install needed beyond the runtime). Reports can **only** be saved to UiPath Shared Drive. The `in_SourceSystem` field was added in Jan 2025 for process-level audit tracing.
+
+#### Library Comparison Summary
+
+| Feature | Active PnL COMAPI | Report Generation COMAPI | HTTP Request |
+|---|---|---|---|
+| Reference | `030119` | `030241` | `030459` |
+| Mechanism | Local COMAPI JS | Local COMAPI JS | REST HTTP POST |
+| Timeout unit | **minutes** (default 60) | **seconds** (default 3000) | **seconds** (default 3000) |
+| Retry on `.err` | No (own logic) | Yes — 3x retries | No |
+| Audit JSON output | No | Yes (`out_ReportCriteriaJSON`) | No |
+| `in_SourceSystem` | No | No | Yes (added Jan 2025) |
+| Custom JS override | No | Yes (`in_AexeoComapiInvokeCode`) | No |
+| Save location | UiPath Share | UiPath Share | UiPath Share only |
 
 ---
 
@@ -305,29 +443,205 @@ Jenkins → Build
 
 ---
 
-## MESO Support Documentation (from Confluence PDF)
+## MESO Support Documentation (`090826-031120`)
 
 ### Process Information
 - **Process Name**: MESO (Middle Office Month-End Sign-Off)
 - **Technology**: AWS & Python
+- **AWS Environment**: `citcocoreprod01` | **Region**: `us-east-1`
+- **Code Repository**: `ia_meso_process` — https://bitbucket.org/citco/ia_meso_process/src/main/
+- **Pipeline**: `core-ia-bpo-meso-service-infrastructure` (eu-west-1 CodePipeline)
+- **User Guide / Trigger File**: `MESO_Single_Trigger_Process_V5.1_TEST.xlsm` (TEST environment reproduction)
+- **Event Codes Reference**: `event_codes_summary.csv`
+
+### Team
+| Role | Person |
+|---|---|
+| Process Developer | Ho, Hoi Leung; Deotale, Kishor (Ali, Mir Momin — deactivated) |
+| Support DL | `innovation_it_support` |
+| Aexeo Support — DEV | Feng Cao / Jajoo, Saurabh |
+| Aexeo Support — NA | Sehgal, Mandeep |
+| Aexeo Support — MNL | Halili, Anna Marie |
+| Aexeo Support — EU | Howard, Kees |
+
+### Storage Locations
+
+| Type | UiPath ShareDrive (legacy) | S3 (current) |
+|---|---|---|
+| Positions output | `\\uipath-share...\RECON_EBINDER\MESO\OUTPUT\POSITIONS` | `s3://prod-citco-ia-checklist-service-documents/meso/output/position/` |
+| Cash output | `\\uipath-share...\RECON_EBINDER\MESO\OUTPUT\CASH` | `s3://prod-citco-ia-checklist-service-documents/meso/output/cash/` |
+| Config | `\\uipath-share...\RECON_EBINDER\MESO\CONFIG` | `s3://prod-citco-ia-checklist-service-documents/meso/config/` |
+| SharePoint output | `http://citcoportal/cfs/sites/sharedservices/FTB/.../Manila/SSC Shared/Middle Office` | — |
+
+### External Dependencies
+1. RPA Generic Trigger Lambda
+2. Aexeo Reporting Server
+3. Aexeo (application)
+4. Citco Recs DB
+5. SharePoint
+6. UiPath ShareDrive
+
+### MESO Configuration (SharePoint)
+- **MESO Config schedules** are managed in SharePoint lists:
+
+| Schedule | SharePoint List URL |
+|---|---|
+| Daily | `http://cfstoday/.../Lists/Meso%20Config%20Daily/AllItems.aspx` |
+| Weekly | `http://cfstoday/.../Lists/MESO%20Config%20Weekly/AllItems.aspx` |
+| Monthly | `http://cfstoday/.../Lists/MESO_CONFIG_MONTHLY/AllItems.aspx` |
+| Quarterly | `http://cfstoday/.../Lists/MESO%20Config%20Quarterly/AllItems.aspx` |
+| PreMESO | `http://cfstoday/.../Lists/Premeso%20Config_1/All%20Items.aspx` |
+
+- **Grant Config Read/Write Access** (Supervisor/Manager level only): raise SD Ticket to RPA Support (coordinate with Hayden, Edmund / Zhang, Jiannan)
+- **Client Onboarding**: User's Supervisor/Manager responsible
+- **Add Funds to existing config**: Supervisor/Manager OR SD Ticket to RPA
 
 ### Pre-Month End Activities
-**Cash:**
-1. Manual GL Entries Report (100216300)
+
+**1. Pre-Month End Activities (Cash):**
+1. Manual_GL_Entries_Report_(100216300)
 2. B-3 Cash ME Signoff Backup
 3. B-1.2 Cash Rec
 4. B-1.3 Aexeo Cash Completeness
 5. Broker ART Extract
+6. Badly Entered Trades Report (100123200)
+7. C-3 Pos ME Signoff Backup (positions)
+8. Boxed Position Report (100402900)
+9. Exception_Manager_Report
+10. C-1.2 Positions Rec
+11. C-1.3 Aexeo Position Completeness
 
-**Positions:**
-1. Outstanding Paydown Check (100301300)
-2. Order Manager Check (100301100)
-3. Expired Positions Report (10019800)
-4. Deal Manager Check (100301200)
+**2. Aexeo Reports (Cash):**
+- Manual_GL_Entries_Report_(100216300)
 
-### Support Contacts
-- **Aexeo Support**: Feng Cao / Saurabh Jajoo (DEV), Mandeep Sehgal (NA), Anna Marie Halili (MNL), Kees Howard (EU)
-- **DL**: innovation_it_support
+**2. Aexeo Reports (Positions):**
+1. Boxed Position Report (100402900)
+2. Badly Entered Trades Report (100123200)
+3. Deal Manager Check (100301200)
+4. Expired Positions Report (10019800)
+5. Order Manager Check (100301100)
+6. Outstanding Paydown Check (100301300)
+
+**3. Other Items:**
+- Cash: Lock_Status_Report
+- Positions: Exception_Manager_Report
+
+**4. Macros (Cash):** C-4 Subscription and Redemption Template, B-3 Cash ME Signoff Backup, B-1.2 Cash Rec, B-1.3 Aexeo Cash Completeness, Broker ART Extract
+**4. Macros (Positions):** C-3 Pos ME Signoff Backup, C-1.2 Positions Rec, C-1.3 Aexeo Position Completeness
+
+**5. E-Binders (Cash):** B-1.3 Aexeo Cash Balance Sheet by Broker (CSV/PDF), B1_100221500_Cash_Recon, B-1.2 Cash Rec
+**5. E-Binders (Positions):** C-1.3 Aexeo Position Report by Broker (CSV/PDF), C1_PNL_Position_Recon, C-1.2 Positions Rec
+
+### MESO Database Details
+- **DB Type**: PostgreSQL
+- **Read-only user**: `meso_read_only_user` (Password: contact Clarisa / Horace / Kishor)
+
+| Environment | JDBC Connection String |
+|---|---|
+| DEV | `jdbc:postgresql://dev-navchecklist-db.ckxyrig1s7l3.us-east-1.rds.amazonaws.com:5432/postgres` |
+| TEST | `jdbc:postgresql://test-navchecklist-db.c8qd5xwqqyv1.us-east-1.rds.amazonaws.com:5432/postgres` |
+| PROD | `jdbc:postgresql://rpacfs1-navpack-prod-db.int.coreprod01.citcosvc.com:5432/postgres` |
+
+**Key Tables:**
+
+| Table | Usage | Retention |
+|---|---|---|
+| `meso_request` | Tracks all MESO requests, process status, and timing | 7 days |
+| `meso_clients_csv_reports` | Config for large-volume clients/funds — generate All Pending Report for last 3 months only | No removal |
+
+**Process status values**: `PENDING` (in progress), `FAILED`, `COMPLETED`
+
+**Useful SQL Queries:**
+```sql
+-- Check most recent 10 MESO requests
+SELECT id, client, fund, start_date, end_date, schedule, run_type,
+       required_reports, status, created_on, modified_on,
+       (modified_on - created_on) AS "Elapse Time", notes
+FROM meso_request
+-- WHERE client in ('BRILLIANCE_CAPITAL','TALISMAN')
+ORDER BY created_on DESC
+FETCH FIRST 10 ROWS ONLY;
+
+-- Check large-volume client config
+SELECT * FROM meso_clients_csv_reports;
+
+-- Kill/retrigger a stuck request (requires R/W access)
+UPDATE meso_request SET status = 'FAILED' WHERE id IN ('<id>');
+```
+
+### Event Store Registration
+- **EVENT_SOURCE**: `RPA`
+- **EVENT_SUBJECT**: `RECON-MONTH-END-SIGN-OFF-032024`
+- **EVENT_AREA**: `INTELLIGENT_AUTOMATION`
+- **Tenant ID (TEST)**: `7358631a-97bd-4bde-b13c-98d8979b9f10` (`GENERIC_UAT_NON_PROD`)
+- **Tenant ID (PROD)**: `bb5919ad-4356-4240-a5a9-8577a2b9a848`
+- **Process Identifier**: `RECON-MESO-TRIGGER`
+- **Event Code example**: `RMES-I-0007` → `PROCESS COMPLETED`
+
+> **Note**: TEST Event Store POST no longer works — TEST DB no longer saves event store messages. Use PROD endpoint only.
+
+**Query Event Store (PROD):**
+```
+POST https://prd-events-service.eu-west-1.meridian.int.coreprod01.citcosvc.com/event/list_active
+```
+```json
+{
+  "tenant_id": "bb5919ad-4356-4240-a5a9-8577a2b9a848",
+  "query": {
+    "metadata": {
+      "event": { "subject": { "op": "eq", "value": "RECON-MONTH-END-SIGN-OFF-032024" } },
+      "ids": { "run_id": { "op": "eq", "value": "<run_id>" } }
+    },
+    "sort": [{ "collection_datetime": { "order": "desc" } }],
+    "pagination": { "page": 1, "limit": 500 }
+  }
+}
+```
+
+**Sample Event Store response fields**: `uuid`, `knowledge_datetime`, `type`, `area`, `subject`, `source`, `code`, `message`, `run_id`, `client_name`, `fund_name`, `value_date`, `process_identifier`, `run_sequence`, `status`, `remarks`
+
+### CloudWatch Logs
+- **Log Group**: `/ia/meso/shared/worker`
+- **CloudWatch Link (PROD)**: `https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logsV2:log-groups/log-group/$252Fia$252Fmeso$252Fshared$252Fworker`
+
+**How to investigate a MESO issue:**
+1. Connect to MESO DB → find the `id` of the request (Cash/Positions) using SQL above
+2. Login to AWS → CloudWatch → Logs Insights
+   - Query Scope: `/ia/meso/shared/worker`
+3. Trace logs by request ID:
+```
+fields @timestamp, @message
+| filter @message like '<request-id>'
+| sort @timestamp desc
+| limit 10000
+```
+4. Filter by multiple criteria using AND/OR:
+```
+fields @timestamp, @message
+| filter @message like /(?i)PRISM/ AND @message like /(?i)RENDAO/ OR @message like /(?i)enunez/
+| sort @timestamp desc
+| limit 100
+```
+
+### RPA LLM Support Agent Prompts
+Use the RPA LLM Support Agent to check MESO status without querying the DB directly:
+1. *"What is the status of RECON MESO for the client `<Client Name>` Fund `<Fund Name>`?"*
+2. *"Can you give the run id associated with this run?"*
+3. *"Can you share more details along with data for each activity associated with this run id?"*
+
+### AWS SSO Access
+```
+https://sso.citco.com/affwebservices/public/saml2sso?SPID=urn:amazon:webservices
+```
+
+| Environment | Shared Account Role | Core Account Role |
+|---|---|---|
+| TEST | `CTM-Developer@citcoshareddev01 (221048274280)` | `CTM-Developer@citcocoretest01` |
+| PROD | `CTM-DevOps@citcosharedprod01 (857871466570)` or `CITCO-ReadOnly@citcosharedprod01` | `CTM-DevOps@citcocoreprod01` or `CITCO-ReadOnly@citcocoreprod01` |
+
+### Error Scenarios & FAQ
+- Full FAQ documented on Confluence: **MESO FAQ - Intelligent Automation**
+- `event_codes_summary.csv` contains all MESO process event codes
 
 ==============================
 
@@ -1032,6 +1346,64 @@ Query by: client, fund, run_id
 - Fields: `client`, `fund`, `run_id`
 
 ---
+
+---
+
+## Workshop Open Questions & Action Items (`workshop_2026-04_training_week.md`)
+
+These are unresolved questions logged during the training week requiring follow-up with Bhanu / platform teams. Items already answered elsewhere in this document are excluded.
+
+### Day 2 (2026-04-14) — Context: ADIC / KG / Event Services
+
+| # | Question | Status |
+|---|---|---|
+| — | Where is the optic loader hosted? | Open |
+| — | What is `GraphName`? (Neptune DB API) | Open |
+| — | How would we know that data has been synced? | Open |
+| — | Can we get the CyberQuery? | Open |
+| — | Can we get access to the Knowledge Graph to see what has been updated? | Open |
+| — | What is workflow API service? (used to get data) | Open |
+| — | Who is responsible for adding configuration — platform team or business team? | Open |
+| — | How does a business item propagate to the Knowledge Graph? | Open |
+| — | Who decides the following: Process/Sub-Process, Task/Sub-Task hierarchy? | Answered: KG Loader |
+| — | Who decides the dependencies (relations) on the Knowledge Graph? | Answered: KG Loader |
+| — | How are the relations on the Knowledge Graph added? | Answered: via KG loader sync from Optics |
+| — | Clarify levels L1–L5: L1=Product (certain), L2–L5 unclear | Open |
+| — | Can the routing service perform a pass-through? | Answered: NO |
+| — | If source-field data is missing, will blank data be sent? | Answered: YES |
+| — | If `advanced_matching` data is missing, will it fail? | Answered: YES |
+| — | Who is responsible for transferring received events to the Action Processor? | Open |
+| — | How does a message reach the AP? | Open |
+| 23 | What is the architecture behind the Event Routing Service? | **@Bhanu – Action Required** |
+| 29 | Who is the AuthMaster team? (Bhanu knows a person in Hyderabad) | **@Bhanu – Action Required** |
+| 31 | What is the TTL (Time-To-Live) for a cache? | **@Bhanu – Action Required** |
+| 32 | How often is the cache flushed? (e.g., on service restart) | **@Bhanu – Action Required** |
+| 40 | What is the process for time-card generation? | **@Bhanu – Action Required** |
+| 44 | How would we know that data has been synced? | **@Bhanu – Action Required** |
+| 46 | Can we get access to the Knowledge Graph to see what has been updated? | **@Bhanu – Action Required** |
+
+### Day 3 (2026-04-15) — Context: ERS-AP
+
+| # | Question | Status |
+|---|---|---|
+| — | How is the ERS-AP registry being built? | Answered: via `deployment_specs.yaml` (Pytoml library) |
+| — | Where is the event scheduler defined? | Open |
+| — | Who is responsible for running the event scheduler? | Answered: Bhanu's team |
+| 47 | Can we get a Confluence page for how to manage (create, deploy) AP via ERS? | **@Bhanu – Action Required** |
+| 48 | How to install VS Code plugin for deploying the AP? Where is it available / which marketplace? | **@Bhanu – Action Required** |
+| 49 | URL of the place where AP is being saved? | **@Bhanu – Action Required** |
+| 50 | Which CloudWatch groups, queries, logs to investigate for Action Processors? (Confluence Page) | **@Bhanu – Action Required** |
+
+### Day 4 (2026-04-16) — Context: Notification Service / User Onboarding
+
+| # | Question | Status |
+|---|---|---|
+| — | Can NS send an email? | Answered: YES |
+| — | Can NS push messages to SQS? | Answered: YES |
+| — | Can NS push messages to SNS? | Answered: YES |
+| 51 | What is the process of onboarding a persona in CitcoWorks? | **@Bhanu – Action Required** |
+| 52 | How should we investigate (check sync) if persona exists in both CitcoWorks and Optics? | **@Bhanu – Action Required** |
+| 53 | Who defines the catalogue for the Reference Service? | **@Bhanu – Action Required** |
 
 *End of Training Week Notes (April 13–20, 2026)*
 *CTM Halifax — Bhavik Bhagat, Soundarya Venkataraman, Sridhar Vadla*
