@@ -359,8 +359,11 @@ Jenkins → Build
 - Stores all **relationships**: Products → Processes → Tasks → Sub-tasks
 - Each item has: `attributes`, `attached fund`, `dependencies`, `optionals`
 - KG is **synced from Optics** (source of truth for process/task structure)
+  - Sync is **on-demand** (confirmed) — not fully real-time
+  - Each **Friday**: team receives email and loads workflows into the KG
 - **Who decides the hierarchy?** KG Loader — decides what is a subprocess vs sub-task
 - **How are relationships added?** Via the KG loader sync from Optics
+- **Process / Sub-process, Task / Sub-task hierarchy** decided by the KG Loader
 
 #### Knowledge Graph Layer — Communication
 ```
@@ -424,9 +427,9 @@ Communication Layer
 **Downstream System (AP):**
 - Consumes via Action Processor (name, e.g., `handle_socl_check`)
 - `dynamic attributes` — consumer (B) wants the data
-- **Can routing service do a pass-through?** → Yes: send payload as-is, without mapping
-  - w/o mapping: cannot be passed if data is missing in source field → sends null
-  - If advanced matching has missing data → **fails**
+- **Can routing service do a pass-through?** → **No** (confirmed): cannot pass through without mapping
+  - w/o mapping: cannot be passed if data is missing in source field → sends null (blank, not error)
+  - If advanced matching has missing data → **fails** (confirmed)
 
 **APIs for downstream:**
 - `set-active-vision`
@@ -469,7 +472,7 @@ Source System → Event Service
 │  Supporting Layer                           │
 │    → Reference Data Service (Catalogue)     │
 │    → Config Service                         │
-│    → Task Assignment Service               │
+│    → Task Assignment Service                │
 │    → Scheduling Service                     │
 │    → Notification Service                   │
 │    → Interaction Service (text/attachment)  │
@@ -484,9 +487,13 @@ Source System → Event Service
 
 - Users get added through **Tenant Roles / Auth Master**
 - User needs a **role** via Auth Master → role = Preparer (persona)
+- **AuthMaster team**: Bhanu knows a contact in Hyderabad
 - **Preparer** = a persona with defined **Skill Sets** (e.g., SRE → Python, Monitoring)
 - Not all users have the skill sets for every (navigator) preparer persona
 - **Business** sends info about which users have skill sets for which persona
+- **Role-based / persona-based feature visibility**: features hidden based on role and persona
+- **Persona onboarding process**: tracked in Citco-Works; synced from Optics to confirm persona exists in both systems
+- **Process IDs**: AskCitco maintains a table of all process IDs
 
 ### Task Management Service
 
@@ -591,9 +598,11 @@ Event Routing Service (E.R.S.)
 AP → performs business logic
    (task updates, task register, handle_socl_check)
 ```
-- **ERS-AP Registry**: done via **deployment spec** (`pytoml` library)
+- **ERS-AP Registry**: built via **deployment_specs.yaml** (`pytoml` library) — confirmed Apr 15
+- **Who is responsible for transferring events to AP?** → ERS Kafka listener; AP process listens to Kafka topic subscriber
 - KG instances: saved in **ODL** + **DynamoDB** (tasks, Cypher queries, hourly/quarterly/monthly)
-- **Scheduler**: where defined? → running hourly; objects saved in DynamoDB
+- **Scheduler**: defined via deployment config; running hourly; objects saved in DynamoDB
+- **Who is responsible for running the event scheduler?** → Bhanu's team (action required — confirmed)
 
 ### Task Interaction Service
 - Gateway for task interactions
@@ -603,9 +612,10 @@ AP → performs business logic
 ### AXI / Axeo — Investment A/C Tool
 - **AXI / Axeo** = Investment Account Management tool
 - **Consumes from Meridian Notification Service** → applies rules
-- **Notification Service capabilities**:
-  - Can send **email**
-  - Push messages to **SQS / SNS**
+- **Notification Service capabilities** (confirmed Apr 16 with Bhanu):
+  - ✅ Can send **email**
+  - ✅ Push messages to **SQS**
+  - ✅ Push messages to **SNS**
 
 ---
 
@@ -700,3 +710,30 @@ Query by: client, fund, run_id
 *End of Training Week Notes (April 13–20, 2026)*
 *CTM Halifax — Bhavik Bhagat, Soundarya Venkataraman, Sridhar Vadla*
 *Mentors: Horace, Kishor, JD, Bhanu*
+
+---
+
+## Acronym Reference
+
+| Acronym | Meaning |
+|---------|---------|
+| ADIC | Application Development & Integration Center |
+| AP | Action Processor |
+| CDI | Citco Document Intelligence |
+| ERS | Event Routing Service |
+| ERS-AP | Event Routing Service – Action Processor |
+| HIL | Human-In-the-Loop |
+| KG | Knowledge Graph |
+| L1–L5 | Knowledge Graph hierarchy levels (Product → Sub-task) |
+| LOB | Line of Business |
+| NS | Notification Service |
+| ODL | Operational Data Lake |
+| TTL | Time-To-Live (cache) |
+| AuthMaster | Authentication & Authorization Service |
+| VPL | Valuation Price Listing |
+| VCA | Voluntary Corporate Actions |
+| MESO | Middle Office Month-End Sign-Off |
+| AXI | Aexeo Investment Account Management tool |
+| COMAPI | COM-based API (technology-dependent, used by Aexeo) |
+| UCM | Unified Content Manager (file share) |
+| SSO | Single Sign-On |
