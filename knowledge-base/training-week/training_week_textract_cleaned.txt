@@ -1,4 +1,5 @@
 # May 4-8 Bhavik RPA Support
+*(RPA Support KT delivered by **Horace** and **Kishor Deotale** — RPA Support team, CTM Halifax)*
 
 week1 of RPA support for me - Bhavik
 April 2026-04-13 Monday
@@ -190,6 +191,7 @@ COE
 ---
 
 ## Aexeo Reporting Architecture (COMAPI / REST API)
+*(KT: Horace & Kishor — RPA Support)*
 *(From notebook diagrams + Confluence PDFs)*
 
 ### Overview
@@ -360,6 +362,7 @@ https://rpacfs1-aexeoreporterservice-uat.int.coreprod01.citcosvc.com/arguments?a
 ---
 
 ## Reporting Service Architecture — Multi-Client Design
+*(KT: Horace & Kishor — RPA Support)*
 
 ### Key Constraints
 - **Each client has their own DB(s)** — databases cannot be shared across multiple clients
@@ -396,6 +399,7 @@ Central Node Master
 ---
 
 ## GridView (ComAPI Feature)
+*(KT: Horace & Kishor — RPA Support)*
 
 - **GridView is supported by ComAPI**
 - UI calculates the things that need to be displayed
@@ -420,6 +424,7 @@ accepted → pending
 ---
 
 ## ECS Fargate & Deployment (MESO Infrastructure)
+*(KT: Horace & Kishor — RPA Support)*
 *(From notebook screenshot)*
 
 ### ECS Fargate Scaling Challenge
@@ -444,6 +449,7 @@ Jenkins → Build
 ---
 
 ## MESO Support Documentation (`090826-031120`)
+*(KT: Horace & Kishor — RPA Support)*
 
 ### Process Information
 - **Process Name**: MESO (Middle Office Month-End Sign-Off)
@@ -1260,7 +1266,19 @@ AP → performs business logic
 
 ---
 
-## 2026-04-16 (Thursday) — RPA Support Walk-Through (Horace)
+## 2026-04-16 (Thursday) — RPA Support Walk-Through (Horace & Kishor)
+*(KT delivered by **Horace** and **Kishor Deotale** — RPA Support team)*
+
+### Confluence & Tool Reference Links (from Horace KT)
+| Process | Link |
+|---|---|
+| Two Sigma Ops Transfers — Support | https://citco.atlassian.net/wiki/spaces/RPA/pages/111679897 |
+| January 2025 Handover / Support Notes | https://citco.atlassian.net/wiki/spaces/RPA/pages/336789722 |
+| UiPath Cloud Orchestrator | https://cloud.uipath.com/cintelligentautomation/Development/orchestrator_/ |
+| UiPath Non-Cloud Orchestrator (On-Prem) | https://citco.uipath.int.coreprod01.citcosvc.com/IntelligentAutomation/Production/orchestrator_/ |
+| FX Settled Status — Exception Handling (Non-Cloud UiPath) | https://citco.atlassian.net/wiki/spaces/INTAUT/pages/602800130 |
+| FX Closeouts & Cash Sweep — Exception Handling (Cloud UiPath) | https://citco.atlassian.net/wiki/spaces/INTAUT/pages/835224912 |
+| VPL — Common Support Inquiries | https://citco.atlassian.net/wiki/spaces/RPA/pages/111680417 |
 
 ### VPL (Valuation Price Listing) — Daily Process
 - **VPL**: Daily at **5 PM EST** (NYSE closing price)
@@ -1322,6 +1340,7 @@ AP → performs business logic
 ---
 
 ## RPA Support — CAIS Pricing Pack (Sridhar Ticket)
+*(KT: Horace & Kishor — RPA Support)*
 
 - **CAIS Pricing Pack** — Intelligent Automation support ticket
 - Auth name/details + logs → location: **UCM**
@@ -1338,6 +1357,7 @@ AP → performs business logic
 ---
 
 ## MESO Support — Aexeo Reporting DB Query
+*(KT: Horace & Kishor — RPA Support)*
 
 ```
 Path: ia/shared/warter/shared_meso_worker
