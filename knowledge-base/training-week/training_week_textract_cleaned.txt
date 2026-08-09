@@ -645,7 +645,7 @@ Login
 ---
 
 ### Task Assignment Service & Task Lifecycle
-*(From notebook Screenshots 12)*
+*(From notebook Screenshots S12, S13, S14, S15, S16)*
 
 **How tasks get assigned to users:**
 ```
@@ -666,22 +666,42 @@ Task Assignment Service
 open → offered → completed
 ```
 
-**Task lifecycle — detailed states (from notebook):**
+**Task lifecycle — detailed states (from notebook S14, S15):**
 
 | Dimension | States | Description |
 |-----------|--------|-------------|
-| **State** (system/ours) | `1. initiated` | From KG, initiated into system |
-| | `2. ready / running` | Task is active |
-| | `3. in-except / in-progress` | Processing or exception |
-| | `4. completed` | Done |
-| **Status** (user-visible) | `1. empty / open` | Task created (ADM: task created) |
-| | `2. open` | User is assigned to task (ADM: user assigned) |
-| | `3. in-progress` | User is working on it |
-| | `4. failed` | Leads to Exception state |
+| **State** (SRE / system internal) | `1. Initiated` | From KG, initiated into system (consistent/internal label) |
+| | `2. Running` | Task is active and being processed |
+| | `3. In-Exception` | Exception path triggered |
+| | `3. No-Exception` | Normal path (no exception) |
+| | `4. Completed` | Task done (both paths converge here) |
+| **Status** (user-visible) | `Empty` | Task created, not yet assigned |
+| | `Open` | User is assigned to task |
+| | `In-Progress` | User is actively working |
+| | `FOR-REVIEW` | Task needs review before completion |
+| | `Failed` | Leads to exception state |
+| | `DONE / Completed` | Successfully finished |
+
+**Exception task creation (from S14):**
+- When `In-Exception` state is reached → a **new exception task is created**
+- The new task gets **type = exception**
+- This exception task is separate from the original task — it has its own lifecycle
 
 - **ADM** (admin view): tracks task creation and user assignment events separately
-- **Clone** action exists on tasks (noted in screenshot — exact use case not elaborated)
-- Task Assignment API drives the lifecycle transitions
+- **Clone** action exists on tasks — allows duplicating a task (use case: reprocessing / parallel handling)
+- Task Assignment API drives all lifecycle transitions
+
+**Task Interaction Service APIs (from S13):**
+```
+API  (task mgmt services)
+        ↓
+  POST submit_interaction/   ← user/event interaction for tasks
+```
+- `POST submit_interaction` = endpoint for submitting a user or event interaction against a task
+- **User/event interaction** is used for tasks (e.g., submitting a response, attaching data)
+- Two API surfaces confirmed (action required — verify with Bhanu):
+  - **Task Interaction Service APIs** — handles task-level interactions
+  - **Task Management Service APIs** — handles persona, assignment, lifecycle
 
 ---
 
@@ -691,22 +711,111 @@ open → offered → completed
 ```
 PROCESS_STARTED → IN_PROGRESS → COMPLETED → PROCESS_COMPLETED
 ```
-- Why defined? → when to include project → tied to the event
+- Why defined? → when to send event, include project code → tied to project name
 - **Retrograding**: FX Closeout agent using UCM / IRA
 
+---
+
+### Event Service — Detail
+*(From notebook S10, S11)*
+
+**RPA world → Intelligent Automation team mapping:**
+- RPA world uses `BE` (Business Exception) / `SE` (System Exception) codes
+- Example: `Code 003` → area = who requested the change (e.g., AP)
+- **Each process has a mapping** (boxed in notes — fundamental design principle)
+- **1 process can have multiple events** (fan-out)
+- Exception: we defined why BE / SE — when sending event, include project code → tied to project name
+
+**Process IDs:**
+- ★ **Where can we find all process IDs?** → `[Ask Citco]` = **we maintain a table** (internal registry)
+- `[Event-store tool]` — tooling exists to inspect/query the event store
+
+**Each process has an event code:**
+- `send → payload` — IDs are defined here
+- IDs are **searchable fields** in ODL / OpenSearch
+- **Volume** = how many clients are processed (tracked per run)
+
+**Life cycle of a trace:**
+```
+trace_id ──→ start ──→ middle ──→ end
+```
+- Each step completed → **events are sent to area**
+- **Area changes** based on exception (dynamic routing on exception)
+- `id` → process identifier: "this event is for which process?"
+
+**Run ID → Sequences structure:**
+```
+Run ID
+  ├── Messages  →  Stages       (what happened at each stage)
+  ├── Status    →  Activity     (current activity state)
+  └── Remarks   →  All details about the run
+```
+
+**ODL as Event Store:**
+*(From notebook S8)*
+- **All events are saved in ODL**
+- Use **Event Service APIs** to get data from ODL (not direct DB access)
+- Key identity: `event_subject = <project code>` — subject field IS the project code
+- **Query mechanism**: OpenSearch-based, queried by:
+  - `project code` (= `event.subject`)
+  - `run_id`
+  - `metadata` fields
+- `message → (status – value)` — message field carries the status-value pair
+
+**JIRA / LLM integration (future):**
+- `LLM → latest event → run_id → all events` — LLM can create JIRA tickets from latest event + run_id context
+
 **Event Service Dashboard (JIRA — future feature — Sridhar/team):**
-- View all tenants
-- Filter: `# of events injected per project per day`
-- `# of projects missing completion` — each has `process_run_id`, `PROCESS_STARTED`, `PROCESS_COMPLETED`
-- **Time to complete the RUN**
+*(From notebook S9 — "Retrograding Repo FX Closeout agent by using UCM / IRA")*
+
+**Retrograding note:** FX Closeout agent retrograded using UCM / IRA — this triggers Event Store re-processing via filter across all tenants.
+
+**Dashboard scope:** all tenants / per-tenant view, with UI filters (Sridhar / ODL team)
+
+**Three core metrics (①②③ from S9):**
+
+| # | Metric | Detail |
+|---|--------|--------|
+| ① | **How many projects injected** | Count of distinct projects sending events |
+| ② | **# of events per project per day / month** | Event volume breakdown by project + time window |
+| ③ | **How many projects missing completion** | Each run tracked via: `process → run_id → PROCESS_STARTED → PROCESS_COMPLETED` — flag runs that started but never completed |
+
+- **Time to complete the RUN** — duration metric per run_id (PROCESS_STARTED → PROCESS_COMPLETED delta)
 - All events saved in **ODL**
 - Use Event Service APIs to get data from ODL
 - Query by: `event.subject` (= project code), `run_id`, OpenSearch
 - `Create JIRA → LLM → latest event → run_id → filter by project, client, dates → progress of event`
-- **Dashboard phase 2**: # of actions taken, Monitor, Alerts, # of clients processed
-- Miss: 1 max, 1 time, per process/client
-- ODL access: given for **one tenant only**
-- **If no events for a process for a month** → anomaly
+- **Dashboard phase 2**: # of actions taken, Monitor + Alerts, # of clients processed
+- ODL access: given for **one tenant only** (multi-tenant access is a pending gap)
+- **If no events for a process for a month** → flag as anomaly
+
+### Exception Handling — Q&A (Training Session, Bhanu)
+*(From notebook S12)*
+
+**Q: If a task is in exception status — who is assigned to the exception task?**
+- → **Persona** handles exception tasks
+- Follow-up: what if the persona doesn't exist? → open question (no answer at time of session)
+
+**Q: ADIC — do we have exceptions?**
+- ADIC: **we don't have exceptions (manual)** — ADIC processes are handled manually, no automated exception flow
+
+**Q: Axius exceptions — how does it work?**
+- Axius Exception = **automated task** → event is triggered, **having a user** (user-attributed exception)
+- Contrast with ADIC: Axius has automated exception events tied to a user context
+
+**Q: In which scenario is an exception task created?**
+- Either a **system exception** OR a **business exception**
+- Exception task is created when: **event is of task-type = exception**
+- Two triggers:
+  - `system exception` — infrastructure/processing failure
+  - `business exception` — rule/data validation failure
+  - event's task type field drives which kind of exception task is created
+
+**Q (Bhanu): What is about Time Card Generation & BPM flow?**
+- Open question raised by Bhanu — Time Card Generation process and its BPM (Blue Prism) flow not covered in this session
+- Action: follow up with Bhanu / Horace on Time Card Generation process details
+
+---
 
 ### Supporting Services Summary (CitcoWorks)
 
@@ -728,9 +837,10 @@ PROCESS_STARTED → IN_PROGRESS → COMPLETED → PROCESS_COMPLETED
 
 ### Presentation Summary
 - **Presented CloudWatch Dashboard** to team/stakeholders
-- Priority: export as **CSV / ABS files**
-- **Centralized dashboard** for all resources (#2 priority item)
-- Currently supported: **Lambda, EC2 (West), ECS, EKS**
+- Priority #1: export as **CSV / ABS files**
+- Priority #2: **Centralized dashboard** for all resources
+- Currently supported compute targets: **Lambda, EC2 (West), ECS, EKS**
+- Next: **EC2, ECS, EKS** (West region) to be added
 
 ### Feedback Received
 
@@ -738,20 +848,61 @@ PROCESS_STARTED → IN_PROGRESS → COMPLETED → PROCESS_COMPLETED
 |-------|--------|
 | OOM + Timeout | Need better logging for Out of Memory and Timeout errors |
 | Current logging | Falls back to error-only (error/info/warnings → error fallback) |
-| Timeout errors | Add better logging for timeout errors specifically |
-| OOM | Log exception to standard output |
-| Export granularity | **1 day** (currently defaults to 168h) — apply dynamically |
-| Export API | 1 API endpoint that exports data by **selecting a date range** |
+| OOM log format | Log exception to stdout: `Out of Memory: "Message"` |
+| Timeout log format | Log timeout errors with standard format: `Time out Error: "Message..."` |
+| Dynamic filters | Apply filters dynamically — tool suggested: **Grafana** |
+| Export granularity | **1 day** (every day) — currently defaults to **168h** (7-day period?) |
+| Export API | Single API endpoint that exports data by **selecting a date range** |
+
+### Grafana — Dynamic Filtering
+*(From notebook S4 — Apr 20)*
+- Team suggested using **Grafana** as the visualization layer for applying filters dynamically
+- Grafana enables: per-project, per-client, per-date filters on dashboard panels
+- Currently the dashboard does not support dynamic filter application — this is the gap
+
+### Dashboard — Events View (Phase 1 vs Phase 2)
+*(From notebook S6, S7 — Apr 20 / training week)*
+
+**What's currently accessible (Phase 1):**
+- Events view: current access only
+- Filter by: **project, client, dates**
+- Show: **progress of event**
+
+**Phase 2 additions (planned):**
+- `# of events received` per day
+- `# of actions taken` per day → **Monitor + Alerts**
+- `# of clients processed` — with **min / max / time** stats per process
+- `process / clients` breakdown view
+- ⚠️ **ODL access is currently given for only one tenant** — multi-tenant ODL access is a blocker for full dashboard
+- ⚠️ **If there are no events for a process for a month** → flag as anomaly (monitoring gap)
 
 ---
 
 ## 2026-04-14 (Late Notes) — Config Service + Apr 15 MESO Config
 
 ### Config Service (CitcoWorks)
-- Centralized config for all apps/envs
-- Can be used for **SLAs**
-- Fields: `Type` (System/Env), `Area` (ACTION-PROCESSOR / SERVICES / MESO), `Subject` (SOCL-CHECKS / TASK-MGMT / RPA), `Tenant ID` (CBU-specific), `Label`, `Data.Sections` (list of dicts)
-- **Config EPIC** = Centralized Config initiative
+*(From notebook Screenshots S1, S2, S3 — Apr 14)*
+
+**Core purpose:**
+- ★ **Config Service = Host of all config** (centralized)
+- Every app and environment has its own config hosted here
+- Can be used for **SLAs** (explicitly noted)
+- Drives automation build: `Config UI → Build Automation from Config`
+  - The Config UI is the entry point; automation is constructed from what's defined in config
+
+**Config metadata schema (RPA/IA context):**
+
+| Field | Values / Notes |
+|-------|---------------|
+| `Type` | System / Env-specific (free text) |
+| `Area` | ACTION-PROCESSOR, SERVICES, MESO |
+| `Subject` | SOCL-CHECKS, TASK-MGMT, RPA (BU-specific) |
+| `Tenant ID` | BU-specific identifier |
+| `Label` | Description / free text |
+| `Data.Sections` | list of dicts ✓ |
+| `Data.Config` | config payload block |
+
+**Config EPIC** = Centralized Config for IA initiative (cross-team)
 
 ### 2026-04-15 (Wednesday) — MESO Config + AP Architecture
 
