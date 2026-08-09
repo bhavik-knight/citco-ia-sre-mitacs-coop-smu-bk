@@ -213,29 +213,10 @@ Python API calling ComAPIs
 - **JS → multiple requests to ComAPI on a single rule**
 - Python wraps these via the Reporting Server REST API
 
-### COMAPI Libraries (from Confluence PDFs)
-1. **Aexeo Active PnL - COMAPI** (UiPath Library)
-   - Owner: Daniel Estrella (Citco)
-   - Calls `ActivePnLComApi` installed on machine
-   - Args: `in_dt_ReportCriteria`, `in_ClientName`, `in_FileName`, `in_SaveLocation`
-   - Optional: `in_ComApiTimeout` (default 60 min), `in_ComApiGridviewType` (global/client), `in_ComApiSaveCsvMethod`
-   - Assets: `Aexeo.ActivePnl.ComApi.Credentials`, `Aexeo.ActivePnl.ComApi.Script`
-   - Saves logs to UiPath Share: `LOGS/`, requests to `REQUESTS/`
-
-2. **Aexeo Report Generation - COMAPI** (UiPath Library)
-   - Owner: Nova Katrina Gomez (Citco)
-   - Builds JSON payload → Invokes `ReporterAPIv1.0.8.JS` → waits for report → moves to save location
-   - Retries 3x on `.err` files
-   - Args: `in_ClientName`, `in_FileName`, `in_ReportID`, `in_GridviewType`, `in_SaveLocation`, `in_dt_ReportCriteria`
-   - Default timeout: 3000 sec (50 min)
-   - Asset: `Aexeo_COMAPI_Credential`
-
-3. **Aexeo Reporter Server - HTTP Request** (UiPath Library)
-   - Owner: Nova Katrina Gomez (Citco)
-   - Generates report via **HTTP Request** to Aexeo Reporter Server (Python script)
-   - Script: `reporter_requests.py` on UiPath Share
-   - Asset: `AexeoReporterServer_HostURL`, `Aexeo_COMAPI_Credential`
-   - `in_SourceSystem` arg tracks which process called the API (e.g., `RECON_EBINDER`)
+### COMAPI Libraries (from Confluence PDFs — for context)
+- **Aexeo Active PnL - COMAPI** — calls `ActivePnLComApi` installed on machine, receives Report Criteria, creates JSON payload, invokes COMAPI JavaScript, waits for report, saves to UiPath Share
+- **Aexeo Report Generation - COMAPI** — builds JSON payload, invokes `ReporterAPIv1.0.8.JS`, retries 3x on `.err` files, saves to UiPath Share
+- **Aexeo Reporter Server - HTTP Request** — generates report via HTTP request to Aexeo Reporter Server (Python `reporter_requests.py`), `in_SourceSystem` arg tracks which process called (e.g., `RECON_EBINDER`)
 
 ---
 
