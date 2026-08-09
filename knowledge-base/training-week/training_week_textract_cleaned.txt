@@ -18,8 +18,9 @@ Performance: Top 10 landa
 
 Health Dashboard: Dashboard
 
-Confluence Page:
-lamda list
+Confluence Page for - lamda list
+
+===================
 
 # Overview
 ## RPA Support:=
@@ -309,20 +310,6 @@ Jenkins → Build
 ### Process Information
 - **Process Name**: MESO (Middle Office Month-End Sign-Off)
 - **Technology**: AWS & Python
-- **AWS Environment**: citcocoreprod01
-- **AWS Region**: us-east-1
-- **Code Repository**: `ia_meso_process` (Bitbucket)
-- **Process Developers**: Horace (Ho, Hoi Leung), Mir Momin Ali, Kishor Deotale
-
-### Storage Locations
-| Type | Location |
-|------|----------|
-| Position (Share) | `\\uipath-share...\prod\RECON_EBINDER\MESO\OUTPUT\POSITIONS` |
-| Cash (Share) | `\\uipath-share...\prod\RECON_EBINDER\MESO\OUTPUT\CASH` |
-| Config (Share) | `\\uipath-share...\prod\RECON_EBINDER\MESO\CONFIG` |
-| Position (S3) | `s3://prod-citco-ia-checklist-service-documents/meso/output/position/` |
-| Cash (S3) | `s3://prod-citco-ia-checklist-service-documents/meso/output/cash/` |
-| Config (S3) | `s3://prod-citco-ia-checklist-service-documents/meso/config/` |
 
 ### Pre-Month End Activities
 **Cash:**
@@ -344,1372 +331,372 @@ Jenkins → Build
 
 ==============================
 
-LoB = Line of Business
-Query Complexity is too high
-So we canot use OPM
-like SQE AL chang
-we have to So with native SOL query.
-/A-MESO-Process Code Repo:-
-Apr 14, 2026 Tuesday Citco Works
-(fund admin /a/c, Loan) + Client Products/workflows
-- It Solves business workflows:
-- Meridien Platforms
-(layered)
-Foundatn Layer:
+> **Note on MESO Query Complexity:** LOB = Line of Business. Query complexity for MESO is too high to use OPM — must use native SQL queries instead.
+
+---
+
+## 2026-04-14 (Tuesday) — CitcoWorks KT (Bhanu Teja)
+
+### CitcoWorks Overview
+**CitcoWorks** (formerly Meridian) = Fund Administration platform for A/C management, Loans, and Client Product workflows.
+- Solves **business workflows** across fund admin
+- **Meridian Platform** (layered architecture)
+
+### Meridian / CitcoWorks — Layered Architecture
+
+```
+┌─────────────────────────────────────────┐
+│  L1: Product (SLAM, etc.)               │  ← Top
+│  L2: Process                            │
+│  L3: Sub-process                        │
+│  L4: Process Task                       │
+│  L5: Sub-task / Task item               │  ← Bottom
+└─────────────────────────────────────────┘
+```
+
+#### Foundation Layer — Knowledge Graph (KG)
+- **Knowledge Graph** is the backbone of CitcoWorks
+- Stores all **relationships**: Products → Processes → Tasks → Sub-tasks
+- Each item has: `attributes`, `attached fund`, `dependencies`, `optionals`
+- KG is **synced from Optics** (source of truth for process/task structure)
+- **Who decides the hierarchy?** KG Loader — decides what is a subprocess vs sub-task
+- **How are relationships added?** Via the KG loader sync from Optics
+
+#### Knowledge Graph Layer — Communication
+```
 Knowledge Graph
-responsible
-run?
-manual?
-System?
-attrib
-attached
-fund.
-tasks
-processes
-optics
-replacement
-Products
-SLAM
-may
-process.
-dependencies
-Captionals
-Sub
-optionals.
-Tasks
-act
-item
-(they
-dispendancies
-Who is desiding what is
-dependence
-process / subprocess
-tast
-sub task?
-relatiships
-on on K.G. K.G.
-loader ?
-is deciding ?
-How
-are those relath re are added?
-DA product
-$ : Task Process.
-L2: Process
-L5 : Cubtrates Pask
-13 supprocess
-Li: Product
-L4: Process
-Ls: Task
-nomenclature
-(5)
-L4 L5
-noman
-Process task ?
-KG is coming from optics.
-synced
-Who
-desiding
-what
-subprocess
-sub
-task?
-on K.G.
-K.G.
-loader
-deciding
-those
-relath
-added?
-product
-$ :
-Task
-Process.
-L2:
-L5 :
-Cubtrates
-Pask
-supprocess
-Li:
-Product
-L4:
-Ls:
-coming
-optics.
-knowledge Graph
-has
-communication loyer.
-Event Service
-Cobserver of
-system
-Attrib.
-Notifican
-Events Routing
-Tenent (B.U)
-Services.
-Area
-Mapping tablex
-process event.
-Subject
-it is config
-Source
-for dis.systen
-actn processors)
-Code down Stream
-sys
-downstream sys
-needs to
-perform some act based on events
-business Logic
-Other apps MESO)
-needs to gets notified based on
-some ant trigers,
-based on rub
-Tenant
-subject
-code
-knowledge
-Graph
-communication
-loyer.
-Cobserver
-Events
-Routing
-Tenent
-(B.U)
-Mapping
-tablex
-event.
-it is
-config
-dis.systen
-actn
-processors)
-Code
-down
-Stream
-downstream
-needs
-perform
-some
-events
-business
-Logic
-Other
-apps
-MESO)
-gets
-notified
-ant
-trigers,
-rub
-In citcoworks; Actn processor
-service
-Schedules.
-Aetn processor eg. register product
-Citco works
-processes.
-Schoeluler
-15 ming
-schedules (pushes). events
-Stores events.
-Event services
-emits event
-for event
-routing Service,
-Where does event Services store
-events?
-the role of
-what event services)
-as of now event Services is a
-dumping ground.
-lot events api
-pulls
-list active
-from db
-dynamg
-Where Which mapping is hosted 7
-API for being used 7
-citcoworks;
-Actn
-Aetn
-register
-works
-schedules
-(pushes).
-Stores
-events.
-services
-emits
-routing
-Service,
-does
-Services
-store
-role
-services)
-now
-dumping
-ground.
-lot
-api
-active
-Which
-mapping
-hosted
-being
-used
-Down Stream System:-
-Business Logic
-Citcow
-Small components.
-Act process
-Event ronting Services have
-multiple APIS,
-CRUD operath,
-Postman
-evant_ uvid.
-get
-event -
-void
-area
-type
-messag
-post
-add- raute. - map downstream system,
-t ID :
-consumer TID
-ronte
-- name
-- event -
-Tel
-advanced- math
-- -id
-- instance-type
-- domain
-filter selected data data to add to
-the que ue for downstreansys
-Down
-System:-
-Business
-Small
-components.
-ronting
-multiple
-APIS,
-CRUD
-operath,
-evant_
-uvid.
-add-
-raute.
-map
-system,
-ID :
-consumer
-TID
-name
-advanced-
-math
--id
-instance-type
-domain
-filter
-selected
-the que ue
-downstreansys
-filters: metadata
-ids
-is TID of router (con sumer)
-stored somewhere?
-Downstream Sys
-AP. (B).
-consumes
-Sacth processor (name)
-handle_soc1 cheebs (name).
-- dynamic - attrib.
-(consumer g. (B) wants the data)
-What
-that is payload
-if we want payload as it is ?
-and not the mapped data
-we can do with ( without
-mapping ?
-filters:
-metadata
-router
-(con
-sumer)
-stored
-somewhere?
-Downstream
-Sys
-AP.
-(B).
-Sacth
-(name)
-handle_soc1
-cheebs
-(name).
-dynamic
-attrib.
-(consumer g.
-(B)
-wants
-that
-payload
-want
-mapped
-with
-without
-Can routing Service do a
-pass through?
-- can we send pay load as is,
-X - IDS
-chita
-4 = -
-routhing.
-ACF
-processor.
-w/o mapping cannot be
-passed?
-if data is missing in saurce
-field. it will send \
-if advaned - matching has mysing data.
-It will fail.
-post-
-set- active-vision
-through?
-pay
-load
-is,
-IDS
-w/o
-missing
-saurce
-field.
-will
-advaned
-matching
-mysing
-data.
-fail.
-set-
-active-vision
-care
-list- ist-tenant-rates tenant- routes
-(iD destribut
--lut of the Toutes A.P that this tenant
-has.
-I receive an cvent. Whose responsibility
-transfering msg to AP?
-listens to
-Kafka consumer
-medages
-puthed to Q
-Event,
-subject.
-Actn Processor.
-soure
-type SYSEM,
--metadab, cock
-source -fpt
-- -ids fL
-sub: MEJO
--data.
-dyn-attib:
--k.v. par.
-client=
-data 11
-fund =
-data.kr.
-Val = datak3
-How event get passed to Actn processor?
--through J routing.
-Source is sending event via
-event service?
-How routing Service passing
-source event to aet processor)
-list-
-ist-tenant-rates
-tenant-
-routes
-(iD
-destribut
--lut
-Toutes
-A.P
-tenant
-receive
-cvent.
-Whose
-responsibility
-transfering
-msg
-AP?
-listens
-Kafka
-puthed
-Processor.
-SYSEM,
--metadab,
-cock
--fpt
--ids
-sub:
-MEJO
--k.v.
-par.
-fund
-Val
-datak3
-passed
-processor?
--through
-routing.
-sending
-service?
-passing
-aet
-processor)
-Saire
-event service
-Receive
-ODL
-Save.
-Redis
-Elasticache
-push to
-Kafba Q? name?
-kafkaQ
-or sas
-end.
-Kafba
-name?
-routing. (listener to Qs (afka)
-Kafka Q Instrer.
-Bham
-What's arch
-behind
-event routing
-Ser vice
-Aetn processor listener
-Actn process
-Static Attrib (hard coded)
-teaches to act
-How the message processors ?
-(listener
-(afka)
-Instrer.
-What's
-arch
-Ser
-vice
-Static
-Attrib
-(hard
-coded)
-teaches
-message
-processors
-Notificatn Service:
-other events needs to be notified
-based on some\
-Next layer.
-kg Communicati
-app
-Execut layer
-Task Mgmt
-Collab layer
-Business aeth worklow
-Integrath
-are registered here
-services,
-task,
-supporting Layer
-reference data service
-config Service
-Task assignment
-Schoduling Service
-Notificatn
-Service:
-other
-some\
-Wes\
-Next
-layer.
-Communicati
-Execut
-layer
-Mgmt
-Collab
-aeth
-worklow
-registered
-here
-supporting
-Layer
-reference
-assignment
-Schoduling
-assigned to
-Preparerer-
-task mgmt. service
-How user get onborded to sitcoworks)
-through tenant roles auth master.
-user needs a role through auth master
-havpreparer
-is a persona,
-- - Skillsets
-out of
-users not all
-wers have skill sets to do
-of (nav) preparer persona.?
-- Who gives that- business
-sends that info of user
-that have skill set to do this
-persona.
-assigned
-mgmt.
-onborded
-sitcoworks)
-through
-roles
-auth
-master.
-master
-persona,
-- Skillsets
-out
-users
-wers
-skill
-sets
-(nav)
-preparer
-persona.?
-that-
-sends
-info
-set
-Task mgmt Service
-we create persona
-persona
-stad Std skill Sets.
-eg. SRE -python
-- inonitoring
-we define persona
-business people define skill sets
-template
-must be perform by persona,
-we Sync that to K.G using
-task mgmt service,
-multiple. has multiple lben
-users do tasks bard
-on tast mognt service
-mgmt
-stad
-Std
-Sets.
--python
-define
-people
-must
-Sync
-K.G
-using
-service,
-multiple.
-lben
-bard
-mognt
-C.P.: Citco Words Apl Reference
-How user is getting added to
-persona ?
-Tasz Assign meat
-Create persona
-Management Persona.
-Ciro
-post manage users
-bur
-optic ness
-IDs?
-Ask
-=we
-maintain
-table
-Sequences:-
-star
-PROCESS
-STARTED
-COMPLETED
-defined
-why
-/ME
-when
-include
-project
-tied
-nap
-Event-store
-talk
-Retrogring
-Fx closeant agent by using UM
-IRA
-like there
-poe
-W vent service dashbaard JIAA
-all tenant
-askid SODL?SRidhar
-How many project
-filters
-# of events < injected per project per day
-How may projects missing completon
-each has
-process ranid
-PROCIS-STAETO
-PRO ESS_COMPLETOR
-Time to complete the RUN.
-all events are saved in ODL
-we will use event service aprs
-to get date from ODL.
-event subject project code>
-Query based on Open search
-based on project code run ID
-meteclets
-Message
-status - value
-closeant
-agent
-using UM
-like
-there
-vent
-dashbaard
-JIAA
-askid
-SODL?SRidhar
-many
-injected
-day
-projects
-completon
-each
-ranid
-PRO
-ESS_COMPLETOR
-Time
-RUN.
-aprs
-date
-ODL.
-code>
-Query
-Open
-search
-run
-value
-Create JIRA
-JIRA
-LLM
-latest event
-run ID
-all events
-filter Based on project; client;
-dates
-progress. of event.
-Dash Board:
-currently access
-of events received per day
-phase2
-of actn taken,
-Monitort
-Alerts
-# of clients processed.
-miss- 1 max. 1 Time.
-process / clients
-ODL accessis
-given for only
-one benant.
-Create
-latest
-project;
-client;
-progress.
-Dash
-Board:
-currently
-access
-received
-taken,
-clients
-processed.
-miss-
-max.
-Time.
-accessis
-given
-one
-benant.
-if there are no events for
-the process for a month,
-Task Mgmt Service
-1 Reference data Service (Catalogue)
-Config Service,
-Task assign ment
-Scheduling Service
-Scheduding services.
-SLAS
-calculator
-Interact service: text/attatchmont
-Whese are files 60ing Storet?
-Would be helpful debugging the issue_ -
-- A - if task moved to different state
-a month,
-Reference
-(Catalogue)
-Config
-assign
-ment
-Scheduling
-Scheduding
-services.
-Interact
-service:
-text/attatchmont
-Whese
-60ing
-Storet?
-Would
-helpful
-debugging
-issue_
-- A
-moved
-different
-state
-2026-4-20 Monday.
-- Presented deschboard
-- export atv CSV; abs files. - priority
-- centratized dishboard for all resources. #2
--currently lambda ; West EC2, ECS, EKS.
-- 00M; Timeout :- better Logging
-- Current logging := (- error, info; warnings etc.
-fall back to error only)
-- Time out emors:= Can we have better logging
-OOM: logg except stadndard.
-out of Memory \
-Time out Emor : \
-- Applying \
-- Export Granularity 1 day ( ory day)
-168h (defalt pend?
-1 API endpoint should export data by
-Selecting a date range
-2026-4-20
-Monday.
-Presented
-deschboard
-export
-atv
-CSV;
-abs
-files.
-- priority
-centratized
-dishboard
-resources.
--currently
-lambda
-West
-EC2,
-ECS,
-EKS.
-00M;
-Timeout
-better
-Logging
-logging
-error,
-info;
-warnings
-etc.
-fall
-error
-only)
-Time out
-emors:=
-OOM:
-logg
-except
-stadndard.
-Emor :
-Applying
-dynamically
-Granularity
-1 day
-( ory day)
-168h
-(defalt
-pend?
-endpoint
-Selecting
-range
-2026-4-14
-Config Services :=
-Hust of all config)
-- app - env have conflys
-- we can use for SLAS.
-Metadala
-free text
-Type : system Env spearfied
-Area : ACTION- PROESSOR, SERVICES, MESO
-Subject : SOCI CHECKS, TASK-MGMT RPA
-- Tenant ID: CBU specific)
-- Lable: descript
-Data:
-- Sections:
-list of dicts
-- Config
-EPIC
-Centralized Config for
-2026- 4-15 Wed
-MESO config in share point
-premess
-Client; fund group Fund (list if funds)
-others
-database nine
-Ui Pice Taken
-dailyweekin)
-we are buiding for
-monthy
-all processes; not just
-quarterly
-Hust
-config)
-env
-conflys
-SLAS.
-free
-text
-Type
-Env
-spearfied
-ACTION-
-PROESSOR,
-SERVICES,
-SOCI
-CHECKS,
-TASK-MGMT
-ID:
-CBU
-specific)
-Lable:
-descript
-Sections:
-dicts
-Centralized
-2026-
-4-15
-Wed
-point
-Client;
-Fund
-(list
-funds)
-database
-nine
-Pice
-Taken
-buiding
-processes;
-just
-Config VI
-Build Antomatn
-from config
-Build
-Antomatn
-Bhanu: AP: solves problem based on
-event trigger routing
-AP can be any thing that needs to be done
-to the event.
-template that update task based on
-the event.
-task]
-Route
-(apdate statusof task)
-Event Event Envice. Service.
-Ronting Service
-E.S.
-E.R.S.
-ERS-AP.
-Kafka listener
-injested
-save
-or forward to
-topic subscriber
-downstreem
-sys.
-- check db for route config
-- frame act msg
-- call Kafka topic subscriber
-- AP perform business logic
-eg. tast updates
-task register
-handle socl-cheek
-How ERSRP registry is being done.
-deployment- spes. your (pytomL-libiory)
-Bhanu:
-AP:
-solves
-any
-done
-(apdate
-statusof
-task)
-Event Envice.
-Service.
-Ronting
-forward to
-topic
-subscriber
-route
-frame
-call
-logic
-updates
-socl-cheek
-ERSRP
-registry
-done.
-deployment-
-spes.
-your
-(pytomL-libiory)
-Where the event
-Schedular is defined 1 ranning?
-hour Lb. & those olj are being Saved @ dynano
-We are creating instances of kg each
-saved in ODL
-saved in Dynamodb
-tasks.
-Cypher
-Queries
-on some hourly
-- He- uarterly
-Monthly
-ADIC
-Task Interact Service :=
-Gateway Tasks
-capability in
-last task M the chair
-for each interact tasks there is
-our event
-Schedular
-ranning?
-hour
-Lb.
-olj
-Saved
-dynano
-creating
-instances
-Dynamodb
-hourly
-He-
-uarterly
-Gateway
-capability
-last
-chair
-interact
-AXI
-Axco
-Investment
-A/C tool
-Consume from Meridian
-notificat service 2
-rules
-What are the capabilities of
-notificate services?
-ef- can n.s. send email ?
-push msg to SQS SNS
-Voluntary Corp AT.
-BP Share - Voluntary Corporate acth
-INPUT
-atterproces
-ip/filenane + process filename
-are filename first
-if not find
-ask to resend.
-processed w/ summary & Inggened file
-A/C
-tool
-Consume
-notificat
-capabilities
-notificate
-services?
-ef-
-n.s.
-SNS
-Voluntary
-Corp
-AT.
-Share
-acth
-ip/filenane
-filename
-first
-find
-resend.
-processed
-summary
-Inggened
-RPA Support Horace
-Sridhar ticket
-RPA- CAIS Except
-CAIS Pricing Pack.
-Intelligent Anto mation.
-need
--CAIS Pricing pack.
-auth name/deted
-logs- locath ucm.
-Select * from history. CAISRUM
-CAIS WB- PROD
-Search Query,
-dient n. process
-log.
-Save to local machine
-check log - errors.
-Copy Zip to local- unzio Closeout
-VI puth prod 1 dataops fxsettle soln
-drop
-UCM drive
-Not
-choext 1-given
-Suipath Prod
-remove
-BPShare locath: - our pwd
-Citcoext \\bbhagat
-drek first.
-Both
-CA - volutary Mandatory ops transfer]
-Horace
-Sridhar
-ticket
-RPA-
-CAIS
-Pricing
-Pack.
-Intelligent
-Anto
-mation.
--CAIS
-pack.
-name/deted
-logs-
-locath
-ucm.
-Select
-history.
-CAISRUM
-WB-
-PROD
-Search
-Query,
-dient
-Save
-local
-machine
-errors.
-Copy
-Zip
-local-
-unzio
-Closeout
-puth
-prod
-dataops
-fxsettle
-soln
-drive
-choext
-1-given
-Suipath
-Prod
-BPShare
-locath:
-pwd
-Citcoext
-\\bbhagat
-volutary
-transfer]
-One notes
-Queuemgnt
-paydow process
-- -AVCAB AV CAB
-- VCA client list.
-( Corporate acty
-Two Sigma
-BpShare Op IP
-TWO sigma
-ops from sfer
-ask them
-stratagy 0 ) Non Streety
-if moves from BPshare ofs transfer to
-(BPthere Twesigma ops Trugg)
-Client will send filetochat
-VPL- Daily - SPMEST (NYSE)
-VIL - check which one have jobs
-ES Esantstore
-4.5 jobs
-One
-notes
-paydow
--AVCAB
-CAB
-VCA
-client
-list.
-acty
-Sigma
-BpShare
-TWO
-sigma
-sfer
-them
-stratagy
-Non
-Streety
-moves
-BPshare
-ofs
-transfer
-(BPthere
-Twesigma
-Trugg)
-filetochat
-VPL-
-Daily
-SPMEST
-(NYSE)
-VIL
-jobs
-Esantstore
-4.5
-PROD- RM - Slue prism.
-Mandeting Corp AcM. s/r 1 pacess pricess
-Emorlog
-GTL - Intermediate Emmloy
-UPs Transfer
-Tigger Blue Prism.
-AVCAR Project vzzty
-Sesssion mgmt.
-Voluntary QPS
-tremks Lej
-- Voluntary - voluntary Ops Tranks
-- Mandatory
-ofs transfer
-set ourbl fand.
-Today
-etinder mgmt
-OTCK
-Newpooll
-(afters).
-NOWPOOLZ
-No ebinder
-- because of time zure
-VCA Opstruns
-some times it doesn't pick up
-it must be today
-processed one have Summary- don't use
-ask for new file
-PROD-
-Slue
-prism.
-Mandeting
-AcM.
-s/r
-pacess
-pricess
-GTL
-Intermediate
-Emmloy
-UPs
-Tigger
-Prism.
-AVCAR
-Project
-vzzty
-Sesssion
-QPS
-tremks
-Lej
-voluntary
-Ops
-Tranks
-ourbl
-fand.
-etinder
-ebinder
-zure
-Opstruns
-times
-doesn't
-pick
-Summary-
-don't
-W binder
-email Quane-Status
-Sasson might
-Consolpavel
-e binder
-pending requsts in Quen
-due 20 pending.
-el-moder
-Queryt Connect
-web Service
-e binderchack.
-ILL
-from d-vil
-add Gots
-Monthyjob
-& start.
-if recon then recon
-ebinder Initiate check
-run VII? bot
-Meritery
-Quane-Status
-Sasson
-might
-requsts
-Quen
-due
-pending.
-Queryt
-Connect
-web
-binderchack.
-d-vil
-Gots
-start.
-recon
-then
-Initiate
-VII?
-bot
-RPA-CA Mandatory (Corniak act)
-(Saturobys)
-How to know which to are
-byox
-BP Share / UI Path
-BP BPSin Sum
-Mayleen
-assignae
-Payten
-Cash-Sweep
-fx close out
-DYMN- - ASIA
-adming
-Skiplang
-commt
-QRT
-RPA Support:
-Citco IT
-Case by case basis
-Hand Over Conthence Page
-Queese status
-Path Cloud : Except Support Page
-portfulio Data of
-dyman ASA
-- - Fx close out
-fx 10300/-
-pays
-start Parameter
-Skip Comploading
-act - DYMON- Arit
-Nerjup
-Skip
-sump True
-RPA-CA
-(Corniak
-act)
-know
-BPSin
-Sum
-close out
-DYMN-
-ASIA
-Support:
-Case
-basis
-Hand
-Over
-Conthence
-Queese
-portfulio
-Data
-dyman
-ASA
-10300/-
-Parameter
-Comploading
-DYMON-
-Arit
-sump
-True
-non-doud Ui Puth.
--sso
-Processes
-Data Ops
-Fx-settled
-Status
-argument In client -
-to PL- ReRun 1 Daily
-VPL Run.
-if would placed
-[ Blue, Prism / Vell Bigger- FILE
-Goy Kay sumproces here
-Request alkans Ledged
-we need to redrop files for users. They Camet
-do it.
-non-doud
-Puth.
-argument
-PL-
-ReRun
-Run.
-would
-placed
-Blue,
-Vell
-Bigger-
-FILE
-Goy
-Kay
-sumproces
-Request
-alkans
-Ledged
-redrop
-users.
-They
-Camet
-it.
-MESO Support.
-New Page
-Axeo Reporting DB avery.
-Miso - Query
-ia 16/shared/warter / shared mesule worder
-lyre
-client, fun, runid
-Support.
-New
-avery.
-Miso
-16/shared/warter
-shared
-mesule
-worder
-client,
-fun,
-runid
+       ↓
+Communication Layer
+       ↓
+   Event Service  ←→  Event Routing Service
+       ↓
+  Tenant (B.U.)
+  Services
+       ↓
+  Mapping Tables
+  (Area → Subject → Source → config for this system → Action Processors)
+       ↓
+  Code / Downstream System
+  → performs some action based on events
+  → Business Logic (other apps: MESO)
+```
+
+- **Observer pattern**: Event Service observes system attribute notifications
+- **Event Routing Service** routes events to the correct **Action Processor (AP)**
+- Each mapping row specifies: `Area`, `Subject`, `Source`, `Type`, `Action Processor`
+
+### CitcoWorks — Action Processor & Event Routing
+
+**In CitcoWorks, the Action Processor (AP):**
+- Solves business logic based on event trigger routing
+- AP can be anything that needs to be done in response to an event
+- Template: update task status based on event → `Route (update status of task)`
+
+**Scheduler:**
+- Runs on **15-minute interval**, pushing/scheduling events
+- Event Service **stores events** (currently a "dumping ground" — all events accumulated)
+- Lot of events → API pulls list of active events from **DynamoDB**
+- Where is the mapping hosted? → API, used by routing service
+
+**Event Service:**
+- Emits events to Event Routing Service
+- Where does Event Service store events? → **ODL / Redis Elasticache → Kafka Q**
+- The role of Event Service: observer → notifies downstream based on triggers
+
+### Event Routing Service — API Structure
+
+**Event Routing Service (ERS)** has multiple CRUD APIs:
+
+| API | Purpose |
+|-----|---------|
+| `GET event/{uuid}` | Get event by ID |
+| `POST add-route` | Map a downstream system |
+| `list-tenant-routes` | List all routes for a tenant |
+
+**Route configuration fields:**
+- `consumer_id (TID)` — ID of the downstream system consumer
+- `route name`, `event` (area/type)
+- `advanced matching` — filter which data goes to the downstream queue
+- `instance-type`, `domain`
+
+**Filters:** `metadata.ids` — TID of router (consumer) stored somewhere?
+
+**Downstream System (AP):**
+- Consumes via Action Processor (name, e.g., `handle_socl_check`)
+- `dynamic attributes` — consumer (B) wants the data
+- **Can routing service do a pass-through?** → Yes: send payload as-is, without mapping
+  - w/o mapping: cannot be passed if data is missing in source field → sends null
+  - If advanced matching has missing data → **fails**
+
+**APIs for downstream:**
+- `set-active-vision`
+- `list-tenant-routes(id, distribute, list of routes, A.P. that this tenant has)`
+
+**Who is responsible for transferring message to AP?**
+- Listens to **Kafka consumer** → messages pushed to Q
+- Event → Subject → Action Processor → Source → Type (SYSTEM) → metadata, clock, source-rpt → IDs (sub: MESO) → data → dyn_attrib (k/v pairs: client=data1, fund=data2, val=data3)
+- **How event gets passed to AP** → through J routing
+- **How routing service passes source event to AP** → via Kafka topic subscriber
+
+### Event Service Internal Flow
+
+```
+Source System → Event Service
+                    ↓
+              Receive → Save to Redis Elasticache
+                    ↓
+              Push to Kafka Q (name?)
+                    ↓
+              Routing Service (listener to Kafka Q)
+                    ↓
+              Kafka Q Listener (Instrer / Bhanu)
+```
+
+**What's behind Event Routing Service?**
+- AP listener → Kafka listener
+- AP process → Static Attributes (hardcoded) → teaches AP how to handle messages
+
+### CitcoWorks Full Layered Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│  KG Communication Layer                     │
+│    ↓                                        │
+│  Execution Layer → Task Management          │
+│  Collaboration Layer                        │
+│    → Business Action Workflow               │
+│    → Integration Services (registered)      │
+│  Supporting Layer                           │
+│    → Reference Data Service (Catalogue)     │
+│    → Config Service                         │
+│    → Task Assignment Service               │
+│    → Scheduling Service                     │
+│    → Notification Service                   │
+│    → Interaction Service (text/attachment)  │
+└─────────────────────────────────────────────┘
+```
+
+**Notification Service:**
+- Other events that need to be notified based on some trigger → Next Layer
+- Sends via email, SQS, SNS
+
+### User Onboarding to CitcoWorks
+
+- Users get added through **Tenant Roles / Auth Master**
+- User needs a **role** via Auth Master → role = Preparer (persona)
+- **Preparer** = a persona with defined **Skill Sets** (e.g., SRE → Python, Monitoring)
+- Not all users have the skill sets for every (navigator) preparer persona
+- **Business** sends info about which users have skill sets for which persona
+
+### Task Management Service
+
+- Create persona → define standard skill sets (e.g., SRE: Python, Monitoring)
+- Business people define skill sets via template
+- Must be performed by the persona
+- Sync to **Knowledge Graph** using task management service
+- Multiple business lines (lben) — users do tasks based on task mgmt service
+
+### CitcoWorks API Reference (Task Assignment + Persona Management)
+
+**User → Persona flow:**
+- `POST manage-users` → Citco → optical IDs
+- `Task Assignment`: Create persona → Management Persona
+- Maintain a table of persona → user mappings
+
+### Event Store — Sequences (Discussion with Sridhar)
+
+**Standard sequence:**
+```
+PROCESS_STARTED → IN_PROGRESS → COMPLETED → PROCESS_COMPLETED
+```
+- Why defined? → when to include project → tied to the event
+- **Retrograding**: FX Closeout agent using UCM / IRA
+
+**Event Service Dashboard (JIRA — future feature — Sridhar/team):**
+- View all tenants
+- Filter: `# of events injected per project per day`
+- `# of projects missing completion` — each has `process_run_id`, `PROCESS_STARTED`, `PROCESS_COMPLETED`
+- **Time to complete the RUN**
+- All events saved in **ODL**
+- Use Event Service APIs to get data from ODL
+- Query by: `event.subject` (= project code), `run_id`, OpenSearch
+- `Create JIRA → LLM → latest event → run_id → filter by project, client, dates → progress of event`
+- **Dashboard phase 2**: # of actions taken, Monitor, Alerts, # of clients processed
+- Miss: 1 max, 1 time, per process/client
+- ODL access: given for **one tenant only**
+- **If no events for a process for a month** → anomaly
+
+### Supporting Services Summary (CitcoWorks)
+
+| Service | Role |
+|---------|------|
+| Task Management Service | Persona, skill sets, task assignment |
+| Reference Data Service (Catalogue) | Reference data |
+| Config Service | Centralized config per env |
+| Task Assignment Service | Assign tasks to personas |
+| Scheduling Service | SLAs calculator, scheduling intervals |
+| Interaction Service | text/attachments gateway; where are files stored? → helpful for debugging |
+
+**Note on file storage**: Where are files going/stored? → would be helpful for debugging issue
+- If task moves to different state → event triggered
+
+---
+
+## 2026-04-20 (Monday) — Dashboard Presentation Day
+
+### Presentation Summary
+- **Presented CloudWatch Dashboard** to team/stakeholders
+- Priority: export as **CSV / ABS files**
+- **Centralized dashboard** for all resources (#2 priority item)
+- Currently supported: **Lambda, EC2 (West), ECS, EKS**
+
+### Feedback Received
+
+| Issue | Detail |
+|-------|--------|
+| OOM + Timeout | Need better logging for Out of Memory and Timeout errors |
+| Current logging | Falls back to error-only (error/info/warnings → error fallback) |
+| Timeout errors | Add better logging for timeout errors specifically |
+| OOM | Log exception to standard output |
+| Export granularity | **1 day** (currently defaults to 168h) — apply dynamically |
+| Export API | 1 API endpoint that exports data by **selecting a date range** |
+
+---
+
+## 2026-04-14 (Late Notes) — Config Service + Apr 15 MESO Config
+
+### Config Service (CitcoWorks)
+- Centralized config for all apps/envs
+- Can be used for **SLAs**
+- Fields: `Type` (System/Env), `Area` (ACTION-PROCESSOR / SERVICES / MESO), `Subject` (SOCL-CHECKS / TASK-MGMT / RPA), `Tenant ID` (CBU-specific), `Label`, `Data.Sections` (list of dicts)
+- **Config EPIC** = Centralized Config initiative
+
+### 2026-04-15 (Wednesday) — MESO Config + AP Architecture
+
+**MESO Config on SharePoint:**
+- `Client`, `Fund Group`, `Fund` (list of funds), other fields
+- `Database name`, UIPath: taken daily/weekly — building for **monthly**, all processes not just quarterly
+
+**Action Processor (AP) — Bhanu deep dive:**
+```
+Event → Event Service (E.S.)
+             ↓
+Event Routing Service (E.R.S.)
+             ↓ Kafka listener
+  → injested → save or forward to topic subscriber (downstream sys)
+  → check DB for route config
+  → frame action message
+  → call Kafka topic subscriber
+             ↓
+AP → performs business logic
+   (task updates, task register, handle_socl_check)
+```
+- **ERS-AP Registry**: done via **deployment spec** (`pytoml` library)
+- KG instances: saved in **ODL** + **DynamoDB** (tasks, Cypher queries, hourly/quarterly/monthly)
+- **Scheduler**: where defined? → running hourly; objects saved in DynamoDB
+
+### Task Interaction Service
+- Gateway for task interactions
+- Capability for the last task in the chain (chair)
+- For each interaction task there is one event
+
+### AXI / Axeo — Investment A/C Tool
+- **AXI / Axeo** = Investment Account Management tool
+- **Consumes from Meridian Notification Service** → applies rules
+- **Notification Service capabilities**:
+  - Can send **email**
+  - Push messages to **SQS / SNS**
+
+---
+
+## 2026-04-16 (Thursday) — RPA Support Walk-Through (Horace)
+
+### VPL (Valuation Price Listing) — Daily Process
+- **VPL**: Daily at **5 PM EST** (NYSE closing price)
+- Check which bots have jobs → **~4.5 jobs** typical queue
+- **Event Store**: used for logging VPL runs
+
+### Corp Actions — Voluntary (VCA)
+
+**BPShare — Voluntary Corporate Actions:**
+- **Input**: IP/filename + process filename → check filename first → if not found → ask to resend
+- Processed → with summary → ingested file
+
+**Queue Management (VCA):**
+- `Paydown process`, **AVCAB / AV CAB** → VCA client list
+- **Two Sigma** ops: BPShare → Two Sigma ops transfer
+  - Ask them: **Strategy 0 → Non-Streety**
+  - If moves from BPShare ops transfer → (BP there Two Sigma ops trigger)
+  - Client will **send file to chat**
+
+### Corp Actions — Mandatory (PROD, Saturdays)
+
+**PROD — Running in Blue Prism:**
+- Mandatory Corp Actions: `s/r 1 process`
+- Error log → GTL → Intermediate employee
+- UPS Transfer → Trigger Blue Prism
+- **AVCAR Project** → session management
+- **Voluntary QPS**: trends log → Voluntary Ops Transfer / Mandatory Ops Transfer
+- Set `ourbl_fund` today
+
+**E-Binder Management:**
+- OTCK, **NewPool1** (afters), **NOWPOOL2**
+- No e-binder because of time zone
+- **VCA Opstruns**: sometimes doesn't pick up → must be today
+- Processed ones have Summary → don't use → ask for new file
+
+**E-Binder Queue Status:**
+- Session might consolidate
+- Pending requests in queue → ~20 pending
+- `el-moder` → Query → Connect → web service → `ebinder_check`
+- From d-vil → add bots → Monthly job + start
+- If recon → then recon → e-binder initiate → check → run VIL bot → Meritory
+
+### RPA Support — General (Citco IT, Case by Case)
+- Hand Over: Confluence Page, Queue status
+- UIPath Cloud: Exception Support Page
+- Portfolio Data of DYMON-ASIA
+- **FX Closeout**: `fx 10300/-` → pays → start parameter
+- `Skip_Comploading` → act → DYMON-Arit → skip → `sump_True`
+
+**UIPath (Cloud) vs Non-Cloud:**
+- **SSO** for cloud UIPath processes
+- **Data Ops** → `Fx-settled` → Status
+- Argument: `In client` → `to PL-ReRun` (Daily VPL Run)
+- If placed → Blue Prism / UIPath Bigger FILE
+- **Gov/Kay sub-process here**
+- Request → aligns with Ledger
+- Need to **re-drop files for users** (they cannot do it themselves)
+
+---
+
+## RPA Support — CAIS Pricing Pack (Sridhar Ticket)
+
+- **CAIS Pricing Pack** — Intelligent Automation support ticket
+- Auth name/details + logs → location: **UCM**
+- Query: `SELECT * FROM history.CAISRUM`
+- **CAIS WB-PROD** → Search Query → client name, process log
+- Save to local machine → check log → errors
+- Copy Zip to local → unzip → **Closeout**
+- `UIPath Prod 1 DataOps fxsettle_soln` → drop to UCM drive
+- `Not choext_1` given → UIPath Prod → remove
+- **BPShare location**: `\\bbhagat` (our pwd, Citcoext)
+
+**Both CA types:** Voluntary + Mandatory (Horace)
+
+---
+
+## MESO Support — Aexeo Reporting DB Query
+
+```
+Path: ia/shared/warter/shared_meso_worker
+Query by: client, fund, run_id
+```
+- **MESO Query** → `ia-16/shared/warter/shared_meso_worker/lyre`
+- Fields: `client`, `fund`, `run_id`
+
+---
+
+*End of Training Week Notes (April 13–20, 2026)*
+*CTM Halifax — Bhavik Bhagat, Soundarya Venkataraman, Sridhar Vadla*
+*Mentors: Horace, Kishor, JD, Bhanu*
