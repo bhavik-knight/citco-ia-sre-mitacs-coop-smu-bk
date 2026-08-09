@@ -1,717 +1,368 @@
-Mayli-8 Bhavill RPA Support
-April
-2026-04-13
-Monday
-add
-Citco
-HOJIRA SRE
-My presentat feed back
-Into Three More Tags:
-CFSBPM; 3)Citco works
-it was good Error & tast, log
-Jeanney
-Meridian
-IA-BPO; RPACFS1
-by. landa
-Log Errors: Dashboard; (Data not pulling)
-bars
-Export exces as
-Performance
-Top 10 landa
-Health Dashboard:
-Dashboard
-Confluence Page
-landa list
-Overview
-RPA Support:=
-lue Prism
-BPM
-E binder
-mover dote- deekstating
-RPAsite RPA we process daily;menthy; Quarterly
-we handle
-add new 60/5 if needed.
-VPL check:= frequency
-(tight deadlive)
-closing stack price.
-5 PM EST; start
-Monitor.
+# May 4-8 Bhavik RPA Support
+
+week1 of RPA support for me - Bhavik
+April 2026-04-13 Monday
+
+My presentation feedback - it was good start
+Add to JIRA SRE - add Three More Tags: 1) BPM; 2)Citco works; 3) Meridian
+
+Error logs - on dashboard - data are not proper yet
+
+Tags needed: 
+1) Meridian; 2) IA-BPO; 3)RPACFS1 4) BPM 5) Citcoworks 6) Automationhub
+
+by. lamda
+bars Export in excels - or as csv
+
+Performance: Top 10 landa
+
+Health Dashboard: Dashboard
+
+Confluence Page:
+lamda list
+
+# Overview
+## RPA Support:=
+
+### Blue Prism - BPM
+1) E-binder
+move close - check status
+
+RPAsite we handle -  RPA we process - Daily;Monthy;Quarterly
+add new bots if needed
+
+2) VPL check:= frequency 
+tight deadlines - because of closing stack price. 
+
+@5 PM EST; Start Monitoring.
 + 3 bots handling the job
 + 3 more bots of
-5 PM
-managing que
-EST
-Make Notes from Confluence Page
-Corporate Act processes:
-Mandatory ; volunteer Op Transfer
-Two izma ops trasfess.
-Mayli-8
-Bhavill
-RPA
-Support
-HOJIRA
-SRE
-presentat
-feed
-back
-Into
-Three
-More
-Tags:
-CFSBPM;
-3)Citco works
-it was
-good
-Error
-tast,
-log
-IA-BPO;
-RPACFS1
-by.
-landa
-Log
-Errors:
-Dashboard;
-(Data
-not
-pulling)
-Export
-exces
-Top
-Health
-Dashboard:
-Confluence
-Page
-list
-Support:=
-lue
-Prism
-binder
-mover
-dote-
-deekstating
-RPAsite
-process
-daily;menthy;
-Quarterly
-handle
-new
-60/5
-needed.
-VPL
-check:=
-frequency
-(tight
-deadlive)
-closing
-stack
-price.
-EST;
-start
-bots
-handling
-the
-job
-more
-managing
-que
-Make
-Notes
-from
-Corporate
-Act
-processes:
-Mandatory
-volunteer
-Transfer
-Two
-izma
-ops
-trasfess.
-they can add 1 job e a time Livitor
-Longest job 30 mine
-Migrath Trackers
-Blue Prism
-UI Path Ave
-Mew
-Where it is
-Cloud
-amprom
-Most
-hosted?
-FA Audit
-Aws VPC
-UIPath Orchestrator
-Rentime - Nodes
-M/C
-API Calls
-nodes
-neter
-Citco Infrad trutues
-MySuLServer.
-Sear
-01 Path daid
-On Prem.
-they
-can
-time
-Livitor
-Longest
-mine
-Migrath
-Trackers
-Blue
-Path
-Ave
-Where
-Audit
-Aws
-VPC
-UIPath
-Orchestrator
-Rentime
-Nodes
-API
-Calls
-Infrad
-trutues
-daid
-Prem.
-Broad Cast
-UI P-th
-Sends. to channel,
-Rustime
-Node
-Heartbeat
-Orch
-this way only
-Orch: Schedule Triggers,
-status update
-Eventy
-Config.
-sas
-Brodeate kind
-Asks for instruct to follow.
-Requests.
-DB gives instruct
-Axi
-Axeo
-Process Rus
-on our
-infr
-Even
-UI Path
-Template
-Blue PASA POOL (Enep
-(Group of regources)
-Nod 1+2 group
-rode x;y group
-Broad
-Cast
-P-th
-Sends.
-channel,
-this
-way
-only
-Orch:
-Schedule
-Triggers,
-status
-update
-Brodeate
-kind
-Asks
-for
-instruct
-follow.
-gives
-Process
-Rus
-our
-PASA
-POOL
-(Enep
-(Group
-regources)
-Nod
-1+2
-group
-rode
-x;y
-factor lovet i Permissions.
-subs
-coe
-tub2
-Bout
-Subz
-M/C folder
-Fouldrals
-subh
-sub folder
-how many
-an/c folder pert
-10mly ? Risk
-Folders
-Prod UAT
-similar to product)
+
+5 PM EST managing queue
+
+3) Make Notes from Confluence Page
+Corporate Action processes:
+- Mandatory
+- Voluntary
+- Op Transfer
+- Two izma ops trasfers.
+
+===================
+
+# RPA Support 
+
+They can add 1 job a time Limitation; Longest job 30 min
+
+Migration Trackers:
+## Blue Prism -> UI Path or AWS 
+## UI Path 
+Cloud - Most of RPA migrated here
+Non-Cloud (aws-vpc) ~ On-Prem - FA-Audits
+
+Where is it (RPA) -> Cloud or On-Prem
+
+
+UIPath Orchestrator <-> API Calls <-> DB (MySQL Server)
+Runtime - Nodes ~ Machines (EC2 instances)
+Nodes (1, 2, 3,..., 50) - could be more than 50 nodes
+
+Citco Infrastrutues is where runtime machines runs.
+
+Runtime -> Note -> Heartbeat -> Orchestrator
+                     |
+                     |
+                     V
+                Status Update -> Events
+
+Orchestrator: Schedule Triggers, API, SQS
+
+Runtime / Node / Requests asks for instruction to follow. 
+DB gives instructions
+Process runs on our Infrastrutues
+
+Blue Prism -> Pool (Group of resources) (Node 1 + 2 group; Node X/Y group)
+UI Path -> Template
+
+UI Path -> Folders 
+Example of folders: CoE (Center of Excellence); FA DataOps; etc
+- Foldes in UI Path; have processes; assets; runtime (machines); queue
+- DB check processes to run
+- We run processes on machines (runtime) (manually; or Scheduled; etc)
+- Foreground processes can be bloacked; blackground process wont be blocked
+- Logs to troubleshooting
+
+- every request is licensed. Multithreaded process can run on multiple threads
+- we are trying to migrate processes from Blue Prism (old) to UI Path.
+
+====================
+  
+# Compute & File Consolidation Notes — Training Week Summary  
+  
+## 1. Compute Service Limits  
+  
+| Service | Key Limitation |  
+|---|---|  
+| **AWS Lambda** | Max **15 minutes** per invocation (hard limit) |  
+| **EC2** | No hard execution timeout — can run long tasks (e.g., 2+ hours) if needed |  
+| **ECS Fargate** | Task provisioning/cooldown delay — if code doesn't finish within expected window, task may need to be manually killed |  
+  
+Fargate Cooldown Issue:**  
+- Fargate has a startup/scaling delay ("cooling period") when provisioning new tasks.  
+- If a task's processing logic doesn't account for this timing, the task may hang or fail to complete — requiring manual termination.  
+  
+---  
+  
+## 2. File Consolidation Process — Memory Issue  
+  
+### Symptoms  
+- Process consumes **excessive memory**  
+- Consolidation task doesn't complete cleanly → must be killed  
+- Memory usage increases as more files are consolidated  
+  
+### Guidelines / Fixes  
+- **Minimum memory**: 8 GB  
+- **Instance family**: Use **R6 or above** (memory-optimized instances)  
+- **Limit concurrency**: Process only **2–3 requests at a time**  
+- **File size exception rule**:  
+  - If an **individual file exceeds ~100–200 MB** → **do not consolidate**  
+  - Send these as **standalone CSV files** instead  
+- **Exception list files** → also skip consolidation, send directly  
+  
+### Report Type Reference — "Box Posision "  
+- **Box position** refers to reports such as:  
+  - **Position reports**  
+  - **Cash reports**  
+  - Other **box-level reports** (~600 records per report)  
+- Format: **CSV**  
+- Approx. size threshold discussed: **~494 MB+**  
+  
+### Output Handling  
+- For files that skip consolidation:  
+  - Export as **raw CSV**  
+  - Drop directly into the designated **CSV output folder** ("CSK" folder — team-specific naming)
+
+---  
+  
+## 3. Summary Rule of Thumb  
+  
+> - **Consolidate** only when individual files are small (< 100–200 MB).  
+> - **Skip consolidation** for large files or exception-list items — send as standalone CSVs.  
+> - **Use R6+ instances**, minimum 8 GB memory, to handle consolidation memory load.  
+> - **Limit concurrent consolidation jobs** to 2–3 at a time.  
+> - **Monitor Fargate task runtime** — build in handling for cooldown/provisioning delay to avoid killed tasks.  
+> - Route large/exception files directly to the **CSV folder** rather than through consolidation.
+
+
+
+==============================
+
+## Blue Prism Folder Structure (PROD vs UAT)
+*(From notebook screenshots — Apr 13 training)*
+
+### PROD Environment — Folder Hierarchy
+```
 COE
-Date ofs
-(Pa... P20}
-Ma,Ms,Mei
-- processes Pv)
-- -Assets
-Logs to troubleshoot
-Generic Trigger.
-(sas, cipat, c/op)
-Real-Time
-API dreeks who is recipient
-where should the reg H? be
-SQS
-listenes.
-Generic Thigger
-UI/PA
-processor
-ANS Lambda
-Vipate
-API gleway
-Current Tables
-Service source
-turget.
-which Q
-folder)
-IA-Meso
-Json/file
-/A-Anditat RA
-Vipath 4 path cloud
-CA-IRAS
-cas
-( need permission to
-push to target Perport
-AI can retrigger
-MESO: was or Maero
-grab data
-create ISV
-and push to UCM.
-derectly push mean (json) to $QS via API
-Generic
-Trigger.
-(sas,
-cipat,
-c/op)
-dreeks
-who
-recipient
-where
-should
-reg
-Thigger
-ANS
-Lambda
-gleway
-Current
-Tables
-Service
-source
-which
-/A-Anditat
-Vipath
-path
-cloud
-( need
-permission
-push
-target
-Perport
-retrigger
-MESO:
-was
-Maero
-grab
-data
-create
-ISV
-and
-UCM.
-derectly
-mean
-(json)
-$QS
-via
-file
-file storage gateway
-filedrop
-Event trigger
-Meridiento event Senia
-read from doc Service
-if file size
-or pass file id.
-is large
-pass ID to
-listener (foread dated
-Fx- clise out: how it works
-retrigger by generic trigger
-depend on use case : if user uses
-maero- faile 13 created & saved to UCM
-To process Send file URL tOADI
-storage
-gateway
-Event
-trigger
-Meridiento
-event
-Senia
-read
-doc
-size
-pass
-id.
-large
-listener
-(foread
-dated
-Fx-
-clise out:
-how
-it works
-generic
-depend
-use
-case
-user
-uses
-maero-
-faile
-created
-saved
-UCM
-To process
-Send
-URL
-tOADI
-Chery
-select * from public
-in-garanc_trg-mp
-ageneric-tragger ingenenc trigger
-200 records data size:
-VBA Mairo
-file trigger
-Via email stdreply. std reply
-Applicatn
-1A support
-dont provide
-Support via email
-Ast Citco
-CTM data hub
-RPA Support ask Q
-take screet. =]
-make em use it
-Virtual
-kickos world
-OP Transfer
-Repo details.
-Culler
-(Support Agent-haling)
-select
-public
-ageneric-tragger
-ingenenc
-200
-records
-size:
-VBA
-Mairo
-Via
-email
-stdreply.
-std
-reply
-dont
-provide
-CTM
-hub
-ask
-take
-screet.
-make
-kickos
-world
-Repo
-details.
-(Support
-Agent-haling)
-Meso:-
-(Middle office = Month End Sign Out)
-E-binders E- 2 Bs, 26 , because of redesign
-Recar team
-FATean
-Start
-User
-Macro
-Cash Reg:
-AXEO report Criteria.
-all pending (17-18) report (Tay tay) today to)
-Gen Trigger (An)
-Confluence Page Document:
-MESO Processor
-Reporting Server (asyne).
--update DB-0
-Generation of
--Shareft (pull data)
-(doarlood
-feed into report Criteria.
-via SP- API
-Citco Rees
-SP List
-transacth
-enail
-SP API
-Email
-if every
-thing
-correct
-all ready reports (XML)
-Hemor
-sevrat
-SP.
-cannot process
-Success. emai
-Consolidate (XML-XSV)
-CITCO Rees,
-Transat
-TIP
-all SV
-rus (mutiple tabs)
-orchestrator
-Completeness check
-Cash
-Reg.
-Pusition
-Reg
-(Middle
-office
-Month
-End
-Sign
-Out)
-E-binders
-Bs,
-because
-redesign
-Recar
-team
-Reg:
-AXEO
-report
-Criteria.
-all
-pending
-(17-18)
-(Tay tay)
-today
-to)
-Gen
-Trigger
-(An)
-Document:
-MESO
-Processor
-Reporting
-Server
-(asyne).
--update
-DB-0
-Generation
--Shareft
-(pull
-data)
-into
-SP-
-Rees
-List
-every
-ready
-reports
-(XML)
-cannot
-Success.
-emai
-Consolidate
-(XML-XSV)
-CITCO
-Rees,
-rus
-(mutiple
-tabs)
-Completeness
-check
-Completeness Cheet for Client reg.
-eg. Tasla share currency, which stock duy ex
-Position Reg: (More Cash reports)
-Similar to cash reg.
-Recon 4 FA
-Pre-Meso: Soft Sign UP based on
-Pre meso.
-Recon
-Pre-Reg of FA :=
-if we are good tostant
-based on pre-meso.
-current April (premen-) May
-Before Month Ends do next
-month activity
-SQS Based
-MESO Architecture:
-ECS (20 req)
-SQS.
-ECS (20 neq)
-Challanges'
-Size of report 600 mb per report
-Consolidatn 5 GB easily.
-pandas Unitation
-Auto scaling
-80.M CPU
-601. Memory
-if usage become normal;
-because of forefull killing aenuities.
-whatever IS running
-Cheet
-Client
-reg.
-eg.
-Tasla
-share
-currency,
-stock
-duy
-Position
-(More
-reports)
-Similar
-cash
-Pre-Meso:
-Soft
-based on
-Pre
-meso.
-Pre-Reg
-are
-tostant
-based
-pre-meso.
-current
-(premen-)
-May
-Before
-Ends
-next
-month
-activity
-Based
-Architecture:
-ECS
-(20 req)
-(20
-neq)
-Size
-600 mb
-per
-Consolidatn
-easily.
-pandas
-Unitation
-Auto
-scaling
-80.M
-CPU
-601.
-Memory
-usage
-become
-normal;
-forefull
-killing
-aenuities.
-whatever
-running
-Lambda 15 mins.
-EC2 - Can have 2 hours Coding pasal
-Furget 5 nine.
-Coding period of ECS farget is the
-problem (code is handling the
-ming task time) to have the task complete)
-Have to kill the instance
-Why it is consuming lots of Memory?
-- consolidate to complete is calprete
-- more memory consuming
-Limit concurrency of consolidation
-8 G8. Memory
-R6 and
-above Except crst
-andividual file size
-> 100/200 mb. (don't use consolidate)
-limit process for (2-3 neq.)
-Box 7 position report 600 orb per report
-Csv.
-494 96 +
-Exepth list
-dont consolidate
-send CSU files
-put in CSK
-folder,
-15 mins.
-EC2
-Can
-have
-hours
-Coding
-pasal
-Furget
-nine.
-period
-farget
-problem
-(code
-ming
-task
-time)
-complete)
-Have
-kill
-instance
-Why
-consuming
-lots
-Memory?
-consolidate
-complete
-calprete
-memory
-Limit
-concurrency
-consolidation
-G8.
-above
-Except
-crst
-andividual
-100/200
-mb.
-(don't
-consolidate)
-limit
-(2-3
-neq.)
-Box
-position
-600
-orb
-494
-Exepth
-send
-CSU
-files
-put
-CSK
+└── DataOps
+    ├── Processes (P1 – P20)
+    │   └── M1, M2, Mc (machines)
+    ├── Assets
+    ├── Rules (Runtime) — M1, M2, M3
+    └── Queues
+```
+- UAT = **similar to PROD** in structure
+- **Logs** to troubleshoot issues
+- **Mostly foreground** during dev time
+- Execution modes:
+  - **Foreground** → blocks the bot machine
+  - **Background** → it will NOT block (non-blocking execution)
+
+---
+
+## Blue Prism Licensing & Multithreading
+
+- **Every robot/node is licensed** → Background mode is expensive per license
+- **Multithreaded** Blue Prism processes:
+  - A single **Process** can run with multiple threads (Thread 1, Thread 2 ... Thread 20)
+  - Enables parallel execution within one process
+- **Migration direction**: AS processes from **Blue Prism → UIPath** (Cloud + On-prem)
+
+---
+
+## Aexeo Reporting Architecture (COMAPI / REST API)
+*(From notebook diagrams + Confluence PDFs)*
+
+### Overview
+The **Reporting Server (Service)** exposes a REST API wrapper around COMAPI:
+
+```
+Python API calling ComAPIs
+         ↓
+   [Wrapper / REST API]
+         ↓
+  ┌──────────────────────────────────┐
+  │  Aexeo Reports (ComAPI)          │  ← ComAPI
+  │  P&L            (ComAPI)         │  ← ComAPI
+  │  A/C Manager    (ComAPI)         │  ← .NET application
+  └──────────────────────────────────┘
+         ↓
+   RDS / PostgreSQL
+```
+
+- **COMAPI = technology-dependent** — cannot be called via standard HTTP
+- Each LOB has its own COMAPI process running on **Blue Prism**
+- **JS → multiple requests to ComAPI on a single rule**
+- Python wraps these via the Reporting Server REST API
+
+### COMAPI Libraries (from Confluence PDFs)
+1. **Aexeo Active PnL - COMAPI** (UiPath Library)
+   - Owner: Daniel Estrella (Citco)
+   - Calls `ActivePnLComApi` installed on machine
+   - Args: `in_dt_ReportCriteria`, `in_ClientName`, `in_FileName`, `in_SaveLocation`
+   - Optional: `in_ComApiTimeout` (default 60 min), `in_ComApiGridviewType` (global/client), `in_ComApiSaveCsvMethod`
+   - Assets: `Aexeo.ActivePnl.ComApi.Credentials`, `Aexeo.ActivePnl.ComApi.Script`
+   - Saves logs to UiPath Share: `LOGS/`, requests to `REQUESTS/`
+
+2. **Aexeo Report Generation - COMAPI** (UiPath Library)
+   - Owner: Nova Katrina Gomez (Citco)
+   - Builds JSON payload → Invokes `ReporterAPIv1.0.8.JS` → waits for report → moves to save location
+   - Retries 3x on `.err` files
+   - Args: `in_ClientName`, `in_FileName`, `in_ReportID`, `in_GridviewType`, `in_SaveLocation`, `in_dt_ReportCriteria`
+   - Default timeout: 3000 sec (50 min)
+   - Asset: `Aexeo_COMAPI_Credential`
+
+3. **Aexeo Reporter Server - HTTP Request** (UiPath Library)
+   - Owner: Nova Katrina Gomez (Citco)
+   - Generates report via **HTTP Request** to Aexeo Reporter Server (Python script)
+   - Script: `reporter_requests.py` on UiPath Share
+   - Asset: `AexeoReporterServer_HostURL`, `Aexeo_COMAPI_Credential`
+   - `in_SourceSystem` arg tracks which process called the API (e.g., `RECON_EBINDER`)
+
+---
+
+## Reporting Service Architecture — Multi-Client Design
+
+### Key Constraints
+- **Each client has their own DB(s)** — databases cannot be shared across multiple clients
+- **ComAPI is client-specific** — tech-dependent, cannot call via plain HTTP
+
+### Architecture Flow
+```
+Central Node Master
+        ↓
+   API Gateway
+        ↓
+  Reporting Service
+  ┌───────────────────────────────┐
+  │   API  ←→  Processors         │
+  │            ↓                  │
+  │          Workers              │
+  └───────────────────────────────┘
+        ↓           ↓
+       SQS      COM APIs:
+              ┌──────────────┐
+              │ ComAPI Axeo Rp│
+              │ ComAPI P&L    │
+              │ ComAPI A/CMgr │
+              └──────────────┘
+```
+
+### Scaling / Threshold
+- **Threshold**: 25 / 50 / 75 (small → M)
+- Processes **1 page at a time** for large reports
+- **2000 requests can be handled by one EC2 instance**
+- Report sizes: up to ~572 MB → 100 records → EC2 instances (205 MB, 25 MB, ECS)
+- Save output to: **shared drive + S3 bucket**
+
+---
+
+## GridView (ComAPI Feature)
+
+- **GridView is supported by ComAPI**
+- UI calculates the things that need to be displayed
+- **MESO / EBinder client reporting uses GridView**
+- Related concepts:
+  - **Throttling** — controls request rate to ComAPI
+  - **DB instance type** — affects throughput
+
+### MESO Job State Machine (from notebook)
+```
+accepted → pending
+               ↓
+           running
+               ↓
+      complete | fail (outcome)
+```
+- ★ **Less than threshold** → release (process normally)
+- **Otherwise** → push back to queue (FIFO or any clever mechanism)
+- **Workers**: 2-hour timeout
+- Uses **Axios** for HTTP calls + logging
+
+---
+
+## ECS Fargate & Deployment (MESO Infrastructure)
+*(From notebook screenshot)*
+
+### ECS Fargate Scaling Challenge
+- **5-minute cooldown** period on scale events
+- Trigger: **SharePoint APS Task** → if **>60% CPU cap** → scale up ECS (1–5 instances)
+
+### CI/CD Pipeline
+```
+Jenkins → Build
+              ↓
+    Ansible Script (deploy on machine)
+              ↓
+            Linux
+```
+
+### Running Python as a Service
+- **NSSM**: Python as a **Windows Service**
+- Web server options:
+  - **Apache** (enterprise)
+  - **nginx** (free, limited support)
+
+---
+
+## MESO Support Documentation (from Confluence PDF)
+
+### Process Information
+- **Process Name**: MESO (Middle Office Month-End Sign-Off)
+- **Technology**: AWS & Python
+- **AWS Environment**: citcocoreprod01
+- **AWS Region**: us-east-1
+- **Code Repository**: `ia_meso_process` (Bitbucket)
+- **Process Developers**: Horace (Ho, Hoi Leung), Mir Momin Ali, Kishor Deotale
+
+### Storage Locations
+| Type | Location |
+|------|----------|
+| Position (Share) | `\\uipath-share...\prod\RECON_EBINDER\MESO\OUTPUT\POSITIONS` |
+| Cash (Share) | `\\uipath-share...\prod\RECON_EBINDER\MESO\OUTPUT\CASH` |
+| Config (Share) | `\\uipath-share...\prod\RECON_EBINDER\MESO\CONFIG` |
+| Position (S3) | `s3://prod-citco-ia-checklist-service-documents/meso/output/position/` |
+| Cash (S3) | `s3://prod-citco-ia-checklist-service-documents/meso/output/cash/` |
+| Config (S3) | `s3://prod-citco-ia-checklist-service-documents/meso/config/` |
+
+### Pre-Month End Activities
+**Cash:**
+1. Manual GL Entries Report (100216300)
+2. B-3 Cash ME Signoff Backup
+3. B-1.2 Cash Rec
+4. B-1.3 Aexeo Cash Completeness
+5. Broker ART Extract
+
+**Positions:**
+1. Outstanding Paydown Check (100301300)
+2. Order Manager Check (100301100)
+3. Expired Positions Report (10019800)
+4. Deal Manager Check (100301200)
+
+### Support Contacts
+- **Aexeo Support**: Feng Cao / Saurabh Jajoo (DEV), Mandeep Sehgal (NA), Anna Marie Halili (MNL), Kees Howard (EU)
+- **DL**: innovation_it_support
+
+==============================
+
 LoB = Line of Business
 Query Complexity is too high
 So we canot use OPM
