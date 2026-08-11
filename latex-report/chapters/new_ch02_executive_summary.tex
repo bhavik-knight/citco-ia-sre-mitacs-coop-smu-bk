@@ -1,0 +1,120 @@
+% ============================================================
+% CHAPTER 2: EXECUTIVE SUMMARY
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Executive Summary}
+\label{chap:executive_summary}
+
+This report documents my five-month Mitacs Business Strategy Internship (BSI)
+at Citco Technology Management (CTM), Halifax, Nova Scotia, conducted between
+\textbf{March~15 and August~31, 2026} under the project title
+\textit{``Intelligent Automation and Reliability Engineering for Financial
+Services''} (Mitacs reference \textbf{IT49539}).
+
+% ────────────────────────────────────────────────────────────
+\section{The Problem}
+% ────────────────────────────────────────────────────────────
+
+Before my internship began, Citco's IA-SRE team operated without a
+centralized observability platform. Monitoring for 119 Lambda functions,
+22 ECS clusters, 83 EC2 instances, and critical Kafka-backed event pipelines
+across five AWS environments relied on an entirely reactive model: business
+teams in Dublin, London, and Halifax would notice anomalies in fund processing
+outputs and raise tickets. No CloudWatch alarms existed on any Meridian
+service. No centralized dashboard surfaced platform health. When the
+Meridian event pipeline stalled on April~17, 2026 --- backing up 9~million
+Kafka messages over 7.5 hours --- the SRE team learned about it from a
+Dublin business user, not from any monitoring system.
+
+Citco also uses \textbf{Dynatrace} for BPM automation observability, but
+its enterprise licensing costs scale with infrastructure size. My industry
+supervisor, Kishor Deotale, framed the core research question for the Mitacs
+engagement: \textit{can AWS-native services achieve Dynatrace-equivalent
+observability at a fraction of the cost?}
+
+% ────────────────────────────────────────────────────────────
+\section{The Approach}
+% ────────────────────────────────────────────────────────────
+
+During this internship, I delivered a \textbf{proof-of-concept (PoC)} AWS-native
+observability stack and feasibility assessment, organized across three
+parallel work streams:
+
+\begin{enumerate}
+    \item \textbf{SRE Observability Platform (IISS-487)} --- A centralized
+          Amazon Managed Grafana (AMG) dashboard with 14 rows, 110+ panels,
+          and 38 CloudWatch alarms covering all major AWS service categories,
+          deployed via parameterized CloudFormation Infrastructure-as-Code.
+
+    \item \textbf{IA Monitoring Platform (IISS-482--486)} --- Per-platform
+          CloudWatch dashboards and a registry-based SQS monitoring pipeline,
+          establishing the architectural patterns and resource inventory that
+          the Grafana platform builds on.
+
+    \item \textbf{IA Resources Inventory API (IISS-507)} --- A Flask REST
+          API for programmatic discovery of all cloud resources across five
+          budget code environments, with 562 automated tests at 99\% coverage.
+\end{enumerate}
+
+Four dedicated RPA production support rotations (Weeks 8, 12, 16, 20) ran
+in parallel, where I handled live incidents including the CAIS Deadline credential
+hotfix (IISS-706) and the MESO month-end stuck tasks (IISS-741, Critical).
+
+% ────────────────────────────────────────────────────────────
+\section{Key Results}
+% ────────────────────────────────────────────────────────────
+
+\begin{table}[ht]
+\centering
+\caption{Executive Summary --- Key Quantitative Outcomes}
+\label{tab:exec_outcomes}
+\begin{tabular}{p{6.5cm}p{2.5cm}p{3.0cm}}
+\toprule
+\textbf{Metric} & \textbf{Before} & \textbf{After} \\
+\midrule
+Incident detection time (MSK lag) & 2--3 hours & $<$30 seconds \\
+CloudWatch alarms on IA platform & 0 & 38 \\
+Centralized dashboard panels & 0 & 110+ \\
+Container Insights (Meridian ECS) & 1 of 6 clusters & 5 of 6 clusters \\
+Resource inventory automation & Manual/Confluence & 119 Lambda, 22 ECS, 83 EC2 (API) \\
+Inventory API test coverage & N/A & 562 tests, 99\% \\
+AWS-native vs Dynatrace parity & N/A & 60\% (80\% with App Signals) \\
+Monthly observability cost (AWS) & \$49 (CW only) & \$77 (CW + Grafana + X-Ray) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The most operationally significant outcome of my work is the reduction in Kafka consumer
+lag detection from a multi-hour manual process to a sub-30-second automated
+alert --- directly addressing the failure mode that caused the April~17
+incident. My Dynatrace parity analysis demonstrates that the AWS-native
+stack achieves 60\% functional parity at approximately \$77/month, rising to
+80\% with Application Signals, versus Dynatrace's enterprise licensing cost.
+
+% ────────────────────────────────────────────────────────────
+\section{Report Structure}
+% ────────────────────────────────────────────────────────────
+
+The remainder of this report is organized as follows.
+Chapter~\ref{chap:tools} surveys the AWS services, development tools, and
+AI-native tooling used throughout the internship.
+Chapter~\ref{chap:project} presents the full project context, team structure,
+Meridian platform, and JIRA scope.
+Chapter~\ref{chap:learning_goals} states the technical and non-technical
+learning goals established at the outset of the engagement.
+Chapter~\ref{chap:methodologies} documents the SRE methodology applied:
+golden signals, SLOs, gap analysis, and requirements.
+Chapter~\ref{chap:implementation} covers the phased technical delivery,
+system architecture, and design decisions.
+Chapter~\ref{chap:weekly_breakdown} provides a phase-by-phase delivery
+narrative organized across the 24-week internship.
+Chapter~\ref{chap:conclusions} evaluates outcomes against learning goals and
+provides a personal reflection.
+Chapter~\ref{chap:achievements} presents the key deliverables and business
+value realized.
+Chapter~\ref{chap:challenges} documents the six engineering challenges
+encountered and their mitigations.
+Chapter~\ref{chap:future_work} outlines the planned extensions, with emphasis
+on the auto-healing agent (IISS-488).

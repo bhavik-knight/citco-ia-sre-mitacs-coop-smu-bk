@@ -1,0 +1,157 @@
+% ============================================================
+% CHAPTER 5: LEARNING GOALS
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Learning Goals}
+\label{chap:learning_goals}
+
+The following learning goals were established at the start of my internship in
+consultation with my academic and industry supervisors. They are organized into
+technical and non-technical categories to reflect the dual competency development
+expected of an MCDA industry placement.
+
+% ────────────────────────────────────────────────────────────
+\section{Internship Parameters}
+% ────────────────────────────────────────────────────────────
+
+My internship spanned \textbf{March~15 -- August~31, 2026}, for a total of
+\textbf{900 hours} of logged work. The engagement operated in two phases:
+a part-time phase from March~15 to April~15 (approximately 10--20 hours per
+week) during which I completed the second semester of coursework in
+parallel, followed by a full-time phase from April~15 to August~31
+(approximately 40+ hours per week) upon academic semester completion. A
+Mitacs BSI renewal (September~1 -- December~31, 2026) was subsequently
+approved, extending the industrial collaboration into a second phase not
+covered by this primary submission.
+
+I was embedded within the \textbf{Intelligent Automation and
+Site Reliability Engineering (IA-SRE)} team at CTM Halifax, operating
+across three interlocking work streams:
+
+\begin{itemize}
+    \item \textbf{SRE \& Operational Observability} --- establishing SLIs
+          and SLOs, applying the four golden signals to financial services
+          workloads, and building a centralized observability platform on
+          Amazon Managed Grafana (AMG).
+
+    \item \textbf{Intelligent Automation \& Predictive Operations} ---
+          authoring CloudFormation IaC templates, engineering a
+          Lambda-based dynamic alarm provisioner, and developing the
+          \texttt{ia-sre-resources-inventory} REST API (IISS-507).
+
+    \item \textbf{Advanced Monitoring \& Capacity Analytics} ---
+          integrating Container Insights for ECS telemetry, designing
+          CloudWatch Logs Insights queries, and contributing to RPA
+          production support rotations.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Technical Learning Goals}
+% ────────────────────────────────────────────────────────────
+
+\begin{itemize}
+    \item \textbf{AWS Cloud Services \& Infrastructure.}
+          Gain production-level proficiency with the AWS services central to
+          Citco's infrastructure: Amazon CloudWatch (metrics, alarms, Logs
+          Insights, Metric Insights SQL); AWS Lambda (serverless functions,
+          memory tuning, cold-start analysis, X-Ray tracing); Amazon ECS
+          with Container Insights and Amazon EKS for containerized
+          workloads; Amazon EC2 with CloudWatch Agent instrumentation;
+          Amazon MSK (managed Kafka, consumer lag monitoring); Amazon SQS
+          (queue-depth telemetry); Amazon SNS (alert routing); Amazon S3;
+          AWS CloudFormation and AWS SAM; and AWS Secrets Manager.
+
+          A deliberate learning goal was exposure to the \textbf{full
+          spectrum of database categories} used in production financial
+          platforms: Amazon DocumentDB; Amazon Neptune (graph database,
+          CitcoWorks Knowledge Graph); Amazon RDS / Aurora; Amazon
+          ElastiCache for Redis / Valkey (Meridian ODL tier); and Amazon
+          OpenSearch Service. Additional infrastructure explored includes
+          Amazon ECR, AWS CodeCommit, AWS CodePipeline, and the AWS IAM
+          permission model (including the 16-role agent permission structure
+          required for Grafana cross-account access).
+
+    \item \textbf{Site Reliability Engineering Principles.}
+          Operationalize SRE concepts in a financial services context ---
+          defining SLIs and SLOs for RPA automation workloads, applying the
+          four golden signals (latency, traffic, errors, saturation) to
+          heterogeneous infrastructure, and designing proactive alerting
+          thresholds that reduce mean time to detection (MTTD) for
+          fund-impacting incidents.
+
+    \item \textbf{Infrastructure-as-Code.}
+          Author parameterized CloudFormation YAML templates for CloudWatch
+          alarm deployment, develop a Lambda-based dynamic provisioner for
+          per-resource alarm creation, and navigate the AWS Secrets Manager
+          64\,KB payload limit encountered during provisioning (resolved by
+          migrating the template payload to S3).
+
+    \item \textbf{Observability Platforms.}
+          Construct and operate a production-grade Amazon Managed Grafana
+          (AMG) workspace --- including upgrading from version 10.4 to 12.4
+          mid-delivery --- integrating CloudWatch as a data source, building
+          14 dashboard rows with 110+ panels, and enabling Container
+          Insights on five of six Meridian ECS clusters.
+
+    \item \textbf{Proactive vs.\ Reactive Reliability Engineering.}
+          Build proactive reliability systems: set SLO-aligned alarm
+          thresholds (MSK consumer lag $< 10{,}000$ messages, ECS CPU
+          $< 80\%$, Lambda error rate $< 1\%$ over 24h), and design the
+          auto-healing pipeline (IISS-488) where alarm triggers initiate
+          automated recovery actions rather than only notifications.
+
+    \item \textbf{Python Development.}
+          Write production-quality Python using \texttt{boto3} for AWS API
+          interaction, \texttt{pytest} with Hypothesis for property-based
+          testing (562-test suite, 99\% coverage), \texttt{Flask} with
+          async route handlers, and \texttt{structlog} for structured JSON
+          logging.
+
+    \item \textbf{Software Engineering Practices.}
+          Practice test-driven development (TDD) and spec-driven development
+          via the Kiro IDE workflow (\texttt{.kiro/specs/} with
+          \texttt{requirements.md}, \texttt{design.md}, \texttt{tasks.md}),
+          enabling agentic sub-agent execution for code generation and PR
+          creation.
+
+    \item \textbf{AI-Augmented Engineering.}
+          Leverage the Kiro IDE (Claude Sonnet), Amazon~Q for contextual
+          code suggestions, and spec-driven agentic workflows to accelerate
+          design documentation, code scaffolding, and automated test
+          generation.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Non-Technical Learning Goals}
+% ────────────────────────────────────────────────────────────
+
+\begin{itemize}
+    \item \textbf{Agile and Kanban Methodology.}
+          Work within Citco's JIRA-based delivery process: sprint planning,
+          ticket decomposition, story-point estimation, and work-log
+          tracking across the IISS, CAIS, and other project boards.
+
+    \item \textbf{Technical Communication.}
+          Produce engineering-grade written deliverables: incident RCA
+          reports, architecture design documents, Confluence knowledge-base
+          pages, and this academic report.
+
+    \item \textbf{Production Incident Response.}
+          Participate in four on-call RPA support rotations (Weeks 8, 12,
+          16, 20) and handle time-sensitive production incidents including
+          the CAIS Deadline hotfix (IISS-706), the MESO month-end stuck
+          task retrigger (IISS-741, Critical), and VPL pricing failures
+          (IISS-753, IISS-876).
+
+    \item \textbf{Cross-Functional Collaboration.}
+          Build working relationships across Halifax IA-SRE, Innovation IT
+          Hyderabad, business operations teams, and the RPA support tier.
+          Coordinate across Halifax EST and Hyderabad IST time zones.
+
+    \item \textbf{Financial Domain Knowledge.}
+          Develop working familiarity with fund administration operations:
+          VPL queue (5~PM EST deadline), Corporate Actions workflows, MESO
+          month-end cycles, and CAIS regulatory filing deadlines.
+\end{itemize}

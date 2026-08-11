@@ -1,0 +1,139 @@
+% ============================================================
+% CHAPTER 9: CONCLUSIONS
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Conclusions}
+\label{chap:conclusions}
+
+% ────────────────────────────────────────────────────────────
+\section{Learning Goals Evaluation}
+\label{sec:learning_goals_eval}
+% ────────────────────────────────────────────────────────────
+
+Chapter~\ref{chap:learning_goals} established eight technical and five non-technical
+learning goals at the outset of my internship. Table~\ref{tab:learning_goals_eval}
+evaluates each goal against evidence gathered from my delivered work.
+
+\begin{table}[ht]
+\centering
+\caption{Learning Goals --- Self-Evaluation at Internship Completion}
+\label{tab:learning_goals_eval}
+\begin{tabular}{p{5.2cm}p{2.2cm}p{5.0cm}}
+\toprule
+\textbf{Learning Goal} & \textbf{Status} & \textbf{Evidence} \\
+\midrule
+AWS Cloud Services \& Infrastructure & \textcolor{smumaroon}{\textbf{Met}} & 13 AWS service namespaces monitored; 119 Lambda / 22 ECS / 83 EC2 inventoried; full DB spectrum (DocumentDB, Neptune, RDS, Redis, OpenSearch) \\
+\midrule
+Site Reliability Engineering Principles & \textcolor{smumaroon}{\textbf{Met}} & Four golden signals applied; SLOs defined for Lambda, ECS, MSK, SQS; MSK lag alarm reduces MTTD from 3.5h to $<$30s \\
+\midrule
+Infrastructure-as-Code & \textcolor{smumaroon}{\textbf{Met}} & 4 CloudFormation stacks deployed; Lambda-backed dynamic provisioner; S3-staged templates; \texttt{samconfig.toml} multi-env reuse \\
+\midrule
+Observability Platforms (AMG) & \textcolor{smumaroon}{\textbf{Met}} & 14-row / 110+ panel Grafana workspace; survived 10.4$\to$12.4 upgrade; 38 alarms wired to SNS \\
+\midrule
+Proactive vs.\ Reactive Reliability & \textcolor{smumaroon}{\textbf{Met}} & Alarm-backed detection replaces business escalation; April~17 incident used as design proof point \\
+\midrule
+Python Development & \textcolor{smumaroon}{\textbf{Met}} & Flask REST API; 562 tests at 99\% coverage; boto3 concurrent discovery; Hypothesis PBT; structlog \\
+\midrule
+Software Engineering Practices & \textcolor{smumaroon}{\textbf{Met}} & TDD with pytest; spec-driven development via Kiro IDE; PR-based merges on CodeCommit \\
+\midrule
+AI-Augmented Engineering & \textcolor{smumaroon}{\textbf{Met}} & Kiro IDE spec workflow; Amazon~Q inline; Claude Sonnet for architecture reasoning \\
+\midrule
+Agile and Kanban Methodology & \textcolor{smumaroon}{\textbf{Met}} & 25+ JIRA tickets across IISS board; story decomposition, work-log discipline, sprint rituals \\
+\midrule
+Technical Communication & \textcolor{smumaroon}{\textbf{Met}} & RCA reports (IISS-706, April~17); Confluence pages; JIRA acceptance criteria; this report \\
+\midrule
+Production Incident Response & \textcolor{smumaroon}{\textbf{Met}} & 4 support rotations; 5 notable incidents resolved; IISS-706 hotfix within 7h \\
+\midrule
+Cross-Functional Collaboration & \textcolor{smumaroon}{\textbf{Met}} & Halifax--Hyderabad time-zone coordination; Meridian team architecture sessions \\
+\midrule
+Financial Domain Knowledge & \textcolor{smumaroon}{\textbf{Met}} & VPL queue, Corp Actions, MESO, CAIS operational familiarity; fund admin SLA awareness \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All 13 learning goals were met by my internship completion. The deepest
+learning occurred at the intersection of engineering and operations:
+the direct experience of the April~17 Meridian incident, followed
+immediately by building the instrumentation that would have detected
+it in under 30 seconds, compressed months of abstract SRE theory
+into a single, concrete engineering outcome.
+
+% ────────────────────────────────────────────────────────────
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+% ────────────────────────────────────────────────────────────
+
+\subsection{Summary of Outcomes}
+
+This internship delivered a reactive-to-proactive transformation of the IA
+platform's observability posture across three distinct work streams. The
+Grafana AMG centralized dashboard (IISS-487) replaced an entirely manual
+monitoring process with a continuously refreshed, alarm-backed, 110-panel
+workspace covering every service category in the IA infrastructure. The
+CloudWatch monitoring platform (IISS-455/469/482--486) catalogued the full
+resource fleet, produced a reusable IaC alarm provisioner, and resolved a
+fundamental tag ambiguity that had been silently skewing resource inventory
+counts. The inventory REST API (IISS-507) wrapped that fleet discovery logic
+into a tested, extensible service layer that downstream tooling can consume
+programmatically. These three streams were complementary rather than
+sequential: each fed information into the others, with the inventory API's
+discovery logic underpinning the Grafana dashboard's resource enumeration,
+and the Grafana alarms surfacing gaps in the inventory's coverage.
+
+Against the learning goals set at the outset, all objectives were met. AWS
+service proficiency was achieved at production depth across CloudWatch,
+Lambda, ECS, MSK, SQS, S3, Secrets Manager, and CloudFormation. SRE
+principles were applied concretely: the four golden signals were mapped to
+real metric namespaces, SLO targets were articulated for each monitored
+service, and the MSK consumer lag alarm reduced the detection window for a
+category of incidents that had previously cost hours of undetected fund
+impact. Python development progressed from scripted analysis to a
+production-quality API with 99\% automated test coverage. The Kiro IDE's
+spec-driven workflow accelerated my design-to-code velocity across the inventory
+API and this report itself --- providing practical experience with AI-native
+engineering in a regulated financial services environment.
+
+The following chapters (\ref{chap:achievements}--\ref{chap:future_work}) present the detailed evidence for each of these outcomes: Chapter~\ref{chap:achievements} covers deliverables and impact, Chapter~\ref{chap:challenges} documents the engineering obstacles, and Chapter~\ref{chap:future_work} outlines the planned next steps.
+
+\subsection{Personal Reflection}
+
+Looking back across five months of full-time engineering in a financial services
+SRE context, what stands out most is how profoundly the work changed the mental
+model I brought to reliability problems. The part-time onboarding phase in March
+and April introduced an environment where production failures were detected by
+business users noticing missing outputs --- a model that, from the outside, seemed
+merely inconvenient. The April~17 incident reframed that impression sharply:
+nine million queued Kafka messages and a 7.5-hour processing delay affecting
+client funds is not an inconvenience; it is a service reliability failure of
+exactly the kind that SRE practice exists to prevent. Building the instrumentation
+that would have caught that incident in under thirty seconds, and then watching
+the MSK consumer lag alarm arm itself and begin monitoring live production
+traffic, gave a concreteness to ``observability'' that no course module had
+provided.
+
+The broader lesson from my internship is that SRE is not a set of tools --- it is
+a discipline of making implicit system behaviors explicit and measurable. The
+Grafana dashboard, the alarm provisioner, and the inventory API are artifacts of
+that discipline applied to one team's infrastructure. Each one makes something
+previously invisible visible: which Lambda functions are erroring, which ECS
+services are approaching CPU saturation, which Kafka consumer groups are falling
+behind. That act of making things visible is the foundation on which every
+subsequent improvement --- auto-healing, anomaly detection, capacity forecasting ---
+must be built. Arriving at that understanding through the work, rather than reading
+about it, is the internship's most durable outcome.
+
+The technical skills accumulated across these five months --- production-level
+fluency with AWS observability services, IaC authoring under real deadline
+pressure, Python API development with a property-based test suite, and
+AI-augmented engineering with the Kiro IDE --- are immediately applicable to
+the renewal period and to any future SRE or platform engineering role. The
+non-technical skills --- production incident response under time pressure,
+cross-timezone stakeholder communication, and the discipline of writing things
+down in the form others can act on --- turned out to matter just as much.
+
+\vspace{1em}
+\noindent
+\textit{This report was submitted in partial fulfillment of the requirements
+for MCDA~5585 and MCDA~5586, Saint Mary's University, Halifax, NS, Canada.}
