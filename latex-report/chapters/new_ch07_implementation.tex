@@ -46,7 +46,7 @@ relate to each other and to the underlying IA platform infrastructure.
 \end{figure}
 
 The \textbf{infrastructure layer} is the monitored subject: five budget
-code environments housing 119 Lambda functions, 22 ECS clusters, 83 EC2
+platforms housing Lambda functions, ECS clusters, EC2
 instances, and the full spectrum of AWS database and messaging services
 used by the Meridian and Citco Works platforms.
 
@@ -326,7 +326,7 @@ LIMIT 10
 \end{lstlisting}
 
 This single query returns the average duration for each Lambda function
-as a separate time series, covering all 119~functions across all budget
+as a separate time series, covering all Lambda functions across all
 codes without requiring one panel per function. The \texttt{WHERE}
 clause can filter by tag or dimension:
 
@@ -1015,7 +1015,7 @@ via the Lambda enhanced monitoring extension; (3)~CloudWatch Lambda Insights
 on detection latency, cost, and permission requirements. This analysis fed
 directly into my alarm design under IISS-487.
 
-By the end of Phase~1, the full Lambda inventory stood at \textbf{119 functions}
+By the end of Phase~1, the full Lambda inventory across all six platforms was documented
 across all six platforms, documented in Confluence. The \texttt{SEARCH()}
 visibility gap and the IAM filter constraint had established a clear design
 directive: my next generation monitoring platform would need to use CloudWatch
@@ -1260,7 +1260,7 @@ validation, and \texttt{serverless-wsgi} for Lambda deployment.
 \subsubsection{Lambda Discoverers}
 
 I implemented Lambda discoverers for all six platforms, confirming the
-119-function inventory documented in Phase~1. The \texttt{rpacfs1} discoverer
+Lambda inventory documented in Phase~1. The \texttt{rpacfs1} discoverer
 used the \texttt{AppName} fallback pattern: a primary filter on
 \texttt{BudgetCode="rpacfs1"} returned zero results, triggering the fallback
 to \texttt{AppName="rpacfs1"}, which correctly identified the fleet. This
@@ -1296,8 +1296,7 @@ a given resource type concurrently rather than sequentially. For a
 \texttt{GET /api/v1/lambda} request without a budget-code filter, this reduces
 the response time from the sequential sum of five discoverer latencies to
 approximately the latency of the single slowest AWS API call --- consistently
-keeping the endpoint within the 10-second NFR target across the full 119-function
-fleet.
+keeping the endpoint within the 10-second NFR target across the full Lambda fleet.
 
 \subsection{Test Suite Milestone --- Jul 14: 562 Tests at 99\% Coverage}
 

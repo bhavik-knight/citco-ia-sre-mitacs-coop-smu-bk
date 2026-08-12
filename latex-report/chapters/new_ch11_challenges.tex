@@ -28,7 +28,7 @@ The \texttt{GROUP BY} mode of CloudWatch Metric Insights SQL supports only
 \texttt{AVG}, \texttt{SUM}, \texttt{MIN}, and \texttt{MAX} aggregate functions;
 \texttt{p50} and \texttt{p99} percentile statistics are not available in this
 mode. This became apparent when I attempted to build a Lambda duration latency
-distribution panel that would show P50 and P99 across all 119 functions in a
+distribution panel that would show P50 and P99 across all Lambda functions in a
 single query. The mitigation I adopted was a wildcard dimension query in standard
 CloudWatch metrics mode (\texttt{FunctionName: ["*"]}), which returns individual
 P50/P99 time series for each recently active function. The accepted tradeoff is
