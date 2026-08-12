@@ -7,7 +7,7 @@
 \chapter{Tools \& Technologies}
 \label{chap:tools}
 
-This chapter surveys the tools and platforms that underpinned my internship
+This chapter surveys the tools and technologies that underpinned my internship
 deliverables. The technology stack can be divided into five layers: the AWS cloud
 infrastructure on which all workloads run; the observability and monitoring platform
 I built on top of that infrastructure; the development toolchain I used to author and test
@@ -24,8 +24,8 @@ engineering decisions documented in subsequent chapters.
 The IA-SRE team operates exclusively on \textbf{Amazon Web Services (AWS)}.
 All production automation workloads, monitoring infrastructure, and credential
 management run within a set of AWS accounts organized around Citco's
-\textit{budget code} model --- five logical environments (\texttt{rpacfs1},
-\texttt{ia-bpo}, \texttt{automationhub}, \texttt{meridian}, \texttt{citcoworks})
+\textit{budget code} model --- six logical platforms (\texttt{rpacfs1},
+\texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian}, \texttt{rpacfs1})
 that map to distinct automation platforms and business functions. The following AWS services were central to my internship work.
 
 \subsection{Amazon CloudWatch}
@@ -40,7 +40,7 @@ memory utilization), ECS tasks (CPU and memory reservation and utilization), SQS
 (depth, age of oldest message, number of messages sent/received), and MSK clusters
 (consumer lag per topic partition). The \textbf{CloudWatch Alarm} subsystem monitors
 these time series against configurable thresholds and routes breach notifications
-through Amazon SNS. The IISS-487 delivery included 38 CloudWatch alarms provisioned
+through Amazon SNS. The IISS-487 delivery included dynamic CloudWatch alarms provisioned
 via parameterized CloudFormation templates.
 
 \textit{Logs Insights.} \textbf{CloudWatch Logs Insights} provides a SQL-like query
@@ -59,9 +59,9 @@ fields @timestamp, @message
 
 \textit{Metric Insights.} \textbf{CloudWatch Metric Insights} extends the SQL model
 to metric time series, enabling \texttt{SELECT} and \texttt{GROUP BY} queries that
-aggregate across all resources of a given type. For example, a single Metric Insights
-query can return the average Lambda duration grouped by function name across all 119
-functions in the account --- eliminating the need to define one panel per function.
+aggregate across all resources of a given service type. For example, a single Metric Insights
+query can return the average Lambda duration grouped by function name across all
+lambda functions in the account --- eliminating the need to define one panel per function.
 A key limitation I discovered during dashboard development is that Metric Insights
 \texttt{GROUP BY} mode supports only four aggregation functions --- \texttt{AVG},
 \texttt{SUM}, \texttt{MIN}, and \texttt{MAX} --- and does not support percentile
@@ -302,7 +302,7 @@ and deployment tool. SAM extends CloudFormation with Lambda-specific resource ty
 archives and synthesizing the underlying CloudFormation change sets. The alarm
 provisioner I developed for IISS-487 used parameterized SAM/CloudFormation templates
 with environment-specific parameter files (\texttt{samconfig.toml}) enabling
-repeatable deployments across all five budget code environments with a single
+repeatable deployments across all six platforms with a single
 \texttt{sam deploy --config-env <env>} command.
 
 \subsection{Git and AWS CodeCommit}

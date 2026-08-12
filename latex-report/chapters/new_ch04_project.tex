@@ -29,7 +29,7 @@ financial automation workloads relied entirely on an \emph{ad~hoc} model:
 business teams in Dublin, London, and Halifax would notice anomalies in
 their fund processing outputs and raise tickets. There were no CloudWatch
 alarms on Meridian's Apache Kafka (MSK) consumer lag, no dashboards
-aggregating ECS task health across the five platforms, no
+aggregating ECS task health across the six platforms, no
 SLO tracking for message-processing throughput, and no mechanism for the
 SRE team to receive proactive notification of degrading conditions. The
 team was, in the language of the four golden signals introduced later by
@@ -42,7 +42,7 @@ The IA team had grown rapidly, and engineering effort had been focused on
 building automation capabilities rather than instrumenting them. By early
 2026, however, the breadth of production workloads --- 119 Lambda
 functions, 22 ECS clusters, critical Kafka-backed event pipelines across
-five platforms --- had reached a scale at which reactive
+six platforms --- had reached a scale at which reactive
 monitoring was no longer adequate. The April~17 incident made that
 inadequacy undeniable.
 
@@ -197,7 +197,7 @@ the period from May~6 to June~18, 2026.
 
 Parallel to the Grafana SRE dashboard, my second work stream developed
 \textbf{per-platform CloudWatch monitoring dashboards} for the Lambda,
-ECS, and EC2 resources across all five IA platforms.
+ECS, and EC2 resources across all six IA platforms.
 This stream sat under parent JIRA IISS-482 (IA Resources/Infrastructure
 Monitoring) and comprised several interconnected sub-stories:
 
@@ -249,9 +249,9 @@ discoverers were implemented, with the full registry covering:
 
 \begin{itemize}
     \item \textbf{119~Lambda functions} across 5~platforms
-          (\texttt{rpacfs1}, \texttt{ia-bpo}, \texttt{automationhub},
-          \texttt{meridian}, \texttt{citcoworks})
-    \item \textbf{22~ECS clusters} across 5~platforms (with a
+          (\texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks},
+          \texttt{ia-bpo}, \texttt{meridian}, \texttt{rpacfs1})
+    \item \textbf{22~ECS clusters} across 6~platforms (with a
           critical discovery challenge: \texttt{CITCOWORKS} and
           \texttt{MERIDIAN} share the \texttt{``Shared Cloud Artifacts''}
           BudgetCode tag, requiring \texttt{AppName} as a mandatory
@@ -955,7 +955,7 @@ cross-platform operational oversight.
 % ────────────────────────────────────────────────────────────
 
 Before meaningful SRE or automation work could begin, I required
-deep domain context across all five IA platform environments. The week of
+deep domain context across all six IA platform environments. The week of
 \textbf{April~13--18, 2026} was structured as a full-week knowledge
 transfer (KT) programme led jointly by Horace and Kishor, and supplemented
 by a multi-day CitcoWorks/Meridian architecture deep-dive delivered
