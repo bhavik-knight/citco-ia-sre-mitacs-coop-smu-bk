@@ -29,7 +29,7 @@ financial automation workloads relied entirely on an \emph{ad~hoc} model:
 business teams in Dublin, London, and Halifax would notice anomalies in
 their fund processing outputs and raise tickets. There were no CloudWatch
 alarms on Meridian's Apache Kafka (MSK) consumer lag, no dashboards
-aggregating ECS task health across the five budget code environments, no
+aggregating ECS task health across the five platforms, no
 SLO tracking for message-processing throughput, and no mechanism for the
 SRE team to receive proactive notification of degrading conditions. The
 team was, in the language of the four golden signals introduced later by
@@ -42,7 +42,7 @@ The IA team had grown rapidly, and engineering effort had been focused on
 building automation capabilities rather than instrumenting them. By early
 2026, however, the breadth of production workloads --- 119 Lambda
 functions, 22 ECS clusters, critical Kafka-backed event pipelines across
-five budget code environments --- had reached a scale at which reactive
+five platforms --- had reached a scale at which reactive
 monitoring was no longer adequate. The April~17 incident made that
 inadequacy undeniable.
 
@@ -193,11 +193,11 @@ resolving breaking changes in visualization configuration.
 The total effort I logged against IISS-487 reached \textbf{140~hours} over
 the period from May~6 to June~18, 2026.
 
-\subsection{Work Stream 2: IA Monitoring Platform (IISS-482 and Sub-Stories)}
+\subsection{Work Stream 2: IA Infrastructure Monitoring (IISS-482 and Sub-Stories)}
 
 Parallel to the Grafana SRE dashboard, my second work stream developed
 \textbf{per-platform CloudWatch monitoring dashboards} for the Lambda,
-ECS, and EC2 resources across all five IA budget code environments.
+ECS, and EC2 resources across all five IA platforms.
 This stream sat under parent JIRA IISS-482 (IA Resources/Infrastructure
 Monitoring) and comprised several interconnected sub-stories:
 
@@ -215,7 +215,7 @@ Monitoring) and comprised several interconnected sub-stories:
           \texttt{logs:PutSubscriptionFilter}).
 
     \item \textbf{IISS-483 / IISS-484}: A gap analysis of the EC2
-          inventory (83~instances across 5~budget codes, with a
+          inventory (83~instances across 5~platforms, with a
           \texttt{BudgetCode=``CFS/RPA''} tag mismatch on the
           \texttt{rpacfs1} environment requiring an \texttt{AppName}
           fallback pattern) and a Container Insights cost analysis
@@ -238,20 +238,20 @@ programmatic discovery of all IA platform cloud resources. The inventory
 API --- implemented in the \texttt{ia-sre-resources-inventory} repository
 --- provides endpoints for querying Lambda functions, ECS clusters, EC2
 instances, Secrets Manager secrets, and S3 buckets across all five
-budget code environments.
+platforms.
 
 The core architectural pattern is a \textbf{discoverer registry}: a
 registry of concrete discoverer classes, each responsible for a specific
-resource type and budget code combination. This pattern enables new
+resource type and platform combination. This pattern enables new
 budget codes and resource types to be added without modifying the core
 API layer. At the time of writing, 3~concrete discoverers and 7~stub
 discoverers were implemented, with the full registry covering:
 
 \begin{itemize}
-    \item \textbf{119~Lambda functions} across 5~budget codes
+    \item \textbf{119~Lambda functions} across 5~platforms
           (\texttt{rpacfs1}, \texttt{ia-bpo}, \texttt{automationhub},
           \texttt{meridian}, \texttt{citcoworks})
-    \item \textbf{22~ECS clusters} across 5~budget codes (with a
+    \item \textbf{22~ECS clusters} across 5~platforms (with a
           critical discovery challenge: \texttt{CITCOWORKS} and
           \texttt{MERIDIAN} share the \texttt{``Shared Cloud Artifacts''}
           BudgetCode tag, requiring \texttt{AppName} as a mandatory
@@ -266,7 +266,7 @@ codebase includes \textbf{562~automated tests} achieving
 \textbf{99\%~code coverage}. The test suite covers unit tests for each
 discoverer, integration tests for the REST endpoints, property-based
 tests for the tag-matching logic, and edge case tests for malformed
-resource tags and empty budget code environments.
+resource tags and empty platforms.
 
 % ────────────────────────────────────────────────────────────
 \section{JIRA Hierarchy and Key Deliverables}
@@ -369,8 +369,7 @@ classes. This design enables the team to onboard new budget codes or
 resource types by implementing a single discoverer class and registering
 it --- no changes to routing, serialization, or test infrastructure.
 
-The tag-based discovery challenge was non-trivial. Two budget code
-environments --- \texttt{CITCOWORKS} and \texttt{MERIDIAN} --- share the
+The tag-based discovery challenge was non-trivial. Two platforms --- \texttt{CITCOWORKS} and \texttt{MERIDIAN} --- share the
 AWS tag value \texttt{``Shared Cloud Artifacts''} for the
 \texttt{BudgetCode} dimension. A naive \texttt{BudgetCode} lookup would
 therefore conflate resources from two distinct operational environments.
@@ -431,7 +430,7 @@ evidence gathered against each.
           the core failure mode of the April~17 incident.
 
     \item \textbf{Dashboard coverage}: 14~dashboard rows and
-          110+~panels covering 7~AWS service categories
+          110+~panels covering 7~AWS AWS service categories
           (\texttt{Lambda}, \texttt{ECS}, \texttt{MSK},
           \texttt{SQS}, \texttt{DocumentDB}/\texttt{Neptune},
           \texttt{OpenSearch}, \texttt{EC2}).
@@ -458,8 +457,8 @@ evidence gathered against each.
 
 \begin{itemize}
     \item \textbf{Resource coverage}: \textbf{119~Lambda functions}
-          discovered across 5~budget codes; \textbf{22~ECS clusters}
-          across 5~budget codes; \textbf{83~EC2 instances} scanned
+          discovered across 5~platforms; \textbf{22~ECS clusters}
+          across 5~platforms; \textbf{83~EC2 instances} scanned
           with tag-based discovery.
 
     \item \textbf{Test coverage}: \textbf{562~automated tests}
@@ -475,7 +474,7 @@ evidence gathered against each.
           preventing inventory contamination between the two environments.
 
     \item \textbf{Extensibility}: The discoverer registry pattern allows
-          new resource types and budget codes to be onboarded by
+          new platforms or resource types to be onboarded by
           implementing a single class implementing the
           \texttt{BaseDiscoverer} interface, with zero changes required
           to the API routing or serialization layers.
@@ -770,7 +769,7 @@ would have fired within minutes of the April~17 backlog beginning to build
 
 Meridian is one component of a broader \textbf{Intelligent Automation (IA)
 platform} operated by the IA-SRE team. The platform is organized into five
-\emph{budget code environments}, each hosting a distinct class of
+\emph{platforms}, each hosting a distinct class of
 automation workload. Understanding this structure was essential for me to
 design a resource inventory system that could enumerate all monitored
 assets without manual cataloguing.
@@ -942,7 +941,7 @@ IISS-876  & VPL Pricing GTL incorrect booking & Done \\
 The Grafana AMG dashboard (IISS-487) is the primary deliverable and
 subsumes much of the monitoring coverage originally scoped under
 IISS-482--486. However, the CloudWatch platform work was not made redundant:
-it established the architectural foundation (tag strategy, budget code
+it established the architectural foundation (tag strategy, platform
 inventory, Container Insights cost analysis, EKS scope) that IISS-487
 built upon, and it produced the \texttt{ia-resources-monitoring} repository
 with its own production-ready CloudWatch dashboard suite and registry API.
@@ -1077,7 +1076,7 @@ IISS-487 dashboard build:
           addition to the existing IA-BPO and RPACFS1 tags).
     \item Improve filter logic to support multi-tag drill-down.
     \item Create a Confluence inventory page (tracked as \textbf{IISS-461})
-          listing all Lambda functions by budget code, tags, and purpose ---
+          listing all Lambda functions by platform, tags, and purpose ---
           providing the human-readable complement to the automated inventory
           API.
 \end{itemize}

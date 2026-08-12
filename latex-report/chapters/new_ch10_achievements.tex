@@ -44,7 +44,7 @@ Hours logged (JIRA) & 140 \\
 \end{table}
 
 The original acceptance criteria for IISS-487 required a single Grafana workspace
-covering all five budget code environments (\texttt{rpacfs1}, \texttt{ia-bpo},
+covering all five platforms (\texttt{rpacfs1}, \texttt{ia-bpo},
 \texttt{automationhub}, \texttt{meridian}, \texttt{citcoworks}) with filter
 variables enabling per-environment drill-down, at least one alarm per monitored
 platform, and an IaC-provisioned alarm stack redeployable without manual edits.
@@ -57,7 +57,7 @@ covered on the next pipeline run.
 \subsection{IISS-482/455/469: CloudWatch Monitoring Platform}
 
 The earlier CloudWatch dashboard work I completed inventoried and visualized the full IA
-resource fleet before the Grafana migration. Key coverage outcomes:
+AWS service fleet before the Grafana migration. Key coverage outcomes:
 
 \begin{itemize}
     \item \textbf{119 Lambda functions} inventoried across five budget code
@@ -106,7 +106,7 @@ Property-based tests (Hypothesis) & Included in 562 total \\
 
 The Discoverer Registry pattern --- in which a \texttt{(resource\_type, budget\_code)}
 tuple maps to a concrete \texttt{BaseDiscoverer} subclass --- proved straightforward
-to extend: adding a new budget code or resource type required implementing one class
+to extend: adding a new platform or resource type required implementing one class
 and registering one entry, with zero changes to routing, serialization, or test
 infrastructure. The 99\% code coverage figure was achieved through a layered test
 strategy: unit tests for each discoverer with mocked boto3 clients; integration tests
@@ -168,8 +168,7 @@ lagged the deployment by days or weeks.
 
 The combination of the Grafana dashboard and the inventory API delivers two
 distinct efficiency improvements. First, the Grafana workspace provides a
-continuously refreshed view of resource health across all five budget code
-environments, eliminating the need to navigate five separate AWS console tabs
+continuously refreshed view of resource health across all five platforms, eliminating the need to navigate five separate AWS console tabs
 to assess the current state of the IA platform. Second, the inventory API
 provides a machine-readable endpoint that downstream tooling --- including the
 Grafana resource inventory panel on Row~13 of the dashboard --- can query
