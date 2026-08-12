@@ -52,7 +52,7 @@ AMG-version-specific syntax that would break on the next major upgrade.
 
 The CloudFormation IaC provisioner I built stored its YAML alarm templates as a
 single JSON-encoded secret in AWS Secrets Manager. As the monitoring scope
-expanded to cover all seven service categories, the generated YAML grew to
+expanded to cover all seven AWS service categories, the generated YAML grew to
 \textbf{14,720 lines at version v728}, exceeding the hard 64\,KB limit on
 Secrets Manager secret values. The Lambda function began failing with
 \texttt{SecretSizeExceeded} on the \texttt{PutSecretValue} call. The
