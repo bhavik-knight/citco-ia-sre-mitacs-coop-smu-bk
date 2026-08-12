@@ -40,7 +40,7 @@ business impact.
 This posture was not unusual for the stage of the platform's maturity.
 The IA team had grown rapidly, and engineering effort had been focused on
 building automation capabilities rather than instrumenting them. By early
-2026, however, the breadth of production workloads --- 119 Lambda
+2026, however, the breadth of production workloads --- Lambda
 functions, 22 ECS clusters, critical Kafka-backed event pipelines across
 six platforms --- had reached a scale at which reactive
 monitoring was no longer adequate. The April~17 incident made that
@@ -248,7 +248,7 @@ API layer. At the time of writing, 3~concrete discoverers and 7~stub
 discoverers were implemented, with the full registry covering:
 
 \begin{itemize}
-    \item \textbf{119~Lambda functions} across 5~platforms
+    \item Lambda functions across all six platforms
           (\texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks},
           \texttt{ia-bpo}, \texttt{meridian}, \texttt{rpacfs1})
     \item \textbf{22~ECS clusters} across 6~platforms (with a
@@ -456,7 +456,7 @@ evidence gathered against each.
 \subsection{IA Resources Inventory API (IISS-507)}
 
 \begin{itemize}
-    \item \textbf{Resource coverage}: \textbf{119~Lambda functions}
+    \item \textbf{Resource coverage}: Lambda functions
           discovered across 5~platforms; \textbf{22~ECS clusters}
           across 5~platforms; \textbf{83~EC2 instances} scanned
           with tag-based discovery.
@@ -511,7 +511,7 @@ MSK consumer lag detection time & 2--3~min (manual) & \textless30~sec (alarm) \\
 CloudWatch alarms on Meridian & 0 & 38 \\
 Dashboard panels (centralized) & 0 & 110+ \\
 Container Insights clusters (Meridian) & 1~of~6 & 5~of~6 \\
-Lambda functions inventoried & Manual/partial & 119 (automated) \\
+Lambda functions inventoried & Manual/partial & Automated (all platforms) \\
 ECS clusters inventoried & Manual/partial & 22 (automated) \\
 EC2 instances scanned & Manual/partial & 83 (tag-based) \\
 Inventory API test coverage & N/A & 562 tests, 99\% \\
