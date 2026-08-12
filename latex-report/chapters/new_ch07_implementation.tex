@@ -99,7 +99,7 @@ drive the later Metric Insights SQL migration:
     \item \textbf{No cross-environment aggregation}: A single
           \texttt{SEARCH()} expression could not span multiple tag
           dimensions simultaneously, making it difficult to aggregate
-          across the five platforms (\texttt{rpacfs1},
+          across the six platforms (\texttt{rpacfs1},
           \texttt{ia-bpo}, \texttt{automationhub}, \texttt{meridian},
           \texttt{citcoworks}) without duplicating panels.
 \end{itemize}
@@ -121,7 +121,7 @@ CloudWatch metric subscription filters. My analysis quantified the
 infrastructure cost of this design: routing log events from all IA Lambda
 functions into a centralized processing layer would require \textbf{106
 metric subscription filters}---one per function per metric
-dimension---across the five platforms. While technically
+dimension---across the six platforms. While technically
 feasible from a CloudWatch service quota perspective, this approach was
 ultimately blocked by an IAM permission boundary constraint:
 the \texttt{logs:PutSubscriptionFilter} action was not granted within the
@@ -144,7 +144,7 @@ under IISS-483 and the alarm design in IISS-487.
 \subsubsection{EC2 Inventory and Tag Mismatch Discovery (IISS-483)}
 
 My gap analysis of the EC2 inventory scanned \textbf{83~instances} across
-the five platforms. This scan revealed a critical tagging
+the six platforms. This scan revealed a critical tagging
 inconsistency: the \texttt{rpacfs1} environment's EC2 instances were
 tagged with \texttt{BudgetCode=``CFS/RPA''} rather than the expected
 \texttt{``rpacfs1''} value, making them invisible to tag-based
@@ -908,8 +908,8 @@ reviews built a working mental model of the IA team's operations before I wrote 
 line of code.
 
 Architecture documentation on Confluence gave a structural picture of the five
-platforms (\texttt{rpacfs1}, \texttt{ia-bpo}, \texttt{automationhub},
-\texttt{meridian}, \texttt{citcoworks}) and the Lambda, ECS, and EC2 workloads they
+platforms (\texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks},
+\texttt{ia-bpo}, \texttt{meridian}, \texttt{rpacfs1}) and the Lambda, ECS, and EC2 AWS services they
 contained. The recurring theme in these documents was a visibility gap: teams learned
 about production failures from business users rather than from monitoring tools. That
 pattern would become the guiding problem statement for my entire internship.
@@ -1001,7 +1001,7 @@ my Grafana architecture:
           log-aggregation design --- routing all Lambda function log events into
           a shared subscriber --- would require \textbf{106 metric subscription
           filters} to cover all function--metric-dimension combinations across the
-          five platforms. This was blocked by an IAM permission boundary:
+          six platforms. This was blocked by an IAM permission boundary:
           \texttt{logs:PutSubscriptionFilter} was not granted within the IA team's
           scoped permission set.
 \end{itemize}
@@ -1016,7 +1016,7 @@ on detection latency, cost, and permission requirements. This analysis fed
 directly into my alarm design under IISS-487.
 
 By the end of Phase~1, the full Lambda inventory stood at \textbf{119 functions}
-across all five platforms, documented in Confluence. The \texttt{SEARCH()}
+across all six platforms, documented in Confluence. The \texttt{SEARCH()}
 visibility gap and the IAM filter constraint had established a clear design
 directive: my next generation monitoring platform would need to use CloudWatch
 Metric Insights SQL rather than metric subscription filters.
@@ -1259,7 +1259,7 @@ validation, and \texttt{serverless-wsgi} for Lambda deployment.
 
 \subsubsection{Lambda Discoverers}
 
-I implemented Lambda discoverers for all five platforms, confirming the
+I implemented Lambda discoverers for all six platforms, confirming the
 119-function inventory documented in Phase~1. The \texttt{rpacfs1} discoverer
 used the \texttt{AppName} fallback pattern: a primary filter on
 \texttt{BudgetCode="rpacfs1"} returned zero results, triggering the fallback
@@ -1268,7 +1268,7 @@ fallback became the standard for all \texttt{rpacfs1} resource types.
 
 \subsubsection{ECS Discoverers and Tag Disambiguation}
 
-I implemented ECS discoverers for all 22 clusters across five platforms.
+I implemented ECS discoverers for all 22 clusters across six platforms.
 The \texttt{CITCOWORKS} and \texttt{MERIDIAN} environments presented the most
 complex discovery challenge: both share the AWS tag value
 \texttt{"Shared Cloud Artifacts"} for the \texttt{BudgetCode} dimension, a

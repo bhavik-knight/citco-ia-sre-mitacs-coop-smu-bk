@@ -44,7 +44,7 @@ Hours logged (JIRA) & 140 \\
 \end{table}
 
 The original acceptance criteria for IISS-487 required a single Grafana workspace
-covering all five platforms (\texttt{rpacfs1}, \texttt{ia-bpo},
+covering all six platforms (\texttt{rpacfs1}, \texttt{ia-bpo},
 \texttt{automationhub}, \texttt{meridian}, \texttt{citcoworks}) with filter
 variables enabling per-environment drill-down, at least one alarm per monitored
 platform, and an IaC-provisioned alarm stack redeployable without manual edits.
@@ -168,7 +168,7 @@ lagged the deployment by days or weeks.
 
 The combination of the Grafana dashboard and the inventory API delivers two
 distinct efficiency improvements. First, the Grafana workspace provides a
-continuously refreshed view of resource health across all five platforms, eliminating the need to navigate five separate AWS console tabs
+continuously refreshed view of resource health across all six platforms, eliminating the need to navigate six separate AWS console tabs
 to assess the current state of the IA platform. Second, the inventory API
 provides a machine-readable endpoint that downstream tooling --- including the
 Grafana resource inventory panel on Row~13 of the dashboard --- can query

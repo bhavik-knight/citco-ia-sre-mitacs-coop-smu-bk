@@ -77,9 +77,9 @@ dashboard I subsequently built as a Proof-of-Concept (PoC).
 Both incidents share the same structural failure: the IA-SRE team had
 no centralized observability platform. Across Lambda functions,
 ECS clusters, EC2 instances, and critical Kafka-backed pipelines
-spanning six platforms --- \texttt{rpacfs1}, \texttt{ia-bpo},
-\texttt{automationhub}, \texttt{meridian}, \texttt{citcoworks}, and
-\texttt{bpm} (internal budget-code identifiers used for cost allocation
+spanning six platforms --- \texttt{automationhub}, \texttt{bpm},
+\texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian}, and
+\texttt{rpacfs1} (internal budget-code identifiers used for cost allocation
 and AWS service tagging across the \textbf{IA-IT-SRE Infrastructure}) --- the primary
 incident detection mechanism was \textbf{business-team escalation}.
 
@@ -119,8 +119,8 @@ to Flask to align with the team's existing Lambda toolchain using the
 API (\texttt{ia-it-sre-infrastructure-inventory}, IISS-507). The inventory
 covers Lambda functions, ECS clusters (with trigger type metadata), EC2
 instances, SQS queues, and S3 buckets across all six platforms:
-\texttt{rpacfs1}, \texttt{ia-bpo}, \texttt{automationhub}, \texttt{meridian},
-\texttt{citcoworks}, and \texttt{bpm}. A critical discovery during this phase
+\texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo},
+\texttt{meridian}, and \texttt{rpacfs1}. A critical discovery during this phase
 was that the \texttt{meridian} and \texttt{citcoworks} platforms share the
 same internal \texttt{BudgetCode} tag value (\texttt{"Shared Cloud
 Artifacts"}), requiring \texttt{AppName} as a mandatory secondary
@@ -134,8 +134,8 @@ across all platforms and all AWS services simultaneously?} I built a
 14-row Amazon Managed Grafana (AMG) workspace with collapsible panels for
 each AWS service and dynamic CloudWatch alarms, starting with Meridian
 (the platform with the most documented monitoring gaps) and extending to
-\texttt{rpacfs1}, \texttt{ia-bpo}, \texttt{automationhub}, \texttt{bpm}, and
-\texttt{citcoworks} via platform template variables. Each row covers one
+\texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, and
+\texttt{rpacfs1} via platform template variables. Each row covers one
 AWS service across the IA-IT-SRE Infrastructure: Lambda, SQS, MSK/Kafka,
 EC2, ECR, EKS, ECS Services, ECS Target Groups, RDS Aurora, DocumentDB,
 Redis/Valkey, Neptune DB, and OpenSearch. The IaC provisioner --- a
