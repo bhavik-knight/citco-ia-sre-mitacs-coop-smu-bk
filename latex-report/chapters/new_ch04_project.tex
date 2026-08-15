@@ -175,26 +175,48 @@ property-based tests. Key deliverable: IISS-507.
 \subsection{Work Stream 4: RPA Production Support}
 
 In parallel with the three engineering work streams, I participated in
-dedicated RPA production support rotation weeks (11~AM -- 7~PM~EST, once
-every four weeks). This was an ongoing, structured responsibility rather
-than an ad-hoc activity: during a support week, I became the primary
-point of contact for all RPA-related incidents and service desk tickets
-raised by business and platform teams across Citco.
+dedicated RPA production support rotation weeks as part of the team's
+\textbf{Follow the Sun} support model. The North America slot covers
+11~AM -- 7~PM~EST, and I held this slot once every four weeks, serving
+as the primary point of contact for all RPA and automation-related
+incidents during the shift.
 
-The responsibilities encompassed the full incident lifecycle. I monitored
-running Blue Prism and UiPath bot queues at the start of each shift ---
-particularly the VPL queue which opens at 5~PM~EST daily --- checked for
-stuck, failed, or exception-state processes, and triaged incoming service
-desk tickets. For each incident I performed root cause analysis (RCA):
-investigating CloudWatch logs, UiPath Orchestrator heartbeat status, Blue
-Prism control room logs, and application-level error messages to identify
-the underlying failure. Where a fix was within scope --- such as updating
-a Corporate Actions FileMask for a new client onboarding, retriggering a
-stuck MESO pipeline, or correcting a configuration file --- I resolved it
-directly during the shift. Where the root cause required a code change or
-architectural fix beyond the support scope, I prepared a documented RCA,
-proposed a resolution, and raised or assigned a JIRA ticket to the
-appropriate development team for follow-up.
+The support model is structured across three tiers. \textbf{Level~1} is
+handled by the AI/RPA Support Agent (24/7). \textbf{Level~2} is owned by
+the Innovation IT Support team, reachable via the
+\texttt{innovation\_it\_support@citco.com} email channel, operating under
+a Follow the Sun model with a 1-hour acknowledgement SLA and 8-hour
+resolution target. \textbf{Level~3} is the SRE team
+(\texttt{ia\_it\_sre@citco.com}), engaged for complex production issues,
+root cause analysis, and service improvement, with a 1-day response SLA.
+As an SRE intern I operated across both L2 and L3 responsibilities during
+support rotations.
+
+At the start of each shift I reviewed all open items across the relevant
+channels: the \textbf{SD (Service Desk) Portal} for incoming tickets, the
+\textbf{innovation\_it\_support@citco.com} email inbox for L2 escalations,
+the \textbf{IA\_INCIDENTS@citco.com} distribution list for incident
+notifications, and \textbf{Microsoft Teams} messages and channel
+notifications from business teams and the outgoing shift. I also reviewed
+the Confluence shift handover log left by the Asia shift to pick up any
+carried-over items or approaching SLA breaches. Ticket ownership rules
+required that whoever acknowledged a ticket owned it to resolution ---
+handover notes had to include actions taken, pending items, blockers, and
+clear next steps for the incoming shift.
+
+Incident work followed the full lifecycle. I monitored running Blue Prism
+and UiPath bot queues (particularly the VPL queue opening at 5~PM~EST
+daily), triaged service desk tickets, and for each issue performed root
+cause analysis: investigating CloudWatch logs, UiPath Orchestrator
+heartbeat status, Blue Prism control room logs, and application-level
+error messages. Where a fix was within support scope --- updating a
+Corporate Actions FileMask for client onboarding, retriggering a stuck
+MESO pipeline, correcting a configuration file --- I resolved it directly.
+Where the root cause required a code change beyond support scope, I
+prepared a documented RCA, proposed a resolution approach, and raised or
+assigned a JIRA to the appropriate development team, copying
+\texttt{IA\_INCIDENTS@citco.com} and \texttt{ia\_it\_sre@citco.com} per
+the incident escalation procedure.
 
 Notable incidents handled during support rotations included the CAIS
 Deadline credential failure (IISS-706), where I identified the Secrets
@@ -202,11 +224,11 @@ Manager rotation gap and delivered a fail-fast hotfix; the MESO month-end
 stuck tasks (IISS-741, Critical) requiring manual pipeline retrigger; and
 the VPL Pricing GTL incorrect booking (IISS-876), where I performed the
 RCA and coordinated the fix with the business team. The operational
-experience gained across these rotations directly informed the alarm
-design and threshold selection in Work Stream~2: each incident type
-encountered during support corresponds to a specific panel or alarm row
-in the Grafana dashboard, ensuring the observability platform reflects
-real production failure modes rather than theoretical ones.
+experience gained across these rotations directly informed alarm design and
+threshold selection in Work Stream~2 --- each incident type encountered
+during support corresponds to a specific panel or alarm row in the Grafana
+dashboard, ensuring the observability platform reflects real production
+failure modes rather than theoretical ones.
 
 % ────────────────────────────────────────────────────────────
 \section{Project Goals}
