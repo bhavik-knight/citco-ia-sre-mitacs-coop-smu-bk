@@ -172,20 +172,41 @@ using \texttt{boto3} for all AWS API calls and Pydantic for response validation.
 The test suite achieved 99\% code coverage across unit, integration, and
 property-based tests. Key deliverable: IISS-507.
 
-\subsection{RPA Production Support}
+\subsection{Work Stream 4: RPA Production Support}
 
-In parallel with the three engineering work streams, I participated in four
-dedicated RPA production support rotation weeks (11~AM -- 7~PM~EST, once every
-four weeks). During a support week, the primary focus shifted from development
-to ensuring the reliability of Blue Prism and UiPath automation workloads in
-production across Citco's business teams. This involved monitoring bot queues,
-triaging and resolving service desk tickets, onboarding new clients for
-Corporate Actions workflows, retriggering failed processes, and escalating or
-investigating production incidents. The operational experience gained through
-these rotations directly informed the alarm threshold selection and dashboard
-design decisions in Work Stream~2 --- each incident type encountered during
-support corresponds to a specific panel or alarm row in the production Grafana
-dashboard.
+In parallel with the three engineering work streams, I participated in
+dedicated RPA production support rotation weeks (11~AM -- 7~PM~EST, once
+every four weeks). This was an ongoing, structured responsibility rather
+than an ad-hoc activity: during a support week, I became the primary
+point of contact for all RPA-related incidents and service desk tickets
+raised by business and platform teams across Citco.
+
+The responsibilities encompassed the full incident lifecycle. I monitored
+running Blue Prism and UiPath bot queues at the start of each shift ---
+particularly the VPL queue which opens at 5~PM~EST daily --- checked for
+stuck, failed, or exception-state processes, and triaged incoming service
+desk tickets. For each incident I performed root cause analysis (RCA):
+investigating CloudWatch logs, UiPath Orchestrator heartbeat status, Blue
+Prism control room logs, and application-level error messages to identify
+the underlying failure. Where a fix was within scope --- such as updating
+a Corporate Actions FileMask for a new client onboarding, retriggering a
+stuck MESO pipeline, or correcting a configuration file --- I resolved it
+directly during the shift. Where the root cause required a code change or
+architectural fix beyond the support scope, I prepared a documented RCA,
+proposed a resolution, and raised or assigned a JIRA ticket to the
+appropriate development team for follow-up.
+
+Notable incidents handled during support rotations included the CAIS
+Deadline credential failure (IISS-706), where I identified the Secrets
+Manager rotation gap and delivered a fail-fast hotfix; the MESO month-end
+stuck tasks (IISS-741, Critical) requiring manual pipeline retrigger; and
+the VPL Pricing GTL incorrect booking (IISS-876), where I performed the
+RCA and coordinated the fix with the business team. The operational
+experience gained across these rotations directly informed the alarm
+design and threshold selection in Work Stream~2: each incident type
+encountered during support corresponds to a specific panel or alarm row
+in the Grafana dashboard, ensuring the observability platform reflects
+real production failure modes rather than theoretical ones.
 
 % ────────────────────────────────────────────────────────────
 \section{Project Goals}
