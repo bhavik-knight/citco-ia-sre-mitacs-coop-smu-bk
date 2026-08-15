@@ -1559,3 +1559,113 @@ paths) that made my monitoring design decisions credible rather than abstract.
 The cost was four weeks of development velocity; the benefit was a dashboard
 that reflects the operational realities of the IA platform rather than an
 idealised architecture.
+
+% ────────────────────────────────────────────────────────────
+\section{Development Repositories}
+\label{sec:dev_repositories}
+% ────────────────────────────────────────────────────────────
+
+The engineering work during my internship spanned \textbf{four primary
+CodeCommit repositories} and a broader set of supporting repositories.
+Understanding this multi-repo scope is important context for interpreting
+the JIRA hierarchy, because many deliverables I tracked under a
+single JIRA (e.g., IISS-487) involved work across multiple repositories, and
+some earlier JIRA work was superseded or fulfilled by later, larger
+deliverables.
+
+\subsection{Primary Repositories}
+
+\begin{itemize}
+    \item \textbf{\texttt{ia-it-sre-infrastructure-monitoring-amg}} --- my primary
+          delivery repository for the Grafana AMG observability platform (IISS-487).
+          Contains the CloudFormation IaC templates, Lambda provisioner, dashboard
+          panel YAML files (per-row, per-panel structure), deployment scripts, and
+          the full test suite (960+ tests). This repository is the central artifact
+          of my internship.
+
+    \item \textbf{\texttt{ia-resources-monitoring}} --- the earlier CloudWatch
+          dashboard platform (IISS-455, IISS-469, IISS-482--486), developed in
+          parallel to the Grafana work. Contains the Python-based CloudWatch
+          dashboard builders for Lambda, EC2, ECS, EKS, and SQS monitoring, the
+          registry API that powers tag-based resource discovery, and the S3 export
+          pipeline. The architectural patterns established in this repository ---
+          particularly the registry pattern and 3-tier fallback model --- directly
+          informed the design of the Inventory API.
+
+    \item \textbf{\texttt{ia-it-sre-infrastructure-inventory} (ia-sre-resources-inventory)} ---
+          the Flask REST API for programmatic cloud asset discovery (IISS-507, IISS-508).
+          Contains the discoverer registry, budget-code-specific discoverers, Pydantic
+          response models, and the 562-test automated suite (99\% coverage). This
+          repository provides the machine-queryable resource inventory that the
+          Grafana dashboard's Row~13 resource panel links to.
+
+    \item \textbf{\texttt{rpacfs1-cais-pricing-extract-genai-infrastructure}} --- the
+          RPACFS1 automation infrastructure repository, where the initial CloudWatch
+          dashboard and Lambda monitoring work (IISS-435, IISS-455 early commits)
+          was prototyped before migrating to the dedicated monitoring repository.
+\end{itemize}
+
+\subsection{Full Project Scope and Tracking}
+
+Table~\ref{tab:full_jira_scope} provides the complete JIRA inventory for the
+internship. A key observation is that the CloudWatch dashboard work (IISS-455,
+IISS-469, IISS-482--486) and the Grafana platform (IISS-487) are
+\emph{complementary rather than redundant}: the CloudWatch dashboards provide
+native AWS Console visibility per resource type, while Grafana AMG provides
+the unified cross-service operational view. Work done under IISS-482 through
+IISS-486 also contributed directly to IISS-487's scope --- particularly the
+Container Insights cost analysis (IISS-484), the EC2 tag strategy (IISS-483),
+and the EKS cluster scope definition (IISS-485).
+
+\begin{table}[ht]
+\centering
+\caption{Full JIRA Scope --- Internship Deliverables}
+\label{tab:full_jira_scope}
+\begin{tabular}{p{1.8cm}p{5.5cm}p{4.5cm}}
+\toprule
+\textbf{JIRA} & \textbf{Title / Scope} & \textbf{Status / Repo} \\
+\midrule
+IISS-435  & RPACFS1 CloudWatch pipeline health dashboard & Done / rpacfs1-cais \\
+IISS-455  & Lambda monitoring CloudWatch dashboard (51→119 functions) & Done / ia-resources-monitoring \\
+IISS-461  & Lambda inventory Confluence page (51 functions) & Done / Confluence \\
+IISS-469  & Improved centralized Lambda dashboard; Top-K analysis & Done / ia-resources-monitoring \\
+IISS-482  & IA Resources/Infrastructure Monitoring Platform (parent) & In Progress / ia-resources-monitoring \\
+IISS-483  & EC2 monitoring dashboard; tag mismatch discovery & In Progress / ia-resources-monitoring \\
+IISS-484  & ECS monitoring dashboard; Container Insights cost analysis & In Progress / ia-resources-monitoring \\
+IISS-485  & EKS monitoring dashboard; AUTOMATIONHUB scope & On Hold / ia-resources-monitoring \\
+IISS-486  & Export to S3 (scheduled Lambda, Excel export) & In Progress / ia-resources-monitoring \\
+IISS-487  & Amazon Managed Grafana SRE Dashboard (primary deliverable) & 140h / ia-it-sre-infrastructure-monitoring-amg \\
+IISS-488  & Auto-Healing Pipeline (SNS → Lambda remediation) & To Do / roadmap \\
+IISS-489  & Meridian SRE Observability Roadmap & To Do / roadmap \\
+IISS-504  & Extend registry API for AUTOMATIONHUB budget code & In Progress / ia-resources-monitoring \\
+IISS-505  & Extend registry API for MERIDIAN & In Progress / ia-resources-monitoring \\
+IISS-506  & MERIDIAN Monitoring Infrastructure (gap analysis) & To Do / roadmap \\
+IISS-507  & IA Resources Inventory API (Flask async REST API) & In Progress / ia-it-sre-infrastructure-inventory \\
+IISS-508  & Backend --- IA Resources (discoverer registry) & In Progress / ia-it-sre-infrastructure-inventory \\
+IISS-509  & Frontend --- IA Resources (dashboard widgets) & To Do / ia-it-sre-infrastructure-inventory \\
+IISS-510  & Extend registry API for CITCOWORKS & In Progress / ia-resources-monitoring \\
+IISS-824  & ML/LLM RPA Status Agent documentation and improvements & In Progress / ml-rpa-status-llm-agent \\
+IISS-837--844 & X-Ray distributed tracing (7 service sub-tasks) & To Do / ia\_meso\_process \\
+IISS-845--873 & Log group discovery \& observability (10 sub-tasks) & To Do / ia-it-sre-infrastructure-monitoring-amg \\
+IISS-538  & MESO high-memory autoscale issue (hotfix) & Done \\
+IISS-706  & CAIS Deadline UCM credential validation hotfix & Done / core-ia-bpo-cais-dl \\
+IISS-741  & MESO month-end stuck tasks (Critical) & Done \\
+IISS-753  & VPL IPV UI selector failure & Done \\
+IISS-876  & VPL Pricing GTL incorrect booking & Done \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Note on IISS-487 and the CloudWatch Platform JIRAs.}
+The Grafana AMG dashboard (IISS-487) is the primary deliverable and
+subsumes much of the monitoring coverage originally scoped under
+IISS-482--486. However, the CloudWatch platform work was not made redundant:
+it established the architectural foundation (tag strategy, platform
+inventory, Container Insights cost analysis, EKS scope) that IISS-487
+built upon, and it produced the \texttt{ia-resources-monitoring} repository
+with its own production-ready CloudWatch dashboard suite and registry API.
+Both platforms coexist and serve different audiences --- the native
+CloudWatch dashboards for per-service deep-dives, and Grafana AMG for
+cross-platform operational oversight.
+
+% ────────────────────────────────────────────────────────────
