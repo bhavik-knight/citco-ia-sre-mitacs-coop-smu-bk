@@ -249,7 +249,7 @@ monitoring posture exhibited the following deficiencies:
 
     \item \textbf{RPA bot monitoring limited to orchestrator UIs.}
           Blue Prism and UiPath bots were monitored exclusively through
-          their respective orchestrator platforms (BPM Orchestrator and
+          their respective orchestrator platforms (Blue Prism Orchestrator and
           UiPath Cloud). No CloudWatch integration existed, and there
           was no mechanism for the SRE team to receive proactive
           notification of bot failures or queue backlogs outside the
@@ -547,3 +547,55 @@ work:
           RPA support KT sessions as a high-value enhancement but did
           not include it in the current scope.
 \end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Limitations and Mitigations}
+\label{sec:limitations}
+% ────────────────────────────────────────────────────────────
+
+Several CloudWatch and AMG constraints shaped the final architecture and
+required deliberate design decisions to work around.
+
+\textbf{CloudWatch \texttt{SEARCH()} visibility gap.} The \texttt{SEARCH()}
+function only returns metrics for AWS services with recent activity. Lambda
+functions not invoked within the lookback window disappear from the
+dashboard entirely --- the same root cause that made the CAIS pipeline
+invisible in IISS-430. \textit{Mitigation:} I replaced all
+\texttt{SEARCH()} expressions with CloudWatch Metric Insights SQL
+(\texttt{SELECT ... GROUP BY FunctionName}), which enumerates all
+deployed AWS services in the namespace regardless of recent activity.
+
+\textbf{Metric Insights SQL cannot compute percentiles.} The
+\texttt{GROUP BY} mode of Metric Insights only supports \texttt{AVG},
+\texttt{SUM}, \texttt{MIN}, and \texttt{MAX}. P50/P99 latency statistics
+are unavailable in this mode. \textit{Mitigation:} Latency percentile
+panels use CloudWatch standard metrics mode with a
+\texttt{FunctionName:~["*"]} wildcard dimension, which restores true
+percentiles but reintroduces the visibility gap for idle AWS services ---
+an accepted tradeoff documented in the dashboard design.
+
+\textbf{CloudWatch subscription filters blocked by IAM boundary.}
+A proposed central log-aggregation design would require 106 metric
+subscription filters across the six platforms. Analysis confirmed this
+was technically feasible but blocked by the
+\texttt{logs:PutSubscriptionFilter} action not being granted within the
+team's scoped permission set. \textit{Mitigation:} I adopted CloudWatch
+Logs Insights widgets embedded in Grafana panels for log-based error
+surfacing, avoiding subscription filters entirely.
+
+\textbf{Secrets Manager 64\,KB payload limit.} The Lambda-backed
+CloudFormation provisioner stores alarm templates as a Secrets Manager
+payload. As the monitoring scope expanded to cover all AWS service
+categories, the generated YAML exceeded the hard 64\,KB limit.
+\textit{Mitigation:} I migrated all templates to an S3 bucket with
+object versioning; the provisioner fetches templates via
+\texttt{s3:GetObject} at deploy time.
+
+\textbf{Shared \texttt{BudgetCode} tag across platforms.} The
+\texttt{meridian} and \texttt{citcoworks} platforms share the internal
+tag value \texttt{"Shared Cloud Artifacts"}, making a single-stage tag
+lookup ambiguous when discovering AWS services in those platforms.
+\textit{Mitigation:} I designated \texttt{AppName} as the mandatory
+secondary discriminator for all AWS service discovery in those platforms,
+documented as a platform-wide governance constraint in the inventory API
+\texttt{README}.
