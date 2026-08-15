@@ -19,7 +19,7 @@ quantitative metrics cited where applicable.
 \subsection{IISS-487: Grafana AMG Centralized SRE Dashboard}
 
 The Grafana AMG observability platform was my primary deliverable of the
-internship, absorbing \textbf{140 hours} across May~6--June~18, 2026. At
+internship, absorbing \textbf{140 hours} across May~6--Jun~18, 2026. At
 completion, the workspace contained:
 
 \begin{table}[ht]
@@ -76,7 +76,7 @@ AWS service fleet before the Grafana migration. Key coverage outcomes:
           boundary on \texttt{logs:PutSubscriptionFilter}, redirecting effort
           to the CloudWatch native dashboard approach.
     \item \textbf{SQS three-tier fallback registry}: the SQS monitoring
-          feature (added June~12) was accompanied by \textbf{960 automated
+          feature (added Jun~12) was accompanied by \textbf{960 automated
           tests} covering registry dispatch, fallback transitions, and queue
           metadata serialization.
 \end{itemize}
@@ -84,7 +84,7 @@ AWS service fleet before the Grafana migration. Key coverage outcomes:
 \subsection{IISS-507: IA Resources Inventory API}
 
 The \texttt{ia-sre-resources-inventory} Flask REST API I built reached production-ready
-state on July~14, 2026. Summary metrics at handoff:
+state on Jul~14, 2026. Summary metrics at handoff:
 
 \begin{table}[ht]
 \centering
@@ -120,7 +120,7 @@ resources regardless of input.
 Four on-call support rotations (Weeks 8, 12, 16, and 20) were completed
 throughout my internship. Over the course of these rotations, five incidents
 reached a point of active investigation or resolution, with the most
-significant being the \textbf{CAIS Deadline hotfix (IISS-706)} on June~8, 2026:
+significant being the \textbf{CAIS Deadline hotfix (IISS-706)} on Jun~8, 2026:
 a UCM credential validation failure caused by an empty credential set returned
 during a Secrets Manager rotation cycle, which I resolved within \textbf{7 hours} from
 initial alert to confirmed fix. The support rotations reinforced the direct
@@ -139,7 +139,7 @@ measurable outcomes illustrate that shift most clearly.
 
 \subsection{Incident Detection Improvement: MSK Consumer Lag}
 
-The April~17, 2026 Meridian incident --- in which approximately 9 million
+The Apr~17, 2026 Meridian incident --- in which approximately 9 million
 Kafka messages queued across the Action Processor consumer group, producing
 a 7.5-hour processing delay affecting multiple prime-brokerage client funds ---
 was the motivating event for the entire monitoring platform. The incident was

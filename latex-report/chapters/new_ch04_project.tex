@@ -21,164 +21,58 @@ technical decisions.
 
 \subsection{Pre-Internship Monitoring Posture}
 
-Before my internship began in mid-March~2026, the IA-SRE team operated
-without a centralized observability stack. Monitoring for production
-financial automation workloads relied entirely on an \emph{ad~hoc} model:
-business teams in Dublin, London, and Halifax would notice anomalies in
-their fund processing outputs and raise tickets. There were no CloudWatch
-alarms on Meridian's Apache Kafka (MSK) consumer lag, no dashboards
-aggregating ECS task health across the six platforms, no
-SLO tracking for message-processing throughput, and no mechanism for the
-SRE team to receive proactive notification of degrading conditions. The
-team was, in the language of the four golden signals introduced later by
-mentor Kri Labos, entirely blind to \emph{saturation} and
-\emph{error rate} signals until they had already caused downstream
-business impact.
+Before my internship began in mid-Mar~2026, the IA-SRE team operated
+without a centralized observability stack. Monitoring relied entirely on
+an \emph{ad~hoc} model: business teams in Dublin, London, and Halifax
+would notice anomalies in fund processing outputs and raise tickets. There
+were no CloudWatch alarms, no dashboards aggregating health across the six
+platforms, and no mechanism for the SRE team to receive proactive
+notification of degrading conditions --- the team was blind to
+\emph{saturation} and \emph{error rate} signals until they had already
+caused downstream business impact.
 
-This posture was not unusual for the stage of the platform's maturity.
-The IA team had grown rapidly, and engineering effort had been focused on
-building automation capabilities rather than instrumenting them. By early
-2026, however, the breadth of production workloads --- Lambda
-functions, 22 ECS clusters, critical Kafka-backed event pipelines across
-six platforms --- had reached a scale at which reactive
-monitoring was no longer adequate. The April~17 incident made that
-inadequacy undeniable.
-
-\subsection{CAIS-Pricing GenAI Pipeline: 29-Day Silent Outage (Jan--Feb 2026)}
+\subsection{CAIS-Pricing Silent Outage (Jan--Feb 2026)}
 \label{sec:cais_silent_outage}
 
-The observability gap had already claimed one production casualty before the
-April~17 incident, and before my internship began. Between
-\textbf{January~20 and February~17, 2026}, the CAIS-Pricing Extract GenAI
-pipeline under the \texttt{rpacfs1} platform stopped delivering output entirely
-for \textbf{29 consecutive days} --- without a single alert firing.
+Between \textbf{Jan~20 and Feb~17, 2026}, the CAIS-Pricing Extract GenAI
+pipeline under the \texttt{rpacfs1} platform stopped delivering output for
+\textbf{29 consecutive days} without a single alert firing. The root cause
+was gradual exhaustion of the external CTI AI model API token, which
+controls the async SQS callback that triggers the downstream Lambda
+stages; without that callback, three downstream functions dropped to zero
+invocations while two upstream functions kept running, making the pipeline
+appear healthy. The outage was detected only when business users reported
+missing pricing data --- 29~days after onset. The post-mortem (IISS-430)
+identified the absence of throughput alarms, SQS queue depth monitoring,
+and end-to-end output verification as the root causes of the failure going
+unnoticed. Sub-task IISS-435 was assigned directly to me as the immediate
+remediation and became the starting point for the full monitoring programme.
 
-The pipeline comprises five Lambda functions in sequence:
-\texttt{pull-documents} and \texttt{filtering-documents} feed documents to an
-external CTI AI model via an async SQS callback; when the CTI model completes,
-the callback triggers the downstream stages: \texttt{post-processing},
-\texttt{pds-data-lookup}, and \texttt{file-transfer}. Starting around
-January~20, the CTI AI model API token gradually exhausted --- dropping from
-60,659 successful CTI submissions per day on January~22 to 147/day by
-February~7. Without a valid token response, the async SQS callback never fired,
-and the three downstream Lambda functions dropped to \textbf{zero invocations}.
-Meanwhile, the two upstream functions continued processing at millions of calls
-per day, making the pipeline appear healthy at a glance.
+\subsection{The Meridian Incident (Apr~2026)}
 
-Zero pricing data files (CSVs) were delivered across January Weeks~3--4 and
-February Weeks~1--3. The outage was detected not by any monitoring system, but
-by \textbf{business users reporting missing data in their reports} --- 29~days
-after it began. The JIRA post-mortem (IISS-430, reporter: Kishor Deotale,
-labels: \texttt{IA\_INCIDENTS}, \texttt{SRE\_TECH\_DEBT}) identified seven
-specific reasons monitoring failed to detect the failure:
-
-\begin{enumerate}
-    \item No throughput alarms on the three downstream Lambda functions ---
-          zero invocations for 29 days triggered no notification
-    \item \texttt{submit\_doc} silently returns \texttt{None} on CTI failure;
-          callers crash with a \texttt{NoneType} error but Lambda reports 0\%
-          error rate because the exception is caught and swallowed
-    \item All Lambda functions use broad \texttt{except Exception} blocks that
-          print to logs but never re-raise, emit custom metrics, or send
-          notifications --- the error rate metric stayed at 0\% throughout
-    \item No custom business metrics existed (no ``CSVs generated today'' or
-          ``documents processed today'' counter)
-    \item No SQS queue depth monitoring --- the inter-stage message backlog
-          grew silently with no alarm
-    \item Upstream Lambdas masked the problem by staying active with millions
-          of calls per day, making dashboards appear healthy
-    \item No end-to-end output verification --- no automated check that the
-          pipeline produced a file each day
-\end{enumerate}
-
-Sub-task IISS-435 --- \textit{Create Unified CloudWatch Dashboard} --- was
-assigned directly to me as the immediate remediation. It became the starting
-point for the full monitoring programme and explains why Lambda was the first
-AWS service targeted: it was the resource class at the centre of the silent
-outage, and each of the seven failure reasons above maps directly to a
-specific panel or alarm in the eventual IISS-487 Grafana dashboard.
-
-\subsection{The April 17, 2026 Meridian Production Incident}
-
-On \textbf{April~17, 2026}, the Meridian platform experienced a
-\textbf{7.5-hour processing delay} that halted daily statement processing
-for BPM Outsource Cases affecting multiple fund clients, including
-Winton, Goldman Sachs dailies, and others.
-
-The root cause was an unexpected surge of automated system events from
-Citco Recs. These events flooded the OpenSearch consumption layer,
-which processes and indexes Kafka events into the OpenSearch cluster that
-AXI queries for BPM completion status. Events were being received
-successfully in Databricks but were not being consumed into OpenSearch,
-causing the Kafka consumer lag to balloon to approximately
-\textbf{9~million messages} queued on the affected topics. Because AXI
-polls Meridian for completion events rather than receiving push
-notifications, the backed-up consumer meant AXI saw no completions and
-stalled.
-
-The incident timeline (Table~\ref{tab:apr17_timeline_ch4}) illustrates
-the observability gap in concrete terms. BPM submitted its first
-completion event at 04:39~AST. AXI polled nine times over the next two
-hours with no result. The SRE team received no alert. The issue surfaced
-only when the \textbf{Dublin business team escalated it at 08:13} ---
-three and a half hours after the first failure signal and more than
-ninety minutes after AXI had exhausted its retry budget. Resolution
-required scaling the OpenSearch consumer concurrency from 30 to 60
-partitions, upgrading the OpenSearch cluster from a
-\texttt{t3.medium.search} to \texttt{m4.large.search} with 5~nodes
-(up from 3), and upscaling both the Interactions Service API and the
-Tasks Management API memory allocations. By approximately 12:00~AST,
-normal processing had resumed --- but not before causing a half-day delay
-for fund clients with time-sensitive NAV and statement delivery windows.
-
-\begin{table}[ht]
-\centering
-\caption{April~17, 2026 Meridian Incident --- Key Timeline (AST)}
-\label{tab:apr17_timeline_ch4}
-\begin{tabular}{lp{9.5cm}}
-\toprule
-\textbf{Time (AST)} & \textbf{Event} \\
-\midrule
-04:39 & BPM submits Deliver2 completion event for \texttt{ap\_id}~706648 \\
-04:53--06:41 & AXI polls Meridian 9~times --- event not received \\
-07:16 & BPM submits event for \texttt{ap\_id}~712661 \\
-08:13 & Dublin business team escalates the issue \\
-09:30 & Root cause identified by Meridian team \\
-09:56 & Stakeholder communication sent; ETA 2--3~hours \\
-$\sim$12:00 & System restored to normal processing \\
-\bottomrule
-\end{tabular}
-\end{table}
+On \textbf{Apr~17, 2026}, a surge of automated system events from Citco
+Recs congested Meridian's OpenSearch consumption layer, causing Kafka
+consumer lag to reach approximately \textbf{9~million messages}. Because
+AXI polls Meridian for BPM completion events, the stalled consumer halted
+daily statement processing for multiple fund clients --- including Winton
+and Goldman Sachs --- for \textbf{7.5~hours}. The key timeline: BPM
+submitted its first event at 04:39~AST; AXI polled nine times with no
+result; the SRE team received no alert; the Dublin business team escalated
+at 08:13~AST, three and a half hours after the first failure signal.
+The post-mortem recorded explicitly: \textit{``No proactive
+monitoring/alerting in place on the SRE side for Meridian event volume
+anomalies.''} Action items from that post-mortem became the core
+requirements for IISS-487.
 
 \subsection{From Incident to Programme}
 
-The April~17 post-mortem identified two systemic deficiencies that
-became the engineering mandate for the internship:
-
-\begin{enumerate}
-    \item \textbf{No proactive monitoring on Kafka consumer lag.} Had a
-          CloudWatch alarm been set on the MSK \texttt{EstimatedMaxTimeLag}
-          metric, the SRE team would have received notification within
-          minutes of the backlog crossing a safe threshold --- before AXI
-          had polled even once. Post-deployment, the lag detection latency
-          improved from the observed 2--3~minute manual discovery window to
-          under \textbf{30~seconds} via automated alarm.
-
-    \item \textbf{No centralized visibility across the IA platform.} The
-          incident's blast radius --- Winton, Goldman Sachs, and other
-          fund clients --- was a direct consequence of having no single
-          pane of glass from which to observe the health of the Meridian
-          event pipeline alongside the SQS queues, ECS task counts, Lambda
-          error rates, and OpenSearch indexing throughput that together
-          determined end-to-end processing status.
-\end{enumerate}
-
-These two gaps directly motivated the three parallel work streams
-described in the following section. The incident served as both a
-technical catalyst and an organizational forcing function: Kishor
-elevated IISS-487 to \textbf{Critical} priority on May~6, 2026, and
-my internship pivoted from exploratory dashboard research to a
-full-scale observability platform build.
+Both incidents shared the same root cause: no proactive monitoring. The
+post-mortems established two specific gaps --- no Kafka consumer lag alarm,
+and no centralized visibility across the IA-IT-SRE Infrastructure --- that
+directly motivated the three work streams described in the following
+section. Kishor elevated IISS-487 to \textbf{Critical} priority on
+May~6, 2026, and my internship pivoted from exploratory dashboard research
+to a full-scale observability platform build.
 
 % ────────────────────────────────────────────────────────────
 \section{Project Overview}
@@ -246,7 +140,7 @@ The primary goals of the internship project were as follows:
           dependency on business-team escalation as the primary detection
           mechanism with proactive CloudWatch alarms that fire within seconds
           of a threshold being crossed, directly addressing the failure modes
-          exposed by IISS-430 and the April~17 Meridian incident.
+          exposed by IISS-430 and the Apr~17 Meridian incident.
 
     \item \textbf{Build a centralized observability platform for the IA-IT-SRE
           Infrastructure.} Provide a single pane of glass across all six
@@ -324,7 +218,7 @@ quantified impact.
 \subsection{Centralized Grafana SRE Dashboard}
 
 IISS-487 was elevated to \textbf{Critical} priority by Kishor Deotale on
-May~6, 2026, in the weeks following the April~17 incident. It was the
+May~6, 2026, in the weeks following the Apr~17 incident. It was the
 largest single engineering effort of my internship, consuming 140~hours
 over approximately six weeks of intensive development. Key milestones
 within IISS-487 included:
@@ -342,7 +236,7 @@ within IISS-487 included:
           Amazon CloudWatch Container Insights, providing CPU, memory,
           network I/O, and storage utilization telemetry at the task
           level. (One cluster, \texttt{meridian-compute-cluster}, had
-          already had Container Insights enabled since July~2024.)
+          already had Container Insights enabled since Jul~2024.)
 
     \item \textbf{May~13, 2026}: Grafana version upgrade from
           \textbf{10.4 to 12.4} --- a major version migration requiring
@@ -354,7 +248,7 @@ within IISS-487 included:
           exceeding the parameter store limit; refactored to S3-backed
           template staging.
 
-    \item \textbf{June~18, 2026}: Final deployment at version v728;
+    \item \textbf{Jun~18, 2026}: Final deployment at version v728;
           total 140~hours reached; release merged to main branch.
 \end{itemize}
 
@@ -363,7 +257,7 @@ within IISS-487 included:
 IISS-482 served as the parent story for the full IA monitoring platform.
 Its sub-stories (IISS-483 through IISS-486) covered EC2, ECS, EKS, and
 S3 export functionality. The SQS monitoring feature, added on
-June~12, 2026, introduced a significant architectural contribution: the
+Jun~12, 2026, introduced a significant architectural contribution: the
 \textbf{registry-based dashboard builder} with three-tier fallback,
 which became the standard pattern for subsequent monitoring integrations.
 The 960~tests written for this feature set the quality baseline for the
@@ -372,7 +266,7 @@ inventory API that followed.
 \subsection{IA Infrastructure Inventory API}
 
 IISS-507 (\texttt{ia-sre-resources-inventory}) was scaffolded on
-June~11, 2026, as a new Flask async API project separate from the
+Jun~11, 2026, as a new Flask async API project separate from the
 existing monitoring repositories. My key architectural decision was the
 \textbf{discoverer registry pattern}: rather than hardcoding resource
 discovery logic per budget code, a registry maps
@@ -396,7 +290,7 @@ Four RPA support rotations (Weeks~8, 12, 16, and~20) and several
 out-of-rotation incidents rounded out my project scope:
 
 \begin{itemize}
-    \item \textbf{IISS-706 (June~8, 7h)}: The CAIS Deadline process
+    \item \textbf{IISS-706 (Jun~8, 7h)}: The CAIS Deadline process
           failed with a \texttt{SpnegoError} caused by empty UCM
           credentials. My root cause analysis revealed that the ECS
           container loaded credentials from Secrets Manager once at
@@ -408,15 +302,15 @@ out-of-rotation incidents rounded out my project scope:
           making the failure visible immediately rather than manifesting
           as a cryptic downstream NTLM authentication error.
 
-    \item \textbf{IISS-741 (July~1, Critical)}: MESO month-end tasks
+    \item \textbf{IISS-741 (Jul~1, Critical)}: MESO month-end tasks
           became stuck for the INNOCAP and SAMLMOS funds, requiring
           manual retrigger of the \texttt{ia\_meso\_process} pipeline.
 
-    \item \textbf{IISS-753 (July~8)}: VPL IPV process encountered a UI
+    \item \textbf{IISS-753 (Jul~8)}: VPL IPV process encountered a UI
           selector failure, with a 16-hour resolution estimate involving
           selector resilience analysis across the UiPath automation.
 
-    \item \textbf{IISS-876 (July~30)}: VPL Pricing GTL incorrect booking
+    \item \textbf{IISS-876 (Jul~30)}: VPL Pricing GTL incorrect booking
           required root cause analysis and a targeted process fix.
 \end{itemize}
 
@@ -439,7 +333,7 @@ evidence gathered against each.
           escalation required) to \textbf{under 30~seconds} via
           automated CloudWatch alarm on the MSK
           \texttt{EstimatedMaxTimeLag} metric. This directly addresses
-          the core failure mode of the April~17 incident.
+          the core failure mode of the Apr~17 incident.
 
     \item \textbf{Dashboard coverage}: 14~dashboard rows and
           110+~panels covering 7~AWS AWS service categories
@@ -535,7 +429,7 @@ CFN stacks (IaC) & 0 & 4 deployed \\
 Taken together, my three work streams transformed the IA-SRE team's
 monitoring posture from a reactive, business-team-dependent model to a
 proactive observability platform with sub-minute alerting, comprehensive
-resource inventory, and infrastructure-as-code governance. The April~17
+resource inventory, and infrastructure-as-code governance. The Apr~17
 incident served as the catalyst; the deliverables described in the
 subsequent chapters constitute my engineering response.
 
@@ -582,7 +476,7 @@ during the internship:
     \item \textbf{OpenSearch Consumer.} Consumes events from Kafka topics
           and indexes them into the OpenSearch search cluster, making events
           queryable by downstream services such as AXI. This is the
-          component whose throughput was overwhelmed on April~17, 2026 ---
+          component whose throughput was overwhelmed on Apr~17, 2026 ---
           the incident that directly motivated the SRE observability work.
 
     \item \textbf{Apache Kafka / Amazon MSK.} The message backbone of the
@@ -604,9 +498,9 @@ during the internship:
           and storage utilization telemetry at the task level.
 \end{itemize}
 
-\subsection{The April 17, 2026 Incident}
+\subsection{The Apr 17, 2026 Incident}
 
-On \textbf{April~17, 2026}, event processing on the Meridian platform
+On \textbf{Apr~17, 2026}, event processing on the Meridian platform
 experienced a 7.5-hour delay that prevented AXI from receiving BPM
 completion events for daily statement processing. The root cause was a
 high volume of automated system events from Citco Recs, which overwhelmed
@@ -623,7 +517,7 @@ half hours after the first failure signal.
 
 \begin{table}[ht]
 \centering
-\caption{April 17, 2026 Meridian Incident --- Key Timeline (AST)}
+\caption{Apr 17, 2026 Meridian Incident --- Key Timeline (AST)}
 \label{tab:apr17_timeline}
 \begin{tabular}{lp{10cm}}
 \toprule
@@ -663,11 +557,11 @@ task-level resource saturation. This gap became the primary motivation for:
           project, providing a full gap analysis and remediation plan.
 \end{itemize}
 
-\subsection{The Earlier Observability Blind Spot (January--February 2026)}
+\subsection{The Earlier Observability Blind Spot (January--Feb 2026)}
 
-The April~17 incident, while the most dramatic and well-documented failure,
+The Apr~17 incident, while the most dramatic and well-documented failure,
 was not the first signal of an observability gap at Citco. In the
-\textbf{five-week period from mid-January to mid-February 2026}, a
+\textbf{five-week period from mid-Jan to mid-Feb 2026}, a
 production service was degraded or effectively down without any member of
 the development, business, infrastructure, or DevOps teams realizing it.
 The failure was eventually surfaced --- not by any automated alert or
@@ -680,14 +574,14 @@ persisted silently for so long that the precise onset was not recoverable
 from logs. The incident became the organizational memory that gave weight to
 Kishor's Dynatrace replacement initiative: it was not a hypothetical
 reliability risk but a demonstrated pattern of extended, undetected service
-degradation. The April~17 incident confirmed the pattern was still present
+degradation. The Apr~17 incident confirmed the pattern was still present
 after the IA platform had grown to its current scale.
 
 Together, these two incidents define the \textbf{observability mandate} that
 governed my internship: build a system where a service degradation that
-would have been invisible for five weeks in January~2026 would instead
+would have been invisible for five weeks in Jan~2026 would instead
 trigger an alert within 30 seconds. The MSK consumer lag alarm I implemented --- which
-would have fired within minutes of the April~17 backlog beginning to build
+would have fired within minutes of the Apr~17 backlog beginning to build
 --- is the clearest demonstration that this mandate was met.
 
 % ────────────────────────────────────────────────────────────
@@ -878,22 +772,22 @@ CloudWatch dashboards for per-service deep-dives, and Grafana AMG for
 cross-platform operational oversight.
 
 % ────────────────────────────────────────────────────────────
-\section{Domain Immersion: Training Week (April 13--18, 2026)}
+\section{Domain Immersion: Training Week (Apr 13--18, 2026)}
 \label{sec:training_week}
 % ────────────────────────────────────────────────────────────
 
 Before meaningful SRE or automation work could begin, I required
 deep domain context across all six IA platform environments. The week of
-\textbf{April~13--18, 2026} was structured as a full-week knowledge
+\textbf{Apr~13--18, 2026} was structured as a full-week knowledge
 transfer (KT) programme led jointly by Horace and Kishor, and supplemented
 by a multi-day CitcoWorks/Meridian architecture deep-dive delivered
 remotely by Bhanu Teja Murari from Hyderabad. The training week
-immediately followed the April~17 Meridian incident, giving the
+immediately followed the Apr~17 Meridian incident, giving the
 sessions urgent practical relevance.
 
 \subsection{RPA Support Processes}
 
-The first two days (April~13--14) focused on the \textbf{Blue Prism and
+The first two days (Apr~13--14) focused on the \textbf{Blue Prism and
 UiPath} operational model. Key concepts covered:
 
 \begin{itemize}
@@ -926,7 +820,7 @@ UiPath} operational model. Key concepts covered:
 
 \subsection{CitcoWorks Platform}
 
-The April~14--15 sessions (delivered by Bhanu Teja Murari) covered the
+The Apr~14--15 sessions (delivered by Bhanu Teja Murari) covered the
 \textbf{CitcoWorks} platform in detail:
 
 \begin{itemize}
@@ -955,13 +849,13 @@ The April~14--15 sessions (delivered by Bhanu Teja Murari) covered the
 
 \subsection{Meridian and Event Store}
 
-Building directly on the CitcoWorks session, the April~15--16 sessions
+Building directly on the CitcoWorks session, the Apr~15--16 sessions
 extended the architecture discussion to \textbf{Meridian event services}:
 
 \begin{itemize}
     \item \textbf{Meridian event architecture} --- the interaction service,
           notification service, and task management API in the context of
-          the April~17 incident. The session clarified how AXI polls
+          the Apr~17 incident. The session clarified how AXI polls
           Meridian for completion events and why OpenSearch consumer
           saturation blocked those queries.
 
@@ -980,7 +874,7 @@ extended the architecture discussion to \textbf{Meridian event services}:
 
 \subsection{The \AE xeo\textsuperscript{\textregistered} Treasury Platform}
 
-The April~16--17 sessions covered the
+The Apr~16--17 sessions covered the
 \textbf{\AE xeo\textsuperscript{\textregistered} Treasury platform} ---
 Citco's cloud-based wire approval and fund movement visibility system.
 \AE xeo integrates with the IA platform via COMAPI (a COM-based API
@@ -993,7 +887,7 @@ E-Binder reconciliation processes.
 
 \subsection{Dashboard Feedback and IISS-461}
 
-On \textbf{April~13} --- the first day of training week --- Kishor reviewed
+On \textbf{Apr~13} --- the first day of training week --- Kishor reviewed
 an early prototype of the Lambda monitoring dashboard. His feedback
 established the feature requirements that drove the remainder of the
 IISS-487 dashboard build:

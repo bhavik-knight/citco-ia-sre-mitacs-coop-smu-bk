@@ -18,10 +18,14 @@ develop the inventory API, and support RPA production operations.
 
 \begin{itemize}
 
-    \item \textbf{Amazon CloudWatch} --- AWS's primary observability
+      \item \textbf{Amazon CloudWatch} --- AWS's primary observability
           service, used for collecting metrics, logs, and alarms across
           all monitored AWS services. Metrics Insights SQL and Logs
           Insights were used for dashboard queries and log analysis.
+
+      \item \textbf{AWS CloudFormation / SAM} --- Infrastructure-as-Code
+          framework used to provision CloudWatch alarms, Grafana
+          workspaces, and Lambda functions via parameterized YAML templates.
 
     \item \textbf{AWS Lambda} --- Serverless compute service hosting
           the automation workloads across all six platforms, and used
@@ -36,7 +40,7 @@ develop the inventory API, and support RPA production operations.
     \item \textbf{Amazon MSK (Managed Streaming for Apache Kafka)} ---
           Managed Kafka service used as the Meridian event pipeline
           backbone. Consumer lag metrics from MSK were the primary
-          observable for the April~17 incident post-mortem monitoring gap.
+          observable for the Apr~17 incident post-mortem monitoring gap.
 
     \item \textbf{Databricks} --- Unified data analytics platform used
           within the Meridian event pipeline for ingesting and processing
@@ -80,10 +84,6 @@ develop the inventory API, and support RPA production operations.
     \item \textbf{Amazon S3} --- Object storage used for CloudFormation
           template staging, Lambda deployment packages, and automation
           output artefacts.
-
-    \item \textbf{AWS CloudFormation / SAM} --- Infrastructure-as-Code
-          framework used to provision CloudWatch alarms, Grafana
-          workspaces, and Lambda functions via parameterized YAML templates.
 
     \item \textbf{AWS Secrets Manager} --- Credential management service
           used to store and rotate API keys, database passwords, and

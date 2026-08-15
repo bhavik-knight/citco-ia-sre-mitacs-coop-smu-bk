@@ -9,7 +9,7 @@
 
 This report documents my Mitacs Business Strategy Internship (BSI)
 at Citco Technology Management (CTM), Halifax, Nova Scotia, conducted between
-\textbf{March~15 and August~31, 2026} under the project title
+\textbf{Mar~15 and Aug~31, 2026} under the project title
 \textit{``Intelligent Automation and Reliability Engineering for Financial
 Services''} (Mitacs reference IT49539).
 
@@ -29,12 +29,12 @@ My approach was incremental across three phases. I first built CloudWatch
 dashboards targeting Lambda functions --- the AWS service at the centre of the
 silent outage --- and documented each function's trigger type and runtime across
 all six platforms (IISS-435, IISS-455, IISS-461, IISS-469). I then developed a
-registry-based IA Infrastructure Monitoring inventory API that queries the AWS
+registry-based IA Infrastructure inventory API that queries the AWS
 API dynamically and returns live, per-platform lists of all deployed AWS
 services (IISS-482--486, IISS-507). Finally, I built a centralized Amazon
 Managed Grafana (AMG) workspace as a proof-of-concept, covering all 13 AWS
 service categories across all six platforms via dynamic platform template
-variables (IISS-487). Four RPA production support rotations ran in parallel
+variables (IISS-487). The RPA production support rotations ran in parallel
 throughout the internship.
 
 The key outcomes of this work are:
@@ -43,9 +43,9 @@ The key outcomes of this work are:
     \item Kafka consumer lag detection reduced from a 3.5-hour business-team
           escalation window to \textbf{under 30 seconds} via a CloudWatch MSK
           \texttt{EstimatedMaxTimeLag} alarm, directly addressing the
-          April~17 Meridian incident failure mode
+          Apr~17 Meridian incident failure mode
     \item Dynamic CloudWatch alarms deployed across all monitored AWS services
-          on all six platforms, where none existed before
+          on all six platforms, where none or limited existed before
     \item Grafana AMG workspace with \textbf{14 rows} covering every AWS
           service category in the IA-IT-SRE Infrastructure
     \item AWS service inventory across all six platforms, with
