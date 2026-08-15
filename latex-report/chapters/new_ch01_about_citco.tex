@@ -35,23 +35,142 @@ CTM is responsible for the design, development, deployment, and reliability of C
 
 \subsection{Team Structure \& Responsibilities}
 
-My placement is within the \textbf{Intelligent Automation \& Site Reliability Engineering (IA-SRE)} team under the supervision of Mr.\ Kishor Deotale (Manager, CTM). The immediate team structure includes:
+My placement is within the \textbf{Intelligent Automation \& Site Reliability Engineering (IA-SRE)} team under the supervision of Mr.\ Kishor Deotale (Manager, CTM). The team is co-located across Halifax (Canada) and Hyderabad (India), with stakeholders spanning Dublin and London. The internship-period team comprised the following members:
 
 \begin{itemize}
-    \item \textbf{Manager / Industry Supervisor}: Mr.\ Kishor Deotale
-    \item \textbf{Senior Team Mentors}: Ho Hoi Leung (Horace), Kristia Marie Labos (Kri)
-    \item \textbf{SMU Co-workers \& Team Members}: Sridhar Vadla, Soundarya Venkataraman
+    \item \textbf{Mr.\ Kishor Deotale} --- Manager and Industry Supervisor.
+          Kishor holds overall accountability for the IA-SRE mandate, guides
+          technical direction, and serves as the liaison between Halifax
+          engineering and Citco's global stakeholder groups. He co-leads
+          the RPA support programme and sets engineering priorities across
+          all work streams.
+
+    \item \textbf{Ho Hoi Leung (``Horace'')} --- Senior Mentor, RPA Support.
+          Horace is the primary knowledge holder for Blue Prism and UiPath
+          platform operations, responsible for escalation triage in the
+          support model and for day-to-day BOT reliability. He delivered
+          the RPA support knowledge-transfer sessions and acts as the first
+          escalation point for production incidents.
+
+    \item \textbf{Kristia Marie Labos (``Kri'')} --- Senior Mentor, SRE.
+          Kri leads the SRE practice for the team, including the four
+          golden signals framework. She guided the observability platform
+          design and provided feedback on alarm threshold selection
+          throughout the dashboard build.
+
+    \item \textbf{Bhanu Teja Murari} --- IT Developer, Innovation IT,
+          Hyderabad. Bhanu delivered the CitcoWorks and Event Store
+          knowledge-transfer sessions, providing architecture walkthroughs
+          of the Event Routing Service, Action Processor deployment model,
+          and the structured Event Store logging library used across all
+          IA automation processes.
+
+    \item \textbf{Sridhar Vadla and Soundarya Venkataraman} --- Co-interns
+          (SMU MCDA, Mitacs BSI IT49539). Both joined the Halifax team
+          concurrently, each working on complementary workstreams of the
+          IA monitoring and automation platform, enabling parallel progress
+          across the observability roadmap.
 \end{itemize}
 
 The IA-SRE team's mandate encompasses:
 \begin{itemize}
-    \item Designing and operating observability platforms (telemetry, monitoring, alerting) for high-throughput financial systems.
-    \item Developing intelligent automation solutions --- including AI-driven incident prediction, log anomaly detection, and self-healing infrastructure capabilities.
-    \item Managing Infrastructure-as-Code (IaC) pipelines, CI/CD automation, and disaster recovery validation.
-    \item Defining and maintaining Service Level Indicators (SLIs) and Service Level Objectives (SLOs) for critical financial infrastructure.
-    \item Ensuring BOT operations reliability for Robotic Process Automation (RPA) workloads in financial services.
+    \item Defining and maintaining Service Level Indicators (SLIs) and
+          Service Level Objectives (SLOs) for critical financial infrastructure,
+          translating business reliability expectations into measurable
+          engineering targets.
+    \item Designing and operating the centralized observability platform ---
+          Amazon Managed Grafana (AMG) with CloudWatch as the primary data
+          source --- that provides unified visibility across all AWS services
+          in the IA-IT-SRE Infrastructure.
+    \item Authoring parameterized CloudFormation and AWS SAM templates for
+          alarm provisioning, developing Lambda-based dynamic provisioners,
+          and maintaining the infrastructure code that deploys and manages
+          AWS services consistently across the six platforms.
+    \item Developing intelligent automation solutions including AI-driven
+          incident prediction, log anomaly detection, and self-healing
+          infrastructure capabilities.
+    \item Ensuring the reliability and recovery of Robotic Process Automation
+          workloads running on Blue Prism and UiPath Cloud/on-premises
+          platforms, including production support rotations and incident
+          response.
 \end{itemize}
 
 \subsection{My Role}
 
-As a participant in the Mitacs Business Strategy Internship (BSI) program, I contribute to the strategic objectives of the IA-SRE team across three principal domains: Site Reliability Engineering \& Operational Observability, Intelligent Automation \& Predictive Operations, and Advanced Monitoring \& Capacity Analytics. In this capacity, I undertake hands-on engineering responsibilities primarily as a Site Reliability Engineer, while also assuming complementary roles as an AWS Cloud Developer, Full-Stack Developer, DevOps Engineer, and AI/ML Engineer in support of production financial systems. The technical contributions arising from these responsibilities are presented in detail in the chapters that follow.
+As a participant in the Mitacs Business Strategy Internship (BSI) program, I was embedded
+within the \textbf{Intelligent Automation \& Site Reliability Engineering (IA-SRE)} team
+at CTM Halifax. I collaborated closely with my manager Kishor Deotale, senior mentors
+Horace and Kri, co-interns Sridhar Vadla and Soundarya Venkataraman, and stakeholders
+across Halifax, Hyderabad, and Dublin. Weekly standups, sprint reviews, and direct
+Confluence and JIRA-based collaboration formed the day-to-day working rhythm.
+
+My responsibilities spanned the following areas:
+
+\begin{itemize}
+    \item \textbf{SRE Observability Platform Development:} Designing and building the
+          centralized Amazon Managed Grafana (AMG) dashboard covering all AWS services
+          across the six IA-IT-SRE Infrastructure platforms, including CloudFormation
+          alarm provisioning and Infrastructure-as-Code delivery (IISS-487).
+
+    \item \textbf{IA Infrastructure Monitoring:} Developing per-platform CloudWatch
+          dashboards for Lambda, ECS, EC2, SQS, EKS, and related AWS services across
+          all six platforms, establishing the architectural patterns for dynamic resource
+          discovery (IISS-455, IISS-469, IISS-482--486).
+
+    \item \textbf{Inventory API Development:} Building the
+          \texttt{ia-it-sre-infrastructure-inventory} Flask REST API for programmatic
+          discovery of all deployed AWS services across the IA-IT-SRE Infrastructure,
+          with a discoverer registry pattern that provides a live, per-platform inventory
+          of all AWS services.
+
+    \item \textbf{Cloud Infrastructure Engineering:} Authoring parameterized
+          CloudFormation and AWS SAM templates, managing IAM roles for cross-account
+          Grafana access, enabling CloudWatch Container Insights on ECS clusters, and
+          navigating AWS service constraints encountered during delivery.
+
+    \item \textbf{Scrum and Meeting Facilitation:} Leading daily standup calls
+          on a rotation basis, covering progress updates, blockers, and
+          coordination across the team. Attending and contributing to a range
+          of recurring meetings including dashboard design reviews (with Kri and Horace),
+          knowledge-transfer sessions (RPA platforms, CitcoWorks, Event Store,
+          \AE xeo), security and compliance reviews with internal audit teams,
+          and ad-hoc stakeholder syncs with Kishor and the wider CTM team.
+
+    \item \textbf{JIRA Story Creation and Management:} Translating verbal
+          requirements and task descriptions communicated by Kishor during
+          meetings or standups into structured JIRA stories and tasks with clear
+          acceptance criteria, subtask decomposition, and relevant links.
+          Also raised defect tickets for issues identified through root cause
+          analysis of production incidents, assigning them to the appropriate
+          development or platform teams for resolution.
+
+    \item \textbf{RPA Production Support:} Providing operational support for
+          Blue Prism and UiPath automation processes during dedicated support
+          rotation weeks (11~AM -- 7~PM~EST shift, once every four weeks). Responsibilities
+          included monitoring running bot queues, triaging and resolving service desk
+          tickets from business and platform teams across Citco, onboarding new clients
+          for Corporate Actions workflows, retriggering failed processes (MESO, VPL,
+          FX Closeouts), and escalating to the senior team or development leads where
+          required.
+
+    \item \textbf{Incident Response and Hotfix Engineering:} Investigating and
+          resolving production incidents including the CAIS Deadline credential failure
+          (IISS-706), MESO month-end stuck tasks (IISS-741), and VPL pricing failures
+          (IISS-753, IISS-876) through root cause analysis and targeted code or
+          configuration fixes.
+
+    \item \textbf{AI-Augmented Engineering:} Leveraging the Kiro IDE, Amazon~Q, and
+          Claude Sonnet for spec-driven development, automated code scaffolding,
+          CloudFormation template generation, and test suite creation, integrating
+          AI-native tooling into the day-to-day engineering workflow.
+
+    \item \textbf{Technical Documentation:} Maintaining Confluence knowledge-base
+          pages for Lambda function inventories, runbooks, incident post-mortems, and
+          architecture decisions; contributing to JIRA story decomposition and
+          time-log tracking across all deliverables.
+\end{itemize}
+
+These responsibilities required a blend of cloud engineering expertise, operational
+discipline, and cross-functional communication skills to deliver production-grade
+monitoring infrastructure while maintaining the reliability of live financial
+automation processes.

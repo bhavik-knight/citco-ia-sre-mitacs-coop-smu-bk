@@ -74,7 +74,7 @@ team's email distribution list that receives SNS alarm notifications.
 
 \subsection{Initial Lambda Dashboard (IISS-455)}
 
-My earliest monitoring work, completed in April~2026, produced a native
+My earliest monitoring work, completed in Apr~2026, produced a native
 Amazon CloudWatch dashboard covering the \texttt{rpacfs1} and
 \texttt{ia-bpo} Lambda function fleets --- a combined inventory of
 \textbf{51~functions} at the time of first publication. The dashboard
@@ -180,7 +180,7 @@ on May~11--12, 2026.
 
 \subsubsection{SQS Registry Architecture (IISS-482 SQS Feature)}
 
-The SQS monitoring feature I added on June~12, 2026 introduced a
+The SQS monitoring feature I added on Jun~12, 2026 introduced a
 \textbf{registry-based architecture with a three-tier fallback model} for
 resilient SQS queue data retrieval. The three tiers operated as follows:
 
@@ -209,7 +209,7 @@ dispatch logic, fallback transitions, and queue metadata serialization.
 % ────────────────────────────────────────────────────────────
 
 IISS-487 was my primary deliverable, consuming
-\textbf{140~hours} over May~6--June~18, 2026. It delivered a centralized
+\textbf{140~hours} over May~6--Jun~18, 2026. It delivered a centralized
 Amazon Managed Grafana workspace with 14~dashboard rows, 110+~panels,
 38~CloudWatch alarms, and a Lambda-backed IaC provisioner --- all built
 on a four-layer architecture described below.
@@ -383,7 +383,7 @@ the IA-SRE team's email distribution list. Alarm categories include:
 
     \item \textbf{MSK alarms}: \texttt{EstimatedMaxTimeLag} exceeding
           10,000~messages on any consumer group. This alarm directly
-          addresses the April~17 incident: it would have fired within
+          addresses the Apr~17 incident: it would have fired within
           minutes of the lag beginning to build, compared to the 3.5-hour
           detection gap that occurred under the reactive model.
 
@@ -473,7 +473,7 @@ remained stable through subsequent Grafana patch releases.
 IISS-507 delivered a \textbf{Flask REST API} that I built for programmatic discovery
 of all IA platform cloud resources. I housed the project in the
 \texttt{ia-sre-resources-inventory} repository and scaffolded it on
-June~11, 2026; it reached production-ready state with 562~automated
+Jun~11, 2026; it reached production-ready state with 562~automated
 tests and 99\%~code coverage.
 
 \subsection{Technology Stack}
@@ -916,14 +916,14 @@ pattern would become the guiding problem statement for my entire internship.
 
 \subsection{Training Week (Apr 13--18)}
 
-The week of April~13 was designated as a formal knowledge-transfer week.
+The week of Apr~13 was designated as a formal knowledge-transfer week.
 I attended four focused sessions over three days:
 
 \begin{itemize}
     \item \textbf{Ho Hoi Leung (Horace) --- RPA Support.}
           Horace walked through the production support rotation model: who is
           on-call each week, how the VPL queue opens at 5~PM~EST each weekday,
-          how Blue Prism (BPM) and UiPath Cloud Orchestrator are monitored, and
+          how Blue Prism and UiPath Cloud Orchestrator are monitored, and
           the escalation ladder from Tier~1 business users through Tier~2 IA
           Operations to Tier~3 IA Development. This KT session established the
           mental framework that made the later support rotations tractable.
@@ -953,7 +953,7 @@ I attended four focused sessions over three days:
 \end{itemize}
 
 The training week also included an unplanned but instructive event. On
-April~17, the Meridian platform suffered a significant processing delay: a surge
+Apr~17, the Meridian platform suffered a significant processing delay: a surge
 of automated events from Citco Recs congested the OpenSearch consumption layer,
 causing approximately 9~million Kafka messages to queue while downstream services
 continued polling for completions that never arrived. The Winton and GS fund teams
@@ -971,7 +971,7 @@ for IISS-487 in the incident retrospective.
 
 The first concrete deliverable was a CloudWatch dashboard covering the
 \texttt{rpacfs1} and \texttt{ia-bpo} Lambda function fleets, which I completed in
-approximately two hours on April~7. I provisioned the dashboard via
+approximately two hours on Apr~7. I provisioned the dashboard via
 CloudFormation and used \texttt{SEARCH()} expressions to enumerate Lambda
 functions by \texttt{FunctionName} prefix, providing per-function panels for
 invocation counts, error rates, and duration averages.
@@ -1029,7 +1029,7 @@ Metric Insights SQL rather than metric subscription filters.
 \subsection{Elevation to Critical and Week~8 Support Shift}
 
 On \textbf{May~6}, Kishor elevated IISS-487 to Critical priority, formalising
-what had been understood informally since the April~17 incident: the IA team
+what had been understood informally since the Apr~17 incident: the IA team
 needed a centralized, real-time monitoring platform before the next Meridian
 outage occurred. The elevation came during my first support rotation week
 (Week~8), which meant the Grafana work could not begin in earnest until the
@@ -1052,7 +1052,7 @@ CloudFormation stacks in sequence:
           \texttt{ApproximateAgeOfOldestMessage} alarms per monitored queue.
     \item \textbf{\texttt{ia-sre-msk-alarms}} --- MSK consumer lag alarm on
           \texttt{EstimatedMaxTimeLag}, the metric whose absence had made the
-          April~17 incident invisible until business users flagged it.
+          Apr~17 incident invisible until business users flagged it.
 \end{enumerate}
 
 Alongside the alarms, I provisioned the Amazon Managed Grafana (AMG) workspace
@@ -1131,7 +1131,7 @@ recently inactive functions.
 
 \textbf{MSK, DocumentDB, OpenSearch Rows, May~19--22.} I built the MSK/Kafka row
 around the \texttt{EstimatedMaxTimeLag} metric per consumer group,
-directly implementing the alarm that would have detected the April~17 incident.
+directly implementing the alarm that would have detected the Apr~17 incident.
 DocumentDB and OpenSearch rows followed, with the OpenSearch JVM heap panel
 receiving particular attention given Meridian's dependency on OpenSearch for
 event querying.
@@ -1159,7 +1159,7 @@ environment, displayed on Row~12 of the dashboard.
 functional: the MSK consumer lag alarm was active, the first six dashboard rows
 were complete, and the composite alarm structure was in place. The detection
 latency for a Meridian Kafka congestion event had been reduced from the observed
-3.5-hour business-team lag of April~17 to a projected sub-30-second alarm fire
+3.5-hour business-team lag of Apr~17 to a projected sub-30-second alarm fire
 time.
 
 % ────────────────────────────────────────────────────────────
@@ -1179,7 +1179,7 @@ the \texttt{rpacfs1} tag mismatch (where \texttt{BudgetCode} carried the value
 
 Rows~9--10 added DocumentDB and OpenSearch monitoring. I gave the OpenSearch panels ---
 index rate, search latency, and JVM heap pressure --- priority attention
-because OpenSearch was the bottleneck in the April~17 incident. I wired a JVM heap
+because OpenSearch was the bottleneck in the Apr~17 incident. I wired a JVM heap
 utilisation panel above 75\% to a CloudWatch alarm to provide early
 warning before the service degraded under load.
 
@@ -1193,7 +1193,7 @@ URL from the resource ARN or dimension value already present in the panel data.
 
 \subsection{IISS-482: SQS Feature --- Jun 12}
 
-The SQS monitoring feature (IISS-482) I implemented on June~12 was a
+The SQS monitoring feature (IISS-482) I implemented on Jun~12 was a
 self-contained sub-deliverable. I added a \textbf{registry-based
 SQS monitoring pipeline} with a three-tier fallback model for resilient queue
 data retrieval:
@@ -1219,7 +1219,7 @@ was merged.
 
 \subsection{Final Deployment --- Jun 18, Version v728}
 
-The dashboard reached its production-ready state on June~18 with the deployment
+The dashboard reached its production-ready state on Jun~18 with the deployment
 of version \textbf{v728}. The final deployment session logged 19 hours across
 multiple sessions that day, covering the last round of deep-link fixes,
 DocumentDB and Redis restructuring, and the release merge to the main branch.
@@ -1240,7 +1240,7 @@ My cumulative totals at release were:
 
 \subsection{IISS-507: Scaffolding the Inventory API --- Jun 11}
 
-Work on IISS-507 began on June~11 --- one week before IISS-487 was formally
+Work on IISS-507 began on Jun~11 --- one week before IISS-487 was formally
 closed --- taking advantage of a brief quieter period during the dashboard
 polish phase. I housed the project in the \texttt{ia-sre-resources-inventory}
 repository and scaffolded it using Kiro IDE's spec-driven development workflow:
@@ -1300,7 +1300,7 @@ keeping the endpoint within the 10-second NFR target across the full Lambda flee
 
 \subsection{Test Suite Milestone --- Jul 14: 562 Tests at 99\% Coverage}
 
-By July~14, my test suite reached \textbf{562 automated tests} with
+By Jul~14, my test suite reached \textbf{562 automated tests} with
 \textbf{99\% code coverage}. The suite comprised four layers:
 
 \begin{itemize}
@@ -1340,9 +1340,9 @@ through IISS-844) for two reasons: the IAM role configuration for
 remaining internship weeks were more effectively spent on documentation and
 knowledge transfer to the permanent team.
 
-I dedicated the final weeks of August to runbook updates, Confluence documentation
+I dedicated the final weeks of Aug to runbook updates, Confluence documentation
 for the dashboard operating model, and structured knowledge transfer sessions with
-Horace and Kri. The Mitacs BSI renewal for the September~1 -- December~31, 2026
+Horace and Kri. The Mitacs BSI renewal for the Sep~1 -- Dec~31, 2026
 extension was confirmed, providing continuity for the X-Ray and log-group discovery
 work scoped in the Phase~4 JIRA backlog.
 
@@ -1356,7 +1356,7 @@ work scoped in the Phase~4 JIRA backlog.
 Four dedicated support rotation weeks (Weeks~8, 12, 16, and~20) ran in parallel
 with my primary development phases. During a support week, my primary
 responsibility shifted from development to RPA production support: monitoring
-Blue Prism (BPM) and UiPath bots, responding to service desk tickets,
+Blue Prism and UiPath bots, responding to service desk tickets,
 performing configuration changes, and escalating or resolving incidents within
 the shift window. The operational rhythm of each support day was structured
 around the following checkpoints:
@@ -1368,7 +1368,7 @@ around the following checkpoints:
     \item \textbf{Corporate Actions triage} --- three process tracks
           (Mandatory, Voluntary, and Ops Transfer) each have configuration files
           on BPShare that must be maintained for new client onboarding.
-    \item \textbf{BPM Orchestrator health checks} --- robot session status,
+    \item \textbf{Blue Prism Orchestrator health checks} --- robot session status,
           failed jobs, and any processes stuck in ``running'' state.
     \item \textbf{UiPath Cloud Orchestrator health} --- robot heartbeat status,
           stuck or failed jobs in the COE/HedgeFunds/PortfolioDataops folders.
@@ -1387,7 +1387,7 @@ and are described below.
 
 \subsubsection{IISS-706 --- CAIS Deadline Hotfix (Jun~8, 7 Hours)}
 
-At approximately 9~AM on June~8, the CAIS Deadline process failed with a
+At approximately 9~AM on Jun~8, the CAIS Deadline process failed with a
 cryptic \texttt{SMBAuthenticationError: SpnegoError} when uploading output
 to the UCM file share. The error message --- \textit{``No username or password
 was specified and the credential cache did not exist or contained no
@@ -1407,8 +1407,8 @@ credentials for every subsequent UCM upload --- until an ECS task restart
 triggered a fresh container with a fresh module import.
 
 This explained the intermittent pattern observed in the preceding days: the
-process had failed on June~3 and succeeded on June~4 (when the container had
-been restarted) and failed again on June~8 (when a new container picked up
+process had failed on Jun~3 and succeeded on Jun~4 (when the container had
+been restarted) and failed again on Jun~8 (when a new container picked up
 empty credentials during another rotation window).
 
 My hotfix implemented two layers of defence:
@@ -1453,7 +1453,7 @@ five minutes.
 
 \subsubsection{IISS-741 --- MESO Month-End Stuck Tasks (Jul~1, Critical)}
 
-On July~1, INNOCAP and SAMLMOS fund tasks were found stuck in the queue with
+On Jul~1, INNOCAP and SAMLMOS fund tasks were found stuck in the queue with
 no heartbeat from the executing Lambda. My manual log investigation confirmed that
 the tasks had stalled and were not progressing. I resolved this by manually
 retriggering the \texttt{ia\_meso\_process} pipeline for both affected funds,

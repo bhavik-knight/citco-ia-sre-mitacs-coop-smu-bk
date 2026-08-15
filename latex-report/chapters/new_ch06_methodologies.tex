@@ -61,7 +61,7 @@ technology.
           infrastructure defect requiring immediate attention.
 
     \item \textbf{Saturation} --- \emph{How full is the service?}
-          Saturation is the signal most relevant to the April~17,~2026
+          Saturation is the signal most relevant to the Apr~17,~2026
           Meridian incident. It is measured as Lambda concurrent
           execution count relative to the account concurrency limit,
           ECS task CPU and memory utilisation, MSK consumer lag (the
@@ -96,7 +96,7 @@ targets for the observability build:
     \item \textbf{MSK consumer lag SLO}: The Kafka consumer lag for
           any Meridian consumer group must remain below
           \textbf{10,000~messages} at any point in time. This threshold
-          was derived from the April~17 post-mortem: the system reached
+          was derived from the Apr~17 post-mortem: the system reached
           9~million messages in backlog before the business team
           escalated, and a threshold of 10,000 would have triggered an
           alarm within minutes of the first deviation.
@@ -203,7 +203,7 @@ what the IA platform could and could not see about itself.
 
 \subsection{Pre-Internship Monitoring Posture}
 
-At the commencement of my internship in March~2026, the IA-SRE team's
+At the commencement of my internship in Mar~2026, the IA-SRE team's
 monitoring posture exhibited the following deficiencies:
 
 \begin{itemize}
@@ -222,7 +222,7 @@ monitoring posture exhibited the following deficiencies:
 
     \item \textbf{Incomplete Container Insights coverage.} Of the six
           Meridian ECS clusters, only one
-          (\texttt{meridian-compute-cluster}, enabled since July~2024)
+          (\texttt{meridian-compute-cluster}, enabled since Jul~2024)
           had Amazon CloudWatch Container Insights activated. The
           remaining five clusters were invisible to task-level CPU and
           memory telemetry.
@@ -230,7 +230,7 @@ monitoring posture exhibited the following deficiencies:
     \item \textbf{No MSK consumer lag monitoring.} Despite Kafka
           consumer lag being the primary leading indicator of Meridian
           processing health --- as demonstrated conclusively by the
-          April~17 incident --- no metric or alarm existed for this
+          Apr~17 incident --- no metric or alarm existed for this
           signal. The \texttt{EstimatedMaxTimeLag} and
           \texttt{SumOffsetLag} metrics available natively from Amazon
           MSK were not surfaced anywhere.
@@ -249,7 +249,7 @@ monitoring posture exhibited the following deficiencies:
 
     \item \textbf{RPA bot monitoring limited to orchestrator UIs.}
           Blue Prism and UiPath bots were monitored exclusively through
-          their respective orchestrator platforms (BPM Orchestrator and
+          their respective orchestrator platforms (Blue Prism Orchestrator and
           UiPath Cloud). No CloudWatch integration existed, and there
           was no mechanism for the SRE team to receive proactive
           notification of bot failures or queue backlogs outside the
@@ -349,7 +349,7 @@ user interviews or focus groups.
 
 \subsection{Elicitation Methods}
 
-\paragraph{Knowledge-Transfer Sessions (Training Week, April 13--18, 2026).}
+\paragraph{Knowledge-Transfer Sessions (Training Week, Apr 13--18, 2026).}
 The first week of full-time engagement was structured as an intensive
 knowledge-transfer programme covering the full breadth of the IA
 platform. Sessions with Horace on the Blue Prism and UiPath
@@ -362,7 +362,7 @@ meaningful SLIs. Key requirements insight from training week: the
 and the MESO platform (high-memory autoscale issue, IISS-538) each
 had distinct resource profiles requiring separate monitoring strategies.
 
-\paragraph{Incident Post-Mortem (April 17, 2026).}
+\paragraph{Incident Post-Mortem (Apr 17, 2026).}
 The Meridian production incident yielded the single most important
 requirements insight of the entire engagement: \textbf{MSK consumer
 lag is the primary leading indicator of Meridian health}. The
@@ -517,7 +517,7 @@ for all resource discovery going forward and was documented in the
 inventory API's \texttt{README} as a platform-wide architectural note.
 
 NFR7 received an unexpected real-world validation during my
-IISS-706 hotfix on June~8, 2026. The CAIS Deadline incident revealed
+IISS-706 hotfix on Jun~8, 2026. The CAIS Deadline incident revealed
 that the ECS container's credential loading pattern (reading from
 Secrets Manager once at module import time via \texttt{constants.py})
 was fragile under secret rotation. The hotfix I delivered introduced fail-fast
@@ -547,3 +547,55 @@ work:
           RPA support KT sessions as a high-value enhancement but did
           not include it in the current scope.
 \end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Limitations and Mitigations}
+\label{sec:limitations}
+% ────────────────────────────────────────────────────────────
+
+Several CloudWatch and AMG constraints shaped the final architecture and
+required deliberate design decisions to work around.
+
+\textbf{CloudWatch \texttt{SEARCH()} visibility gap.} The \texttt{SEARCH()}
+function only returns metrics for AWS services with recent activity. Lambda
+functions not invoked within the lookback window disappear from the
+dashboard entirely --- the same root cause that made the CAIS pipeline
+invisible in IISS-430. \textit{Mitigation:} I replaced all
+\texttt{SEARCH()} expressions with CloudWatch Metric Insights SQL
+(\texttt{SELECT ... GROUP BY FunctionName}), which enumerates all
+deployed AWS services in the namespace regardless of recent activity.
+
+\textbf{Metric Insights SQL cannot compute percentiles.} The
+\texttt{GROUP BY} mode of Metric Insights only supports \texttt{AVG},
+\texttt{SUM}, \texttt{MIN}, and \texttt{MAX}. P50/P99 latency statistics
+are unavailable in this mode. \textit{Mitigation:} Latency percentile
+panels use CloudWatch standard metrics mode with a
+\texttt{FunctionName:~["*"]} wildcard dimension, which restores true
+percentiles but reintroduces the visibility gap for idle AWS services ---
+an accepted tradeoff documented in the dashboard design.
+
+\textbf{CloudWatch subscription filters blocked by IAM boundary.}
+A proposed central log-aggregation design would require 106 metric
+subscription filters across the six platforms. Analysis confirmed this
+was technically feasible but blocked by the
+\texttt{logs:PutSubscriptionFilter} action not being granted within the
+team's scoped permission set. \textit{Mitigation:} I adopted CloudWatch
+Logs Insights widgets embedded in Grafana panels for log-based error
+surfacing, avoiding subscription filters entirely.
+
+\textbf{Secrets Manager 64\,KB payload limit.} The Lambda-backed
+CloudFormation provisioner stores alarm templates as a Secrets Manager
+payload. As the monitoring scope expanded to cover all AWS service
+categories, the generated YAML exceeded the hard 64\,KB limit.
+\textit{Mitigation:} I migrated all templates to an S3 bucket with
+object versioning; the provisioner fetches templates via
+\texttt{s3:GetObject} at deploy time.
+
+\textbf{Shared \texttt{BudgetCode} tag across platforms.} The
+\texttt{meridian} and \texttt{citcoworks} platforms share the internal
+tag value \texttt{"Shared Cloud Artifacts"}, making a single-stage tag
+lookup ambiguous when discovering AWS services in those platforms.
+\textit{Mitigation:} I designated \texttt{AppName} as the mandatory
+secondary discriminator for all AWS service discovery in those platforms,
+documented as a platform-wide governance constraint in the inventory API
+\texttt{README}.
