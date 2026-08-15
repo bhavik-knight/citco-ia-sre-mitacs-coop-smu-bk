@@ -285,21 +285,21 @@ technical overview per deliverable.
 \centering
 \caption{Project Deliverables --- JIRA Scope Summary}
 \label{tab:jira_deliverables}
-\begin{tabular}{p{1.8cm}p{5.8cm}p{4.5cm}}
+\begin{tabular}{p{1.8cm}p{7.0cm}p{3.0cm}}
 \toprule
-\textbf{JIRA} & \textbf{Title} & \textbf{Scope} \\
+\textbf{JIRA} & \textbf{Title} & \textbf{Status} \\
 \midrule
-IISS-487 & Centralized Grafana SRE Dashboard & AMG workspace, 14 rows, CloudWatch alarms, IaC provisioner \\
+IISS-487 & Centralized Grafana SRE Dashboard & Done \\
 \midrule
-IISS-482--486 & IA Infrastructure Monitoring Platform & Per-platform CloudWatch dashboards, SQS registry \\
+IISS-482--486 & IA Infrastructure Monitoring Platform & Done / In Progress \\
 \midrule
-IISS-455, 461, 469 & Lambda Monitoring Dashboard & CloudWatch Lambda dashboard, Confluence inventory, architecture analysis \\
+IISS-455, 461, 469 & Lambda Monitoring Dashboard and inventory & Done \\
 \midrule
-IISS-507--510 & IA Infrastructure Inventory API & Flask REST API, discoverer registry, 99\% test coverage \\
+IISS-507--510 & IA Infrastructure Inventory API & In Progress \\
 \midrule
-IISS-706 & CAIS Deadline Credential Hotfix & Fail-fast credential validation, two-layer defence \\
+IISS-706 & CAIS Deadline Credential Hotfix & Done \\
 \midrule
-IISS-538, 741, 753, 876 & RPA Support Incidents & Hotfixes, RCA, process retriggering \\
+IISS-538, 741, 753, 876 & RPA Support Incidents & Done \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -625,7 +625,7 @@ during the internship:
           and storage utilization telemetry at the task level.
 \end{itemize}
 
-\subsection{The Apr 17, 2026 Incident}
+\subsection{The Meridian Incident}
 
 On \textbf{Apr~17, 2026}, event processing on the Meridian platform
 experienced a 7.5-hour delay that prevented AXI from receiving BPM
@@ -684,7 +684,7 @@ task-level resource saturation. This gap became the primary motivation for:
           project, providing a full gap analysis and remediation plan.
 \end{itemize}
 
-\subsection{The Earlier Observability Blind Spot (January--Feb 2026)}
+\subsection{The Earlier Observability Blind Spot (Jan--Feb 2026)}
 
 The Apr~17 incident, while the most dramatic and well-documented failure,
 was not the first signal of an observability gap at Citco. In the
@@ -791,248 +791,6 @@ The key business processes monitored by the IA-SRE team include:
 \end{itemize}
 
 % ────────────────────────────────────────────────────────────
-\section{Development Repositories and Project Scope}
-\label{sec:repos_scope}
-% ────────────────────────────────────────────────────────────
 
-The engineering work during my internship spanned \textbf{four primary
-CodeCommit repositories} and a broader set of supporting repositories.
-Understanding this multi-repo scope is important context for interpreting
-the JIRA hierarchy, because many deliverables I tracked under a
-single JIRA (e.g., IISS-487) involved work across multiple repositories, and
-some earlier JIRA work was superseded or fulfilled by later, larger
-deliverables.
-
-\subsection{Primary Repositories}
-
-\begin{itemize}
-    \item \textbf{\texttt{ia-it-sre-infrastructure-monitoring-amg}} --- my primary
-          delivery repository for the Grafana AMG observability platform (IISS-487).
-          Contains the CloudFormation IaC templates, Lambda provisioner, dashboard
-          panel YAML files (per-row, per-panel structure), deployment scripts, and
-          the full test suite (960+ tests). This repository is the central artifact
-          of my internship.
-
-    \item \textbf{\texttt{ia-resources-monitoring}} --- the earlier CloudWatch
-          dashboard platform (IISS-455, IISS-469, IISS-482--486), developed in
-          parallel to the Grafana work. Contains the Python-based CloudWatch
-          dashboard builders for Lambda, EC2, ECS, EKS, and SQS monitoring, the
-          registry API that powers tag-based resource discovery, and the S3 export
-          pipeline. The architectural patterns established in this repository ---
-          particularly the registry pattern and 3-tier fallback model --- directly
-          informed the design of the Inventory API.
-
-    \item \textbf{\texttt{ia-it-sre-infrastructure-inventory} (ia-sre-resources-inventory)} ---
-          the Flask REST API for programmatic cloud asset discovery (IISS-507, IISS-508).
-          Contains the discoverer registry, budget-code-specific discoverers, Pydantic
-          response models, and the 562-test automated suite (99\% coverage). This
-          repository provides the machine-queryable resource inventory that the
-          Grafana dashboard's Row~13 resource panel links to.
-
-    \item \textbf{\texttt{rpacfs1-cais-pricing-extract-genai-infrastructure}} --- the
-          RPACFS1 automation infrastructure repository, where the initial CloudWatch
-          dashboard and Lambda monitoring work (IISS-435, IISS-455 early commits)
-          was prototyped before migrating to the dedicated monitoring repository.
-\end{itemize}
-
-\subsection{Full Project Scope and Tracking}
-
-Table~\ref{tab:full_jira_scope} provides the complete JIRA inventory for the
-internship. A key observation is that the CloudWatch dashboard work (IISS-455,
-IISS-469, IISS-482--486) and the Grafana platform (IISS-487) are
-\emph{complementary rather than redundant}: the CloudWatch dashboards provide
-native AWS Console visibility per resource type, while Grafana AMG provides
-the unified cross-service operational view. Work done under IISS-482 through
-IISS-486 also contributed directly to IISS-487's scope --- particularly the
-Container Insights cost analysis (IISS-484), the EC2 tag strategy (IISS-483),
-and the EKS cluster scope definition (IISS-485).
-
-\begin{table}[ht]
-\centering
-\caption{Full JIRA Scope --- Internship Deliverables}
-\label{tab:full_jira_scope}
-\begin{tabular}{p{1.8cm}p{5.5cm}p{4.5cm}}
-\toprule
-\textbf{JIRA} & \textbf{Title / Scope} & \textbf{Status / Repo} \\
-\midrule
-IISS-435  & RPACFS1 CloudWatch pipeline health dashboard & Done / rpacfs1-cais \\
-IISS-455  & Lambda monitoring CloudWatch dashboard (51→119 functions) & Done / ia-resources-monitoring \\
-IISS-461  & Lambda inventory Confluence page (51 functions) & Done / Confluence \\
-IISS-469  & Improved centralized Lambda dashboard; Top-K analysis & Done / ia-resources-monitoring \\
-IISS-482  & IA Resources/Infrastructure Monitoring Platform (parent) & In Progress / ia-resources-monitoring \\
-IISS-483  & EC2 monitoring dashboard; tag mismatch discovery & In Progress / ia-resources-monitoring \\
-IISS-484  & ECS monitoring dashboard; Container Insights cost analysis & In Progress / ia-resources-monitoring \\
-IISS-485  & EKS monitoring dashboard; AUTOMATIONHUB scope & On Hold / ia-resources-monitoring \\
-IISS-486  & Export to S3 (scheduled Lambda, Excel export) & In Progress / ia-resources-monitoring \\
-IISS-487  & Amazon Managed Grafana SRE Dashboard (primary deliverable) & 140h / ia-it-sre-infrastructure-monitoring-amg \\
-IISS-488  & Auto-Healing Pipeline (SNS → Lambda remediation) & To Do / roadmap \\
-IISS-489  & Meridian SRE Observability Roadmap & To Do / roadmap \\
-IISS-504  & Extend registry API for AUTOMATIONHUB budget code & In Progress / ia-resources-monitoring \\
-IISS-505  & Extend registry API for MERIDIAN & In Progress / ia-resources-monitoring \\
-IISS-506  & MERIDIAN Monitoring Infrastructure (gap analysis) & To Do / roadmap \\
-IISS-507  & IA Resources Inventory API (Flask async REST API) & In Progress / ia-it-sre-infrastructure-inventory \\
-IISS-508  & Backend --- IA Resources (discoverer registry) & In Progress / ia-it-sre-infrastructure-inventory \\
-IISS-509  & Frontend --- IA Resources (dashboard widgets) & To Do / ia-it-sre-infrastructure-inventory \\
-IISS-510  & Extend registry API for CITCOWORKS & In Progress / ia-resources-monitoring \\
-IISS-824  & ML/LLM RPA Status Agent documentation and improvements & In Progress / ml-rpa-status-llm-agent \\
-IISS-837--844 & X-Ray distributed tracing (7 service sub-tasks) & To Do / ia\_meso\_process \\
-IISS-845--873 & Log group discovery \& observability (10 sub-tasks) & To Do / ia-it-sre-infrastructure-monitoring-amg \\
-IISS-538  & MESO high-memory autoscale issue (hotfix) & Done \\
-IISS-706  & CAIS Deadline UCM credential validation hotfix & Done / core-ia-bpo-cais-dl \\
-IISS-741  & MESO month-end stuck tasks (Critical) & Done \\
-IISS-753  & VPL IPV UI selector failure & Done \\
-IISS-876  & VPL Pricing GTL incorrect booking & Done \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Note on IISS-487 and the CloudWatch Platform JIRAs.}
-The Grafana AMG dashboard (IISS-487) is the primary deliverable and
-subsumes much of the monitoring coverage originally scoped under
-IISS-482--486. However, the CloudWatch platform work was not made redundant:
-it established the architectural foundation (tag strategy, platform
-inventory, Container Insights cost analysis, EKS scope) that IISS-487
-built upon, and it produced the \texttt{ia-resources-monitoring} repository
-with its own production-ready CloudWatch dashboard suite and registry API.
-Both platforms coexist and serve different audiences --- the native
-CloudWatch dashboards for per-service deep-dives, and Grafana AMG for
-cross-platform operational oversight.
-
-% ────────────────────────────────────────────────────────────
-\section{Domain Immersion: Training Week (Apr 13--18, 2026)}
-\label{sec:training_week}
-% ────────────────────────────────────────────────────────────
-
-Before meaningful SRE or automation work could begin, I required
-deep domain context across all six IA platform environments. The week of
-\textbf{Apr~13--18, 2026} was structured as a full-week knowledge
-transfer (KT) programme led jointly by Horace and Kishor, and supplemented
-by a multi-day CitcoWorks/Meridian architecture deep-dive delivered
-remotely by Bhanu Teja Murari from Hyderabad. The training week
-immediately followed the Meridian Incident, giving the
-sessions urgent practical relevance.
-
-\subsection{RPA Support Processes}
-
-The first two days (Apr~13--14) focused on the \textbf{Blue Prism and
-UiPath} operational model. Key concepts covered:
-
-\begin{itemize}
-    \item \textbf{Blue Prism architecture} --- the pool/queue model (resource pools,
-          foreground vs.\ background execution, licensed-per-node
-          multithreading), the PROD and UAT folder hierarchy
-          (\texttt{COE $\to$ DataOps $\to$ Processes / Assets / Rules /
-          Queues}), and the ongoing migration path from Blue Prism to
-          UiPath Cloud.
-
-    \item \textbf{UiPath architecture} --- the Orchestrator folder structure
-          (CoE, FA~DataOps, etc.), trigger types (scheduled, API, SQS),
-          runtime node heartbeat model, and the runtime $\to$ node
-          $\to$ Orchestrator status-update loop.
-
-    \item \textbf{Support escalation model} --- service desk tickets escalate
-          to Horace, then to Kishor for management-level decisions. RPA
-          Support rotations follow a weekly cadence with a defined on-call
-          protocol for time-sensitive fund operations.
-
-    \item \textbf{VPL queue monitoring} --- starting at 5~PM EST, checking
-          queue depth, bot count, and completion status. Delays in VPL
-          directly affect NAV delivery to clients and are therefore treated
-          as high-severity incidents.
-
-    \item \textbf{Corporate Actions template management} --- Mandatory,
-          Voluntary, and Ops Transfer workflows are handled through a
-          combination of Blue Prism processes and manual exception review.
-\end{itemize}
-
-\subsection{CitcoWorks Platform}
-
-The Apr~14--15 sessions (delivered by Bhanu Teja Murari) covered the
-\textbf{CitcoWorks} platform in detail:
-
-\begin{itemize}
-    \item \textbf{Knowledge Graph (KG) hierarchy} --- a five-level hierarchy
-          (L1: Product, L2: Process, L3: Sub-process, L4: Process Task,
-          L5: Sub-task) maintained in a Neptune DB-backed graph and
-          synchronized on-demand from the Optics source of truth. Each
-          Friday, the team receives a workflow load email and updates the
-          KG.
-
-    \item \textbf{Event Routing Service and Action Processor} --- the ERS
-          routes events (stored in ODL/Redis Elasticache, then Kafka) to
-          registered APs based on the mapping table (Area, Subject, Source,
-          Type). APs are deployed via \texttt{deployment\_specs.yaml} and
-          implement business logic such as task status updates and
-          cross-system integrations. The routing service cannot perform a
-          pass-through; missing fields in advanced matching cause routing
-          failures rather than silently dropped events.
-
-    \item \textbf{AuthMaster} --- the Authentication and Authorization
-          service governing user access to CitcoWorks. User personas are
-          synced from AuthMaster into CitcoWorks at login, with a
-          configurable TTL cache. Tenant roles determine which features and
-          workflow views are accessible.
-\end{itemize}
-
-\subsection{Meridian and Event Store}
-
-Building directly on the CitcoWorks session, the Apr~15--16 sessions
-extended the architecture discussion to \textbf{Meridian event services}:
-
-\begin{itemize}
-    \item \textbf{Meridian event architecture} --- the interaction service,
-          notification service, and task management API in the context of
-          the Apr~17 incident. The session clarified how AXI polls
-          Meridian for completion events and why OpenSearch consumer
-          saturation blocked those queries.
-
-    \item \textbf{Event Store} --- Citco's structured logging library used
-          across all IA processes. Each event carries a mandatory set of
-          fields: \texttt{tenant\_id}, \texttt{knowledge\_datetime},
-          \texttt{area}, \texttt{subject}, \texttt{type}, \texttt{source},
-          \texttt{code}, \texttt{message}, \texttt{run\_id},
-          \texttt{process\_identifier}, and mutable context fields
-          (client, fund, valueDate). Event codes follow a structured
-          convention (\texttt{PROJ-I-0001} for informational,
-          \texttt{PROJ-BE-0001} for business errors,
-          \texttt{PROJ-SE-0001} for system errors) that enables
-          query-based triage via CloudWatch Logs Insights.
-\end{itemize}
-
-\subsection{The \AE xeo\textsuperscript{\textregistered} Treasury Platform}
-
-The Apr~16--17 sessions covered the
-\textbf{\AE xeo\textsuperscript{\textregistered} Treasury platform} ---
-Citco's cloud-based wire approval and fund movement visibility system.
-\AE xeo integrates with the IA platform via COMAPI (a COM-based API
-technology used for report generation) and the Aexeo Reporter Server REST
-API (a Python-wrapped HTTP endpoint exposing the same report generation
-capability without requiring a local COMAPI installation). Key workloads
-supported by the IA platform include Active P\&L reports, Aexeo Report
-Generation, and account manager configurations used by MESO and the
-E-Binder reconciliation processes.
-
-\subsection{Dashboard Feedback and IISS-461}
-
-On \textbf{Apr~13} --- the first day of training week --- Kishor reviewed
-an early prototype of the Lambda monitoring dashboard. His feedback
-established the feature requirements that drove the remainder of the
-IISS-487 dashboard build:
-
-\begin{itemize}
-    \item Add three additional tag dimensions to the dashboard filters:
-          \textbf{BPM}, \textbf{CitcoWorks}, and \textbf{Meridian} (in
-          addition to the existing IA-BPO and RPACFS1 tags).
-    \item Improve filter logic to support multi-tag drill-down.
-    \item Create a Confluence inventory page (tracked as \textbf{IISS-461})
-          listing all Lambda functions by platform, tags, and purpose ---
-          providing the human-readable complement to the automated inventory
-          API.
-\end{itemize}
-
-This feedback loop --- domain immersion immediately producing actionable
-engineering requirements --- was the pattern that characterized my entire
-internship. The training week did not just provide background context; it
-directly shaped my priority order, scope, and design of every subsequent
-deliverable.
+% Development repositories are documented in Chapter~\ref{chap:implementation}.
 
