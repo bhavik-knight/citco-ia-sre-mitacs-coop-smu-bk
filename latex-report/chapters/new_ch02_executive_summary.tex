@@ -1,0 +1,224 @@
+% ============================================================
+% CHAPTER 2: EXECUTIVE SUMMARY
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Executive Summary}
+\label{chap:executive_summary}
+
+This report documents my Mitacs Business Strategy Internship (BSI)
+at Citco Technology Management (CTM), Halifax, Nova Scotia, conducted between
+\textbf{March~15 and August~31, 2026} under the project title
+\textit{``Intelligent Automation and Reliability Engineering for Financial
+Services''}.
+
+% ────────────────────────────────────────────────────────────
+\section{The Problem}
+% ────────────────────────────────────────────────────────────
+
+When I joined the IA-SRE team in March~2026, two documented production
+failures had already established the cost of operating without centralized
+observability.
+
+\subsection*{IISS-430 --- CAIS-Pricing GenAI Pipeline: 29-Day Silent Outage (Jan--Feb 2026)}
+
+Between \textbf{January~20 and February~17, 2026} --- roughly five weeks before my
+internship began --- the CAIS-Pricing Extract GenAI pipeline under the
+\texttt{rpacfs1} platform stopped delivering output entirely.
+Three downstream Lambda functions dropped to
+\textbf{zero invocations} while the two upstream functions kept running at
+millions of calls per day, making the pipeline appear healthy to a
+casual observer. The root cause was gradual exhaustion of the CTI AI
+model API token, which controls the async SQS callback that triggers
+the downstream stages. Without that callback, the downstream Lambda
+functions were simply never invoked.
+
+Zero pricing data files (CSVs) were delivered across January Weeks~3--4
+and February Weeks~1--3. The outage was eventually detected not by any
+monitoring system, but by \textbf{business users reporting missing
+data in their reports} --- 29~days after it began.
+
+Sub-task IISS-435 --- \textit{Create Unified CloudWatch Dashboard} ---
+was assigned directly to me as the immediate remediation for the gaps
+identified in incident IISS-430, and became the starting point for the
+full monitoring programme.
+
+\subsection*{IISS-472 --- Meridian Event Processing Delay: April~17, 2026}
+
+The second failure occurred during my first week of training.
+On \textbf{April~17, 2026}, a high volume of automated system events
+from Citco Recs congested the OpenSearch consumption layer on the
+Meridian platform. Events were successfully received in Databricks but
+were not being consumed into OpenSearch, causing Kafka consumer lag to
+reach approximately \textbf{9~million messages}. Because AXI polls
+Meridian for completion events, the stalled consumer meant AXI saw no
+completions and daily statement processing halted for multiple fund
+clients --- including Winton and Goldman Sachs dailies --- for
+\textbf{7.5~hours}.
+
+The SRE team received no alert. Detection came only when the Dublin
+business team escalated at 08:13~AST, more than three and a half hours
+after the first failure signal. The official incident post-mortem
+recorded explicitly:
+
+\begin{quote}
+\textit{``No proactive monitoring/alerting in place on the SRE side for
+Meridian event volume anomalies. Reliance on business teams to flag
+processing delays.''}
+\end{quote}
+
+Action items 1 and 2 from that post-mortem --- assigned to Kri Labos
+--- became the core functional requirements for IISS-487, the centralized
+dashboard I subsequently built as a Proof-of-Concept (PoC).
+
+\subsection*{The Shared Root Cause}
+
+Both incidents share the same structural failure: the IA-SRE team had
+no centralized observability platform. Across Lambda functions,
+ECS clusters, EC2 instances, and critical Kafka-backed pipelines
+spanning six platforms --- \texttt{automationhub}, \texttt{bpm},
+\texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian}, and
+\texttt{rpacfs1} (internal budget-code identifiers used for cost allocation
+and AWS service tagging across the \textbf{IA-IT-SRE Infrastructure}) --- the primary
+incident detection mechanism was \textbf{business-team escalation}.
+
+Citco also uses \textbf{Dynatrace} for BPM automation observability,
+but its enterprise licensing cost scales with infrastructure size.
+My industry supervisor, Kishor Deotale, framed the research question
+for the Mitacs engagement: \textit{can AWS-native services achieve
+Dynatrace-equivalent observability at a fraction of the cost?}
+
+% ────────────────────────────────────────────────────────────
+\section{The Approach}
+% ────────────────────────────────────────────────────────────
+
+My approach was incremental --- each phase addressed the most
+pressing gap, and the output of each phase fed the next.
+
+\textbf{Phase 1: CloudWatch Dashboards for Lambda (IISS-435, IISS-455, IISS-461, IISS-469).}
+The immediate remediation for IISS-430 was a unified CloudWatch dashboard
+for the \texttt{rpacfs1} and \texttt{ia-bpo} Lambda fleets, later expanded
+across all six platforms. I built this using Infrastructure-as-Code (IaC)
+CloudFormation templates on CloudWatch and extended it to cover additional
+platforms (BPM, CitcoWorks, Meridian) in IISS-469. Lambda was the natural
+starting point because it was the AWS service at the centre of the CAIS silent
+outage, and because AWS exposes rich native metrics --- invocation count, error
+rate, duration, throttles, and concurrent executions --- without any agent
+installation. Lambda trigger types --- SQS-based, scheduled (EventBridge), and
+API-Gateway-based --- were documented alongside each function in the
+Confluence inventory (IISS-461) to make operational intent visible.
+
+\textbf{Phase 2: IA Infrastructure Monitoring --- Dynamic AWS Service Inventory (IISS-482--486, IISS-507--510).}
+Static dashboards break as fleets grow. To make AWS service discovery dynamic,
+I built a registry-based inventory that queries the AWS API at runtime and
+returns structured lists of deployed AWS services per platform. The inventory
+evolved through three iterations: an initial FastAPI prototype, a conversion
+to Flask to align with the team's existing Lambda toolchain using the
+\texttt{serverless-wsgi} adapter, and finally a Lambda-deployed async Flask
+API (\texttt{ia-it-sre-infrastructure-inventory}, IISS-507). The inventory
+covers Lambda functions, ECS clusters (with trigger type metadata), EC2
+instances, SQS queues, and S3 buckets across all six platforms:
+\texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo},
+\texttt{meridian}, and \texttt{rpacfs1}. A critical discovery during this phase
+was that the \texttt{meridian} and \texttt{citcoworks} platforms share the
+same internal \texttt{BudgetCode} tag value (\texttt{"Shared Cloud
+Artifacts"}), requiring \texttt{AppName} as a mandatory secondary
+discriminator for AWS service discovery in those platforms.
+
+\textbf{Phase 3: Grafana AMG Centralized Dashboard (IISS-487).}
+While the CloudWatch dashboards from Phase~1 gave per-platform visibility
+into individual AWS services, the Grafana PoC answered a different question:
+\textit{what is the health of the entire IA-IT-SRE Infrastructure, right now,
+across all platforms and all AWS services simultaneously?} I built a
+14-row Amazon Managed Grafana (AMG) workspace with collapsible panels for
+each AWS service and dynamic CloudWatch alarms, starting with Meridian
+(the platform with the most documented monitoring gaps) and extending to
+\texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, and
+\texttt{rpacfs1} via platform template variables. Each row covers one
+AWS service across the IA-IT-SRE Infrastructure: Lambda, SQS, MSK/Kafka,
+EC2, ECR, EKS, ECS Services, ECS Target Groups, RDS Aurora, DocumentDB,
+Redis/Valkey, Neptune DB, and OpenSearch. The IaC provisioner --- a
+Lambda-backed CloudFormation pipeline --- dynamically discovers the
+current AWS service fleet at deploy time and synthesizes per-service alarm
+definitions, enabling a single \texttt{sam deploy} to provision alarms
+across all monitored AWS services without manual enumeration.
+
+% ────────────────────────────────────────────────────────────
+\section{Limitations and Mitigations}
+% ────────────────────────────────────────────────────────────
+
+Several CloudWatch and AMG constraints shaped the final architecture.
+
+\textbf{CloudWatch \texttt{SEARCH()} visibility gap.} The \texttt{SEARCH()}
+function only returns metrics for AWS services with recent activity. Lambda
+functions not invoked within the lookback window disappear from the
+dashboard entirely --- the same root cause that made the CAIS pipeline
+invisible in IISS-430. \textit{Mitigation:} Replaced all
+\texttt{SEARCH()} expressions with CloudWatch Metric Insights SQL
+(\texttt{SELECT ... GROUP BY FunctionName}), which enumerates all
+deployed AWS services in the namespace regardless of recent activity.
+
+\textbf{Metric Insights SQL cannot compute percentiles.} The
+\texttt{GROUP BY} mode of Metric Insights only supports \texttt{AVG},
+\texttt{SUM}, \texttt{MIN}, and \texttt{MAX}. P50/P99 latency statistics
+are unavailable in this mode. \textit{Mitigation:} Latency percentile
+panels use CloudWatch standard metrics mode with a
+\texttt{FunctionName: ["*"]} wildcard dimension. This restores true
+percentiles but reintroduces the visibility gap for idle AWS services ---
+an accepted tradeoff documented in the dashboard design.
+
+\textbf{Secrets Manager 64\,KB payload limit.} The Lambda-backed
+CloudFormation provisioner stores alarm templates as a Secrets Manager
+payload. As the monitoring scope expanded to cover all AWS service
+categories, the generated YAML exceeded the hard 64\,KB limit.
+\textit{Mitigation:} Migrated all templates to an S3 bucket with object
+versioning; the provisioner fetches templates via \texttt{s3:GetObject}
+at deploy time.
+
+\textbf{Shared \texttt{BudgetCode} tag across platforms.} The
+\texttt{meridian} and \texttt{citcoworks} platforms share the internal
+tag value \texttt{"Shared Cloud Artifacts"}, making a single-stage
+tag lookup ambiguous when discovering AWS services in those platforms.
+\textit{Mitigation:} Designated \texttt{AppName} as the mandatory
+secondary discriminator for all AWS service discovery in those platforms,
+documented as a platform-wide governance constraint in the
+inventory API \texttt{README}.
+
+% ────────────────────────────────────────────────────────────
+\section{Key Results}
+% ────────────────────────────────────────────────────────────
+
+\begin{itemize}
+    \item Kafka consumer lag detection time reduced from a 3.5-hour
+          business-team escalation window to \textbf{under 30 seconds}
+          via a CloudWatch MSK \texttt{EstimatedMaxTimeLag} alarm ---
+          directly addressing the April~17 Meridian incident failure mode
+    \item Dynamic CloudWatch alarms deployed across all monitored AWS
+          services on all six platforms (was zero alarms before)
+    \item Grafana AMG workspace with \textbf{14 rows} covering every AWS
+          service category in the IA-IT-SRE Infrastructure
+    \item Lambda function inventory across all six platforms, catalogued
+          with trigger type (SQS-based, EventBridge-scheduled, API-Gateway),
+          runtime, and metric-emission status
+    \item AWS service inventory extended beyond Lambda to cover ECS, EC2,
+          SQS, EKS, ECR, and database services via the inventory API,
+          with \textbf{99\% automated test coverage}
+    \item AWS-native stack achieves \textbf{$\sim$60\% Dynatrace feature
+          parity} at \$77/month (CloudWatch + Grafana AMG + X-Ray),
+          rising to \textbf{$\sim$80\%} with Application Signals ---
+          versus Dynatrace enterprise licensing cost
+\end{itemize}
+
+The three capabilities that remain outside AWS-native reach are Davis~AI
+causal analysis, automatic anomaly baselining, and session replay ---
+approximately 20\% of Dynatrace's functional surface with no direct
+AWS equivalent.
+
+Despite these limitations, the PoC demonstrates that AWS-native tooling
+can close the most operationally critical gaps --- proactive alerting,
+cross-service visibility, and AWS service inventory --- at a fraction of
+the enterprise APM cost. The chapters that follow detail the
+methodologies, architecture, and engineering decisions behind each
+deliverable, and reflect on the broader learning outcomes of the
+engagement.

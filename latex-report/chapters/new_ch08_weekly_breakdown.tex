@@ -1,0 +1,241 @@
+% ============================================================
+% CHAPTER 8: WEEKLY BREAKDOWN
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Weekly Breakdown}
+\label{chap:weekly_breakdown}
+
+This chapter provides a phase-by-phase narrative of the internship delivery,
+organised around the four major phases that structured the 24-week engagement.
+The narrative complements the detailed technical account in
+Chapter~\ref{chap:implementation} by focusing on the chronological flow ---
+what was done each week, what blocked or accelerated progress, and how the
+priorities shifted in response to production events.
+
+% ────────────────────────────────────────────────────────────
+\section{Phase 1: Foundation \& CloudWatch Dashboards (Weeks 1--7, Mar~15 -- May~10)}
+\label{sec:wb_phase1}
+% ────────────────────────────────────────────────────────────
+
+\subsection{Weeks 1--4: Onboarding and First Deliverables (Mar 15 -- Apr 11)}
+
+The engagement opened in part-time mode with approximately 10--20 hours per
+week. The first priority was access provisioning: AWS console, JIRA,
+Confluence, and CodeCommit access requests were filed on Day~1 and cleared
+over the following two weeks. The initial period was used productively for
+architecture documentation review on Confluence --- building a working mental
+model of the six platforms (\texttt{rpacfs1}, \texttt{ia-bpo},
+\texttt{automationhub}, \texttt{meridian}, \texttt{citcoworks}) and the
+Lambda, ECS, and EC2 workloads distributed across them.
+
+\begin{table}[ht]
+\centering
+\caption{Phase 1 --- Weekly Delivery Summary}
+\label{tab:wb_phase1}
+\begin{tabular}{p{1.2cm}p{4.0cm}p{7.5cm}}
+\toprule
+\textbf{Week} & \textbf{Dates} & \textbf{Key Deliverables} \\
+\midrule
+1 & Mar 15--21 & Access provisioning, architecture study, AWS environment orientation \\
+2 & Mar 22--28 & IISS-435: RPACFS1 CloudWatch pipeline health dashboard (262 tests) \\
+3 & Mar 29--Apr 4 & IISS-435 completion; IISS-455 Lambda dashboard design started \\
+4 & Apr 5--11 & IISS-455: Lambda dashboard deployed (51 functions); IISS-461: Confluence inventory page \\
+5 & Apr 12--18 & Training week (RPA, CitcoWorks, Meridian, Aexeo KTs); April 17 incident observed; IISS-469 started \\
+6 & Apr 19--25 & IISS-469 completed; IISS-487 Grafana story created; IISS-482 board set up \\
+7 & Apr 26--May 2 & IISS-484 ECS dashboard; IISS-485 EKS dashboard; IISS-483 EC2 gap analysis \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Week 2} produced the first concrete deliverable: the RPACFS1
+CloudWatch pipeline health dashboard (IISS-435), built against the
+\texttt{rpacfs1-cais-pricing-extract-genai-infrastructure} repository. The
+dashboard included Lambda function monitoring, Logs Insights error widgets,
+and 262 automated tests.
+
+\textbf{Week 5} (April 13--18) was the training week. Four knowledge-transfer
+sessions covered the RPA support model (Horace), CitcoWorks and Event Store
+(Bhanu Teja Murari), Meridian Kafka architecture (Meridian team), and the
+\AE xeo Treasury platform. The April~17 Meridian incident occurred during this
+week, making the observability gap visible firsthand. By week end, IISS-469
+was underway and the architectural limitation of the \texttt{SEARCH()}-based
+dashboard (the visibility gap for inactive functions) had been documented.
+
+\textbf{Week 7} built the ECS (IISS-484), EKS (IISS-485), and EC2 (IISS-483)
+monitoring dashboards. The EC2 gap analysis discovered the
+\texttt{BudgetCode=``CFS/RPA''} tag mismatch on \texttt{rpacfs1} instances,
+introducing the \texttt{AppName} fallback pattern that became foundational for
+the inventory API.
+
+\subsection{Phase 1 Total: 100 hours --- Key Insight}
+
+By the end of Phase~1, the Lambda inventory across all six platforms was complete
+and the SEARCH() visibility gap had established the design constraint for the
+next phase: CloudWatch Metric Insights SQL rather than subscription filters.
+
+% ────────────────────────────────────────────────────────────
+\section{Phase 2: Grafana AMG Intensive Build (Weeks 8--11, May~6 -- May~27)}
+\label{sec:wb_phase2}
+% ────────────────────────────────────────────────────────────
+
+\begin{table}[ht]
+\centering
+\caption{Phase 2 --- Weekly Delivery Summary}
+\label{tab:wb_phase2}
+\begin{tabular}{p{1.2cm}p{4.0cm}p{7.5cm}}
+\toprule
+\textbf{Week} & \textbf{Dates} & \textbf{Key Deliverables} \\
+\midrule
+8 & May 3--9 & RPA Support Rotation \#1; IISS-487 elevated to Critical; Grafana scaffolding \\
+9 & May 10--16 & May 11: 4 CFN stacks deployed; Grafana workspace live; Container Insights enabled; Grafana upgrade 10.4→12.4; Lambda/ECS/SQS rows \\
+10 & May 17--23 & MSK, DocumentDB, OpenSearch, RDS rows; Secrets Manager 64KB limit → S3 migration \\
+11 & May 24--30 & Redis row; SNS 3-topic setup; 17 alarms; 8 composite alarms; Grafana alerting \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Week 8} was the first RPA support rotation. IISS-487 was elevated
+to Critical priority on May~6. Infrastructure deployment could not begin
+until the following Monday due to the support shift, but the week was used
+to scaffold the Grafana repository and plan the four-layer architecture.
+
+\textbf{Week 9} (May 10--16) was the single most infrastructure-dense week
+of the internship. May~11 saw four CloudFormation stacks deployed, the Grafana
+AMG workspace provisioned with its 16-role IAM agent permission model, and
+Container Insights enabled on five of the six Meridian clusters. Two days
+later, on May~13, the unexpected Grafana 10.4→12.4 upgrade broke all SQL
+panels and variable interpolation --- approximately one working day was
+consumed migrating queries to the stable Grafana~12.4 model.
+
+By \textbf{Week 11}, the core platform was functional: MSK consumer lag
+alarm active, composite alarms configured, and the first six dashboard rows
+complete. The detection window for a Meridian Kafka congestion event had
+dropped from the 3.5-hour April~17 gap to a projected sub-30-second alarm fire.
+
+\subsection{Phase 2 Total: 157 hours --- Key Milestone}
+
+The MSK consumer lag alarm armed itself against live production traffic
+on May~11, 2026 --- the inflection point where the observability gap
+identified by the April~17 incident was closed.
+
+% ────────────────────────────────────────────────────────────
+\section{Phase 3: Dashboard Completion, Hotfixes \& SQS (Weeks 12--15, May~28 -- Jun~18)}
+\label{sec:wb_phase3}
+% ────────────────────────────────────────────────────────────
+
+\begin{table}[ht]
+\centering
+\caption{Phase 3 --- Weekly Delivery Summary}
+\label{tab:wb_phase3}
+\begin{tabular}{p{1.2cm}p{4.0cm}p{7.5cm}}
+\toprule
+\textbf{Week} & \textbf{Dates} & \textbf{Key Deliverables} \\
+\midrule
+12 & May 31--Jun 6 & RPA Support Rotation \#2; IISS-538: MESO autoscale hotfix \\
+13 & Jun 7--13 & IISS-706: CAIS Deadline hotfix (7h); EC2 rows; IISS-507 scaffolded (2.5h); IISS-482 SQS (960 tests) \\
+14 & Jun 14--20 & Dashboard deep-links; final polish; v728 deployment (140h milestone); IISS-482 closed \\
+15 & Jun 21--27 & MSK/EC2 refinements; 6 resource mapper Lambdas; IISS-507 Lambda discoverers (119 functions) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Week 12} was the second RPA support rotation. The MESO ECS
+autoscale issue (IISS-538) was resolved alongside support duties.
+
+\textbf{Week 13} was the most incident-dense week of the internship.
+The CAIS Deadline \texttt{SpnegoError} (IISS-706) required 7 hours of
+investigation and hotfix work, identifying the module-import credential
+caching pattern as the root cause. In parallel, the IISS-507 inventory
+API was scaffolded using the Kiro spec-driven workflow (2.5 hours), and
+the SQS monitoring feature (IISS-482) was completed with 960 automated tests.
+
+\textbf{Week 14} delivered the final dashboard at version v728, closing
+IISS-487 at exactly 140 hours. Deep-link panels, DocumentDB and Redis
+restructuring, and the main branch merge completed the primary deliverable.
+
+\subsection{Phase 3 Total: 160 hours --- Key Milestone}
+
+IISS-487 closed at v728 on June~18, 2026. The full platform --- 14 rows,
+110+ panels, 38 alarms, 4 CloudFormation stacks --- was in production.
+
+% ────────────────────────────────────────────────────────────
+\section{Phase 4: Inventory API, X-Ray Research \& Report (Weeks 16--24, Jun~19 -- Aug~31)}
+\label{sec:wb_phase4}
+% ────────────────────────────────────────────────────────────
+
+\begin{table}[ht]
+\centering
+\caption{Phase 4 --- Weekly Delivery Summary}
+\label{tab:wb_phase4}
+\begin{tabular}{p{1.2cm}p{4.0cm}p{7.5cm}}
+\toprule
+\textbf{Week} & \textbf{Dates} & \textbf{Key Deliverables} \\
+\midrule
+16 & Jun 28--Jul 4 & IISS-741: MESO stuck tasks (Critical); IISS-507 ECS/EC2 discoverers; log group research \\
+17 & Jul 5--11 & IISS-753: VPL selector investigation; IISS-507 EC2 discoverers; X-Ray specs written \\
+18 & Jul 12--18 & IISS-487: Log group utilities; 30 saved queries; Grafana Row 17 (logs panel) \\
+19 & Jul 19--25 & Log group PR merged; SRE Observability Platform v2.19.9 released \\
+20 & Jul 26--Aug 1 & RPA Support Rotation \#4; IISS-838--844: X-Ray tracing specs for 7 services \\
+21 & Aug 2--8 & IISS-824: ML-RPA-Status LLM Agent fixes (11 bugs, 194 tests, 99\% coverage) \\
+22 & Aug 9--15 & AMG repo cleanup; README alerting docs; report LaTeX chapters drafted \\
+23 & Aug 16--22 & IISS-876: VPL GTL booking fix; report results/conclusions chapters \\
+24 & Aug 23--31 & Final report compilation; KT sessions with Horace/Kri; Mitacs renewal confirmed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Week 16} saw the MESO month-end stuck tasks incident (IISS-741,
+Critical) requiring manual retrigger of INNOCAP/SAMLMOS fund processes. ECS
+discoverers were completed concurrently, confirming the 22-cluster inventory
+and implementing the two-stage AppName filter for the shared BudgetCode environments.
+
+\textbf{Week 18--19} added the CloudWatch Logs observability layer to the
+Grafana platform: 30 Logs Insights saved queries across 7 platforms, a
+log group URL encoding utility, and Grafana Row~17 for log-derived panels.
+
+\textbf{Week 21} addressed the ML-RPA-Status LLM Agent (IISS-824):
+11 critical bugs fixed (OOM Lambda, Athena SSE, SSL, idempotent KB sync),
+a 1,140-line monolithic function split into 8 modules, and 194 unit tests
+written with 99\% coverage.
+
+\textbf{Weeks 22--24} transitioned to report writing, knowledge transfer,
+and handover documentation. The Mitacs BSI renewal for
+September~1 -- December~31, 2026 was confirmed, providing continuity for
+the X-Ray tracing and log-group discovery work deferred from this engagement.
+
+\subsection{Phase 4 Total: 480 hours --- Key Milestone}
+
+The 562-test inventory API reached 99\% coverage on July~14, 2026, completing
+the third and final technical deliverable of the internship.
+
+% ────────────────────────────────────────────────────────────
+\section{Internship Hours Summary}
+\label{sec:wb_hours}
+% ────────────────────────────────────────────────────────────
+
+\begin{table}[ht]
+\centering
+\caption{Internship Hours by Phase}
+\label{tab:wb_hours}
+\begin{tabular}{p{5.0cm}p{1.2cm}p{5.5cm}p{1.5cm}}
+\toprule
+\textbf{Phase} & \textbf{Weeks} & \textbf{Primary Deliverables} & \textbf{Hours} \\
+\midrule
+Phase 1: Foundation \& CloudWatch & 1--7 & IISS-435, IISS-455/461/469, IISS-482--486 scaffolding & 100 \\
+Phase 2: Grafana AMG Build & 8--11 & IISS-487 core (4 CFN stacks, Rows 1--6, alarms) & 157 \\
+Phase 3: Dashboard Completion \& Hotfixes & 12--15 & IISS-487 v728, IISS-706, IISS-538, IISS-482 SQS & 160 \\
+Phase 4: Inventory API, Research \& Report & 16--24 & IISS-507, IISS-741, IISS-824, X-Ray specs, report & 480 \\
+\midrule
+\textbf{Total} & \textbf{24} & & \textbf{897} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The internship ran from March~15 to August~31, 2026, logging
+\textbf{897 hours} across 24 weeks. The remaining 3 hours to reach the
+900-hour commitment are covered by the knowledge-transfer and handover
+sessions in the final days of August and the first days of September.
+Complete itemised work logs are provided in the appendix and in the
+accompanying \texttt{WorkLogs.xlsx} submission file.
