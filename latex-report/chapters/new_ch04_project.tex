@@ -275,140 +275,171 @@ The primary goals of the internship project were as follows:
 \label{sec:deliverables_scope}
 % ────────────────────────────────────────────────────────────
 
-All engineering work during my internship was tracked through Citco's
-JIRA instance under the \texttt{IISS} project key. Table~\ref{tab:jira_deliverables}
-summarizes the key deliverables, their classification, and their
-quantified impact.
+This section documents the technical scope, stack, and architectural
+decisions for each primary deliverable. Implementation details and
+engineering decisions are covered in depth in
+Chapter~\ref{chap:implementation}; this section provides the scoped
+technical overview per deliverable.
 
 \begin{table}[ht]
 \centering
-\caption{JIRA Deliverables --- Summary Table}
+\caption{Project Deliverables --- JIRA Scope Summary}
 \label{tab:jira_deliverables}
-\begin{tabular}{lp{5.5cm}p{5.0cm}}
+\begin{tabular}{p{1.8cm}p{5.8cm}p{4.5cm}}
 \toprule
-\textbf{JIRA} & \textbf{Title / Scope} & \textbf{Hours / Impact} \\
+\textbf{JIRA} & \textbf{Title} & \textbf{Scope} \\
 \midrule
-\textbf{IISS-487} & Amazon Managed Grafana: Centralized SRE Dashboard & 140h logged; 14 rows, 110+ panels, 38 alarms, 7 platforms, IaC CFN provisioner \\
+IISS-487 & Centralized Grafana SRE Dashboard & AMG workspace, 14 rows, CloudWatch alarms, IaC provisioner \\
 \midrule
-\textbf{IISS-482} & IA Resources/Infrastructure Monitoring Platform & 11h logged; SQS registry, 3-tier fallback, 960 SQS tests \\
+IISS-482--486 & IA Infrastructure Monitoring Platform & Per-platform CloudWatch dashboards, SQS registry \\
 \midrule
-\textbf{IISS-455} & Lambda Monitoring Dashboard (initial CloudWatch) & 2h logged; 51 Lambda functions, Confluence inventory \\
+IISS-455, 461, 469 & Lambda Monitoring Dashboard & CloudWatch Lambda dashboard, Confluence inventory, architecture analysis \\
 \midrule
-\textbf{IISS-469} & Centralized Lambda Dashboard Improvements & Architecture analysis; Top-K limits documented, 5 OOM detection approaches \\
+IISS-507--510 & IA Infrastructure Inventory API & Flask REST API, discoverer registry, 99\% test coverage \\
 \midrule
-\textbf{IISS-507} & IA Resources Inventory API (Flask) & 2.5h logged; 562 tests, 99\% coverage, discoverer registry \\
+IISS-706 & CAIS Deadline Credential Hotfix & Fail-fast credential validation, two-layer defence \\
 \midrule
-\textbf{IISS-538} & MESO High-Memory/CPU Autoscale Issue & Hotfix; \texttt{ia\_meso\_process} ECS autoscaling configuration ($\sim$Jun~5) \\
-\midrule
-\textbf{IISS-706} & CAIS Deadline Hotfix --- UCM Credential Validation & 7h logged; SpnegoError root cause analysis; fail-fast credential validation; two-layer defence \\
-\midrule
-\textbf{IISS-741} & MESO Month-End Stuck Tasks (Critical) & Retrigger for INNOCAP/SAMLMOS; Jul~1, 2026 \\
-\midrule
-\textbf{IISS-753} & VPL IPV UI Selector Failure & 16h estimate; selector resilience investigation; Jul~8, 2026 \\
-\midrule
-\textbf{IISS-876} & VPL Pricing GTL Incorrect Booking & Root cause analysis and fix; Jul~30, 2026 \\
+IISS-538, 741, 753, 876 & RPA Support Incidents & Hotfixes, RCA, process retriggering \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Centralized Grafana SRE Dashboard}
+\subsection{Centralized Grafana SRE Dashboard (IISS-487)}
 
-IISS-487 was elevated to \textbf{Critical} priority by Kishor Deotale on
-May~6, 2026, in the weeks following the Apr~17 incident. It was the
-largest single engineering effort of my internship, consuming 140~hours
-over approximately six weeks of intensive development. Key milestones
-within IISS-487 included:
+\textbf{Platform:} Amazon Managed Grafana (AMG) v12.4, CloudWatch as
+sole data source via the native Grafana CloudWatch plugin.
 
-\begin{itemize}
-    \item \textbf{May~11, 2026}: Infrastructure deployment --- four
-          CloudFormation stacks deployed into the IA SRE AWS account,
-          including the Grafana AMG workspace, the SNS alarm topic,
-          the S3 dashboard storage bucket, and the IAM roles for the
-          16-role agent permission model required by Grafana's CloudWatch
-          data source.
+\textbf{Data layer:} Amazon CloudWatch Metrics and CloudWatch Logs
+Insights. Metric Insights SQL (\texttt{SELECT ... FROM namespace GROUP BY
+dimension}) used for all multi-resource panels --- enables a single query
+to return per-resource time series across the full fleet without one panel
+per resource. CloudWatch Logs Insights used for log-derived error panels
+with structured JSON field extraction.
 
-    \item \textbf{May~11--12, 2026}: Container Insights enablement ---
-          five of the six Meridian ECS clusters were onboarded to
-          Amazon CloudWatch Container Insights, providing CPU, memory,
-          network I/O, and storage utilization telemetry at the task
-          level. (One cluster, \texttt{meridian-compute-cluster}, had
-          already had Container Insights enabled since Jul~2024.)
+\textbf{Dashboard structure:} 14 collapsible rows, one per AWS service
+category --- Lambda, SQS, MSK/Kafka, EC2, ECR, EKS, ECS Services, ECS
+Target Groups, RDS Aurora, DocumentDB, Redis/Valkey, Neptune DB, and
+OpenSearch. Cross-service filtering is implemented via Grafana template
+variables backed by CloudWatch \texttt{dimension\_values()} queries,
+allowing operators to scope the entire workspace to a single platform or
+AWS service via dropdown selection.
 
-    \item \textbf{May~13, 2026}: Grafana version upgrade from
-          \textbf{10.4 to 12.4} --- a major version migration requiring
-          query syntax updates and panel configuration remediation across
-          the entire dashboard.
+\textbf{Alerting layer:} CloudWatch alarms provisioned across all
+monitored AWS services, each wired to an SNS topic routing to the SRE
+team email distribution list (\texttt{ia\_it\_sre@citco.com}). Composite
+alarms aggregate per-service states into platform-level health signals.
 
-    \item \textbf{May~21, 2026}: Secrets Manager 64KB limit breach ---
-          the agentic CloudFormation provisioner grew to 14,720~lines,
-          exceeding the parameter store limit; refactored to S3-backed
-          template staging.
+\textbf{Infrastructure-as-Code (IaC):} AWS SAM + parameterized
+CloudFormation YAML templates (one template per AWS service category).
+A Lambda-backed CloudFormation custom resource provisioner dynamically
+discovers the current fleet at deploy time and synthesizes alarm
+\texttt{AWS::CloudWatch::Alarm} resource definitions, deployed across
+four stacks: Lambda alarms, ECS alarms, SQS alarms, and MSK alarms.
+Templates are staged in S3 (migrated from Secrets Manager due to the
+64~KB payload limit) and fetched by the provisioner Lambda at runtime.
 
-    \item \textbf{Jun~18, 2026}: Final deployment at version v728;
-          total 140~hours reached; release merged to main branch.
-\end{itemize}
+\textbf{IAM model:} 16-role cross-account agent permission model granting
+the Grafana service account read-only access to CloudWatch metrics, logs,
+and EC2 tags across all IA AWS accounts. Each role is scoped to
+\texttt{cloudwatch:GetMetricData}, \texttt{cloudwatch:ListMetrics},
+\texttt{logs:StartQuery}, \texttt{logs:GetQueryResults}, and
+\texttt{ec2:DescribeTags}.
 
-\subsection{IA Infrastructure Monitoring Platform}
+\textbf{Container Insights:} Enabled on five of the six Meridian ECS
+clusters, publishing task-level CPU, memory, network I/O, and storage
+telemetry into the \texttt{ECS/ContainerInsights} namespace, surfaced in
+the ECS dashboard rows.
 
-IISS-482 served as the parent story for the full IA monitoring platform.
-Its sub-stories (IISS-483 through IISS-486) covered EC2, ECS, EKS, and
-S3 export functionality. The SQS monitoring feature, added on
-Jun~12, 2026, introduced a significant architectural contribution: the
-\textbf{registry-based dashboard builder} with three-tier fallback,
-which became the standard pattern for subsequent monitoring integrations.
-The 960~tests written for this feature set the quality baseline for the
-inventory API that followed.
+\subsection{IA Infrastructure Monitoring Platform (IISS-482--486)}
 
-\subsection{IA Infrastructure Inventory API}
+\textbf{Platform:} Native Amazon CloudWatch dashboards built via
+\texttt{aws\_cw\_dashboard} CloudFormation resources and Python-based
+dashboard builders.
 
-IISS-507 (\texttt{ia-sre-resources-inventory}) was scaffolded on
-Jun~11, 2026, as a new Flask async API project separate from the
-existing monitoring repositories. My key architectural decision was the
-\textbf{discoverer registry pattern}: rather than hardcoding resource
-discovery logic per budget code, a registry maps
-\texttt{(resource\_type, budget\_code)} tuples to concrete discoverer
-classes. This design enables the team to onboard new budget codes or
-resource types by implementing a single discoverer class and registering
-it --- no changes to routing, serialization, or test infrastructure.
+\textbf{Scope:} Per-platform CloudWatch dashboards covering Lambda
+(invocations, errors, duration, throttles, concurrent executions), EC2
+(CPU, memory via CloudWatch Agent, disk I/O, network), ECS (service CPU
+and memory via Container Insights), EKS (node and pod metrics), and SQS
+(queue depth, oldest message age). Each dashboard supports tag-based
+resource filtering using \texttt{BudgetCode} as the primary tag and
+\texttt{AppName} as the mandatory fallback discriminator for
+\texttt{meridian} and \texttt{citcoworks} platforms.
 
-The tag-based discovery challenge was non-trivial. Two platforms --- \texttt{CITCOWORKS} and \texttt{MERIDIAN} --- share the
-AWS tag value \texttt{``Shared Cloud Artifacts''} for the
-\texttt{BudgetCode} dimension. A naive \texttt{BudgetCode} lookup would
-therefore conflate resources from two distinct operational environments.
-The solution was to designate the \texttt{AppName} tag as a mandatory
-secondary discriminator for these two environments, with the discovery
-logic performing a two-stage filter: \texttt{BudgetCode=``Shared Cloud
-Artifacts''} followed by \texttt{AppName} $\in$ \{\texttt{citcoworks}, \texttt{meridian}\}.
+\textbf{SQS Registry Architecture (IISS-482):} A registry-based SQS
+monitoring pipeline with a three-tier fallback model: (1)~live
+CloudWatch API query; (2)~S3-cached snapshot on API failure; (3)~locally
+bundled queue inventory as the final fallback. This ensures the SQS
+monitoring pipeline remains functional during AWS service degradation
+events.
 
-\subsection{RPA Support Incidents and Hotfixes}
+\textbf{Key limitation driving WS3:} CloudWatch Metric Insights SQL
+\texttt{WHERE} clause does not support pattern matching or regex on
+dimension values. Enumerating resource names dynamically for Grafana
+template variables required a dedicated external API rather than relying
+on \texttt{dimension\_values()} alone.
 
-Four RPA support rotations (Weeks~8, 12, 16, and~20) and several
-out-of-rotation incidents rounded out my project scope:
+\subsection{IA Infrastructure Inventory API (IISS-507)}
 
-\begin{itemize}
-    \item \textbf{IISS-706 (Jun~8, 7h)}: The CAIS Deadline process
-          failed with a \texttt{SpnegoError} caused by empty UCM
-          credentials. My root cause analysis revealed that the ECS
-          container loaded credentials from Secrets Manager once at
-          module import time via \texttt{constants.py}. When the UCM
-          secret was rotated or expired between container restarts, the
-          cached empty credential persisted for the entire container
-          lifecycle. I implemented a fail-fast validation layer
-          and a second credential check before the UCM upload step,
-          making the failure visible immediately rather than manifesting
-          as a cryptic downstream NTLM authentication error.
+\textbf{Stack:} Python~3, \texttt{flask[async]}, \texttt{boto3},
+Pydantic, \texttt{serverless-wsgi} (Lambda deployment adapter),
+\texttt{pytest} + Hypothesis (property-based testing).
 
-    \item \textbf{IISS-741 (Jul~1, Critical)}: MESO month-end tasks
-          became stuck for the INNOCAP and SAMLMOS funds, requiring
-          manual retrigger of the \texttt{ia\_meso\_process} pipeline.
+\textbf{Architecture --- Discoverer Registry Pattern:} A central registry
+maps \texttt{(resource\_type, platform)} tuples to concrete discoverer
+classes, each implementing \texttt{async def discover() -> List[Resource]}.
+New platforms or AWS service types are onboarded by implementing a single
+class --- zero changes to routing, serialization, or test infrastructure.
+Route handlers use \texttt{asyncio.gather()} to dispatch all relevant
+discoverers concurrently, keeping end-to-end API latency within the
+10-second NFR target across the full fleet.
 
-    \item \textbf{IISS-753 (Jul~8)}: VPL IPV process encountered a UI
-          selector failure, with a 16-hour resolution estimate involving
-          selector resilience analysis across the UiPath automation.
+\textbf{Tag disambiguation:} The \texttt{meridian} and \texttt{citcoworks}
+platforms share the \texttt{BudgetCode=``Shared Cloud Artifacts''} tag.
+A mandatory two-stage filter --- stage~1 \texttt{BudgetCode} match,
+stage~2 \texttt{AppName} discriminator --- separates resources from the
+two platforms and is enforced in all discoverers for those environments.
 
-    \item \textbf{IISS-876 (Jul~30)}: VPL Pricing GTL incorrect booking
-          required root cause analysis and a targeted process fix.
-\end{itemize}
+\textbf{API endpoints:} \texttt{GET /api/v1/lambda},
+\texttt{/api/v1/ecs}, \texttt{/api/v1/ec2}, \texttt{/api/v1/sqs},
+\texttt{/api/v1/s3}, \texttt{/api/v1/health}. All endpoints support an
+optional \texttt{?platform=} query parameter for filtered discovery.
+
+\textbf{Pydantic response model:} Each discovered resource carries five
+fields: \texttt{name}, \texttt{type}, \texttt{platform},
+\texttt{tags} (free-form dict), \texttt{arn}.
+
+\textbf{Test suite:} 99\% code coverage across unit tests (per-discoverer
+with mocked \texttt{boto3}), integration tests (full Flask test client),
+property-based tests via Hypothesis (tag-matching logic), and edge-case
+tests (malformed tags, empty platforms, pagination edge cases).
+
+\subsection{RPA Support Incidents (IISS-706, IISS-538, IISS-741, IISS-753, IISS-876)}
+
+\textbf{IISS-706 --- CAIS Deadline UCM Credential Failure:}
+\texttt{constants.py} cached UCM credentials as module-level variables
+at container startup via Secrets Manager. A Secrets Manager rotation
+returning empty values during the rotation window caused all subsequent
+UCM uploads to fail with \texttt{SpnegoError} (NTLM auth failure).
+\textit{Fix:} fail-fast credential validation at module load time plus a
+pre-upload credential pre-check in \texttt{pysmb\_helper.py}.
+
+\textbf{IISS-538 --- MESO ECS Autoscale:} ECS service autoscaling policy
+misconfiguration caused the \texttt{ia\_meso\_process} service to scale
+up task count without a corresponding scale-down or saturation threshold.
+\textit{Fix:} corrected ECS autoscaling policy; added CPU saturation alarm
+to IISS-487 alarm set.
+
+\textbf{IISS-741 --- MESO Stuck Tasks:} Lambda heartbeat stalled for
+INNOCAP and SAMLMOS funds; manual pipeline retrigger required after admin
+access was granted.
+
+\textbf{IISS-753 --- VPL IPV UI Selector:}
+\texttt{CheckpointException} in UiPath \texttt{OpenValuationAnalysis.xaml}
+--- the bot's retry loop exhausted waiting for the \AE xeo Pricing window.
+Selector resilience analysis scoped; escalated to development team.
+
+\textbf{IISS-876 --- VPL Pricing GTL Booking:} Process logic error in GTL
+booking entry calculation; fix coordinated with business team after RCA.
 
 % ────────────────────────────────────────────────────────────
 \section{Acceptance Criteria and Success Metrics}
