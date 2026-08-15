@@ -88,7 +88,7 @@ internship period.
 
 \subsection{Work Stream 1: CloudWatch Dashboards and IA Infrastructure Monitoring}
 
-Following the CAIS-Pricing silent outage (IISS-430), the immediate
+Following the CAIS-Pricing Silent Outage, the immediate
 remediation was to build a unified CloudWatch monitoring dashboard starting
 with Lambda --- the AWS service at the centre of that incident. The goal was
 to surface invocation count, error rate, duration, and throttle metrics
@@ -183,8 +183,7 @@ incidents during the shift.
 
 The support model is structured across three tiers. \textbf{Level~1} is
 handled by the AI/RPA Support Agent (24/7). \textbf{Level~2} is owned by
-the Innovation IT Support team, reachable via the
-\texttt{innovation\_it\_support@citco.com} email channel, operating under
+the Innovation IT Support team (us) email channel, operating under
 a Follow the Sun model with a 1-hour acknowledgement SLA and 8-hour
 resolution target. \textbf{Level~3} is the SRE team
 (\texttt{ia\_it\_sre@citco.com}), engaged for complex production issues,
@@ -198,8 +197,8 @@ channels: the \textbf{SD (Service Desk) Portal} for incoming tickets, the
 the \textbf{IA\_INCIDENTS@citco.com} distribution list for incident
 notifications, and \textbf{Microsoft Teams} messages and channel
 notifications from business teams and the outgoing shift. I also reviewed
-the Confluence shift handover log left by the Asia shift to pick up any
-carried-over items or approaching SLA breaches. Ticket ownership rules
+the Confluence shift handover log left by the Manila (Phillipinse) shift to 
+pick up any carried-over items or approaching SLA breaches. Ticket ownership rules
 required that whoever acknowledged a ticket owned it to resolution ---
 handover notes had to include actions taken, pending items, blockers, and
 clear next steps for the incoming shift.
@@ -214,8 +213,7 @@ Corporate Actions FileMask for client onboarding, retriggering a stuck
 MESO pipeline, correcting a configuration file --- I resolved it directly.
 Where the root cause required a code change beyond support scope, I
 prepared a documented RCA, proposed a resolution approach, and raised or
-assigned a JIRA to the appropriate development team, copying
-\texttt{IA\_INCIDENTS@citco.com} and \texttt{ia\_it\_sre@citco.com} per
+assigned a JIRA to the appropriate development team, copying \texttt{ia\_it\_sre@citco.com} per
 the incident escalation procedure.
 
 Notable incidents handled during support rotations included the CAIS
@@ -223,12 +221,7 @@ Deadline credential failure (IISS-706), where I identified the Secrets
 Manager rotation gap and delivered a fail-fast hotfix; the MESO month-end
 stuck tasks (IISS-741, Critical) requiring manual pipeline retrigger; and
 the VPL Pricing GTL incorrect booking (IISS-876), where I performed the
-RCA and coordinated the fix with the business team. The operational
-experience gained across these rotations directly informed alarm design and
-threshold selection in Work Stream~2 --- each incident type encountered
-during support corresponds to a specific panel or alarm row in the Grafana
-dashboard, ensuring the observability platform reflects real production
-failure modes rather than theoretical ones.
+RCA and coordinated the fix with the business team. 
 
 % ────────────────────────────────────────────────────────────
 \section{Project Goals}
@@ -243,10 +236,10 @@ The primary goals of the internship project were as follows:
           dependency on business-team escalation as the primary detection
           mechanism with proactive CloudWatch alarms that fire within seconds
           of a threshold being crossed, directly addressing the failure modes
-          exposed by IISS-430 and the Apr~17 Meridian incident.
+          exposed by the CAIS-Pricing Silent Outage and the Meridian Incident.
 
     \item \textbf{Build a centralized observability platform for the IA-IT-SRE
-          Infrastructure.} Provide a single pane of glass across all six
+          Infrastructure.} Provide a eagle-eye view across all six
           platforms and all 13 AWS service categories, enabling the SRE team
           to assess platform health, drill down to individual AWS services, and
           respond to incidents without navigating six separate CloudWatch consoles.
@@ -885,7 +878,7 @@ deep domain context across all six IA platform environments. The week of
 transfer (KT) programme led jointly by Horace and Kishor, and supplemented
 by a multi-day CitcoWorks/Meridian architecture deep-dive delivered
 remotely by Bhanu Teja Murari from Hyderabad. The training week
-immediately followed the Apr~17 Meridian incident, giving the
+immediately followed the Meridian Incident, giving the
 sessions urgent practical relevance.
 
 \subsection{RPA Support Processes}
