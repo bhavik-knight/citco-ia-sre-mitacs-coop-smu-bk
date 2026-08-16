@@ -32,7 +32,7 @@ Infrastructure-as-Code & \textcolor{smumaroon}{\textbf{Met}} & 4 CloudFormation 
 \midrule
 Observability Platforms (AMG) & \textcolor{smumaroon}{\textbf{Met}} & 14-row / 110+ panel Grafana workspace; survived 10.4$\to$12.4 upgrade; 38 alarms wired to SNS \\
 \midrule
-Proactive vs.\ Reactive Reliability & \textcolor{smumaroon}{\textbf{Met}} & Alarm-backed detection replaces business escalation; Apr~17 incident used as design proof point \\
+Proactive vs.\ Reactive Reliability & \textcolor{smumaroon}{\textbf{Met}} & Alarm-backed detection replaces business escalation; Meridian Incident used as design proof point \\
 \midrule
 Python Development & \textcolor{smumaroon}{\textbf{Met}} & Flask REST API; 562 tests at 99\% coverage; boto3 concurrent discovery; Hypothesis PBT; structlog \\
 \midrule
@@ -104,7 +104,7 @@ SRE context, what stands out most is how profoundly the work changed the mental
 model I brought to reliability problems. The part-time onboarding phase in March
 and Apr introduced an environment where production failures were detected by
 business users noticing missing outputs --- a model that, from the outside, seemed
-merely inconvenient. The Apr~17 incident reframed that impression sharply:
+merely inconvenient. The Meridian Incident reframed that impression sharply:
 nine million queued Kafka messages and a 7.5-hour processing delay affecting
 client funds is not an inconvenience; it is a service reliability failure of
 exactly the kind that SRE practice exists to prevent. Building the instrumentation

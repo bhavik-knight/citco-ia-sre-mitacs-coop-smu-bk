@@ -174,3 +174,235 @@ These responsibilities required a blend of cloud engineering expertise, operatio
 discipline, and cross-functional communication skills to deliver production-grade
 monitoring infrastructure while maintaining the reliability of live financial
 automation processes.
+
+% ────────────────────────────────────────────────────────────
+% PLATFORM CONTEXT
+% ────────────────────────────────────────────────────────────
+
+\section{The Meridian Platform}
+\label{sec:meridian_platform}
+% ────────────────────────────────────────────────────────────
+
+\textbf{Meridian} is Citco's core digital workflow platform for fund
+operations. It handles event processing, task management, and document
+workflows for fund administration --- serving as the operational backbone
+through which business events (fund completions, report deliveries, task
+assignments) flow between Citco's systems and external counterparties.
+Understanding Meridian's architecture was prerequisite to my designing
+meaningful observability coverage for it.
+
+\subsection{Meridian Components Relevant to Observability}
+
+The following Meridian components were my primary observability targets
+during the internship:
+
+\begin{itemize}
+    \item \textbf{Event Routing Service (ERS).} Routes events between
+          services using a mapping table that specifies area, subject,
+          source, type, and destination Action Processor. Events are stored
+          in an ODL/Redis Elasticache layer and then pushed to Kafka topics
+          for consumption. ERS cannot perform a pass-through without a
+          mapping entry; missing \texttt{advanced\_matching} fields cause
+          routing failures.
+
+    \item \textbf{Action Processor (AP).} Consumes routed events from Kafka
+          and executes the corresponding business logic (e.g., updating task
+          status, triggering downstream notifications). APs are registered
+          via \texttt{deployment\_specs.yaml} using the PyTOML library and
+          can be anything from a simple status update to a cross-system
+          integration call.
+
+    \item \textbf{OpenSearch Consumer.} Consumes events from Kafka topics
+          and indexes them into the OpenSearch search cluster, making events
+          queryable by downstream services such as AXI. This is the
+          component whose throughput was overwhelmed during the Meridian Incident ---
+          the incident that directly motivated the SRE observability work.
+
+    \item \textbf{Apache Kafka / Amazon MSK.} The message backbone of the
+          Meridian event architecture. Kafka topics serve as the durable
+          buffer between event producers (ERS) and consumers (OpenSearch
+          consumer, APs). Consumer lag on these topics is the primary
+          leading indicator of event processing delays.
+
+    \item \textbf{ECS Clusters (Meridian).} Six ECS clusters host the
+          containerized Meridian services:
+          \texttt{meridian-api-cluster},
+          \texttt{meridian-cluster-compute},
+          \texttt{meridian-cluster-services},
+          \texttt{meridian-services-cluster},
+          \texttt{meridian-ui-cluster}, and
+          \texttt{meridian-compute-cluster}.
+          I enabled Container Insights on five of these six clusters on
+          May~11--12, 2026 (IISS-487), providing CPU, memory, network I/O,
+          and storage utilization telemetry at the task level.
+\end{itemize}
+
+\subsection{The Meridian Incident}
+
+On \textbf{Apr~17, 2026}, event processing on the Meridian platform
+experienced a 7.5-hour delay that prevented AXI from receiving BPM
+completion events for daily statement processing. The root cause was a
+high volume of automated system events from Citco Recs, which overwhelmed
+the OpenSearch consumption layer. Events were received successfully in
+Databricks but were not being consumed into OpenSearch --- backing up
+approximately \textbf{9~million messages} on the Kafka topics. Multiple
+funds were affected, including Winton, Goldman Sachs dailies, and others.
+
+The timeline illustrates the core observability gap: BPM submitted the
+first completion event at 04:39 AST; AXI polled nine times over the
+following two hours with no response; and the issue was not flagged until
+the \textbf{Dublin business team raised it at 08:13} --- over three and a
+half hours after the first failure signal.
+
+\begin{table}[ht]
+\centering
+\caption{Apr 17, 2026 Meridian Incident --- Key Timeline (AST)}
+\label{tab:apr17_timeline}
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{Time (AST)} & \textbf{Event} \\
+\midrule
+04:39 & BPM submits Deliver2 completion event for \texttt{ap\_id} 706648 \\
+04:53--06:41 & AXI polls Meridian 9 times --- event not received \\
+07:16 & BPM submits event for \texttt{ap\_id} 712661 \\
+08:13 & Dublin business team flags the issue \\
+09:30 & Root cause identified by Meridian team \\
+09:56 & Communication sent --- ETA 2--3 hours \\
+$\sim$12:00 & System restored to normal processing \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The resolution involved doubling the concurrency and Kafka partition counts
+for the OpenSearch consumer (30$\to$60 concurrent consumers, 30$\to$60
+partitions), upgrading the OpenSearch cluster from a \texttt{t3.medium} to
+\texttt{m4.large} with the node count increased from 3 to 5, and upscaling
+the Interactions Service and Tasks Management API memory allocations.
+
+The incident directly exposed a critical gap in the team's monitoring
+posture: \textbf{no proactive monitoring or alerting was in place on the
+SRE side for Meridian event volume anomalies.} The SRE team had no
+visibility into Kafka consumer lag, OpenSearch ingestion rates, or ECS
+task-level resource saturation. This gap became the primary motivation for:
+
+\begin{itemize}
+    \item \textbf{IISS-487} --- the centralized Grafana SRE dashboard,
+          designed to surface Meridian consumer lag as a leading indicator;
+    \item \textbf{IISS-489} --- the formal SRE Observability Roadmap, which
+          mapped monitoring gaps to prioritized engineering actions;
+    \item \textbf{IISS-488} --- the Auto-Healing Pipeline initiative, aimed
+          at reducing the mean time to recovery for recurring failure modes;
+    \item \textbf{IISS-506} --- the Meridian monitoring infrastructure
+          project, providing a full gap analysis and remediation plan.
+\end{itemize}
+
+\subsection{The Earlier Observability Blind Spot (Jan--Feb 2026)}
+
+The Meridian Incident, while the most dramatic and well-documented failure,
+was not the first signal of an observability gap at Citco. In the
+\textbf{five-week period from mid-Jan to mid-Feb 2026}, a
+production service was degraded or effectively down without any member of
+the development, business, infrastructure, or DevOps teams realizing it.
+The failure was eventually surfaced --- not by any automated alert or
+monitoring system --- but by a client complaint that arrived weeks after the
+underlying problem had begun affecting fund operations.
+
+This five-week blind spot pre-dated the formal SRE engagement by several
+months and had no documented root cause analysis because the problem had
+persisted silently for so long that the precise onset was not recoverable
+from logs. The incident became the organizational memory that gave weight to
+Kishor's Dynatrace replacement initiative: it was not a hypothetical
+reliability risk but a demonstrated pattern of extended, undetected service
+degradation. The Meridian Incident confirmed the pattern was still present
+after the IA platform had grown to its current scale.
+
+Together, these two incidents define the \textbf{observability mandate} that
+governed my internship: build a system where a service degradation that
+would have been invisible for five weeks in Jan~2026 would instead
+trigger an alert within 30 seconds. The MSK consumer lag alarm I implemented --- which
+would have fired within minutes of the Apr~17 backlog beginning to build
+--- is the clearest demonstration that this mandate was met.
+
+% ────────────────────────────────────────────────────────────
+
+\section{The Intelligent Automation Platform}
+\label{sec:ia_platform}
+% ────────────────────────────────────────────────────────────
+
+Meridian is one component of a broader \textbf{Intelligent Automation (IA)
+platform} operated by the IA-SRE team. The platform is organized into five
+\emph{platforms}, each hosting a distinct class of
+automation workload. Understanding this structure was essential for me to
+design a resource inventory system that could enumerate all monitored
+assets without manual cataloguing.
+
+\subsection{Budget Code Environments}
+
+\begin{table}[ht]
+\centering
+\caption{IA Platform --- Budget Code Environments and Resource Counts}
+\label{tab:budget_codes}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Budget Code} & \textbf{Platform} & \textbf{Lambda} & \textbf{ECS Clusters} \\
+\midrule
+\texttt{rpacfs1}      & CFS RPA Automation          & $\sim$30 & 5 \\
+\texttt{ia-bpo}       & BPO Intelligent Processing  & $\sim$30 & 6 \\
+\texttt{automationhub}& UiPath Automation Hub       & 22       & 1 (+1 EKS) \\
+\texttt{meridian}     & Meridian Workflow Platform  & 32       & 6 \\
+\texttt{citcoworks}   & CitcoWorks Workflow Engine  & 5        & 5 \\
+\midrule
+\textbf{Total} & & \textbf{$\sim$119} & \textbf{22 ECS + 1 EKS} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In addition to serverless and containerized workloads, the platform
+includes 8~EC2 instances (a mix of running and stopped) distributed across
+the five environments. Tag-based resource discovery --- using the
+\texttt{BudgetCode} tag as primary key and \texttt{AppName} as a fallback
+--- was required for the inventory API (IISS-507) because
+\texttt{CITCOWORKS} and \texttt{MERIDIAN} share a ``Shared Cloud
+Artifacts'' BudgetCode that is not unique at the environment level.
+
+\subsection{RPA Platforms and Key Business Processes}
+
+The IA platform's automation workloads operate on two RPA technologies:
+
+\begin{itemize}
+    \item \textbf{Blue Prism} handles daily, monthly, and quarterly
+          fund operations automation. Blue Prism is deployed in pools of
+          licensed robot nodes; each pool handles a designated class of
+          work (e.g., DataOps P1--P20 in PROD).
+
+    \item \textbf{UiPath} --- both UiPath Cloud (most processes, post
+          migration) and UiPath on-premises (non-cloud, for processes such
+          as FX Settled Status audits that run within the Citco VPC) ---
+          is the target platform for Blue Prism migrations and hosts newer
+          automation processes.
+\end{itemize}
+
+The key business processes monitored by the IA-SRE team include:
+
+\begin{itemize}
+    \item \textbf{VPL Pricing} --- Valuation and Pricing (VPL) queue
+          monitored from 5~PM EST daily. Three primary bots (with capacity
+          for three additional) handle fund NAV and pricing completion
+          events under a tight business deadline driven by market close.
+
+    \item \textbf{Corporate Actions} --- Mandatory, Voluntary, and
+          Operations Transfer workflows, plus Two Sigma wire transfers.
+
+    \item \textbf{MESO} --- Middle Office Month-End Sign-Off
+          (\texttt{ia\_meso\_process}), a Python and AWS-based process
+          handling cash and position reconciliation, Aexeo report
+          generation, and E-Binder packaging for fund administration teams.
+
+    \item \textbf{CAIS Deadline} --- Consolidated Audit Trail (CAIS)
+          submission automation under the \texttt{ia-bpo} budget code,
+          subject to regulatory filing deadlines.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+
+% Development repositories are documented in Chapter~\ref{chap:implementation}.
