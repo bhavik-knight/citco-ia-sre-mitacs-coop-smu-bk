@@ -383,7 +383,7 @@ the IA-SRE team's email distribution list. Alarm categories include:
 
     \item \textbf{MSK alarms}: \texttt{EstimatedMaxTimeLag} exceeding
           10,000~messages on any consumer group. This alarm directly
-          addresses the Apr~17 incident: it would have fired within
+          addresses the Meridian Incident: it would have fired within
           minutes of the lag beginning to build, compared to the 3.5-hour
           detection gap that occurred under the reactive model.
 
@@ -1029,7 +1029,7 @@ Metric Insights SQL rather than metric subscription filters.
 \subsection{Elevation to Critical and Week~8 Support Shift}
 
 On \textbf{May~6}, Kishor elevated IISS-487 to Critical priority, formalising
-what had been understood informally since the Apr~17 incident: the IA team
+what had been understood informally since the Meridian Incident: the IA team
 needed a centralized, real-time monitoring platform before the next Meridian
 outage occurred. The elevation came during my first support rotation week
 (Week~8), which meant the Grafana work could not begin in earnest until the
@@ -1052,7 +1052,7 @@ CloudFormation stacks in sequence:
           \texttt{ApproximateAgeOfOldestMessage} alarms per monitored queue.
     \item \textbf{\texttt{ia-sre-msk-alarms}} --- MSK consumer lag alarm on
           \texttt{EstimatedMaxTimeLag}, the metric whose absence had made the
-          Apr~17 incident invisible until business users flagged it.
+          Meridian Incident invisible until business users flagged it.
 \end{enumerate}
 
 Alongside the alarms, I provisioned the Amazon Managed Grafana (AMG) workspace
@@ -1131,7 +1131,7 @@ recently inactive functions.
 
 \textbf{MSK, DocumentDB, OpenSearch Rows, May~19--22.} I built the MSK/Kafka row
 around the \texttt{EstimatedMaxTimeLag} metric per consumer group,
-directly implementing the alarm that would have detected the Apr~17 incident.
+directly implementing the alarm that would have detected the Meridian Incident.
 DocumentDB and OpenSearch rows followed, with the OpenSearch JVM heap panel
 receiving particular attention given Meridian's dependency on OpenSearch for
 event querying.
@@ -1179,7 +1179,7 @@ the \texttt{rpacfs1} tag mismatch (where \texttt{BudgetCode} carried the value
 
 Rows~9--10 added DocumentDB and OpenSearch monitoring. I gave the OpenSearch panels ---
 index rate, search latency, and JVM heap pressure --- priority attention
-because OpenSearch was the bottleneck in the Apr~17 incident. I wired a JVM heap
+because OpenSearch was the bottleneck in the Meridian Incident. I wired a JVM heap
 utilisation panel above 75\% to a CloudWatch alarm to provide early
 warning before the service degraded under load.
 

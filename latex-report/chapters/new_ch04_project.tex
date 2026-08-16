@@ -390,123 +390,86 @@ response carries name, type, platform, tags, and ARN.
 property-based tests.
 
 % ────────────────────────────────────────────────────────────
-\section{Acceptance Criteria and Success Metrics}
+\section{Acceptance Criteria}
 \label{sec:acceptance_criteria}
 % ────────────────────────────────────────────────────────────
 
-Success across the three work streams was defined in terms of both
-\emph{functional} acceptance criteria (did the deliverable do what was
-specified?) and \emph{quantitative} metrics (can the improvement be
-measured?). The following subsections enumerate the criteria and the
-evidence gathered against each.
+The following criteria defined whether each deliverable met its stated
+objectives.
 
 \subsection{SRE Observability Platform}
 
 \begin{itemize}
-    \item \textbf{Consumer lag detection latency}: Improved from a
-          manual discovery window of 2--3~minutes (business team
-          escalation required) to \textbf{under 30~seconds} via
-          automated CloudWatch alarm on the MSK
-          \texttt{EstimatedMaxTimeLag} metric. This directly addresses
-          the core failure mode of the Apr~17 incident.
+    \item \textbf{Proactive incident detection}: The team can be alerted
+          to Kafka consumer lag, Lambda error rate spikes, ECS CPU
+          saturation, and SQS queue backlogs before business teams
+          escalate --- directly addressing the failure modes exposed by
+          the CAIS-Pricing Silent Outage and the Meridian Incident.
 
-    \item \textbf{Dashboard coverage}: 14~dashboard rows and
-          110+~panels covering 7~AWS AWS service categories
-          (\texttt{Lambda}, \texttt{ECS}, \texttt{MSK},
-          \texttt{SQS}, \texttt{DocumentDB}/\texttt{Neptune},
-          \texttt{OpenSearch}, \texttt{EC2}).
+    \item \textbf{Cross-platform visibility}: The SRE team can assess
+          the health of all six platforms and all monitored AWS services
+          from a single Grafana workspace without navigating individual
+          CloudWatch consoles.
 
-    \item \textbf{Alarm coverage}: 38~CloudWatch alarms deployed across
-          all monitored platforms, each connected to SNS notifications
-          routed to the SRE team's distribution list.
+    \item \textbf{Alarm coverage}: CloudWatch alarms are deployed and
+          active across all monitored AWS services on all six platforms,
+          with SNS notifications routed to the SRE team.
 
-    \item \textbf{Container Insights}: Enabled on 5~of~6 Meridian ECS
-          clusters (May~11--12, 2026), providing task-level CPU and
-          memory telemetry that was absent prior to the internship.
+    \item \textbf{Container-level telemetry}: Task-level CPU and memory
+          metrics are available for the Meridian ECS clusters, enabling
+          resource saturation to be detected before service degradation
+          occurs.
 
-    \item \textbf{Infrastructure deployment}: 4~CloudFormation stacks
-          deployed on May~11, 2026, establishing the Grafana workspace,
-          alarm infrastructure, and S3 storage as reproducible IaC.
+    \item \textbf{Reproducible infrastructure}: All monitoring
+          infrastructure --- Grafana workspace, alarms, IAM roles, S3
+          storage --- is provisioned as Infrastructure-as-Code and
+          can be redeployed consistently across environments.
+\end{itemize}
 
-    \item \textbf{Grafana version}: Workspace upgraded from 10.4 to
-          \textbf{12.4} during development, ensuring the platform runs
-          on a supported, feature-current release for the remainder of
-          its operational life.
+\subsection{IA Infrastructure Monitoring Platform}
+
+\begin{itemize}
+    \item \textbf{Platform coverage}: CloudWatch dashboards exist for
+          all six platforms covering the key AWS services (Lambda, ECS,
+          EC2, SQS, EKS) with tag-based resource filtering.
+
+    \item \textbf{Resilient SQS monitoring}: The SQS registry pipeline
+          remains functional during AWS service degradation via the
+          three-tier fallback model.
 \end{itemize}
 
 \subsection{IA Infrastructure Inventory API}
 
 \begin{itemize}
-    \item \textbf{Resource coverage}: Lambda functions
-          discovered across 5~platforms; \textbf{22~ECS clusters}
-          across 5~platforms; \textbf{83~EC2 instances} scanned
-          with tag-based discovery.
+    \item \textbf{Dynamic discovery}: The API returns a current,
+          accurate list of deployed AWS services per platform at query
+          time, enabling Grafana template variables to reflect the live
+          fleet without manual updates.
 
-    \item \textbf{Test coverage}: \textbf{562~automated tests}
-          achieving \textbf{99\%~code coverage}. The test suite
-          includes unit tests for each discoverer, integration tests
-          for all REST endpoints, and property-based tests for the
-          tag-matching and registry dispatch logic.
+    \item \textbf{Tag disambiguation}: Resources from the
+          \texttt{meridian} and \texttt{citcoworks} platforms are
+          correctly separated despite sharing the same \texttt{BudgetCode}
+          tag value.
 
-    \item \textbf{Tag disambiguation}: The
-          \texttt{AppName}-based secondary filter correctly separates
-          \texttt{CITCOWORKS} from \texttt{MERIDIAN} resources sharing
-          the \texttt{``Shared Cloud Artifacts''} BudgetCode tag,
-          preventing inventory contamination between the two environments.
+    \item \textbf{Extensibility}: New platforms or AWS service types
+          can be onboarded by implementing a single discoverer class
+          with no changes to the API routing or test infrastructure.
 
-    \item \textbf{Extensibility}: The discoverer registry pattern allows
-          new platforms or resource types to be onboarded by
-          implementing a single class implementing the
-          \texttt{BaseDiscoverer} interface, with zero changes required
-          to the API routing or serialization layers.
+    \item \textbf{Test coverage}: 99\% automated test coverage across
+          unit, integration, and property-based tests.
 \end{itemize}
 
-\subsection{RPA Support Operations}
+\subsection{RPA Production Support}
 
 \begin{itemize}
-    \item \textbf{CAIS Deadline hotfix (IISS-706)}: A fail-fast
-          credential validation layer was delivered within 7~hours of
-          the initial incident report, preventing recurrence of the
-          empty-credential container lifecycle problem. The hotfix
-          was reviewed and merged to a release branch for production
-          deployment.
+    \item \textbf{Incident response}: Production incidents are triaged,
+          root-caused, and either resolved within the support shift or
+          escalated with a documented RCA and proposed fix.
 
-    \item \textbf{Support rotation coverage}: 4~production support
-          rotations completed (Weeks~8, 12, 16, 20) without SLA
-          breach, covering VPL queue monitoring (5~PM~EST daily),
-          Corporate Actions triage, MESO month-end operations, and
-          BPM/UiPath platform incidents.
+    \item \textbf{SLA compliance}: Tickets are acknowledged within the
+          L2 response SLA and carried over with complete handover notes
+          per the IA Support Model.
 \end{itemize}
-
-\subsection{Summary of Quantitative Outcomes}
-
-\begin{table}[ht]
-\centering
-\caption{Key Quantitative Outcomes}
-\label{tab:quant_outcomes}
-\begin{tabular}{lll}
-\toprule
-\textbf{Metric} & \textbf{Pre-Internship} & \textbf{Post-Internship} \\
-\midrule
-MSK consumer lag detection time & 2--3~min (manual) & \textless30~sec (alarm) \\
-CloudWatch alarms on Meridian & 0 & 38 \\
-Dashboard panels (centralized) & 0 & 110+ \\
-Container Insights clusters (Meridian) & 1~of~6 & 5~of~6 \\
-Lambda functions inventoried & Manual/partial & Automated (all platforms) \\
-ECS clusters inventoried & Manual/partial & 22 (automated) \\
-EC2 instances scanned & Manual/partial & 83 (tag-based) \\
-Inventory API test coverage & N/A & 562 tests, 99\% \\
-CFN stacks (IaC) & 0 & 4 deployed \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Taken together, my three work streams transformed the IA-SRE team's
-monitoring posture from a reactive, business-team-dependent model to a
-proactive observability platform with sub-minute alerting, comprehensive
-resource inventory, and infrastructure-as-code governance. The Apr~17
-incident served as the catalyst; the deliverables described in the
-subsequent chapters constitute my engineering response.
 
 
 % ────────────────────────────────────────────────────────────
@@ -515,230 +478,3 @@ subsequent chapters constitute my engineering response.
 % ────────────────────────────────────────────────────────────
 
 % ────────────────────────────────────────────────────────────
-\section{The Meridian Platform}
-\label{sec:meridian_platform}
-% ────────────────────────────────────────────────────────────
-
-\textbf{Meridian} is Citco's core digital workflow platform for fund
-operations. It handles event processing, task management, and document
-workflows for fund administration --- serving as the operational backbone
-through which business events (fund completions, report deliveries, task
-assignments) flow between Citco's systems and external counterparties.
-Understanding Meridian's architecture was prerequisite to my designing
-meaningful observability coverage for it.
-
-\subsection{Meridian Components Relevant to Observability}
-
-The following Meridian components were my primary observability targets
-during the internship:
-
-\begin{itemize}
-    \item \textbf{Event Routing Service (ERS).} Routes events between
-          services using a mapping table that specifies area, subject,
-          source, type, and destination Action Processor. Events are stored
-          in an ODL/Redis Elasticache layer and then pushed to Kafka topics
-          for consumption. ERS cannot perform a pass-through without a
-          mapping entry; missing \texttt{advanced\_matching} fields cause
-          routing failures.
-
-    \item \textbf{Action Processor (AP).} Consumes routed events from Kafka
-          and executes the corresponding business logic (e.g., updating task
-          status, triggering downstream notifications). APs are registered
-          via \texttt{deployment\_specs.yaml} using the PyTOML library and
-          can be anything from a simple status update to a cross-system
-          integration call.
-
-    \item \textbf{OpenSearch Consumer.} Consumes events from Kafka topics
-          and indexes them into the OpenSearch search cluster, making events
-          queryable by downstream services such as AXI. This is the
-          component whose throughput was overwhelmed on Apr~17, 2026 ---
-          the incident that directly motivated the SRE observability work.
-
-    \item \textbf{Apache Kafka / Amazon MSK.} The message backbone of the
-          Meridian event architecture. Kafka topics serve as the durable
-          buffer between event producers (ERS) and consumers (OpenSearch
-          consumer, APs). Consumer lag on these topics is the primary
-          leading indicator of event processing delays.
-
-    \item \textbf{ECS Clusters (Meridian).} Six ECS clusters host the
-          containerized Meridian services:
-          \texttt{meridian-api-cluster},
-          \texttt{meridian-cluster-compute},
-          \texttt{meridian-cluster-services},
-          \texttt{meridian-services-cluster},
-          \texttt{meridian-ui-cluster}, and
-          \texttt{meridian-compute-cluster}.
-          I enabled Container Insights on five of these six clusters on
-          May~11--12, 2026 (IISS-487), providing CPU, memory, network I/O,
-          and storage utilization telemetry at the task level.
-\end{itemize}
-
-\subsection{The Meridian Incident}
-
-On \textbf{Apr~17, 2026}, event processing on the Meridian platform
-experienced a 7.5-hour delay that prevented AXI from receiving BPM
-completion events for daily statement processing. The root cause was a
-high volume of automated system events from Citco Recs, which overwhelmed
-the OpenSearch consumption layer. Events were received successfully in
-Databricks but were not being consumed into OpenSearch --- backing up
-approximately \textbf{9~million messages} on the Kafka topics. Multiple
-funds were affected, including Winton, Goldman Sachs dailies, and others.
-
-The timeline illustrates the core observability gap: BPM submitted the
-first completion event at 04:39 AST; AXI polled nine times over the
-following two hours with no response; and the issue was not flagged until
-the \textbf{Dublin business team raised it at 08:13} --- over three and a
-half hours after the first failure signal.
-
-\begin{table}[ht]
-\centering
-\caption{Apr 17, 2026 Meridian Incident --- Key Timeline (AST)}
-\label{tab:apr17_timeline}
-\begin{tabular}{lp{10cm}}
-\toprule
-\textbf{Time (AST)} & \textbf{Event} \\
-\midrule
-04:39 & BPM submits Deliver2 completion event for \texttt{ap\_id} 706648 \\
-04:53--06:41 & AXI polls Meridian 9 times --- event not received \\
-07:16 & BPM submits event for \texttt{ap\_id} 712661 \\
-08:13 & Dublin business team flags the issue \\
-09:30 & Root cause identified by Meridian team \\
-09:56 & Communication sent --- ETA 2--3 hours \\
-$\sim$12:00 & System restored to normal processing \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The resolution involved doubling the concurrency and Kafka partition counts
-for the OpenSearch consumer (30$\to$60 concurrent consumers, 30$\to$60
-partitions), upgrading the OpenSearch cluster from a \texttt{t3.medium} to
-\texttt{m4.large} with the node count increased from 3 to 5, and upscaling
-the Interactions Service and Tasks Management API memory allocations.
-
-The incident directly exposed a critical gap in the team's monitoring
-posture: \textbf{no proactive monitoring or alerting was in place on the
-SRE side for Meridian event volume anomalies.} The SRE team had no
-visibility into Kafka consumer lag, OpenSearch ingestion rates, or ECS
-task-level resource saturation. This gap became the primary motivation for:
-
-\begin{itemize}
-    \item \textbf{IISS-487} --- the centralized Grafana SRE dashboard,
-          designed to surface Meridian consumer lag as a leading indicator;
-    \item \textbf{IISS-489} --- the formal SRE Observability Roadmap, which
-          mapped monitoring gaps to prioritized engineering actions;
-    \item \textbf{IISS-488} --- the Auto-Healing Pipeline initiative, aimed
-          at reducing the mean time to recovery for recurring failure modes;
-    \item \textbf{IISS-506} --- the Meridian monitoring infrastructure
-          project, providing a full gap analysis and remediation plan.
-\end{itemize}
-
-\subsection{The Earlier Observability Blind Spot (Jan--Feb 2026)}
-
-The Apr~17 incident, while the most dramatic and well-documented failure,
-was not the first signal of an observability gap at Citco. In the
-\textbf{five-week period from mid-Jan to mid-Feb 2026}, a
-production service was degraded or effectively down without any member of
-the development, business, infrastructure, or DevOps teams realizing it.
-The failure was eventually surfaced --- not by any automated alert or
-monitoring system --- but by a client complaint that arrived weeks after the
-underlying problem had begun affecting fund operations.
-
-This five-week blind spot pre-dated the formal SRE engagement by several
-months and had no documented root cause analysis because the problem had
-persisted silently for so long that the precise onset was not recoverable
-from logs. The incident became the organizational memory that gave weight to
-Kishor's Dynatrace replacement initiative: it was not a hypothetical
-reliability risk but a demonstrated pattern of extended, undetected service
-degradation. The Apr~17 incident confirmed the pattern was still present
-after the IA platform had grown to its current scale.
-
-Together, these two incidents define the \textbf{observability mandate} that
-governed my internship: build a system where a service degradation that
-would have been invisible for five weeks in Jan~2026 would instead
-trigger an alert within 30 seconds. The MSK consumer lag alarm I implemented --- which
-would have fired within minutes of the Apr~17 backlog beginning to build
---- is the clearest demonstration that this mandate was met.
-
-% ────────────────────────────────────────────────────────────
-\section{The Intelligent Automation Platform}
-\label{sec:ia_platform}
-% ────────────────────────────────────────────────────────────
-
-Meridian is one component of a broader \textbf{Intelligent Automation (IA)
-platform} operated by the IA-SRE team. The platform is organized into five
-\emph{platforms}, each hosting a distinct class of
-automation workload. Understanding this structure was essential for me to
-design a resource inventory system that could enumerate all monitored
-assets without manual cataloguing.
-
-\subsection{Budget Code Environments}
-
-\begin{table}[ht]
-\centering
-\caption{IA Platform --- Budget Code Environments and Resource Counts}
-\label{tab:budget_codes}
-\begin{tabular}{llcc}
-\toprule
-\textbf{Budget Code} & \textbf{Platform} & \textbf{Lambda} & \textbf{ECS Clusters} \\
-\midrule
-\texttt{rpacfs1}      & CFS RPA Automation          & $\sim$30 & 5 \\
-\texttt{ia-bpo}       & BPO Intelligent Processing  & $\sim$30 & 6 \\
-\texttt{automationhub}& UiPath Automation Hub       & 22       & 1 (+1 EKS) \\
-\texttt{meridian}     & Meridian Workflow Platform  & 32       & 6 \\
-\texttt{citcoworks}   & CitcoWorks Workflow Engine  & 5        & 5 \\
-\midrule
-\textbf{Total} & & \textbf{$\sim$119} & \textbf{22 ECS + 1 EKS} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-In addition to serverless and containerized workloads, the platform
-includes 8~EC2 instances (a mix of running and stopped) distributed across
-the five environments. Tag-based resource discovery --- using the
-\texttt{BudgetCode} tag as primary key and \texttt{AppName} as a fallback
---- was required for the inventory API (IISS-507) because
-\texttt{CITCOWORKS} and \texttt{MERIDIAN} share a ``Shared Cloud
-Artifacts'' BudgetCode that is not unique at the environment level.
-
-\subsection{RPA Platforms and Key Business Processes}
-
-The IA platform's automation workloads operate on two RPA technologies:
-
-\begin{itemize}
-    \item \textbf{Blue Prism} handles daily, monthly, and quarterly
-          fund operations automation. Blue Prism is deployed in pools of
-          licensed robot nodes; each pool handles a designated class of
-          work (e.g., DataOps P1--P20 in PROD).
-
-    \item \textbf{UiPath} --- both UiPath Cloud (most processes, post
-          migration) and UiPath on-premises (non-cloud, for processes such
-          as FX Settled Status audits that run within the Citco VPC) ---
-          is the target platform for Blue Prism migrations and hosts newer
-          automation processes.
-\end{itemize}
-
-The key business processes monitored by the IA-SRE team include:
-
-\begin{itemize}
-    \item \textbf{VPL Pricing} --- Valuation and Pricing (VPL) queue
-          monitored from 5~PM EST daily. Three primary bots (with capacity
-          for three additional) handle fund NAV and pricing completion
-          events under a tight business deadline driven by market close.
-
-    \item \textbf{Corporate Actions} --- Mandatory, Voluntary, and
-          Operations Transfer workflows, plus Two Sigma wire transfers.
-
-    \item \textbf{MESO} --- Middle Office Month-End Sign-Off
-          (\texttt{ia\_meso\_process}), a Python and AWS-based process
-          handling cash and position reconciliation, Aexeo report
-          generation, and E-Binder packaging for fund administration teams.
-
-    \item \textbf{CAIS Deadline} --- Consolidated Audit Trail (CAIS)
-          submission automation under the \texttt{ia-bpo} budget code,
-          subject to regulatory filing deadlines.
-\end{itemize}
-
-% ────────────────────────────────────────────────────────────
-
-% Development repositories are documented in Chapter~\ref{chap:implementation}.
-
