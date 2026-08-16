@@ -21,13 +21,13 @@
 \usepackage{tikz}    % Border box
 \usepackage{eso-pic} % Border on all pages
 
-% Border box on every page (matching Neeyati's report)
+% Border box on every page (matching Neeyati's report — 24pt inset)
 \AddToShipoutPictureBG{%
     \begin{tikzpicture}[remember picture, overlay]
-        \draw[line width=1.2pt]
-            ([xshift=14pt, yshift=-14pt] current page.north west)
+        \draw[line width=0.5pt]
+            ([xshift=24pt, yshift=-24pt] current page.north west)
             rectangle
-            ([xshift=-14pt, yshift=14pt] current page.south east);
+            ([xshift=-24pt, yshift=24pt] current page.south east);
     \end{tikzpicture}%
 }
 
