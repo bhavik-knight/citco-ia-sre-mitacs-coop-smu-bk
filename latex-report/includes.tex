@@ -97,38 +97,7 @@
     urlcolor=smumaroon
 }
 
-% --- HEADER AND FOOTER STYLE (Neeyati-aligned) ---
-% Border box on every page via fancyhdr background
-\usepackage{eso-pic}
-\AddToShipoutPictureBG{%
-    \begin{tikzpicture}[remember picture, overlay]
-        \draw[line width=1.2pt]
-            ([xshift=14pt, yshift=-14pt] current page.north west)
-            rectangle
-            ([xshift=-14pt, yshift=14pt] current page.south east);
-    \end{tikzpicture}%
-}
-
-% Page style: no header, Neeyati-style footer (N | P a g e)
-\pagestyle{fancy}
-\fancyhf{}
-\fancyfoot[R]{\thepage\ | \textls[150]{P a g e}}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0.4pt}
-
-% Plain style (used by chapter opening pages) — same footer, border handled by eso-pic
-\fancypagestyle{plain}{%
-    \fancyhf{}%
-    \fancyfoot[R]{\thepage\ | \textls[150]{P a g e}}%
-    \renewcommand{\headrulewidth}{0pt}%
-    \renewcommand{\footrulewidth}{0.4pt}%
-}
-
-\captionsetup{margin=10pt,font=small,labelfont=bf}
-
-% Justified text (Neeyati uses full justification)
-\usepackage{microtype}
-\usepackage[tracking=true]{microtype}
+% --- HEADER AND FOOTER STYLE ---
 
 
 % --- CUSTOM CHAPTER HEADING OVERRIDES (SMU MAROON THEME) ---
