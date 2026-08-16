@@ -50,19 +50,16 @@ remediation and became the starting point for the full monitoring programme.
 
 \subsection{The Meridian Incident (Apr~2026)}
 
-On \textbf{Apr~17, 2026}, a surge of automated system events from Citco
-Recs congested Meridian's OpenSearch consumption layer, causing Kafka
-consumer lag to reach approximately \textbf{9~million messages}. Because
-AXI polls Meridian for BPM completion events, the stalled consumer halted
-daily statement processing for multiple fund clients --- including Winton
-and Goldman Sachs --- for \textbf{7.5~hours}. The key timeline: BPM
-submitted its first event at 04:39~AST; AXI polled nine times with no
-result; the SRE team received no alert; the Dublin business team escalated
-at 08:13~AST, three and a half hours after the first failure signal.
-The post-mortem recorded explicitly: \textit{``No proactive
+The Meridian Incident is described in full detail in
+Section~\ref{sec:meridian_platform} of Chapter~\ref{chap:about_company}.
+In brief: a surge of automated system events from Citco Recs overwhelmed
+Meridian's OpenSearch consumption layer, causing Kafka consumer lag to
+reach approximately \textbf{9~million messages} and halting daily
+statement processing for 7.5~hours. The SRE team received no alert; the
+Dublin business team escalated over three and a half hours after the
+first failure signal. The post-mortem recorded: \textit{``No proactive
 monitoring/alerting in place on the SRE side for Meridian event volume
-anomalies.''} Action items from that post-mortem became the core
-requirements for IISS-487.
+anomalies.''} This became the primary driver for IISS-487.
 
 \subsection{From Incident to Programme}
 
@@ -239,7 +236,7 @@ The primary goals of the internship project were as follows:
           exposed by the CAIS-Pricing Silent Outage and the Meridian Incident.
 
     \item \textbf{Build a centralized observability platform for the IA-IT-SRE
-          Infrastructure.} Provide a eagle-eye view across all six
+          Infrastructure.} Provide an eagle-eye view across all six
           platforms and all 13 AWS service categories, enabling the SRE team
           to assess platform health, drill down to individual AWS services, and
           respond to incidents without navigating six separate CloudWatch consoles.
@@ -347,7 +344,7 @@ Python-based dashboard builders and CloudFormation.
 \textbf{Scope:} Initially scoped to the \texttt{rpacfs1} and
 \texttt{ia-bpo} platforms (Lambda functions, Confluence inventory),
 then extended to all six platforms --- \texttt{automationhub},
-\texttt{bpm}, \texttt{citcoworks}, \texttt{meridian}, and
+\texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian}, and
 \texttt{rpacfs1} --- covering Lambda, EC2, ECS, EKS, SQS, and
 supporting AWS services. Each dashboard uses \texttt{BudgetCode} as
 the primary tag filter and \texttt{AppName} as the mandatory fallback
