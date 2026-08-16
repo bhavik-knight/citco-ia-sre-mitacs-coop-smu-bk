@@ -53,13 +53,52 @@ CloudWatch pipeline health dashboard (IISS-435), built against the
 dashboard included Lambda function monitoring, Logs Insights error widgets,
 and 262 automated tests.
 
-\textbf{Week 5} (Apr 13--18) was the training week. Four knowledge-transfer
-sessions covered the RPA support model (Horace), CitcoWorks and Event Store
-(Bhanu Teja Murari), Meridian Kafka architecture (Meridian team), and the
-\AE xeo Treasury platform. The the Meridian Incident occurred during this
-week, making the observability gap visible firsthand. By week end, IISS-469
-was underway and the architectural limitation of the \texttt{SEARCH()}-based
-dashboard (the visibility gap for inactive functions) had been documented.
+\textbf{Week 5} (Apr 13--18) was the full training week. Four structured
+knowledge-transfer sessions introduced the domain context required to design
+meaningful observability coverage for the IA-IT-SRE Infrastructure:
+
+\begin{itemize}
+    \item \textbf{RPA Support Model (Horace)} --- the Blue Prism and UiPath
+          operational model, the pool/queue architecture, PROD and UAT folder
+          hierarchy (\texttt{COE $\to$ DataOps $\to$ Processes / Assets / Rules /
+          Queues}), the support escalation model (service desk $\to$ Horace $\to$
+          Kishor), VPL queue monitoring (5~PM~EST daily), and Corporate Actions
+          template management (Mandatory, Voluntary, Ops Transfer).
+
+    \item \textbf{CitcoWorks and Event Store (Bhanu Teja Murari)} --- the
+          CitcoWorks Knowledge Graph (L1--L5 hierarchy backed by Amazon Neptune),
+          the Event Routing Service (ERS) and Action Processor (AP) deployment
+          model via \texttt{deployment\_specs.yaml}, the AuthMaster authentication
+          service, and the structured Event Store logging library used across all
+          IA processes (mandatory fields: \texttt{tenant\_id},
+          \texttt{knowledge\_datetime}, \texttt{area}, \texttt{subject},
+          \texttt{type}, \texttt{source}, \texttt{code}, \texttt{message},
+          \texttt{run\_id}, \texttt{process\_identifier}).
+
+    \item \textbf{Meridian Platform and Kafka Architecture (Meridian team)} ---
+          the Meridian event pipeline: ERS stores events in ODL/Redis Elasticache
+          then pushes to MSK Kafka topics; the OpenSearch Consumer indexes events
+          for AXI to query; six ECS clusters host Meridian services
+          (\texttt{meridian-api-cluster}, \texttt{meridian-cluster-compute},
+          \texttt{meridian-cluster-services}, \texttt{meridian-services-cluster},
+          \texttt{meridian-ui-cluster}, \texttt{meridian-compute-cluster}); Kafka
+          consumer lag on these topics is the primary leading indicator of event
+          processing health. The Meridian Incident occurred on Apr~17 during
+          this week, making the observability gap immediately concrete.
+
+    \item \textbf{\AE xeo Treasury Platform} --- Citco's cloud-based wire
+          approval and fund movement platform, integrating via COMAPI and the
+          \AE xeo Reporter Server REST API; key workloads include Active P\&L
+          reports, report generation, and account manager configurations used by
+          MESO and the E-Binder reconciliation processes.
+\end{itemize}
+
+Also on Apr~13, Kishor reviewed an early Lambda dashboard prototype and provided
+the requirements that shaped IISS-487: add three additional platform tag
+dimensions (BPM, CitcoWorks, Meridian), improve filter logic for multi-tag
+drill-down, and create a Confluence Lambda inventory page (IISS-461). By week
+end, IISS-469 was underway and the \texttt{SEARCH()} visibility gap for
+inactive Lambda functions had been identified and documented.
 
 \textbf{Week 7} built the ECS (IISS-484), EKS (IISS-485), and EC2 (IISS-483)
 monitoring dashboards. The EC2 gap analysis discovered the
