@@ -7,10 +7,10 @@
 \chapter{Learning Goals}
 \label{chap:learning_goals}
 
-The following learning goals were established at the start of my internship in
-consultation with my academic and industry supervisors. They are organized into
-technical and non-technical categories to reflect the dual competency development
-expected of an MCDA industry placement.
+The following learning goals were established at the start of my internship
+in consultation with my academic and industry supervisors. They are organized
+into technical and non-technical categories to reflect the dual competency
+development expected of an MCDA industry placement.
 
 % ────────────────────────────────────────────────────────────
 \section{Internship Parameters}
@@ -20,107 +20,119 @@ My internship spanned \textbf{Mar~15 -- Aug~31, 2026}, for a total of
 \textbf{900 hours} of logged work. The engagement operated in two phases:
 a part-time phase from Mar~15 to Apr~15 (approximately 10--20 hours per
 week) during which I completed the second semester of coursework in
-parallel, followed by a full-time phase from Apr~15 to Aug~31
-(approximately 40+ hours per week) upon academic semester completion. A
-Mitacs BSI renewal (Sep~1 -- Dec~31, 2026) was subsequently
-approved, extending the industrial collaboration into a second phase not
-covered by this primary submission.
+parallel, followed by a full-time phase from Apr~15 to Aug~31 (approximately
+40+ hours per week) upon academic semester completion. A Mitacs BSI renewal
+(Sep~1 -- Dec~31, 2026) was subsequently approved, extending the industrial
+collaboration into a second phase not covered by this primary submission.
 
-I was embedded within the \textbf{Intelligent Automation and
-Site Reliability Engineering (IA-SRE)} team at CTM Halifax, operating
-across three interlocking work streams:
-
-\begin{itemize}
-    \item \textbf{SRE \& Operational Observability} --- establishing SLIs
-          and SLOs, applying the four golden signals to financial services
-          workloads, and building a centralized observability platform on
-          Amazon Managed Grafana (AMG).
-
-    \item \textbf{Intelligent Automation \& Predictive Operations} ---
-          authoring CloudFormation IaC templates, engineering a
-          Lambda-based dynamic alarm provisioner, and developing the
-          \texttt{ia-sre-resources-inventory} REST API (IISS-507).
-
-    \item \textbf{Advanced Monitoring \& Capacity Analytics} ---
-          integrating Container Insights for ECS telemetry, designing
-          CloudWatch Logs Insights queries, and contributing to RPA
-          production support rotations.
-\end{itemize}
+I was embedded within the \textbf{Intelligent Automation and Site Reliability
+Engineering (IA-SRE)} team at CTM Halifax, operating across three
+interlocking work streams: SRE \& Operational Observability, Intelligent
+Automation \& Predictive Operations, and Advanced Monitoring \& Capacity
+Analytics.
 
 % ────────────────────────────────────────────────────────────
 \section{Technical Learning Goals}
 % ────────────────────────────────────────────────────────────
 
 \begin{itemize}
-    \item \textbf{AWS Cloud Services \& Infrastructure.}
-          Gain production-level proficiency with the AWS services central to
-          Citco's infrastructure: Amazon CloudWatch (metrics, alarms, Logs
-          Insights, Metric Insights SQL); AWS Lambda (serverless functions,
-          memory tuning, cold-start analysis, X-Ray tracing); Amazon ECS
-          with Container Insights and Amazon EKS for containerized
-          workloads; Amazon EC2 with CloudWatch Agent instrumentation;
-          Amazon MSK (managed Kafka, consumer lag monitoring); Amazon SQS
-          (queue-depth telemetry); Amazon SNS (alert routing); Amazon S3;
-          AWS CloudFormation and AWS SAM; and AWS Secrets Manager.
 
-          A deliberate learning goal was exposure to the \textbf{full
-          spectrum of database categories} used in production financial
-          platforms: Amazon DocumentDB; Amazon Neptune (graph database,
-          CitcoWorks Knowledge Graph); Amazon RDS / Aurora; Amazon
-          ElastiCache for Redis / Valkey (Meridian ODL tier); and Amazon
-          OpenSearch Service. Additional infrastructure explored includes
-          Amazon ECR, AWS CodeCommit, AWS CodePipeline, and the AWS IAM
-          permission model (including the 16-role agent permission structure
-          required for Grafana cross-account access).
+    \item \textbf{AWS Cloud Services and Infrastructure.}
+          Gain production-level proficiency with the AWS services central
+          to the IA-IT-SRE Infrastructure. During the part-time onboarding
+          phase, I focused on understanding the full AWS service landscape
+          in use at Citco: Amazon CloudWatch (metrics, alarms, Logs Insights,
+          Metric Insights SQL), AWS Lambda (serverless execution, cold-start
+          behaviour, concurrency), Amazon ECS and EKS (containerized
+          workloads), Amazon EC2 (virtual machine infrastructure),
+          Amazon MSK (managed Kafka, consumer lag), Amazon SQS
+          (queue-based messaging), Amazon SNS (alerting), Amazon S3,
+          AWS CloudFormation and SAM (Infrastructure-as-Code), AWS
+          CodePipeline (CI/CD), and AWS Secrets Manager (credential
+          management). A deliberate goal was exposure to the full spectrum
+          of database categories deployed at Citco: Amazon DynamoDB
+          (key-value), Amazon DocumentDB (document), Amazon Neptune
+          (graph database --- CitcoWorks Knowledge Graph), Amazon RDS
+          Aurora (relational), Amazon ElastiCache for Redis and Valkey
+          (in-memory caching --- Meridian ODL tier), and Amazon OpenSearch
+          Service (search and analytics). Additional infrastructure covered
+          includes Amazon ECR, AWS CodeCommit, and the AWS IAM permission
+          model (including cross-account role chaining for Grafana
+          data source access).
 
-    \item \textbf{Site Reliability Engineering Principles.}
-          Operationalize SRE concepts in a financial services context ---
-          defining SLIs and SLOs for RPA automation workloads, applying the
-          four golden signals (latency, traffic, errors, saturation) to
-          heterogeneous infrastructure, and designing proactive alerting
-          thresholds that reduce mean time to detection (MTTD) for
-          fund-impacting incidents.
+    \item \textbf{Observability, Monitoring, and the Four Golden Signals.}
+          Develop a working understanding of modern observability principles
+          and apply them to a production financial services platform. This
+          goal was anchored by a structured knowledge-transfer session with
+          Kri Labos (SRE mentor) on the four golden signals framework:
 
-    \item \textbf{Infrastructure-as-Code.}
-          Author parameterized CloudFormation YAML templates for CloudWatch
-          alarm deployment, develop a Lambda-based dynamic provisioner for
-          per-resource alarm creation, and navigate the AWS Secrets Manager
-          64\,KB payload limit encountered during provisioning (resolved by
-          migrating the template payload to S3).
+          \begin{itemize}
+              \item \textbf{Latency} --- how long requests take to complete;
+                    measured at P50, P95, and P99 percentiles; degradation
+                    thresholds from 200~ms to 2~s indicate performance risk.
 
-    \item \textbf{Observability Platforms.}
-          Construct and operate a production-grade Amazon Managed Grafana
-          (AMG) workspace --- including upgrading from version 10.4 to 12.4
-          mid-delivery --- integrating CloudWatch as a data source, building
-          14 dashboard rows with 110+ panels, and enabling Container
-          Insights on five of six Meridian ECS clusters.
+              \item \textbf{Traffic} --- volume of demand on the system;
+                    measured as request rate, Kafka throughput (messages
+                    in/out), disk I/O, and Lambda invocation count; load
+                    trends distinguish autoscaling candidates from capacity
+                    expansion needs.
 
-    \item \textbf{Proactive vs.\ Reactive Reliability Engineering.}
-          Build proactive reliability systems: set SLO-aligned alarm
-          thresholds (MSK consumer lag $< 10{,}000$ messages, ECS CPU
-          $< 80\%$, Lambda error rate $< 1\%$ over 24h), and design the
-          auto-healing pipeline (IISS-488) where alarm triggers initiate
-          automated recovery actions rather than only notifications.
+              \item \textbf{Errors} --- rate of failed requests; HTTP 5xx,
+                    4xx, and 3xx error rates tracked as a percentage;
+                    3--5\% threshold for SLO compliance, above 5\%
+                    indicates a service or deployment issue.
 
-    \item \textbf{Python Development.}
-          Write production-quality Python using \texttt{boto3} for AWS API
-          interaction, \texttt{pytest} with Hypothesis for property-based
-          testing (562-test suite, 99\% coverage), \texttt{Flask} with
-          async route handlers, and \texttt{structlog} for structured JSON
-          logging.
+              \item \textbf{Saturation} --- how full the system is; CPU,
+                    memory, thread count, and database connection counts;
+                    CPU at 95\% signals capacity risk; used for bottleneck
+                    prediction and capacity planning.
+          \end{itemize}
+
+          Beyond the four golden signals, learning goals included
+          understanding key observability metrics for each AWS service
+          on the dashboard --- MSK consumer lag, SQS queue depth and
+          oldest message age, ECS task CPU and memory, Lambda duration
+          and concurrent executions, EC2 CPU and network, OpenSearch
+          JVM heap pressure, and Redis memory utilization --- as well as
+          evaluating advanced observability tooling including AWS X-Ray
+          (distributed tracing), AWS Application Signals (SLO management),
+          Grafana Trace Maps, and improvement opportunities for the
+          existing IA ML/LLM RPA Support Agent.
+
+    \item \textbf{Infrastructure-as-Code and CI/CD.}
+          Author parameterized CloudFormation and AWS SAM templates for
+          alarm and infrastructure deployment; develop a Lambda-backed
+          dynamic alarm provisioner; and understand the AWS CodePipeline
+          CI/CD model used for automation deployments across the platforms.
+
+    \item \textbf{Grafana AMG Platform.}
+          Build and operate a production-grade Amazon Managed Grafana
+          workspace: configure CloudWatch as a data source, design
+          collapsible dashboard rows for each AWS service, implement
+          platform template variables for dynamic filtering, and learn
+          Grafana panel types (time series, stat, bar gauge, heatmap,
+          top-K list, table with deep-link URLs).
+
+    \item \textbf{Backend API Development.}
+          Write production-quality Python APIs using \texttt{Flask} and
+          \texttt{FastAPI} with async route handlers, \texttt{boto3} for
+          AWS service interaction, Pydantic for response validation, and
+          \texttt{pytest} with Hypothesis for property-based testing.
 
     \item \textbf{Software Engineering Practices.}
-          Practice test-driven development (TDD) and spec-driven development
-          via the Kiro IDE workflow (\texttt{.kiro/specs/} with
-          \texttt{requirements.md}, \texttt{design.md}, \texttt{tasks.md}),
-          enabling agentic sub-agent execution for code generation and PR
-          creation.
-
-    \item \textbf{AI-Augmented Engineering.}
-          Leverage the Kiro IDE (Claude Sonnet), Amazon~Q for contextual
-          code suggestions, and spec-driven agentic workflows to accelerate
-          design documentation, code scaffolding, and automated test
+          Practice spec-driven development via the Kiro IDE workflow
+          (\texttt{.kiro/specs/} with \texttt{requirements.md},
+          \texttt{design.md}, \texttt{tasks.md}), and apply AI-augmented
+          engineering using Kiro (Claude Sonnet) and Amazon~Q to
+          accelerate design documentation, code scaffolding, and test
           generation.
+
+    \item \textbf{Proactive vs.\ Reactive Reliability Engineering.}
+          Transition from a reactive support model (incident detection by
+          business escalation) to a proactive one (alarm-backed detection
+          within 30~seconds) by applying SLI/SLO targets and error budget
+          concepts to real production workloads.
+
 \end{itemize}
 
 % ────────────────────────────────────────────────────────────
@@ -128,30 +140,38 @@ across three interlocking work streams:
 % ────────────────────────────────────────────────────────────
 
 \begin{itemize}
-    \item \textbf{Agile and Kanban Methodology.}
-          Work within Citco's JIRA-based delivery process: sprint planning,
-          ticket decomposition, story-point estimation, and work-log
-          tracking across the IISS, CAIS, and other project boards.
 
-    \item \textbf{Technical Communication.}
+    \item \textbf{Scrum and Engineering Leadership.}
+          Lead daily standup calls on rotation, facilitate team coordination,
+          translate verbal requirements from Kishor into structured JIRA
+          stories with clear acceptance criteria and subtask decomposition,
+          and develop task estimation and prioritisation skills in a
+          production engineering environment.
+
+    \item \textbf{Cross-Functional and Cross-Timezone Collaboration.}
+          Build working relationships across Halifax IA-SRE, Innovation IT
+          Hyderabad (IST), Dublin and London business operations teams,
+          and the RPA support tier. Participate in structured
+          knowledge-transfer sessions, design reviews, security and
+          compliance meetings, and stakeholder syncs across time zones.
+
+    \item \textbf{Production Incident Response and RCA.}
+          Develop the discipline of structured root cause analysis: follow
+          the IA Support Model escalation tiers, document findings in SD
+          tickets and Confluence, communicate clearly with business and
+          platform teams under time pressure, and propose fixes or raise
+          JIRA defects with actionable resolution steps.
+
+    \item \textbf{Technical Communication and Documentation.}
           Produce engineering-grade written deliverables: incident RCA
           reports, architecture design documents, Confluence knowledge-base
-          pages, and this academic report.
-
-    \item \textbf{Production Incident Response.}
-          Participate in four on-call RPA support rotations (Weeks 8, 12,
-          16, 20) and handle time-sensitive production incidents including
-          the CAIS Deadline hotfix (IISS-706), the MESO month-end stuck
-          task retrigger (IISS-741, Critical), and VPL pricing failures
-          (IISS-753, IISS-876).
-
-    \item \textbf{Cross-Functional Collaboration.}
-          Build working relationships across Halifax IA-SRE, Innovation IT
-          Hyderabad, business operations teams, and the RPA support tier.
-          Coordinate across Halifax EST and Hyderabad IST time zones.
+          pages, runbooks, and this academic report.
 
     \item \textbf{Financial Domain Knowledge.}
-          Develop working familiarity with fund administration operations:
-          VPL queue (5~PM EST deadline), Corporate Actions workflows, MESO
-          month-end cycles, and CAIS regulatory filing deadlines.
+          Develop working familiarity with fund administration operations ---
+          VPL queue (5~PM~EST daily deadline), Corporate Actions workflows
+          (Mandatory, Voluntary, Ops Transfer), MESO month-end cycles,
+          and CAIS regulatory filing deadlines --- to make informed
+          monitoring and incident response decisions.
+
 \end{itemize}
