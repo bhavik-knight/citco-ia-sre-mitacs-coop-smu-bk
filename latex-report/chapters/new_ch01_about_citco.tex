@@ -240,8 +240,9 @@ during the internship:
 \subsection{The Meridian Incident}
 
 On \textbf{Apr~17, 2026}, event processing on the Meridian platform
-experienced a 7.5-hour delay that prevented AXI from receiving BPM
-completion events for daily statement processing. The root cause was a
+experienced a 7.5-hour delay that prevented AXI from receiving
+BPM (Business Process Management) completion events for daily statement
+processing. The root cause was a
 high volume of automated system events from Citco Recs, which overwhelmed
 the OpenSearch consumption layer. Events were received successfully in
 Databricks but were not being consumed into OpenSearch --- backing up
@@ -256,7 +257,7 @@ half hours after the first failure signal.
 
 \begin{table}[ht]
 \centering
-\caption{Apr 17, 2026 Meridian Incident --- Key Timeline (AST)}
+\caption{Apr~17, 2026 Meridian Incident --- Key Timeline (AST)}
 \label{tab:apr17_timeline}
 \begin{tabular}{lp{10cm}}
 \toprule
@@ -320,8 +321,8 @@ Together, these two incidents define the \textbf{observability mandate} that
 governed my internship: build a system where a service degradation that
 would have been invisible for five weeks in Jan~2026 would instead
 trigger an alert within 30 seconds. The MSK consumer lag alarm I implemented --- which
-would have fired within minutes of the Apr~17 backlog beginning to build
---- is the clearest demonstration that this mandate was met.
+would have fired within minutes of the backlog that began building during
+the Meridian Incident --- is the clearest demonstration that this mandate was met.
 
 % ────────────────────────────────────────────────────────────
 
@@ -329,41 +330,42 @@ would have fired within minutes of the Apr~17 backlog beginning to build
 \label{sec:ia_platform}
 % ────────────────────────────────────────────────────────────
 
-Meridian is one component of a broader \textbf{Intelligent Automation (IA)
-platform} operated by the IA-SRE team. The platform is organized into five
-\emph{platforms}, each hosting a distinct class of
-automation workload. Understanding this structure was essential for me to
-design a resource inventory system that could enumerate all monitored
-assets without manual cataloguing.
+Meridian is one component of the broader \textbf{IA-IT-SRE Infrastructure}
+operated by the IA-SRE team. The infrastructure is organized into six
+platforms, each identified by an internal budget code used for cost
+allocation and AWS resource tagging. Understanding this structure was
+essential for me to design a resource inventory system that could
+enumerate all monitored AWS services without manual cataloguing.
 
-\subsection{Budget Code Environments}
+\subsection{Platforms and Budget Codes}
 
 \begin{table}[ht]
 \centering
-\caption{IA Platform --- Budget Code Environments and Resource Counts}
+\caption{IA-IT-SRE Infrastructure --- Six Platforms and Resource Counts}
 \label{tab:budget_codes}
 \begin{tabular}{llcc}
 \toprule
 \textbf{Budget Code} & \textbf{Platform} & \textbf{Lambda} & \textbf{ECS Clusters} \\
 \midrule
-\texttt{rpacfs1}      & CFS RPA Automation          & $\sim$30 & 5 \\
-\texttt{ia-bpo}       & BPO Intelligent Processing  & $\sim$30 & 6 \\
 \texttt{automationhub}& UiPath Automation Hub       & 22       & 1 (+1 EKS) \\
-\texttt{meridian}     & Meridian Workflow Platform  & 32       & 6 \\
+\texttt{bpm}          & CFS BPM Automation          & $\sim$10 & 2 \\
 \texttt{citcoworks}   & CitcoWorks Workflow Engine  & 5        & 5 \\
+\texttt{ia-bpo}       & BPO Intelligent Processing  & $\sim$30 & 6 \\
+\texttt{meridian}     & Meridian Workflow Platform  & 32       & 6 \\
+\texttt{rpacfs1}      & CFS RPA Automation          & $\sim$30 & 5 \\
 \midrule
-\textbf{Total} & & \textbf{$\sim$119} & \textbf{22 ECS + 1 EKS} \\
+\textbf{Total} & & \textbf{$\sim$129} & \textbf{25 ECS + 1 EKS} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-In addition to serverless and containerized workloads, the platform
-includes 8~EC2 instances (a mix of running and stopped) distributed across
-the five environments. Tag-based resource discovery --- using the
+In addition to serverless and containerized AWS services, the
+IA-IT-SRE Infrastructure includes EC2 instances distributed across
+the six platforms. Tag-based resource discovery --- using the
 \texttt{BudgetCode} tag as primary key and \texttt{AppName} as a fallback
 --- was required for the inventory API (IISS-507) because
-\texttt{CITCOWORKS} and \texttt{MERIDIAN} share a ``Shared Cloud
-Artifacts'' BudgetCode that is not unique at the environment level.
+\texttt{citcoworks} and \texttt{meridian} share a ``Shared Cloud
+Artifacts'' BudgetCode that is not unique at the platform level.
 
 \subsection{RPA Platforms and Key Business Processes}
 
