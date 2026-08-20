@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % CHAPTER 12: ACHIEVEMENTS & BUSINESS VALUE
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -32,10 +32,11 @@ completion, the workspace contained:
 \centering
 \caption{IISS-487 Grafana Dashboard --- Delivery Metrics}
 \label{tab:iiss487_metrics}
-\begin{tabular}{p{6.5cm}p{5.5cm}}
-\toprule
-\textbf{Metric} & \textbf{Value at Completion} \\
-\midrule
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{Xp{5.5cm}}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Metric}} & \textcolor{white}{\textbf{Value at Completion}} \\
+\hline
 Total dashboard rows & 14 \\
 Total panels & 110+ \\
 CloudWatch alarms provisioned & 38 \\
@@ -45,8 +46,8 @@ Container Insights enabled & 5 of 6 Meridian ECS clusters \\
 IAM role model & 16-role cross-account agent permission model \\
 Grafana version at delivery & 12.4 (upgraded from 10.4 during development) \\
 Hours logged (JIRA) & 140 \\
-\bottomrule
-\end{tabular}
+\hline
+\end{tabularx}
 \end{table}
 
 The original acceptance criteria for IISS-487 required a single Grafana workspace
@@ -72,8 +73,8 @@ AWS service fleet before the Grafana migration. Key coverage outcomes:
           CPU and memory metrics surfaced via Container Insights after May~11.
     \item \textbf{83 EC2 instances} scanned, with a critical tagging
           inconsistency discovered and documented: \texttt{rpacfs1} instances
-          carried \texttt{BudgetCode=``CFS/RPA''} rather than the expected
-          \texttt{``rpacfs1''}, requiring the \texttt{AppName} fallback
+          carried \texttt{BudgetCode="CFS/RPA"} rather than the expected
+          \textbf{"rpacfs1"}, requiring the AppName fallback
           disambiguation pattern.
     \item \textbf{Top-K filter analysis}: a systematic evaluation determined
           that centralizing log aggregation via CloudWatch metric subscription
@@ -96,18 +97,19 @@ state on Jul~14, 2026. Summary metrics at handoff:
 \centering
 \caption{IISS-507 Inventory API --- Delivery Metrics}
 \label{tab:iiss507_metrics}
-\begin{tabular}{p{6.5cm}p{5.5cm}}
-\toprule
-\textbf{Metric} & \textbf{Value at Completion} \\
-\midrule
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{Xp{5.5cm}}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Metric}} & \textcolor{white}{\textbf{Value at Completion}} \\
+\hline
 Automated tests & 562 \\
 Code coverage & 99\% \\
 API response time (full fleet) & $<$10 seconds (NFR3 target met) \\
 Discoverer registry entries & 12 (resource type $\times$ budget code pairs) \\
 Disambiguation pattern & Two-stage AppName filter for Shared BudgetCode \\
 Property-based tests (Hypothesis) & Included in 562 total \\
-\bottomrule
-\end{tabular}
+\hline
+\end{tabularx}
 \end{table}
 
 The Discoverer Registry pattern --- in which a \texttt{(resource\_type, budget\_code)}
@@ -118,7 +120,7 @@ infrastructure. The 99\% code coverage figure was achieved through a layered tes
 strategy: unit tests for each discoverer with mocked boto3 clients; integration tests
 via the Flask test client against all REST endpoints; and property-based tests using
 the Hypothesis library, which generated random tag combinations to verify that the
-two-stage filter never conflated \texttt{MERIDIAN} and \texttt{CITCOWORKS}
+two-stage filter never conflated \texttt{meridian} and \texttt{citcoworks}
 resources regardless of input.
 
 \subsection{RPA Production Support}

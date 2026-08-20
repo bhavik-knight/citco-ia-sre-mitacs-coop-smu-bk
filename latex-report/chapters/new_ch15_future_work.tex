@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % CHAPTER 14: FUTURE WORK
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -84,23 +84,19 @@ from the four support rotation weeks:
 \centering
 \caption{Auto-Healing Agent --- Initial Remediation Catalogue}
 \label{tab:autohealing_catalogue}
-\begin{tabular}{p{4.5cm}p{4.0cm}p{3.5cm}}
-\toprule
-\textbf{Alarm / Trigger} & \textbf{Recovery Action} & \textbf{Escalation if Fails} \\
-\midrule
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{Xp{4.0cm}p{3.5cm}}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Alarm / Trigger}} & \textcolor{white}{\textbf{Recovery Action}} & \textcolor{white}{\textbf{Escalation if Fails}} \\
+\hline
 ECS task desired $\neq$ running & \texttt{ecs:UpdateService} (force new deployment) & SNS alert to SRE \\
-\midrule
 MSK consumer lag $>$ 10{,}000 messages & Scale ECS consumer service (+1 task) & SNS + JIRA ticket (auto-created via JIRA API) \\
-\midrule
 Lambda error rate $>$ 1\% over 5 min & Trigger Step Functions diagnostic workflow; capture last 50 error log lines to S3 & SNS alert with S3 log link \\
-\midrule
 SQS queue age $>$ 1 hour & Invoke queue-processor Lambda with \texttt{force=true} parameter & SNS alert \\
-\midrule
 ECS CPU $>$ 80\% sustained 5 min & Trigger ECS service auto-scaling policy (\texttt{RegisterScalableTarget}) & SNS if already at max task count \\
-\midrule
 RPA bot missing heartbeat (future) & Call UiPath Orchestrator API to restart robot job & SNS + support ticket \\
-\bottomrule
-\end{tabular}
+\hline
+\end{tabularx}
 \end{table}
 
 \paragraph{Design Principles.}

@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % CHAPTER 6: LEARNING GOALS
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -44,30 +44,11 @@ development expected of an MCDA industry placement.
     \item \textbf{Observability, Monitoring, and the Four Golden Signals.}
           Develop a working understanding of modern observability principles
           and apply them to a production financial services platform. This
-          goal was anchored by a structured knowledge-transfer session with
-          Kri Labos (SRE mentor) on the four golden signals framework:
-
-          \begin{itemize}
-              \item \textbf{Latency} --- how long requests take to complete;
-                    measured at P50, P95, and P99 percentiles; degradation
-                    thresholds from 200~ms to 2~s indicate performance risk.
-
-              \item \textbf{Traffic} --- volume of demand on the system;
-                    measured as request rate, Kafka throughput (messages
-                    in/out), disk I/O, and Lambda invocation count; load
-                    trends distinguish autoscaling candidates from capacity
-                    expansion needs.
-
-              \item \textbf{Errors} --- rate of failed requests; HTTP 5xx,
-                    4xx, and 3xx error rates tracked as a percentage;
-                    3--5\% threshold for SLO compliance, above 5\%
-                    indicates a service or deployment issue.
-
-              \item \textbf{Saturation} --- how full the system is; CPU,
-                    memory, thread count, and database connection counts;
-                    CPU at 95\% signals capacity risk; used for bottleneck
-                    prediction and capacity planning.
-          \end{itemize}
+          goal was developed through discussions with Kri (SRE mentor) on
+          the four golden signals framework --- latency, traffic, errors,
+          and saturation --- and their application to the IA platform AWS
+          service fleet. Full details are covered in
+          Chapter~\ref{chap:methodologies}.
 
           Beyond the four golden signals, learning goals included
           understanding key observability metrics for each AWS service
@@ -95,10 +76,10 @@ development expected of an MCDA industry placement.
           top-K list, table with deep-link URLs).
 
     \item \textbf{Backend API Development.}
-          Write production-quality Python APIs using \texttt{Flask} and
-          \texttt{FastAPI} with async route handlers, \texttt{boto3} for
+          Write production-quality Python APIs using Flask and
+          FastAPI with async route handlers, boto3 for
           AWS service interaction, Pydantic for response validation, and
-          \texttt{pytest} with Hypothesis for property-based testing.
+          pytest with Hypothesis for property-based testing.
 
     \item \textbf{Software Engineering Practices.}
           Practice spec-driven development via the Kiro IDE workflow

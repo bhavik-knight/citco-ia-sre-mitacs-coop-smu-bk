@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % CHAPTER 8: REQUIREMENTS ELICITATION
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -9,22 +9,14 @@
 
 During my internship I worked with a small set of internal stakeholders
 whose needs shaped the functional and non-functional requirements of the
-IA-IT-SRE Infrastructure monitoring platform. This chapter identifies
-those stakeholders, describes the elicitation techniques I used, and
-documents the requirements that governed the build.
+IA-IT-SRE Infrastructure monitoring platform.
 
 % ────────────────────────────────────────────────────────────
 \section{Stakeholder Identification}
 \label{sec:stakeholders}
 % ────────────────────────────────────────────────────────────
 
-Requirements for an internal SRE tooling platform are shaped by a
-relatively small but technically diverse set of stakeholders.
-Unlike external-facing software products, the IA observability
-platform has no end-user customer outside Citco. All stakeholders
-are internal --- either direct members of the IA-SRE team or
-operational teams who depend on the automations that the platform
-monitors. Table~\ref{tab:stakeholders} enumerates the key
+Table~\ref{tab:stakeholders} enumerates the key
 stakeholders, their roles, and their specific interests in the
 project.
 
@@ -32,25 +24,19 @@ project.
 \centering
 \caption{Stakeholder Identification}
 \label{tab:stakeholders}
-\begin{tabular}{p{3.8cm}p{3.0cm}p{5.5cm}}
-\toprule
-\textbf{Stakeholder} & \textbf{Role} & \textbf{Interest / Influence} \\
-\midrule
-Kishor Deotale & Manager, CTM; Industry Supervisor & Primary sponsor; sets engineering priorities; escalated IISS-487 to Critical on May~6, 2026; final acceptance authority \\
-\midrule
-Ho Hoi Leung (Horace) & RPA Platform Lead & RPA platform subject matter expert; provided KT on Blue Prism and UiPath architectures; defined RPA monitoring scope \\
-\midrule
-Kristia Marie Labos (Kri) & SRE Methodology Lead & Provided golden signals and SLI/SLO training (May~25 session); reviewed dashboard design; validated alarm threshold selection \\
-\midrule
-IA Operations Team & Internal SRE consumers & Primary users of the Grafana dashboard and alarm notifications; operational first responders to CloudWatch alarms \\
-\midrule
-Business Operations Teams (Dublin, London, Halifax) & Fund admin automation consumers & Downstream consumers of the automations; surface incidents under the reactive model; motivated the shift to proactive monitoring \\
-\midrule
-Meridian Platform Team & Kafka/ECS architecture owners & Provided architecture context for MSK consumer group structure, ECS cluster topology, and OpenSearch integration \\
-\midrule
-Co-Interns (Sridhar Vadla, Soundarya Venkataraman) & Collaborative development partners & Parallel development of related monitoring features; design review and test validation \\
-\bottomrule
-\end{tabular}
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{p{2.5cm}p{3.8cm}X}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Stakeholder}} & \textcolor{white}{\textbf{Role}} & \textcolor{white}{\textbf{Interest / Influence}} \\
+\hline
+Kishor & Manager, CTM; Industry Supervisor & Primary sponsor; set engineering priorities; escalated IISS-487 to Critical; final acceptance authority \\
+Horace & IT Senior Developer, RPA Platform Lead & RPA subject matter expert; delivered Blue Prism and UiPath KT; defined RPA monitoring scope \\
+Kri & IT Developer, SRE Engineer & Delivered golden signals and alarm threshold training; reviewed dashboard design \\
+IA IT SRE Team & Internal SRE consumers & Primary users of the Grafana dashboard and CloudWatch alarm notifications \\
+Meridian Team & Kafka/ECS architecture owners & Provided MSK consumer group structure, ECS cluster topology, and OpenSearch integration context \\
+Sridhar \& Soundarya & Co-interns & Parallel development of related monitoring features; design review and test validation \\
+\hline
+\end{tabularx}
 \end{table}
 
 % ────────────────────────────────────────────────────────────
@@ -58,8 +44,7 @@ Co-Interns (Sridhar Vadla, Soundarya Venkataraman) & Collaborative development p
 \label{sec:requirements_elicitation}
 % ────────────────────────────────────────────────────────────
 
-All stakeholders for this project were internal to Citco. This
-constrained the elicitation methods to those appropriate for an
+The elicitation methods used were appropriate for an
 in-house engineering context: structured knowledge-transfer sessions,
 incident post-mortems, and JIRA story refinement, rather than formal
 user interviews or focus groups.
@@ -81,8 +66,8 @@ had distinct resource profiles requiring separate monitoring strategies.
 
 \paragraph{Incident Post-Mortem (Apr 17, 2026).}
 The Meridian production incident yielded the single most important
-requirements insight of the entire engagement: \textbf{MSK consumer
-lag is the primary leading indicator of Meridian health}. The
+requirements insight of the entire engagement: MSK consumer
+lag is the primary leading indicator of Meridian health. The
 post-mortem made concrete the latency between signal onset and
 detection under the reactive model, and directly specified the target
 for the lag alarm evaluation period (NFR2: $\leq$1~minute).
@@ -113,12 +98,12 @@ resulting design:
 
 \begin{enumerate}
     \item \textbf{Tag-based resource discovery is non-trivial at Citco
-          scale.} The training week revealed that the \texttt{CITCOWORKS}
-          and \texttt{MERIDIAN} environments share the
-          \texttt{``Shared Cloud Artifacts''} BudgetCode tag, meaning
-          a simple \texttt{BudgetCode} lookup conflates resources from
+          scale.} The training week revealed that the \texttt{citcoworks}
+          and \texttt{meridian} environments share the
+          \textbf{Shared Cloud Artifacts} BudgetCode tag, meaning
+          a simple BudgetCode lookup conflates resources from
           two operationally distinct environments. This directly
-          motivated FR9 (tag-based discovery with \texttt{AppName}
+          motivated FR9 (tag-based discovery with AppName
           fallback).
 
     \item \textbf{The primary audience for the dashboard is the SRE
@@ -135,7 +120,7 @@ resulting design:
           manually provisioned monitoring infrastructure in previous
           projects (configuration drift, undocumented alarms). The JIRA
           refinement sessions made FR7 an explicit acceptance criterion
-          rather than a ``nice to have.''
+          rather than a \textbf{nice to have}.
 \end{enumerate}
 
 % ────────────────────────────────────────────────────────────
@@ -156,29 +141,22 @@ requirements, each with the primary deliverable that satisfies it.
 \centering
 \caption{Functional Requirements}
 \label{tab:functional_requirements}
-\begin{tabular}{p{0.8cm}p{6.8cm}p{4.5cm}}
-\toprule
-\textbf{ID} & \textbf{Requirement} & \textbf{Satisfied By} \\
-\midrule
-FR1 & Dashboard must display real-time metrics for Lambda functions (invocations, errors, duration, throttles, concurrent executions) per budget code & Grafana AMG dashboard, Lambda rows (IISS-487) \\
-\midrule
-FR2 & Dashboard must display ECS service CPU and memory utilisation per cluster and service & Container Insights + ECS rows in Grafana (IISS-487, IISS-483) \\
-\midrule
-FR3 & Dashboard must display MSK consumer lag per consumer group and topic partition & MSK rows in Grafana; CloudWatch \texttt{EstimatedMaxTimeLag} alarm (IISS-487) \\
-\midrule
-FR4 & Dashboard must display SQS queue depth and oldest message age per queue & SQS rows in Grafana; SQS monitoring API (IISS-482) \\
-\midrule
-FR5 & CloudWatch alarms must be provisioned for all monitored resource types with SNS notification routing to SRE team & 38 CloudWatch alarms deployed via CloudFormation (IISS-487) \\
-\midrule
-FR6 & Dashboard must support variable-based filtering by budget code, environment, and resource name & Grafana template variables (IISS-487) \\
-\midrule
-FR7 & All monitoring infrastructure must be deployed as Infrastructure-as-Code via CloudFormation & 4 CloudFormation stacks; Lambda-backed IaC provisioner; S3-staged templates (IISS-487) \\
-\midrule
-FR8 & Inventory API must enumerate all Lambda, ECS, EC2, and S3 resources per budget code via REST endpoints & Flask REST API, discoverer registry (IISS-507) \\
-\midrule
-FR9 & Inventory API must support tag-based resource discovery with \texttt{AppName} fallback for shared BudgetCode environments & Two-stage filter logic in \texttt{CITCOWORKS}/\texttt{MERIDIAN} discoverers (IISS-507) \\
-\bottomrule
-\end{tabular}
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{p{0.9cm}Xp{5.0cm}}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requirement}} & \textcolor{white}{\textbf{Satisfied By}} \\
+\hline
+FR1 & Dashboard displays real-time Lambda metrics (invocations, errors, duration, throttles) per platform & Grafana AMG, Lambda rows (IISS-487) \\
+FR2 & Dashboard displays ECS CPU and memory utilisation per cluster and service & Container Insights + ECS rows (IISS-487, IISS-483) \\
+FR3 & Dashboard displays MSK consumer lag per consumer group & MSK rows; \texttt{EstimatedMaxTimeLag} alarm (IISS-487) \\
+FR4 & Dashboard displays SQS queue depth and oldest message age & SQS rows in Grafana; SQS monitoring (IISS-482) \\
+FR5 & CloudWatch alarms provisioned for all monitored resource types with SNS routing to SRE team & 38 alarms via CloudFormation (IISS-487) \\
+FR6 & Dashboard supports variable-based filtering by platform and resource & Grafana template variables (IISS-487) \\
+FR7 & All monitoring infrastructure deployed as Infrastructure-as-Code & 4 CloudFormation stacks; Lambda-backed IaC provisioner (IISS-487) \\
+FR8 & Inventory API enumerates Lambda, ECS, EC2, and S3 resources per platform via REST & Flask REST API, discoverer registry (IISS-507) \\
+FR9 & Inventory API supports two-stage tag-based discovery for shared BudgetCode platforms & Two-stage AppName filter in \texttt{citcoworks}/\texttt{meridian} discoverers (IISS-507) \\
+\hline
+\end{tabularx}
 \end{table}
 
 \subsection{Non-Functional Requirements}
@@ -191,25 +169,20 @@ achieved value where applicable.
 \centering
 \caption{Non-Functional Requirements}
 \label{tab:nonfunctional_requirements}
-\begin{tabular}{p{0.8cm}p{4.5cm}p{2.8cm}p{3.5cm}}
-\toprule
-\textbf{ID} & \textbf{Requirement} & \textbf{Target Metric} & \textbf{Achieved} \\
-\midrule
-NFR1 & Dashboard refresh latency must enable sub-minute incident detection & $\leq$30~seconds & \textcolor{smumaroon}{$\leq$30~sec} (CloudWatch native refresh) \\
-\midrule
-NFR2 & CloudWatch alarm evaluation period for critical metrics (MSK consumer lag, Lambda error rate) & $\leq$1~minute & \textcolor{smumaroon}{1-minute period} (deployed) \\
-\midrule
-NFR3 & Inventory API response time for full resource enumeration & $\leq$10~seconds & \textcolor{smumaroon}{$<$10~sec} (async Flask, async AWS SDK) \\
-\midrule
-NFR4 & Inventory API automated test coverage & $\geq$95\% & \textcolor{smumaroon}{99\%} (562 tests) \\
-\midrule
-NFR5 & All CloudFormation templates must be parameterized for multi-environment reuse without code changes & Parameterized YAML & \textcolor{smumaroon}{Achieved} (env, budget code, thresholds as parameters) \\
-\midrule
-NFR6 & Dashboard must remain functional after Grafana version upgrades without manual panel rework & Standard plugin queries only & \textcolor{smumaroon}{Achieved} (survived 10.4$\to$12.4 upgrade with query migration) \\
-\midrule
-NFR7 & Zero hardcoded credentials --- all secrets via AWS Secrets Manager & No plaintext secrets in code or templates & \textcolor{smumaroon}{Achieved} (all credentials via Secrets Manager; validated in IISS-706 hotfix) \\
-\bottomrule
-\end{tabular}
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{p{0.9cm}Xp{2.2cm}p{3.0cm}}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requirement}} & \textcolor{white}{\textbf{Target}} & \textcolor{white}{\textbf{Achieved}} \\
+\hline
+NFR1 & Dashboard refresh enables sub-minute incident detection & $\leq$30~sec & $\leq$30~sec \\
+NFR2 & CloudWatch alarm evaluation period for MSK lag and Lambda error rate & $\leq$1~min & 1~min \\
+NFR3 & Inventory API response time for full resource enumeration & $\leq$10~sec & $<$10~sec \\
+NFR4 & Inventory API automated test coverage & $\geq$95\% & 99\% (562 tests) \\
+NFR5 & CloudFormation templates parameterized for multi-environment reuse & Parameterized YAML & Achieved \\
+NFR6 & Dashboard functional after Grafana version upgrades without manual rework & Standard plugin queries & Achieved (10.4$\to$12.4) \\
+NFR7 & Zero hardcoded credentials --- all secrets via AWS Secrets Manager & No plaintext secrets & Achieved \\
+\hline
+\end{tabularx}
 \end{table}
 
 \subsection{Requirements Traceability}
@@ -225,13 +198,13 @@ architectural change to the underlying monitoring design.
 
 The most technically demanding requirement was FR9, which exposed a
 fundamental ambiguity in the AWS tagging strategy for the IA platform.
-My discovery that \texttt{CITCOWORKS} and \texttt{MERIDIAN} share the
-same \texttt{BudgetCode} tag value (\texttt{``Shared Cloud Artifacts''})
+My discovery that \texttt{citcoworks} and \texttt{meridian} share the
+same BudgetCode tag value (\textbf{Shared Cloud Artifacts})
 was not documented anywhere before I built the inventory API. The
-solution --- designating \texttt{AppName} as a mandatory secondary
+solution --- designating AppName as a mandatory secondary
 discriminator for these two environments --- became the standard pattern
 for all resource discovery going forward and was documented in the
-inventory API's \texttt{README} as a platform-wide architectural note.
+inventory API's README as a platform-wide architectural note.
 
 NFR7 received an unexpected real-world validation during my
 IISS-706 hotfix on Jun~8, 2026. The CAIS Deadline incident revealed
@@ -245,8 +218,7 @@ authentication error.
 
 \subsection{Out-of-Scope Requirements}
 
-Two requirements categories were explicitly deferred as post-internship
-work:
+The following were evaluated and explicitly descoped:
 
 \begin{itemize}
     \item \textbf{Automated error budget burn-rate alerting.} Computing
@@ -256,11 +228,24 @@ work:
           burn-rate alarms requires additional CloudFormation work that
           I descoped from IISS-487.
 
-    \item \textbf{RPA bot CloudWatch integration.} Bridging the Blue
-          Prism and UiPath orchestrators to CloudWatch (to surface
-          bot queue depth and failure counts as native AWS metrics)
-          requires a polling Lambda function or a webhook integration
-          with the orchestrator APIs. I identified this during the
-          RPA support KT sessions as a high-value enhancement but did
-          not include it in the current scope.
+    \item \textbf{Prometheus as a data source.} A self-managed Prometheus
+          server with a CloudWatch Exporter sidecar was evaluated as an
+          alternative data layer. It was ruled out because Amazon Managed
+          Grafana does not support a self-managed Prometheus endpoint
+          without Amazon Managed Service for Prometheus (AMP), which
+          would add infrastructure cost and operational overhead.
+          CloudWatch Metric Insights SQL provides equivalent
+          multi-resource aggregation capability without the additional
+          stack. Documented as Decision~3 in
+          Section~\ref{sec:decision_cloudwatch_only}.
+
+    \item \textbf{Pyroscope (continuous profiling).} Pyroscope is a
+          Grafana-ecosystem continuous profiling tool that would surface
+          CPU flame graphs and memory allocation traces at the function
+          level. While it would complement the golden signals dashboard,
+          it requires an instrumentation agent deployed alongside each
+          monitored service. Given the scope of the current engagement
+          and the constraint that the Grafana workspace uses only
+          CloudWatch as its data source, Pyroscope was identified as a
+          post-internship enhancement.
 \end{itemize}

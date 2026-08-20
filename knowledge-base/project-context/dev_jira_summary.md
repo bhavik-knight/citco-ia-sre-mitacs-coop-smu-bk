@@ -155,10 +155,10 @@ during the Citco CTM internship (March 15 – August 31, 2026).
 ### IISS-753 — VPL IPV UI element failure (Jul 8, 16h estimate)
 ### IISS-876 — VPL Pricing GTL incorrect booking (Jul 30)
 
-## Resource Totals Across All 5 Budget Codes
-| Resource | rpacfs1 | IA-BPO | AUTOMATIONHUB | MERIDIAN | CITCOWORKS | Total |
-|----------|---------|--------|---------------|----------|------------|-------|
-| EC2 (running) | 1 | 0 | 0 | 1 | 1 | 3 |
+## Resource Totals Across All 6 Budget Codes
+| Resource | rpacfs1 | IA-BPO | BPM | AUTOMATIONHUB | MERIDIAN | CITCOWORKS | Total |
+|----------|---------|--------|-----|---------------|----------|------------|-------|
+| EC2 (running) | 1 | 0 | 0 | 0 | 1 | 1 | 3 |
 | EC2 (stopped) | 0 | 0 | 4 | 1 | 0 | 5 |
 | ECS Clusters | 5 | 6 | 0 | 6 | 5 | 22 |
 | Lambda | ~30 | ~30 | 22 | 32 | 5 | ~119 |

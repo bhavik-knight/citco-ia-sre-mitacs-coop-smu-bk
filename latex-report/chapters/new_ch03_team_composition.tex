@@ -1,0 +1,114 @@
+% ============================================================
+% CHAPTER 3: TEAM COMPOSITION & RESPONSIBILITIES
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Team Composition \& Responsibilities}
+\label{chap:team}
+
+My placement was within the \textbf{Intelligent Automation \& Site Reliability Engineering (IA-SRE)} team at Citco Technology Management (CTM), Halifax. This chapter describes the team I worked with and the responsibilities I held during the internship.
+
+% ────────────────────────────────────────────────────────────
+\section{Team Structure}
+\label{sec:team_structure}
+% ────────────────────────────────────────────────────────────
+
+The IA-SRE team is co-located across Halifax (Canada) and Hyderabad (India), with stakeholders spanning Dublin and London. My direct supervisor was Mr.\ Kishor Deotale (Manager, CTM). The internship-period team comprised the following members:
+
+\begin{itemize}
+
+    \item \textbf{Kishor Deotale} --- Manager, CTM and Industry Supervisor.
+          Kishor is responsible for all work streams, sets engineering priorities,
+          and served as the final acceptance authority for all deliverables.
+
+    \item \textbf{Ho Hoi Leung (``Horace'')} --- IT Senior Developer, RPA Platform Lead.
+          Horace is the primary knowledge holder for Blue Prism and UiPath
+          platform operations, responsible for escalation triage in the
+          Follow~the~Sun support model and the designated Halifax
+          escalation point for production incidents.
+
+    \item \textbf{Kristia Marie Labos (``Kri'')} --- IT Developer, SRE Engineer.
+          Kri leads the SRE practice for the team, including the four
+          golden signals framework. She guided the observability platform
+          design and validated alarm threshold selection throughout the
+          dashboard build.
+
+    \item \textbf{Sridhar Vadla and Soundarya Venkataraman} --- Co-interns
+          (SMU MCDA, Mitacs BSI IT49539). Both joined the Halifax team
+          concurrently, each working on complementary workstreams of the
+          IA monitoring and automation platform, enabling parallel progress
+          across the observability roadmap.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{My Role and Responsibilities}
+\label{sec:my_role}
+% ────────────────────────────────────────────────────────────
+
+As a participant in the Mitacs Business Strategy Internship (BSI) program, I was embedded
+within the IA-SRE team at CTM Halifax. I collaborated closely with Kishor, Horace,
+Kri, co-interns Sridhar and Soundarya, and stakeholders across Halifax, Hyderabad, and
+Dublin. Weekly standups, sprint reviews, and direct Confluence and JIRA-based
+collaboration formed the day-to-day working rhythm.
+
+My responsibilities spanned the following areas:
+
+\begin{itemize}
+    \item \textbf{IA Infrastructure Monitoring:} Developing per-platform CloudWatch
+          dashboards for Lambda, ECS, EC2, SQS, EKS, and related AWS services across
+          all six platforms, establishing the architectural patterns for dynamic resource
+          discovery (IISS-455, IISS-469, IISS-482--486).
+
+    \item \textbf{SRE Observability Platform Development:} Designing and building the
+          centralized Amazon Managed Grafana (AMG) dashboard covering all AWS services
+          across the six IA-IT-SRE Infrastructure platforms, including CloudFormation
+          alarm provisioning and Infrastructure-as-Code delivery (IISS-487).
+
+    \item \textbf{Inventory API Development:} Building the
+          \texttt{ia-it-sre-infrastructure-inventory} Flask REST API for programmatic
+          discovery of all deployed AWS services across the IA-IT-SRE Infrastructure,
+          with a discoverer registry pattern that provides a live, per-platform inventory
+          of all AWS services (IISS-507).
+
+    \item \textbf{Cloud Infrastructure Engineering:} Authoring parameterized
+          CloudFormation and AWS SAM templates, managing IAM roles for cross-account
+          Grafana access, enabling CloudWatch Container Insights on ECS clusters, and
+          navigating AWS service constraints encountered during delivery.
+
+    \item \textbf{Scrum and Meeting Facilitation:} Leading daily standup calls on a
+          rotation basis. Attending dashboard design reviews, knowledge-transfer
+          sessions (RPA platforms, CitcoWorks, Event Store, \AE xeo), security
+          and compliance reviews, and stakeholder syncs with the wider CTM team.
+
+    \item \textbf{JIRA Story Creation and Management:} Translating verbal
+          requirements into structured JIRA stories and tasks with clear
+          acceptance criteria and subtask decomposition. Raising defect tickets
+          for issues identified through root cause analysis of production incidents.
+
+    \item \textbf{RPA Production Support:} Providing operational support for
+          Blue Prism and UiPath automation processes during dedicated support
+          rotation weeks (11~AM -- 7~PM~EST shift, once every four weeks).
+          Responsibilities included monitoring bot queues, triaging service desk
+          tickets, onboarding new clients for Corporate Actions workflows,
+          retriggering failed processes, and escalating where required.
+
+    \item \textbf{Incident Response and Hotfix Engineering:} Investigating and
+          resolving production incidents including the CAIS Deadline credential
+          failure (IISS-706), MESO month-end stuck tasks (IISS-741), and VPL
+          pricing failures (IISS-753, IISS-876) through root cause analysis and
+          targeted code or configuration fixes.
+
+    \item \textbf{AI-Augmented Engineering:} Leveraging the Kiro IDE, Amazon~Q, and
+          Claude Sonnet for spec-driven development, automated code scaffolding,
+          CloudFormation template generation, and test suite creation.
+
+    \item \textbf{Technical Documentation:} Maintaining Confluence knowledge-base
+          pages for Lambda function inventories, runbooks, incident post-mortems, and
+          architecture decisions.
+\end{itemize}
+
+These responsibilities required a blend of cloud engineering expertise, operational
+discipline, and cross-functional communication skills to deliver production-grade
+monitoring infrastructure while maintaining the reliability of live financial
+automation processes.

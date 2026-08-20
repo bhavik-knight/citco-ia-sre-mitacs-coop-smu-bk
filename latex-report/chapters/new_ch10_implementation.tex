@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % CHAPTER 9: IMPLEMENTATION & ARCHITECTURE
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -18,28 +18,28 @@ relate to each other and to the underlying IA platform infrastructure.
 \begin{figure}[ht]
 \centering
 \begin{lstlisting}[language={}, basicstyle=\ttfamily\footnotesize, frame=none, backgroundcolor=\color{white}, numbers=none]
- +-----------------------------------------------------------------+
- |                    CONSUMERS / OPERATORS                        |
- |   Grafana AMG Dashboard  .  Inventory REST API  .  SRE Team    |
- +--------------------------------+--------------------------------+
-                                  |
- +--------------------------------v--------------------------------+
- |              VISUALIZATION & ALERTING LAYER                    |
- |  Amazon Managed Grafana (AMG)        CloudWatch Alarms         |
- |  14 rows . 110+ panels . variables   38 alarms . SNS routing   |
- +--------------------------------+--------------------------------+
-                                  |
- +--------------------------------v--------------------------------+
- |                        DATA LAYER                              |
- |  Amazon CloudWatch  |  CloudWatch Logs Insights  |  X-Ray     |
- |  Metric Insights SQL|  Saved queries (30x7 plat.)|  (PoC)     |
- +--------------------------------+--------------------------------+
-                                  |
- +--------------------------------v--------------------------------+
- |      INFRASTRUCTURE LAYER (5 Budget Code Environments)         |
- |  Lambda (119) . ECS (22 clusters) . EC2 (83) . MSK/Kafka       |
- |  SQS . DocumentDB . Neptune . RDS . Redis . OpenSearch          |
- +-----------------------------------------------------------------+
+ +---------------------------------------------------------------+
+ |                   CONSUMERS / OPERATORS                       |
+ |  Grafana AMG Dashboard . Inventory REST API . CW Dashboard    |
+ +------------------------------+--------------------------------+
+                                |
+ +------------------------------v--------------------------------+
+ |             VISUALIZATION & ALERTING LAYER                    |
+ |  Amazon Managed Grafana (AMG)       CloudWatch Alarms         |
+ |  14 rows . 110+ panels . variables  38 alarms . SNS routing   |
+ +------------------------------+--------------------------------+
+                                |
+ +------------------------------v--------------------------------+
+ |                       DATA LAYER                              |
+ |  Amazon CloudWatch | CloudWatch Logs Insights |  X-Ray        |
+ |  Metric Insights SQL | Saved queries (30x7)   |  (PoC)        |
+ +------------------------------+--------------------------------+
+                                |
+ +------------------------------v--------------------------------+
+ |      INFRASTRUCTURE LAYER (6 Budget Code Environments)        |
+ |  SQS . Lambda . ECS . MSK/Kafka . EC2                         |
+ |  DocumentDB . Neptune . OpenSearch . RDS . Redis              |
+ +---------------------------------------------------------------+
 \end{lstlisting}
 \caption{IA-SRE Observability Platform --- High-Level Architecture (four layers)}
 \label{fig:platform_overview}
@@ -80,7 +80,7 @@ Amazon CloudWatch dashboard covering the \texttt{rpacfs1} and
 \textbf{51~functions} at the time of first publication. The dashboard
 provided per-function panels for invocation counts, error rates, duration
 averages, and throttle events, and I accompanied it with a Confluence
-inventory page mapping each function to its owning team and SLO target.
+inventory page mapping each function.
 
 The architectural pattern for this early work was straightforward:
 CloudWatch native widgets queried the \texttt{AWS/Lambda} namespace using
@@ -132,7 +132,7 @@ This investigation also evaluated five distinct approaches to out-of-memory
 (OOM) detection for Lambda functions: (1) parsing \texttt{REPORT}
 log lines from CloudWatch Logs Insights; (2) comparing
 \texttt{MaxMemoryUsed} against \texttt{MemorySize} via the Lambda
-\texttt{enhanced monitoring} extension; (3) CloudWatch Lambda Insights
+enhanced monitoring extension; (3) CloudWatch Lambda Insights
 (paid tier); (4) custom metric emission on memory threshold breach; and
 (5) structured log parsing via a metric filter pattern. I documented each approach
 with its detection latency, cost, and permission requirements.
@@ -146,12 +146,12 @@ under IISS-483 and the alarm design in IISS-487.
 My gap analysis of the EC2 inventory scanned \textbf{83~instances} across
 the six platforms. This scan revealed a critical tagging
 inconsistency: the \texttt{rpacfs1} environment's EC2 instances were
-tagged with \texttt{BudgetCode=``CFS/RPA''} rather than the expected
-\texttt{``rpacfs1''} value, making them invisible to tag-based
-\texttt{BudgetCode} lookups. This discovery led me to introduce the
-\texttt{AppName} fallback pattern: when a primary \texttt{BudgetCode}
+tagged with \texttt{BudgetCode="CFS/RPA"} rather than the expected
+\textbf{"rpacfs1"} value, making them invisible to tag-based
+BudgetCode lookups. This discovery led me to introduce the
+AppName fallback pattern: when a primary BudgetCode
 lookup returns no results for \texttt{rpacfs1}, the discovery logic falls
-back to filtering by \texttt{AppName=``rpacfs1''}. This fallback became
+back to filtering by \texttt{AppName="rpacfs1"}. This fallback became
 the standard for all resource discovery in the inventory API (see
 Section~\ref{sec:inventory_api}).
 
@@ -253,35 +253,30 @@ dashboard structure.
 
 \begin{table}[ht]
 \centering
-\caption{Grafana AMG Dashboard --- Row Structure (14 Rows)}
+\caption{Grafana AMG Dashboard --- Row Structure (Rows 1--15 shown; Rows 16--17: Alarms \& Notifications, X-Ray Traces)}
 \label{tab:dashboard_rows}
-\begin{tabular}{p{0.5cm}p{3.0cm}p{8.5cm}}
-\toprule
-\textbf{Row} & \textbf{Service} & \textbf{Panels and Metrics} \\
-\midrule
-1 & SQS & Queue depth (ApproximateNumberOfMessagesVisible), oldest message age (ApproximateAgeOfOldestMessage) per queue; DLQ depth timeseries \\
-\midrule
-2--3 & Lambda & Invocations, errors, duration P50/P95, throttles, concurrent executions --- per budget code \\
-\midrule
-4--5 & ECS & CPU and memory utilisation per cluster and service; Container Insights task-level metrics (\texttt{ECS/ContainerInsights} namespace) \\
-\midrule
-6 & MSK/Kafka & Consumer lag: \texttt{EstimatedMaxTimeLag} and \texttt{SumOffsetLag} per consumer group \\
-\midrule
-7--8 & EC2 & CPU utilisation, memory (CloudWatch agent), disk I/O, network in/out --- tag-based (\texttt{AppName}) \\
-\midrule
-9 & DocumentDB / Neptune & Database connections, query latency \\
-\midrule
-10 & OpenSearch & Index rate, search latency, JVM heap pressure \\
-\midrule
-11 & Grafana AMG health & Workspace CPU, active users, query latency \\
-\midrule
-12 & Alarm state overview & Composite alarm status board (OK/ALARM/INSUFFICIENT\_DATA per platform) \\
-\midrule
-13 & Resource inventory & Panel linking to the IA Resources Inventory API \\
-\midrule
-14 & Deep-link row & Clickable AWS Console URLs for each resource \\
-\bottomrule
-\end{tabular}
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{lp{3.0cm}X}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Row}} & \textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Panels and Metrics}} \\
+\hline
+1 & Health Overview & Colour-coded stat tile per service (Lambda, SQS, MSK, EC2, ECR, EKS, ECS, RDS, DocumentDB, Redis, Neptune, OpenSearch); critical/warning alarm counts \\
+2 & Performance Overview & Top-10 bargauge comparisons per service --- highest queue depth, Lambda errors, ECS CPU, Kafka consumer lag, Redis memory, etc. \\
+3 & Lambda & Invocations, errors, throttles, concurrent executions, duration P50/P99; Logs Insights error panel \\
+4 & SQS & Queue depth (\texttt{ApproximateNumberOfMessagesVisible}), oldest message age, DLQ depth \\
+5 & MSK/Kafka & Consumer lag: \texttt{SumOffsetLag} and \texttt{EstimatedMaxTimeLag}; broker CPU, disk, messages in/out per second \\
+6 & EC2 & CPU (avg/max), memory (CloudWatch Agent), network I/O, disk I/O, status checks \\
+7 & ECR & Container image pull activity \\
+8 & EKS & Kubernetes node and pod metrics \\
+9 & ECS Services & CPU and memory utilisation per cluster and service; Container Insights task-level metrics \\
+10 & ECS Target Groups & ALB request throughput, response time P50/P95/P99, HTTP 5xx/4xx error counts \\
+11 & RDS / Aurora & CPU, database connections, read/write latency, IOPS, freeable memory \\
+12 & DocumentDB & CPU, disk queue depth, active connections, read/write latency, IOPS \\
+13 & Redis / Valkey & Engine CPU (avg/max), memory, cache hit rate, replication lag, connections, latency \\
+14 & Neptune DB & CPU, Gremlin/SPARQL errors, freeable memory, queue depth, network throughput \\
+15 & OpenSearch & Cluster status (green/yellow/red), JVM heap pressure, indexing rate, search latency \\
+\hline
+\end{tabularx}
 \end{table}
 
 \subsubsection{Grafana Template Variables}
@@ -294,7 +289,7 @@ template variables backed by CloudWatch dimension-value queries:
           environment (\texttt{rpacfs1}, \texttt{ia-bpo}, \texttt{meridian},
           \texttt{citcoworks}, \texttt{automationhub}). Backed by a
           CloudWatch \texttt{ListMetrics} call enumerating distinct
-          \texttt{BudgetCode} tag values.
+          BudgetCode tag values.
 
     \item \texttt{\$ecs\_cluster} --- filters ECS panels to a specific
           cluster. Backed by a \texttt{dimension\_values()} query on
@@ -341,7 +336,7 @@ GROUP BY ServiceName
 A fundamental constraint of Metric Insights SQL is that the
 \texttt{GROUP BY} mode only supports the aggregate functions
 \texttt{AVG}, \texttt{SUM}, \texttt{MIN}, and \texttt{MAX}. Percentile
-statistics (\texttt{p50}, \texttt{p95}, \texttt{p99}) are \emph{not
+statistics (p50, p95, p99) are \emph{not
 available} in \texttt{GROUP BY} mode. This is a CloudWatch API limitation,
 not a Grafana limitation.
 
@@ -393,7 +388,7 @@ the IA-SRE team's email distribution list. Alarm categories include:
 
     \item \textbf{Composite alarms}: Platform-level health signals that
           aggregate per-service alarm states into a single
-          \texttt{OK}/\texttt{ALARM} indicator per budget code
+          OK/ALARM indicator per budget code
           environment. Displayed on Row~12 of the dashboard.
 \end{itemize}
 
@@ -481,14 +476,14 @@ tests and 99\%~code coverage.
 \begin{itemize}
     \item \textbf{Language}: Python~3, \texttt{flask[async]} for async
           route handlers
-    \item \textbf{AWS SDK}: \texttt{boto3} for all resource discovery
+    \item \textbf{AWS SDK}: boto3 for all resource discovery
     \item \textbf{Validation}: Pydantic response models (type-safe
-          \texttt{Resource} dataclass with fields: \texttt{name},
-          \texttt{type}, \texttt{budget\_code}, \texttt{tags},
-          \texttt{arn})
-    \item \textbf{Deployment}: AWS Lambda via \texttt{serverless-wsgi}
+          \texttt{Resource} dataclass with fields: name,
+          type, \texttt{budget\_code}, tags,
+          arn)
+    \item \textbf{Deployment}: AWS Lambda via serverless-wsgi
           adapter
-    \item \textbf{Testing}: \texttt{pytest} + \texttt{Hypothesis}
+    \item \textbf{Testing}: pytest + Hypothesis
           (property-based tests)
 \end{itemize}
 
@@ -550,35 +545,31 @@ test infrastructure.
 \centering
 \caption{IA Resources Inventory API --- Endpoint Summary}
 \label{tab:api_endpoints}
-\begin{tabular}{p{5.5cm}p{7.0cm}}
-\toprule
-\textbf{Endpoint} & \textbf{Description} \\
-\midrule
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{Xp{7.0cm}}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Endpoint}} & \textcolor{white}{\textbf{Description}} \\
+\hline
 \texttt{GET /api/v1/lambda} & All Lambda functions; optional
   \texttt{?budget\_code=rpacfs1} filter \\
-\midrule
 \texttt{GET /api/v1/ecs} & All ECS clusters across all platforms \\
-\midrule
 \texttt{GET /api/v1/ec2} & All EC2 instances (tag-based discovery) \\
-\midrule
 \texttt{GET /api/v1/secrets} & Secrets Manager secrets inventory \\
-\midrule
 \texttt{GET /api/v1/s3} & S3 buckets per budget code \\
-\midrule
 \texttt{GET /api/v1/health} & Health check --- returns 200 OK \\
-\bottomrule
-\end{tabular}
+\hline
+\end{tabularx}
 \end{table}
 
 \subsection{Tag-Based Discovery and the Two-Stage Filter}
 
 The most technically interesting discovery challenge was the
-\texttt{CITCOWORKS} and \texttt{MERIDIAN} tag ambiguity. Both
-environments share the AWS tag value \texttt{``Shared Cloud Artifacts''}
-for the \texttt{BudgetCode} dimension --- a legacy of the two platforms
+\texttt{citcoworks} and \texttt{meridian} tag ambiguity. Both
+environments share the AWS tag value \textbf{"Shared Cloud Artifacts"}
+for the BudgetCode dimension --- a legacy of the two platforms
 being onboarded before the IA team established per-platform
-\texttt{BudgetCode} uniqueness requirements. A naive
-\texttt{BudgetCode} lookup would conflate resources from two operationally
+BudgetCode uniqueness requirements. A naive
+BudgetCode lookup would conflate resources from two operationally
 distinct environments.
 
 My solution is a \textbf{two-stage filter} implemented in both the
@@ -593,7 +584,7 @@ class MeridianECSDiscoverer(BaseDiscoverer):
         client = boto3.client("ecs")
         all_clusters = []
 
-        # Stage 1: filter by BudgetCode (shared with CITCOWORKS)
+        # Stage 1: filter by BudgetCode (shared with \texttt{citcoworks})
         paginator = client.get_paginator("list_clusters")
         async for page in paginator.paginate():
             for arn in page["clusterArns"]:
@@ -608,10 +599,10 @@ class MeridianECSDiscoverer(BaseDiscoverer):
         return all_clusters
 \end{lstlisting}
 
-The \texttt{AppName} tag is now designated the \textbf{mandatory secondary
-discriminator} for all resources in the \texttt{``Shared Cloud Artifacts''}
+The AppName tag is now designated the \textbf{mandatory secondary
+discriminator} for all resources in the \textbf{"Shared Cloud Artifacts"}
 BudgetCode environments. Any new resource added to either environment
-without the correct \texttt{AppName} tag will be invisible to the
+without the correct AppName tag will be invisible to the
 inventory API. This risk is mitigated by a tag compliance CloudWatch
 alarm that fires if new ECS services or Lambda functions lack the
 required tags.
@@ -661,7 +652,7 @@ achieving \textbf{99\%~code coverage}:
     \item \textbf{Property-based tests (Hypothesis)}: Tag-parsing logic,
           registry dispatch, and Pydantic response serialization tested
           with randomly generated inputs. Verifies that the two-stage
-          filter never returns a \texttt{MERIDIAN} resource when
+          filter never returns a \texttt{meridian} resource when
           \texttt{budget\_code=citcoworks} is specified, regardless of
           what combination of tag values is present.
 
@@ -735,32 +726,32 @@ that runs infrequently.
 \label{sec:decision_appname}
 
 \paragraph{Problem.}
-As described in Section~\ref{sec:inventory_api}, the \texttt{CITCOWORKS}
-and \texttt{MERIDIAN} environments share \texttt{BudgetCode=``Shared Cloud
-Artifacts''}. A single-stage \texttt{BudgetCode} lookup cannot distinguish
+As described in Section~\ref{sec:inventory_api}, the \texttt{citcoworks}
+and \texttt{meridian} environments share \texttt{BudgetCode="Shared Cloud
+Artifacts"}. A single-stage BudgetCode lookup cannot distinguish
 resources from the two environments, causing inventory contamination.
 
 \paragraph{Root Cause.}
 Both platforms were onboarded before the IA team established the
 policy requiring each platform to have a unique
-\texttt{BudgetCode} tag value. Retroactively changing the tag across
+BudgetCode tag value. Retroactively changing the tag across
 all existing resources in two production environments would require
 a coordinated tagging campaign with risk of operational disruption.
 
 \paragraph{Decision.}
-I designated the \texttt{AppName} tag as the \textbf{mandatory secondary
-discriminator} for all resources in the \texttt{``Shared Cloud Artifacts''}
-BudgetCode. Discoverers for \texttt{CITCOWORKS} and \texttt{MERIDIAN}
+I designated the AppName tag as the \textbf{mandatory secondary
+discriminator} for all resources in the \textbf{"Shared Cloud Artifacts"}
+BudgetCode. Discoverers for \texttt{citcoworks} and \texttt{meridian}
 must implement the two-stage filter described in
 Section~\ref{sec:inventory_api}.
 
 \paragraph{Tradeoff.}
 This decision creates a tagging governance obligation: all new resources
-added to either environment \emph{must} carry the correct \texttt{AppName}
+added to either environment \emph{must} carry the correct AppName
 tag. A resource missing this tag will be invisible to the inventory API,
 creating a silent coverage gap. This risk is mitigated by a CloudWatch
 tag compliance alarm and documented in the \texttt{ia-sre-resources-inventory}
-\texttt{README} as a platform-wide architectural constraint.
+README as a platform-wide architectural constraint.
 
 \subsection{Decision 3: CloudWatch as Sole Data Source (No Prometheus)}
 \label{sec:decision_cloudwatch_only}
@@ -804,7 +795,7 @@ exclusively.
 
 \paragraph{Tradeoff.}
 The accepted limitation is that CloudWatch Metric Insights SQL does not
-support \texttt{p50}/\texttt{p99} percentiles in \texttt{GROUP BY} mode
+support p50/p99 percentiles in \texttt{GROUP BY} mode
 (see Section~\ref{sec:grafana_amg_platform}). Latency distribution
 dashboards must use \texttt{AVG} and \texttt{MAX} as proxies, or fall
 back to the standard metrics wildcard mode which only shows recently
@@ -864,26 +855,24 @@ comprehensive error logging and a manual re-invocation pathway via
 \centering
 \caption{Design Decision Summary}
 \label{tab:design_decisions}
-\begin{tabular}{p{3.2cm}p{3.5cm}p{5.0cm}}
-\toprule
-\textbf{Decision} & \textbf{Chosen Approach} & \textbf{Key Tradeoff} \\
-\midrule
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{Xp{3.5cm}p{5.0cm}}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Decision}} & \textcolor{white}{\textbf{Chosen Approach}} & \textcolor{white}{\textbf{Key Tradeoff}} \\
+\hline
 Template storage & S3 (from Secrets Manager) & +\texttt{s3:GetObject} permission; $\sim$50\,ms latency \\
-\midrule
 Tag disambiguation & AppName mandatory secondary key & Tags governance obligation; missing tag = invisible resource \\
-\midrule
 Metrics data source & CloudWatch native plugin only & No p50/p99 in GROUP BY mode; AVG/MAX as proxies \\
-\midrule
 Alarm provisioning & Dynamic Lambda provisioner & Sequential deploy dependency; Lambda failure halts pipeline \\
-\bottomrule
-\end{tabular}
+\hline
+\end{tabularx}
 \end{table}
 
 Taken together, these four decisions shaped an architecture that favours
 operational simplicity and zero-maintenance fleet coverage over strict
 metric precision, while accepting bounded and well-understood tradeoffs
 at each decision point. I documented the design in the respective
-repository \texttt{README} and JIRA acceptance criteria so that future
+repository README and JIRA acceptance criteria so that future
 team members can revisit any decision as the platform's monitoring
 maturity evolves.
 
@@ -1123,7 +1112,7 @@ with the \texttt{FROM "ECS/ContainerInsights"} namespace form.
 \textbf{Percentile Limitation, May~14.} A key CloudWatch constraint was
 confirmed during my Lambda Duration panel work: Metric Insights SQL \texttt{GROUP BY}
 mode supports only \texttt{AVG}, \texttt{SUM}, \texttt{MIN}, and \texttt{MAX}.
-Percentile statistics (\texttt{p50}, \texttt{p99}) are unavailable in this mode.
+Percentile statistics (p50, p99) are unavailable in this mode.
 For the Lambda duration P50/P95 panels, I implemented a wildcard dimension workaround
 --- querying the standard CloudWatch metrics API with
 \texttt{FunctionName:~["*"]} --- accepting the visibility gap tradeoff for
@@ -1152,7 +1141,7 @@ I deployed a Re-Notifier Lambda to ensure alarm state changes were routed
 through an SNS topic to the IA-SRE email distribution list, regardless of
 whether CloudWatch had already sent a prior notification in the same alarm
 state. I configured eight composite alarms to aggregate per-service alarm
-states into a single \texttt{OK}/\texttt{ALARM} indicator per budget code
+states into a single OK/ALARM indicator per budget code
 environment, displayed on Row~12 of the dashboard.
 
 \textbf{Phase~2 Milestone.} By May~27, my core monitoring platform was
@@ -1170,10 +1159,10 @@ time.
 \subsection{Rows 7--14 and the Deep-Link Pattern (May~28 -- Jun~4)}
 
 With the first six rows stable, Phase~3 completed the remaining dashboard structure.
-Rows~7--8 added EC2 monitoring using the \texttt{AppName} tag as the primary
+Rows~7--8 added EC2 monitoring using the AppName tag as the primary
 discovery dimension --- the fallback pattern I established in IISS-483 to handle
-the \texttt{rpacfs1} tag mismatch (where \texttt{BudgetCode} carried the value
-\texttt{"CFS/RPA"} rather than \texttt{"rpacfs1"}). The EC2 row covered
+the \texttt{rpacfs1} tag mismatch (where BudgetCode carried the value
+"CFS/RPA" rather than rpacfs1). The EC2 row covered
 \textbf{83 instances} across all environments, with per-instance CPU, memory
 (via CloudWatch Agent), and network panels.
 
@@ -1252,8 +1241,8 @@ have required a full day of boilerplate setup.
 
 I chose the technology stack to align with the team's existing Python
 ecosystem: \texttt{flask[async]} for route handlers,
-\texttt{boto3} for all AWS resource discovery, Pydantic for response model
-validation, and \texttt{serverless-wsgi} for Lambda deployment.
+boto3 for all AWS resource discovery, Pydantic for response model
+validation, and serverless-wsgi for Lambda deployment.
 
 \subsection{Inventory API Development --- Jun 11 -- Jul 14}
 
@@ -1261,7 +1250,7 @@ validation, and \texttt{serverless-wsgi} for Lambda deployment.
 
 I implemented Lambda discoverers for all six platforms, confirming the
 Lambda inventory documented in Phase~1. The \texttt{rpacfs1} discoverer
-used the \texttt{AppName} fallback pattern: a primary filter on
+used the AppName fallback pattern: a primary filter on
 \texttt{BudgetCode="rpacfs1"} returned zero results, triggering the fallback
 to \texttt{AppName="rpacfs1"}, which correctly identified the fleet. This
 fallback became the standard for all \texttt{rpacfs1} resource types.
@@ -1269,25 +1258,25 @@ fallback became the standard for all \texttt{rpacfs1} resource types.
 \subsubsection{ECS Discoverers and Tag Disambiguation}
 
 I implemented ECS discoverers for all 22 clusters across six platforms.
-The \texttt{CITCOWORKS} and \texttt{MERIDIAN} environments presented the most
+The \texttt{citcoworks} and \texttt{meridian} environments presented the most
 complex discovery challenge: both share the AWS tag value
-\texttt{"Shared Cloud Artifacts"} for the \texttt{BudgetCode} dimension, a
+"Shared Cloud Artifacts" for the BudgetCode dimension, a
 legacy of their original onboarding before the IA team established per-platform
 uniqueness requirements. The solution was a two-stage filter in each discoverer:
 Stage~1 filters by \texttt{BudgetCode="Shared Cloud Artifacts"}; Stage~2
 applies \texttt{AppName="meridian"} or \texttt{AppName="citcoworks"} to
-discriminate between the two environments. I formally designated the \texttt{AppName} tag
+discriminate between the two environments. I formally designated the AppName tag
 as the mandatory secondary discriminator for all resources
 in the shared-tag platforms, a governance decision documented in
-the repository \texttt{README} and enforced by a tag-compliance CloudWatch alarm.
+the repository README and enforced by a tag-compliance CloudWatch alarm.
 
 \subsubsection{EC2 Discoverers}
 
 My EC2 discoverers covered \textbf{83 instances} with the same AppName fallback
 pattern used in the Lambda discoverers. The Pydantic response model for each
-discovered resource carried five fields: \texttt{name}, \texttt{type},
-\texttt{budget\_code}, \texttt{tags} (as a free-form dictionary), and
-\texttt{arn} for direct AWS Console linkage.
+discovered resource carried five fields: name, type,
+\texttt{budget\_code}, tags (as a free-form dictionary), and
+arn for direct AWS Console linkage.
 
 \subsubsection{Async Architecture and API Latency}
 
@@ -1311,7 +1300,7 @@ By Jul~14, my test suite reached \textbf{562 automated tests} with
           endpoints, verifying routing, serialisation, and error response format.
     \item \textbf{Property-based tests (Hypothesis)} --- tag-parsing logic and
           registry dispatch tested with randomly generated inputs, verifying that
-          the two-stage filter never returns a \texttt{MERIDIAN} resource when
+          the two-stage filter never returns a \texttt{meridian} resource when
           \texttt{budget\_code=citcoworks} is specified, regardless of tag value
           combinations.
     \item \textbf{Edge case tests} --- malformed tags, empty platforms,
@@ -1498,21 +1487,18 @@ and their operational characteristics.
 \centering
 \caption{Support Incident Summary}
 \label{tab:support_incidents}
-\begin{tabular}{p{1.6cm}p{1.5cm}p{4.0cm}p{4.5cm}p{1.0cm}}
-\toprule
-\textbf{JIRA} & \textbf{Date} & \textbf{Description} & \textbf{Resolution} & \textbf{Hours} \\
-\midrule
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{lp{1.5cm}Xp{4.5cm}p{1.0cm}}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{JIRA}} & \textcolor{white}{\textbf{Date}} & \textcolor{white}{\textbf{Description}} & \textcolor{white}{\textbf{Resolution}} & \textcolor{white}{\textbf{Hours}} \\
+\hline
 IISS-706 & Jun 8 & CAIS Deadline \texttt{SpnegoError} --- empty UCM credentials from Secrets Manager rotation & Fail-fast credential validation in \texttt{constants.py} and \texttt{pysmb\_helper.py}; ECS restart & 7h \\
-\midrule
 IISS-538 & Jun 5 & MESO \texttt{ia\_meso\_process} ECS tasks consuming excessive CPU/memory, not autoscaling & ECS service autoscaling policy corrected; ECS SaturationAlarm added to IISS-487 & $\sim$2h \\
-\midrule
 IISS-741 & Jul 1 & INNOCAP/SAMLMOS MESO fund tasks stuck in queue, no Lambda heartbeat & Manual retrigger of pipeline for affected funds after admin access granted & $\sim$3h \\
-\midrule
 IISS-753 & Jul 8 & VPL IPV \AE xeo pricing window selector failure in UiPath (\texttt{CheckpointException}) & Escalated to dev team; 16h selector resilience investigation scoped & 16h est. \\
-\midrule
 IISS-876 & Jul 30 & VPL Pricing GTL incorrect booking values & Targeted process logic fix; business team reconciled affected NAV calculations & $\sim$4h \\
-\bottomrule
-\end{tabular}
+\hline
+\end{tabularx}
 \end{table}
 
 \subsection{Cross-Cutting Learning: How Support Incidents Shaped Dashboard Design}
@@ -1621,39 +1607,40 @@ and the EKS cluster scope definition (IISS-485).
 \centering
 \caption{Full JIRA Scope --- Internship Deliverables}
 \label{tab:full_jira_scope}
-\begin{tabular}{p{1.8cm}p{5.5cm}p{4.5cm}}
-\toprule
-\textbf{JIRA} & \textbf{Title / Scope} & \textbf{Status / Repo} \\
-\midrule
-IISS-435  & RPACFS1 CloudWatch pipeline health dashboard & Done / rpacfs1-cais \\
-IISS-455  & Lambda monitoring CloudWatch dashboard (51→119 functions) & Done / ia-resources-monitoring \\
-IISS-461  & Lambda inventory Confluence page (51 functions) & Done / Confluence \\
-IISS-469  & Improved centralized Lambda dashboard; Top-K analysis & Done / ia-resources-monitoring \\
-IISS-482  & IA Resources/Infrastructure Monitoring Platform (parent) & In Progress / ia-resources-monitoring \\
-IISS-483  & EC2 monitoring dashboard; tag mismatch discovery & In Progress / ia-resources-monitoring \\
-IISS-484  & ECS monitoring dashboard; Container Insights cost analysis & In Progress / ia-resources-monitoring \\
-IISS-485  & EKS monitoring dashboard; AUTOMATIONHUB scope & On Hold / ia-resources-monitoring \\
-IISS-486  & Export to S3 (scheduled Lambda, Excel export) & In Progress / ia-resources-monitoring \\
-IISS-487  & Amazon Managed Grafana SRE Dashboard (primary deliverable) & 140h / ia-it-sre-infrastructure-monitoring-amg \\
-IISS-488  & Auto-Healing Pipeline (SNS → Lambda remediation) & To Do / roadmap \\
-IISS-489  & Meridian SRE Observability Roadmap & To Do / roadmap \\
-IISS-504  & Extend registry API for AUTOMATIONHUB budget code & In Progress / ia-resources-monitoring \\
-IISS-505  & Extend registry API for MERIDIAN & In Progress / ia-resources-monitoring \\
-IISS-506  & MERIDIAN Monitoring Infrastructure (gap analysis) & To Do / roadmap \\
-IISS-507  & IA Resources Inventory API (Flask async REST API) & In Progress / ia-it-sre-infrastructure-inventory \\
-IISS-508  & Backend --- IA Resources (discoverer registry) & In Progress / ia-it-sre-infrastructure-inventory \\
-IISS-509  & Frontend --- IA Resources (dashboard widgets) & To Do / ia-it-sre-infrastructure-inventory \\
-IISS-510  & Extend registry API for CITCOWORKS & In Progress / ia-resources-monitoring \\
-IISS-824  & ML/LLM RPA Status Agent documentation and improvements & In Progress / ml-rpa-status-llm-agent \\
-IISS-837--844 & X-Ray distributed tracing (7 service sub-tasks) & To Do / ia\_meso\_process \\
-IISS-845--873 & Log group discovery \& observability (10 sub-tasks) & To Do / ia-it-sre-infrastructure-monitoring-amg \\
-IISS-538  & MESO high-memory autoscale issue (hotfix) & Done \\
-IISS-706  & CAIS Deadline UCM credential validation hotfix & Done / core-ia-bpo-cais-dl \\
-IISS-741  & MESO month-end stuck tasks (Critical) & Done \\
-IISS-753  & VPL IPV UI selector failure & Done \\
-IISS-876  & VPL Pricing GTL incorrect booking & Done \\
-\bottomrule
-\end{tabular}
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{p{2.2cm}X}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{JIRA}} & \textcolor{white}{\textbf{Title / Scope}} \\
+\hline
+IISS-435  & RPACFS1 CloudWatch pipeline health dashboard \\
+IISS-455  & Lambda monitoring CloudWatch dashboard (51→119 functions) \\
+IISS-461  & Lambda inventory Confluence page \\
+IISS-469  & Improved centralized Lambda dashboard; Top-K filter analysis \\
+IISS-482  & IA Infrastructure Monitoring Platform (parent) \\
+IISS-483  & EC2 monitoring dashboard; tag mismatch discovery \\
+IISS-484  & ECS monitoring dashboard; Container Insights cost analysis \\
+IISS-485  & EKS monitoring dashboard; AUTOMATIONHUB scope \\
+IISS-486  & Export to S3 (scheduled Lambda, Excel export) \\
+IISS-487  & Amazon Managed Grafana SRE Dashboard (primary deliverable, 140h) \\
+IISS-488  & Auto-Healing Pipeline (SNS → Lambda remediation) \\
+IISS-489  & Meridian SRE Observability Roadmap \\
+IISS-504  & Extend inventory API for AUTOMATIONHUB \\
+IISS-505  & Extend inventory API for \texttt{meridian} \\
+IISS-506  & \texttt{meridian} Monitoring Infrastructure (gap analysis) \\
+IISS-507  & IA Infrastructure Inventory API (Flask async REST API) \\
+IISS-508  & Backend --- discoverer registry pattern \\
+IISS-509  & Frontend --- dashboard integration widgets \\
+IISS-510  & Extend inventory API for \texttt{citcoworks} \\
+IISS-824  & ML/LLM RPA Status Agent documentation and improvements \\
+IISS-837--844 & X-Ray distributed tracing (7 sub-tasks) \\
+IISS-845--873 & Log group discovery and observability (10 sub-tasks) \\
+IISS-538  & MESO high-memory autoscale hotfix \\
+IISS-706  & CAIS Deadline UCM credential validation hotfix \\
+IISS-741  & MESO month-end stuck tasks (Critical) \\
+IISS-753  & VPL IPV UI selector failure \\
+IISS-876  & VPL Pricing GTL incorrect booking \\
+\hline
+\end{tabularx}
 \end{table}
 
 \paragraph{Note on IISS-487 and the CloudWatch Platform JIRAs.}

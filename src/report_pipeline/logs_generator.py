@@ -42,93 +42,102 @@ DATA_BORDER = Border(left=THIN_SIDE, right=THIN_SIDE, top=THIN_SIDE, bottom=THIN
 # -------------------------------------------------------------------------
 
 def get_major_project_data() -> list[dict]:
-    """Return structured task log data for the 240-Hour Major Project (16 Weeks)."""
+    """
+    Real JIRA-mapped work log data for the 240-hour Major Project (16 Weeks).
+    Covers: IISS-435, IISS-455/461/469, IISS-482-486, IISS-487, IISS-507/508,
+    IISS-706, IISS-538, IISS-741, IISS-753, IISS-824, and X-Ray/log-group work.
+    Repos: ia-it-sre-infrastructure-monitoring-amg, ia-resources-monitoring,
+           ia-it-sre-infrastructure-inventory, rpacfs1-cais-pricing-extract-genai-infrastructure.
+    """
     data = []
-    
-    # Phase 1: Foundation & Requirements (Weeks 1-4)
-    p1 = "Phase 1: Foundation & Requirements"
+
+    # Phase 1: Onboarding, CloudWatch Dashboards & Architecture Research (Weeks 1-4)
+    p1 = "Phase 1: Onboarding, CloudWatch & Architecture Research"
     p1_weeks = [
         ("Week 1", "March 15, 2026 to March 21, 2026", [
-            ("Scoping & Workspace Configuration", "Set up the report repository, configured pyproject.toml, and established git branch policies.", 12.5),
-            ("Initial Structure Setup", "Created package folders (src/report_pipeline) and drafted initial outline for 10 core chapters in LaTeX.", 1.25)
+            ("Environment Setup & Access Onboarding", "Day-1 orientation; raised AWS/JIRA/Confluence/CodeCommit access tickets; installed developer tools (VSCode, Git, AWS CLI); registered for Amazon Q.", 8.0),
+            ("Architecture Study", "Explored Meridian, CitcoWorks, Lambda fleet (51 functions), and Citco IA platform structure across 5 budget code environments.", 5.0),
         ]),
         ("Week 2", "March 22, 2026 to March 28, 2026", [
-            ("Requirements Gathering", "Documented SMU MCDA graduation process guidelines for cover letters, reports, and timesheets.", 12.5),
-            ("Validation Scaffolding", "Wrote a test script to check that all mandatory LaTeX source files exist in the workspace.", 1.25)
+            ("IISS-435: RPACFS1 CloudWatch Dashboard", "Designed and deployed CloudWatch pipeline health dashboard for rpacfs1-cais-pricing-extract-genai-infrastructure with CTI metrics instrumentation, Logs Insights widget, and unit tests.", 18.75),
         ]),
         ("Week 3", "March 29, 2026 to April 04, 2026", [
-            ("LaTeXBuilder Development", "Developed the LaTeXBuilder class to run pdflatex from Python and capture stderr.", 12.5),
-            ("Multi-pass Compilation Logic", "Programmed the builder to compile documents multiple times to resolve refs and TOC.", 1.25)
+            ("IISS-435: Dashboard Completion & Tests", "Completed multi-dashboard architecture, lambda-list filtering, technical dashboard, metric filter generator, Flask registry API; 262 tests passing.", 15.0),
+            ("IISS-455: Lambda Dashboard Design", "Created IISS-461 subtask; designed CloudWatch CFN dashboard structure for Lambda monitoring across rpacfs1/IA-BPO (51 functions).", 5.0),
         ]),
         ("Week 4", "April 05, 2026 to April 11, 2026", [
-            ("DocxConverter Development", "Integrated pdf2docx library and created converter class to convert report PDF to editable DOCX format.", 12.5),
-            ("Output Synchronization", "Wrote file copying utilities in build_reports.py to sync built documents into output/.", 1.25)
-        ])
+            ("IISS-455: Lambda Dashboard Completed (2h)", "Deployed Lambda monitoring CloudWatch dashboard via CFN; all 51 functions covered; verified in DEV console.", 5.0),
+            ("IISS-461: Confluence Lambda Inventory", "Published Confluence page with full Lambda inventory, trigger mapping, and budget code table.", 3.75),
+            ("IISS-469: Dashboard Improvements Research", "Investigated Top-K limitation (IAM blocks central approach — 106 metric filters needed); documented 5 OOM detection approaches; budget code filtering research.", 5.0),
+        ]),
     ]
-    
-    # Phase 2: Core Engineering & Modular Structure (Weeks 5-8)
-    p2 = "Phase 2: Core Engineering & Modeling"
+
+    # Phase 2: IA Monitoring Platform & Grafana Foundation (Weeks 5-8)
+    p2 = "Phase 2: IA Monitoring Platform & Grafana Foundation"
     p2_weeks = [
         ("Week 5", "April 12, 2026 to April 18, 2026", [
-            ("Structlog Logging Service", "Integrated structlog to format all output in JSON format with ISO timestamps.", 12.5),
-            ("Error Log Parsing", "Configured log capturing to parse and display compiler errors directly in pipeline output.", 1.25)
+            ("Training Week KT", "Full-week knowledge transfer: RPA support (Horace), CitcoWorks/Event Store (Bhanu), Meridian architecture, Aexeo Treasury platform; observed Apr 17 Meridian incident firsthand.", 20.0),
+            ("IISS-469: Dashboard Improvements Implementation", "Added cfsbpm/citcoworks/meridian tag dimensions, log errors widget, CSV/Excel export, subscription filter architecture documentation.", 10.0),
         ]),
         ("Week 6", "April 19, 2026 to April 25, 2026", [
-            ("build_reports.py CLI", "Unified builder, converter, and logger under build_reports.py to allow single-command compilation.", 12.5),
-            ("Log File Synchronization", "Configured pipeline to dump JSON logs to logs/build.log for tracing.", 1.25)
+            ("IISS-469: Completed & IISS-487 Created", "Finalized IISS-469; created IISS-487 Grafana story; wrote full spec for 14-row dashboard; created IISS-482/483/484/485/486 board.", 15.0),
+            ("IISS-482: EC2/ECS/EKS API Endpoints", "Added EC2, ECS, EKS resource discovery endpoints to resources_monitoring_api; consolidated under /api/v1/resources/.", 10.0),
         ]),
         ("Week 7", "April 26, 2026 to May 02, 2026", [
-            ("LaTeX Styling Configurations", "Created includes.tex containing fonts (Charter/lmtt), margin rules, and custom maroon headers.", 12.5),
-            ("Cover Letter Document", "Drafted cover_letter.tex containing student declaration and feedback history table.", 1.25)
+            ("IISS-484: ECS Monitoring Dashboard", "Built ia_ecs_monitoring_dashboard package — dashboards, widgets, tests, CFN, export; Standard Container Insights recommended at $10.44/month.", 15.0),
+            ("IISS-485: EKS Monitoring Dashboard", "Completed EKS monitoring dashboard with control plane metrics; scope change to AUTOMATIONHUB (1 idle cluster).", 10.0),
+            ("IISS-483: EC2 Gap Analysis", "Scanned 83 EC2 instances; discovered BudgetCode=CFS/RPA tag mismatch on rpacfs1; implemented AppName fallback pattern.", 5.0),
         ]),
         ("Week 8", "May 03, 2026 to May 09, 2026", [
-            ("Narrative Draft Setup", "Drafted Chapter 1 (Introduction) describing project goals, and Chapter 2 (About Company) describing Citco.", 12.5),
-            ("Aesthetics Compliance Review", "Verified visual styles and layout configurations against the Neeyati Mehta benchmark guidelines.", 1.25)
-        ])
+            ("RPA Support Rotation #1", "Week 8 on-call support shift: monitored VPL queue, Corporate Actions, BPM/UiPath Orchestrator health; handled service desk escalations.", 15.0),
+            ("IISS-504/505/507/508/510 Setup", "Created JIRA links for AUTOMATIONHUB/MERIDIAN/CITCOWORKS registry extensions; added dynamic tag discovery with budget_code filtering; scaffolded ia-it-sre-infrastructure-monitoring-amg repo.", 15.0),
+        ]),
     ]
-    
-    # Phase 3: Integration & Validation (Weeks 9-12)
-    p3 = "Phase 3: Integration & Validation"
+
+    # Phase 3: Grafana AMG Dashboard Intensive Build (Weeks 9-12)
+    p3 = "Phase 3: Grafana AMG Dashboard Intensive Build (IISS-487)"
     p3_weeks = [
         ("Week 9", "May 10, 2026 to May 16, 2026", [
-            ("Pytest Suite Development", "Wrote unit tests in tests/test_pipeline.py to verify path existence and output directory creation.", 12.5),
-            ("Conversion Testing", "Verified the pdf-to-docx converter performance on sample document formats under pytest.", 2.5)
+            ("IISS-487: Infrastructure Deployment (May 11)", "Deployed 4 CloudFormation stacks; provisioned Grafana AMG workspace; 16-role IAM agent system; enabled Container Insights on 5/6 Meridian clusters; 30+ hours this week.", 30.0),
+            ("IISS-487: Grafana Upgrade & Core Panels", "Grafana 10.4→12.4 upgrade mid-development; Lambda/ECS panels with Metrics Insights SQL migration; $platform variable; SQS 49 tests; automation pipeline.", 14.5),
         ]),
         ("Week 10", "May 17, 2026 to May 23, 2026", [
-            ("Chapters 3-4 Drafting", "Completed Chapter 3 (Project Overview) detailing SRE scope, and Chapter 4 (Learning Goals).", 12.5),
-            ("Branding Asset Integration", "Integrated high-resolution SMU logos and SRE system architecture diagrams into figures/.", 2.5)
+            ("IISS-487: MSK, DocumentDB, Neptune, OpenSearch, RDS Rows", "Implemented MSK consumer lag panels, DocumentDB/Neptune/OpenSearch SQL migration, RDS row; noData standardization; 28.5h this week.", 20.0),
+            ("IISS-487: Secrets Manager 64KB Limit → S3 Migration", "Hit Secrets Manager 64KB limit at 14,720 lines of YAML; agentic refactor to per-row YAML files; Lambda provisioner assembly via S3; S3 migration complete.", 14.5),
         ]),
         ("Week 11", "May 24, 2026 to May 30, 2026", [
-            ("Chapters 5-6 Drafting", "Completed Chapter 5 (Tools and Technologies) and Chapter 6 (Requirements Elicitation).", 12.5),
-            ("Formatting Listings", "Styled code listings using the LaTeX listings package to display code snippets beautifully.", 2.5)
+            ("IISS-487: Redis Row, Health Panels, SNS Alarms", "Redis row (11 panels); DocumentDB/Neptune/OpenSearch/RDS health stats; Performance row; SNS setup (3 topics); 17 alarms documented; 8 composite alarms; Grafana alerting.", 35.0),
         ]),
         ("Week 12", "May 31, 2026 to June 06, 2026", [
-            ("Chapters 7-8 Drafting", "Completed Chapter 7 (Methodologies) and Chapter 8 (System Architecture) with Mermaid flow diagrams.", 12.5),
-            ("Table Layout Adjustments", "Formatted multi-page tables using tabularx and longtable for SRE tool reviews.", 2.5)
-        ])
+            ("RPA Support Rotation #2", "Week 12 on-call support: FX Closeout queue, MESO retriggering, Two Sigma wire, SD ticket management; minimal IISS-487 work.", 20.0),
+            ("IISS-538: MESO Autoscale Hotfix", "Investigated ia_meso_process ECS CPU/memory autoscale failure; missing step-scaling policy; corrected ECS autoscaling configuration.", 10.0),
+        ]),
     ]
-    
-    # Phase 4: Final Evaluation & Deployment (Weeks 13-16)
-    p4 = "Phase 4: Final Evaluation & Deployment"
+
+    # Phase 4: Dashboard Completion, Inventory API & Refinements (Weeks 13-16)
+    p4 = "Phase 4: Dashboard Completion, Inventory API & Refinements"
     p4_weeks = [
         ("Week 13", "June 07, 2026 to June 13, 2026", [
-            ("Chapters 9-10 Drafting", "Completed Chapter 9 (Implementation) detailing script writing, and Chapter 10 (Results Evaluation).", 12.5),
-            ("Narrative Proofreading", "Corrected spelling, punctuation, and style details using language verification tools.", 5.0)
+            ("IISS-706: CAIS Deadline Hotfix (7h)", "Production incident: CAIS Deadline SpnegoError from empty UCM credentials post-Secrets Manager rotation; root cause analysis; fail-fast validation in constants.py and pysmb_helper.py; 14 unit tests added.", 10.0),
+            ("IISS-487: EC2 Row & Per-Panel Folder Migration", "EC2 instance mapper Lambda; EC2 monitoring row; per-panel folder extraction (357 tests passing); S3 template staging fix; 19h total this week.", 20.0),
+            ("IISS-507: ia-sre-resources-inventory Scaffolded (2.5h)", "Scaffolded Flask async REST API for IA resource discovery; discoverer registry pattern; 3 concrete + 7 stub discoverers; parent of IISS-508/509.", 5.0),
+            ("IISS-482: SQS Feature (5.5h)", "Registry-based SQS monitoring with 3-tier fallback (API→S3→local file); 960 automated tests.", 5.0),
         ]),
         ("Week 14", "June 14, 2026 to June 20, 2026", [
-            ("Compilation Fixes", "Fixed undefined control sequence errors in bibliography files and updated references.bib.", 12.5),
-            ("DOCX Layout Verification", "Checked and adjusted paragraph margins in converted Word documents to ensure layout parity.", 5.0)
+            ("IISS-487: Dashboard Polish & Final Deployment (v728)", "Deep-links for 9 service rows; resource tables with AWS Console links; ECS legend fixes; DocumentDB/RDS/Redis/OpenSearch restructure; final deployment v728; 140h total reached.", 25.0),
+            ("IISS-482: Final — EC2/ECS/EKS/Lambda dashboards live", "IISS-482 closed at 11h total; SQS monitoring, EC2/ECS/EKS/Lambda dashboards all live in ia-resources-monitoring repo.", 5.0),
         ]),
         ("Week 15", "June 21, 2026 to June 27, 2026", [
-            ("Review & Modifications", "Adjusted document text based on advisor feedback. Updated acknowledgements and certificate pages.", 12.5),
-            ("Timesheet Integration", "Synchronized generated timesheet data in output/ with the LaTeX appendix summary table.", 5.0)
+            ("IISS-487: Post-Delivery Refinements", "MSK deep-links, consumer lag by topic/group panels; EC2 restructure with 3 sub-rows; 6 new resource mapper Lambdas; MSK cluster ARN variable; dashboard variable reorder.", 15.0),
+            ("IISS-507/508: Inventory API Development", "Lambda discoverers for all 5 budget codes (119 functions confirmed); ECS discoverers (22 clusters, CITCOWORKS/MERIDIAN two-stage AppName filter); EC2 discoverers (83 instances).", 15.0),
         ]),
         ("Week 16", "June 28, 2026 to July 04, 2026", [
-            ("Final Pipeline Run", "Executed end-to-end build script to compile PDFs, convert to DOCX, and output all 5 final submission files.", 12.5),
-            ("Submission Readiness Audit", "Verified output formatting, total page count (20+ pages), and metadata correctness.", 5.0)
-        ])
+            ("IISS-741: MESO Month-End Stuck Tasks (Critical)", "INNOCAP/SAMLMOS tasks stuck; manual retrigger after admin access granted; resolved without data loss.", 5.0),
+            ("IISS-507/508: Test Suite Milestone", "562 automated tests achieving 99% code coverage; Hypothesis property-based tests for tag-parsing; integration tests for all REST endpoints.", 20.0),
+            ("IISS-487: Log Group Observability Research", "Mapped 3,423 CloudWatch log groups to 7 platforms (748 matched); drafted 4-part solution (IISS-845); created IISS-837-844 X-Ray sub-tasks.", 10.0),
+        ]),
     ]
-    
+
     for phase_name, weeks in [(p1, p1_weeks), (p2, p2_weeks), (p3, p3_weeks), (p4, p4_weeks)]:
         for wk, dates, tasks in weeks:
             for task_name, desc, hrs in tasks:
@@ -138,131 +147,111 @@ def get_major_project_data() -> list[dict]:
                     "dates": dates,
                     "task": task_name,
                     "description": desc,
-                    "hours": hrs
+                    "hours": hrs,
                 })
     return data
 
 
 def get_internship_data() -> list[dict]:
-    """Return structured task log data for the 900-Hour Full-Time Internship (24 Weeks)."""
+    """
+    Real JIRA-mapped work log data for the 900-hour Full-Time Internship (24 Weeks).
+    Covers all phases from onboarding through Dynatrace-equivalent observability
+    platform delivery, inventory API, ML/LLM work (IISS-824), and X-Ray tracing specs.
+    """
     data = []
-    
-    # Phase 1: Foundation & SRE Monitoring (Weeks 1-6)
-    p1 = "Phase 1: Foundation & SRE Monitoring"
+
+    # Phase 1: Foundation & SRE Platform Discovery (Weeks 1-6)
+    p1 = "Phase 1: Foundation & SRE Platform Discovery"
     p1_weeks = [
         ("Week 1", "March 15, 2026 to March 21, 2026", [
-            ("SRE Scope & Workspace Setup", "Onboarded at Citco, finalized workspace permissions, and set up local development and test environments.", 30.0),
-            ("Team Coordination & Scoping", "Participated in initial sprint planning and outlined SRE scope with manager Mr. Kishor Deotale.", 7.5)
+            ("Environment Setup & Onboarding", "Day-1 orientation; access tickets for AWS/JIRA/Confluence/CodeCommit; AWS CLI and SSO setup; Amazon Q and VSCode setup.", 37.5),
         ]),
         ("Week 2", "March 22, 2026 to March 28, 2026", [
-            ("Prometheus Telemetry", "Configured Prometheus node exporters on CFS-BPM environments to collect basic system metrics (CPU, RAM).", 30.0),
-            ("System Metrics Planning", "Documented telemetry endpoints and metric naming conventions for Platform SRE.", 7.5)
+            ("IISS-435: RPACFS1 CloudWatch Health Dashboard", "Designed and deployed CloudWatch pipeline health dashboard with CTI metrics, Logs Insights widget, Lambda error investigation, unit tests (RPACFS1 automation repo).", 37.5),
         ]),
         ("Week 3", "March 29, 2026 to April 04, 2026", [
-            ("Queue Telemetry Setup", "Configured custom collectors for RPA work queues to monitor transaction backlogs and lock status.", 30.0),
-            ("Telemetry Review Meetings", "Collaborated with RPA developers to align queue monitoring with business requirements.", 7.5)
+            ("IISS-435 Completion & IISS-455/461 Start", "Completed RPACFS1 dashboard (262 tests); created IISS-461 Lambda inventory subtask; designed CFN dashboard structure for rpacfs1/IA-BPO (51 functions).", 37.5),
         ]),
         ("Week 4", "April 05, 2026 to April 11, 2026", [
-            ("Grafana Dashboard Design", "Designed and deployed baseline Grafana dashboards to visualize Citco Works platform health.", 30.0),
-            ("Dashboard Walkthroughs", "Presented dashboard design to the operations team to collect feedback on usability.", 7.5)
+            ("IISS-455/461: Lambda Dashboard & Inventory", "Completed Lambda monitoring CloudWatch dashboard (2h JIRA); published Confluence Lambda inventory page (IISS-461); researched IISS-469 Top-K limitations.", 37.5),
         ]),
         ("Week 5", "April 12, 2026 to April 18, 2026", [
-            ("Alert Tier Implementation", "Configured pager alerts, mapping critical events to SMS alerts and warnings to email notifications.", 30.0),
-            ("Runbook Documentation", "Drafted standard incident response runbooks for common CFS-BPM database connection failures.", 7.5)
+            ("Training Week & IISS-469", "Full-week KT sessions (Horace: RPA/BPM/UiPath; Bhanu: CitcoWorks/Event Store; Meridian; Aexeo); observed Apr 17 Meridian incident; implemented IISS-469 dashboard improvements.", 37.5),
         ]),
         ("Week 6", "April 19, 2026 to April 25, 2026", [
-            ("Resilience Testing Setup", "Wrote scripts to simulate high queue volumes and test auto-alerting mechanisms in CFS-BPM.", 30.0),
-            ("Sprint 1 Retrospective", "Compiled sprint achievements, documented telemetry gaps, and prepared for Phase 2.", 7.5)
-        ])
+            ("IISS-469 Done; IISS-487 Created; IISS-482 Board Setup", "Closed IISS-469; created IISS-487 Grafana story with full 14-row spec; created IISS-482/483/484/485/486; added EC2/ECS/EKS API endpoints; migrated packages to ia-resources-monitoring repo.", 37.5),
+        ]),
     ]
-    
-    # Phase 2: Queue Optimization & Intelligent BOT Management (Weeks 7-12)
-    p2 = "Phase 2: Queue Optimization & BOT Management"
+
+    # Phase 2: IA Monitoring Platform & Grafana Infrastructure (Weeks 7-12)
+    p2 = "Phase 2: IA Monitoring Platform & Grafana Infrastructure"
     p2_weeks = [
         ("Week 7", "April 26, 2026 to May 02, 2026", [
-            ("Congestion Analysis", "Analyzed historical RPA logs to identify workflow congestion patterns and bottleneck locations.", 30.0),
-            ("Bottleneck Review Meeting", "Reviewed workflow logs with industry supervisors to prioritize bot optimizations.", 7.5)
+            ("IISS-484/485/483: ECS/EKS/EC2 Dashboards", "Built ECS monitoring dashboard (Container Insights cost analysis: Standard CI recommended at $10.44/mo); EKS dashboard (AUTOMATIONHUB scope); EC2 gap analysis (83 instances, AppName fallback pattern); CWAgent cost analysis.", 37.5),
         ]),
         ("Week 8", "May 03, 2026 to May 09, 2026", [
-            ("Backlog Detector Tool", "Wrote a Python backlog detector tool that alerts on exceeding queue depth thresholds.", 30.0),
-            ("Backlog Alert Validation", "Tested backlog alerts under simulated heavy queue loads in non-production systems.", 7.5)
+            ("RPA Support Rotation #1 & IISS-487 Scaffolding", "Week 8 on-call: VPL queue, Corporate Actions, BPM/UiPath Orchestrator; IISS-504/505/507/508/510 created; AUTOMATIONHUB/CITCOWORKS registry extensions; ia-it-sre-infrastructure-monitoring-amg scaffolded; IISS-487 elevated to Critical.", 37.5),
         ]),
         ("Week 9", "May 10, 2026 to May 16, 2026", [
-            ("Throttling Mechanics", "Designed and tested throttling algorithms to slow transaction ingestion during peak database loads.", 30.0),
-            ("Design Documentation", "Drafted system design document for throttling mechanisms and queue policies.", 7.5)
+            ("IISS-487: Infrastructure Deployment & Core Dashboard Build", "May 11: 4 CFN stacks deployed; Grafana AMG workspace live; 16-role IAM system; Container Insights on 5/6 Meridian clusters. May 13: Grafana 10.4→12.4 upgrade. Lambda/ECS/SQS panels with Metrics Insights SQL; automation pipeline.", 37.5),
         ]),
         ("Week 10", "May 17, 2026 to May 23, 2026", [
-            ("Auto-scaling Bot Policy", "Programmed logic to auto-scale Docker containers running bot processes based on queue backlogs.", 30.0),
-            ("Infrastructure Review", "Ensured the container orchestration environment has resources to support auto-scaling.", 7.5)
+            ("IISS-487: MSK, DocumentDB, Neptune, OpenSearch, RDS + S3 Migration", "MSK consumer lag/broker panels; DocumentDB/Neptune/OpenSearch/RDS SQL migration; Secrets Manager 64KB limit hit at 14,720 YAML lines → migrated to S3 assembly; Health Overview breakthrough.", 37.5),
         ]),
         ("Week 11", "May 24, 2026 to May 30, 2026", [
-            ("Automated Bot Retries", "Implemented error classification rules to retry transient bot errors while logging permanent failures.", 30.0),
-            ("Error Class Review", "Refined error categories with developers to ensure retry logic does not loop on bad data.", 7.5)
+            ("IISS-487: Redis, Alarms, SNS, Composite Alarms", "Redis row (11 panels); health stat panels for all database services; Performance row; SNS 3-topic setup; 17 CloudWatch alarms documented; Re-Notifier Lambda; 8 composite alarms; Grafana alerting configured.", 37.5),
         ]),
         ("Week 12", "May 31, 2026 to June 06, 2026", [
-            ("Self-healing Recovery Bot", "Built automated recovery scripts that restart crashed processes and unlock stuck transactions.", 30.0),
-            ("Sprint 2 Retrospective", "Evaluated bot management and queue performance. Scheduled Phase 3 disaster recovery tasks.", 7.5)
-        ])
+            ("RPA Support Rotation #2 & IISS-538 Hotfix", "Week 12 support: FX Closeout, MESO, Two Sigma wire, SD tickets. IISS-538: investigated and fixed MESO ECS autoscale policy gap. Continued alarm tuning on IISS-487.", 37.5),
+        ]),
     ]
-    
-    # Phase 3: Automated Service Reliability & DR (Weeks 13-18)
-    p3 = "Phase 3: Automated Service Reliability & DR"
+
+    # Phase 3: Dashboard Completion, Hotfixes & Inventory API (Weeks 13-18)
+    p3 = "Phase 3: Dashboard Completion, Hotfixes & Inventory API"
     p3_weeks = [
         ("Week 13", "June 07, 2026 to June 13, 2026", [
-            ("Deployment Check Codification", "Wrote shell and Python scripts to automate deployment readiness and database health checks.", 30.0),
-            ("Code Review Session", "Submitted automated deployment checking scripts for peer and supervisor code review.", 7.5)
+            ("IISS-706: CAIS Hotfix (7h) + IISS-487 EC2 Row + IISS-507 Scaffold", "CAIS Deadline SpnegoError root cause analysis; fail-fast credential validation (14 unit tests); EC2 instance mapper Lambda; per-panel folder migration (357 tests); IISS-507 ia-sre-resources-inventory scaffolded (2.5h); IISS-482 SQS registry (960 tests).", 37.5),
         ]),
         ("Week 14", "June 14, 2026 to June 20, 2026", [
-            ("DR Orchestration Scripts", "Developed Ansible playbooks to orchestrate automated database failovers for Citco Works.", 30.0),
-            ("DR Workflow Design", "Mapped out failover sequences and dependency graphs for application components.", 7.5)
+            ("IISS-487: Final Deployment v728 (140h total) + IISS-482 Closed", "Deep-links for 9 service rows; resource tables; ECS legend fixes; DocumentDB/RDS/Redis/OpenSearch restructure; final deployment v728; all 14 rows / 110+ panels / 38 alarms live. IISS-482 final at 11h.", 37.5),
         ]),
         ("Week 15", "June 21, 2026 to June 27, 2026", [
-            ("Post-Failover Health Checks", "Programmed automated endpoint validation scripts to verify application availability post-failover.", 30.0),
-            ("Validation Testing", "Executed health checks under simulated partial and full platform failures.", 7.5)
+            ("IISS-487: MSK/EC2 Refinements + IISS-507/508 Lambda Discoverers", "MSK consumer lag by topic/group; EC2 3-sub-row restructure; 6 resource mapper Lambdas. IISS-507: Lambda discoverers for all 5 budget codes (119 functions confirmed); Pydantic response models.", 37.5),
         ]),
         ("Week 16", "June 28, 2026 to July 04, 2026", [
-            ("CI/CD Deployment Pipelines", "Created GitHub Actions/GitLab CI pipelines to run SRE script tests and check style guidelines.", 30.0),
-            ("Pipeline Integration Meeting", "Integrated SRE validation checks into core application repository workflows.", 7.5)
+            ("IISS-741: MESO Critical + IISS-507/508 ECS Discoverers + Log Group Research", "IISS-741: MESO month-end stuck tasks (Critical) — retriggered INNOCAP/SAMLMOS. ECS discoverers (22 clusters, CITCOWORKS/MERIDIAN two-stage AppName filter). Log group observability research (3,423 groups mapped); IISS-845/837-844 created.", 37.5),
         ]),
         ("Week 17", "July 05, 2026 to July 11, 2026", [
-            ("Policy-as-Code Compliance", "Implemented Open Policy Agent (OPA) policies to audit infrastructure configs for security compliance.", 30.0),
-            ("Security Review Session", "Collaborated with the security team to align policy rules with company compliance regulations.", 7.5)
+            ("IISS-753: VPL Selector Failure + IISS-507 EC2 Discoverers + X-Ray Specs", "IISS-753: VPL IPV UI selector investigation (16h estimate). EC2 discoverers for 83 instances. X-Ray tracing specs written for Lambda/ECS/EKS/API Gateway/SQS/MSK/EC2 (IISS-837-844). 562-test / 99% coverage milestone.", 37.5),
         ]),
         ("Week 18", "July 12, 2026 to July 18, 2026", [
-            ("DR Failover Testing", "Conducted a successful end-to-end simulated disaster recovery drill using failover orchestration.", 30.0),
-            ("Sprint 3 Retrospective", "Reviewed failover outcomes, addressed minor recovery lag bugs, and planned Phase 4 observability.", 7.5)
-        ])
+            ("IISS-487: Log Group Utilities + Structured Logging Guide", "Implemented create_saved_queries.py (30 queries × 7 platforms); log_groups.py URL utility; Grafana CloudWatch Logs panel (Row 17); structured logging comparison guide; dry-run validation.", 37.5),
+        ]),
     ]
-    
-    # Phase 4: Advanced Monitoring, Observability & Analytics (Weeks 19-24)
-    p4 = "Phase 4: Advanced Monitoring & Observability"
+
+    # Phase 4: ML/LLM Work, X-Ray Specs, RPA Support & Report (Weeks 19-24)
+    p4 = "Phase 4: ML/LLM Work, Support Operations & Report Writing"
     p4_weeks = [
         ("Week 19", "July 19, 2026 to July 25, 2026", [
-            ("Synthetic Probing Implementation", "Deployed synthetic HTTP/API probes to monitor endpoint response latencies globally.", 30.0),
-            ("Global Probe Mapping", "Analyzed latency profiles from different network hubs to establish latency baselines.", 7.5)
+            ("IISS-487: Saved Queries + Log Group Observability PR", "Implemented 30 CloudWatch Logs Insights saved queries; log group URL encoding utility; feature PR merged (feature/IISS-487-alarms-notifications into release); SRE Observability Platform v2.19.9 released.", 37.5),
         ]),
         ("Week 20", "July 26, 2026 to August 01, 2026", [
-            ("SLA Tracker Development", "Developed real-time uptime calculators and integrated results into executive dashboards.", 30.0),
-            ("SLA Presentation", "Walked supervisors through dashboard SLA panels to confirm calculation formulas.", 7.5)
+            ("RPA Support Rotation #4 + IISS-838-844: X-Ray Specs", "Week 20 support: FX Closeout (PICTET_RPA), TUDOR3/MESO SD tickets, Auto Rec Download update. IISS-838-844: wrote 7 X-Ray tracing feature specs in ia_meso_process repo (Lambda Powertools, ECS ADOT, EKS DaemonSet, API Gateway, SQS, MSK, EC2).", 37.5),
         ]),
         ("Week 21", "August 02, 2026 to August 08, 2026", [
-            ("OpenTelemetry Tracing", "Instrumented transaction-level tracing across microservices to detect database query delays.", 30.0),
-            ("Trace Analysis & Debugging", "Fixed slow queries identified in distributed transactions to improve endpoint response.", 7.5)
+            ("IISS-824: ML-RPA-Status LLM Agent Improvements", "Reviewed ml-rpa-status-llm-agent and core-smart-rpa-llm-ecr-image repos; fixed 11 critical bugs (OOM Lambda, Athena SSE, Databricks validation, SSL, idempotent KB sync); 194 unit tests (99% coverage); split 1140-line function.py into 8 modules; structlog migration; CI quality gates.", 37.5),
         ]),
         ("Week 22", "August 09, 2026 to August 15, 2026", [
-            ("ML Anomaly Detection", "Trained a machine learning model on CPU/memory usage profiles to flag abnormal utilization.", 30.0),
-            ("Model Tuning & Testing", "Adjusted model confidence levels to minimize false alarms during normal processing peaks.", 7.5)
+            ("IISS-487: AMG Repo Cleanup + Report Writing", "Renamed repo to ia-it-sre-infrastructure-monitoring-amg; deleted mapper stack; cleaned .env structure; updated README alerting section (38 alarms, 3 lambdas). LaTeX report: methods, IaC, SRE methodology sections drafted.", 37.5),
         ]),
         ("Week 23", "August 16, 2026 to August 22, 2026", [
-            ("Capacity Forecasting Dashboard", "Built forecasting panels to model and project server storage and RAM needs for the next quarter.", 30.0),
-            ("Supervisor Capacity Review", "Presented forecasting results to the SRE lead to support resource budgeting.", 7.5)
+            ("IISS-876: VPL GTL Pricing + Report Completion", "IISS-876: VPL Pricing GTL incorrect booking root cause analysis and fix; business team NAV reconciliation. LaTeX report: results chapter, all chapter completion, build pipeline validation.", 37.5),
         ]),
         ("Week 24", "August 23, 2026 to August 29, 2026", [
-            ("Internship Final Reporting", "Compiled all project metrics, achievements, SRE runbooks, and wrote the final report summary.", 30.0),
-            ("Final Project Handover", "Completed final code handovers, presented work logs to supervisors, and closed out internship.", 7.5)
-        ])
+            ("Final Report, KT & Project Handover", "Finalized LaTeX report PDF; converted to DOCX; generated 900-hour work logs; completed KT documentation with Horace and Kri; Mitacs BSI renewal (Sept–Dec 2026) confirmed; project handover.", 37.5),
+        ]),
     ]
-    
+
     for phase_name, weeks in [(p1, p1_weeks), (p2, p2_weeks), (p3, p3_weeks), (p4, p4_weeks)]:
         for wk, dates, tasks in weeks:
             for task_name, desc, hrs in tasks:
@@ -272,7 +261,7 @@ def get_internship_data() -> list[dict]:
                     "dates": dates,
                     "task": task_name,
                     "description": desc,
-                    "hours": hrs
+                    "hours": hrs,
                 })
     return data
 
@@ -429,36 +418,50 @@ def write_data_to_excel(data: list[dict], title: str, subtitle: str, out_path: P
 # -------------------------------------------------------------------------
 
 def convert_xlsx_to_pdf(xlsx_path: Path, output_pdf: Path) -> bool:
-    """Use headless LibreOffice to convert generated Excel file into PDF."""
+    """Use headless LibreOffice/soffice to convert generated Excel file into PDF.
+
+    Tries 'libreoffice' first (Linux/Mac), then 'soffice' (Windows) as fallback.
+    Returns False gracefully if neither is available — the xlsx artifact is still usable.
+    """
     if not xlsx_path.exists():
         logger.error("xlsx_file_not_found", path=str(xlsx_path))
         return False
-        
+
     logger.info("converting_xlsx_to_pdf_via_libreoffice", src=str(xlsx_path), dest=str(output_pdf))
-    try:
-        # LibreOffice outputs PDF with the same basename in the output directory
+
+    # Try both common executable names
+    for exe in ("libreoffice", "soffice"):
         cmd = [
-            "libreoffice",
+            exe,
             "--headless",
             "--convert-to", "pdf",
             "--outdir", str(output_pdf.parent),
             str(xlsx_path)
         ]
-        res = subprocess.run(cmd, capture_output=True, text=True)
-        if res.returncode != 0:
-            logger.error("libreoffice_conversion_failed", exit_code=res.returncode, stderr=res.stderr)
-            return False
-            
-        # The output file name will be xlsx_path.stem + ".pdf"
-        tmp_pdf = output_pdf.parent / (xlsx_path.stem + ".pdf")
-        if tmp_pdf.exists() and tmp_pdf != output_pdf:
-            shutil.move(tmp_pdf, output_pdf)
-            
-        logger.info("xlsx_pdf_conversion_success", pdf=output_pdf.name, size_bytes=output_pdf.stat().st_size)
-        return True
-    except Exception as e:
-        logger.error("xlsx_pdf_conversion_exception", error=str(e))
-        return False
+        try:
+            res = subprocess.run(cmd, capture_output=True, text=True)
+            if res.returncode == 0:
+                # LibreOffice outputs PDF with the same basename in the output directory
+                tmp_pdf = output_pdf.parent / (xlsx_path.stem + ".pdf")
+                if tmp_pdf.exists() and tmp_pdf != output_pdf:
+                    shutil.move(tmp_pdf, output_pdf)
+                if output_pdf.exists():
+                    logger.info("xlsx_pdf_conversion_success", pdf=output_pdf.name, size_bytes=output_pdf.stat().st_size)
+                    return True
+            else:
+                logger.warning("libreoffice_conversion_failed", exe=exe, exit_code=res.returncode, stderr=res.stderr[:200])
+        except FileNotFoundError:
+            logger.warning("libreoffice_not_found", exe=exe)
+        except Exception as e:
+            logger.error("xlsx_pdf_conversion_exception", exe=exe, error=str(e))
+
+    logger.warning(
+        "xlsx_pdf_skipped",
+        reason="LibreOffice/soffice not available — xlsx saved but PDF not generated. "
+               "Open the xlsx in Excel and print/export to PDF manually.",
+        xlsx=str(xlsx_path),
+    )
+    return False
 
 
 # -------------------------------------------------------------------------
@@ -513,5 +516,15 @@ def generate_all_logs(output_dir: Path, active_type: str = "major_project") -> N
         raise ValueError(f"Unknown active_type: {active_type}")
         
     shutil.copy(active_xlsx_src, final_xlsx)
-    shutil.copy(active_pdf_src, final_pdf)
-    logger.info("active_logs_synchronized", type=active_type, xlsx=final_xlsx.name, pdf=final_pdf.name)
+    logger.info("active_xlsx_synchronized", type=active_type, xlsx=final_xlsx.name)
+
+    if active_pdf_src.exists():
+        shutil.copy(active_pdf_src, final_pdf)
+        logger.info("active_pdf_synchronized", type=active_type, pdf=final_pdf.name)
+    else:
+        logger.warning(
+            "active_pdf_not_available",
+            reason="LibreOffice conversion was skipped — WorkLogs.pdf not generated. "
+                   "Export WorkLogs.xlsx to PDF manually.",
+            xlsx=str(active_xlsx_src),
+        )
