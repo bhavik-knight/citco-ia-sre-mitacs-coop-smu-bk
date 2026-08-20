@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % CHAPTER 13: CHALLENGES & MITIGATIONS
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -7,7 +7,7 @@
 \chapter{Challenges \& Mitigations}
 \label{chap:challenges}
 
-Six engineering challenges arose during my internship that were significant
+Seven engineering challenges arose during my internship that were significant
 enough to alter the delivery plan or require a design revision. Each is
 documented with the problem encountered, the mitigation I applied, and the
 tradeoffs accepted.
@@ -17,16 +17,24 @@ tradeoffs accepted.
 \label{sec:challenges}
 % ────────────────────────────────────────────────────────────
 
-Six engineering challenges arose during my internship that were significant
-enough to alter the delivery plan or require a design revision. They are
-documented here both for completeness and as a record of the problem-solving
-approach I applied at each decision point.
+\subsection{Challenge 1: CloudWatch \texttt{SEARCH()} Visibility Gap}
 
-\subsection{Challenge 1: CloudWatch Metric Insights Percentile Limitation}
+The \texttt{SEARCH()} function in CloudWatch only returns metrics for AWS
+services with recent activity. Lambda functions not invoked within the
+lookback window disappear from dashboard panels entirely --- the same root
+cause that made the CAIS-Pricing pipeline invisible for 29 days in
+IISS-430. I replaced all \texttt{SEARCH()} expressions with CloudWatch
+Metric Insights SQL (\texttt{SELECT ... GROUP BY FunctionName}), which
+enumerates all deployed functions in the namespace regardless of recent
+activity. This resolved the invisibility problem for idle functions at the
+cost of losing true percentile statistics in \texttt{GROUP BY} mode ---
+leading directly to Challenge~2 below.
+
+\subsection{Challenge 2: Metric Insights SQL Cannot Compute Percentiles}
 
 The \texttt{GROUP BY} mode of CloudWatch Metric Insights SQL supports only
 \texttt{AVG}, \texttt{SUM}, \texttt{MIN}, and \texttt{MAX} aggregate functions;
-\texttt{p50} and \texttt{p99} percentile statistics are not available in this
+p50 and p99 percentile statistics are not available in this
 mode. This became apparent when I attempted to build a Lambda duration latency
 distribution panel that would show P50 and P99 across all Lambda functions in a
 single query. The mitigation I adopted was a wildcard dimension query in standard
@@ -36,7 +44,7 @@ that functions with no recent invocations are absent from the panel --- a gap
 I documented as a known limitation and flagged as a future-work item for
 custom-dimension metric emission.
 
-\subsection{Challenge 2: Grafana 10.4 $\to$ 12.4 Mid-Development Upgrade}
+\subsection{Challenge 3: Grafana 10.4 $\to$ 12.4 Mid-Development Upgrade}
 
 Two days after my initial CloudFormation stack deployment on May~11, the
 Amazon Managed Grafana workspace was upgraded from version~10.4 to version~12.4.
@@ -48,7 +56,7 @@ CloudWatch query model. The experience produced NFR6: all future panel queries
 I author would use only the standard CloudWatch plugin query interface, avoiding any
 AMG-version-specific syntax that would break on the next major upgrade.
 
-\subsection{Challenge 3: Secrets Manager 64\,KB Limit}
+\subsection{Challenge 4: Secrets Manager 64\,KB Limit}
 
 The CloudFormation IaC provisioner I built stored its YAML alarm templates as a
 single JSON-encoded secret in AWS Secrets Manager. As the monitoring scope
@@ -63,25 +71,25 @@ negligible additional cost. I updated the Lambda execution role to include
 that was accepted in exchange for the elimination of all payload size
 constraints going forward.
 
-\subsection{Challenge 4: Shared BudgetCode Tag Ambiguity}
+\subsection{Challenge 5: Shared BudgetCode Tag Ambiguity}
 
-The \texttt{CITCOWORKS} and \texttt{MERIDIAN} environments both carry
-\texttt{BudgetCode=``Shared Cloud Artifacts''} --- a legacy of both platforms
+The \texttt{citcoworks} and \texttt{meridian} environments both carry
+\texttt{BudgetCode="Shared Cloud Artifacts"} --- a legacy of both platforms
 being onboarded before the IA team standardized the uniqueness requirement for
-\texttt{BudgetCode} values. A single-stage tag filter could not distinguish
+BudgetCode values. A single-stage tag filter could not distinguish
 resources from the two environments, causing inventory contamination in early
 prototype runs of the inventory API. Retroactively retagging all production
 resources across two platforms was ruled out as too disruptive. My mitigation
-was the \textbf{two-stage \texttt{AppName} filter} documented in
+was the \textbf{two-stage AppName filter} documented in
 Section~\ref{sec:inventory_api}: any discoverer operating in the
-\texttt{``Shared Cloud Artifacts''} BudgetCode must apply a secondary
-\texttt{AppName} check as a mandatory discriminator. This created a tagging
+\textbf{"Shared Cloud Artifacts"} BudgetCode must apply a secondary
+AppName check as a mandatory discriminator. This created a tagging
 governance obligation --- new resources added without the correct
-\texttt{AppName} tag are invisible to the inventory API --- mitigated by a tag
+AppName tag are invisible to the inventory API --- mitigated by a tag
 compliance CloudWatch alarm and a documented platform-wide constraint in the
-repository \texttt{README}.
+repository README.
 
-\subsection{Challenge 5: IAM Permission Boundary Blocking Subscription Filters}
+\subsection{Challenge 6: IAM Permission Boundary Blocking Subscription Filters}
 
 The Top-K centralized log aggregation design evaluated under IISS-469 required
 \texttt{logs:PutSubscriptionFilter} to route log events from all IA Lambda
@@ -95,7 +103,7 @@ calendar time relative to the benefit. The design was redirected toward the
 CloudWatch Metric Insights SQL approach, which I used to achieve comparable per-resource
 drill-down without requiring subscription filter infrastructure.
 
-\subsection{Challenge 6: Module-Import Credential Caching (IISS-706 Hotfix)}
+\subsection{Challenge 7: Module-Import Credential Caching (IISS-706 Hotfix)}
 
 The CAIS Deadline hotfix on Jun~8 exposed a fragility in the credential
 retrieval pattern used by the affected bot: credentials were fetched once at

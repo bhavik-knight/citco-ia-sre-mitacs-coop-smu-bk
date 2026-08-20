@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % CHAPTER 4: PROJECT OVERVIEW
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -91,7 +91,7 @@ oldest message age), EC2 instances (CPU and memory via CloudWatch Agent),
 ECS clusters and tasks (via CloudWatch Container Insights), EKS node metrics,
 and database services. Each resource type was added as a separate CloudWatch
 dashboard, establishing the tag-based resource discovery patterns ---
-including the \texttt{AppName} fallback strategy for shared \texttt{BudgetCode}
+including the AppName fallback strategy for shared BudgetCode
 environments --- that all later work built upon.
 
 These CloudWatch dashboards were effective for per-service visibility, but
@@ -158,7 +158,7 @@ The API uses a discoverer registry pattern: a registry maps
 \texttt{(resource\_type, platform)} tuples to concrete discoverer classes,
 allowing new platforms or AWS service types to be onboarded by implementing
 a single class. The service was built with Python and \texttt{flask[async]},
-using \texttt{boto3} for all AWS API calls and Pydantic for response validation.
+using boto3 for all AWS API calls and Pydantic for response validation.
 The test suite achieved 99\% code coverage across unit, integration, and
 property-based tests. Key deliverable: IISS-507.
 

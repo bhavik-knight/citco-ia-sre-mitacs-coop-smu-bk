@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % CHAPTER 5: PROJECT GOALS & DELIVERABLES
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -72,22 +72,45 @@ Chapter~\ref{chap:implementation}.
 \centering
 \caption{Project Deliverables --- JIRA Scope}
 \label{tab:jira_deliverables}
-\begin{tabular}{p{2.2cm}p{9.5cm}}
-\toprule
-\textbf{JIRA} & \textbf{Title / Scope} \\
-\midrule
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{lX}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{JIRA}} & \textcolor{white}{\textbf{Title / Scope}} \\
+\hline
 IISS-435, 455, 461, 469 & CloudWatch Lambda Monitoring Dashboard and inventory \\
-\midrule
 IISS-482--486 & IA Infrastructure Monitoring Platform (CloudWatch dashboards extended to all platforms) \\
-\midrule
 IISS-487 & Centralized Grafana AMG SRE Dashboard (primary deliverable) \\
-\midrule
 IISS-507--510 & IA Infrastructure Inventory API (Flask REST API) \\
-\midrule
 IISS-706, 538, 741, 753, 876 & RPA Production Support Incidents \\
-\bottomrule
-\end{tabular}
+\hline
+\end{tabularx}
 \end{table}
+
+
+\subsection{IA Infrastructure Monitoring Platform (IISS-435, 455, 461, 469, 482--486)}
+
+\textbf{Platform:} Native Amazon CloudWatch dashboards built with
+Python-based dashboard builders and CloudFormation.
+
+\textbf{Scope:} Initially scoped to the \texttt{rpacfs1} and
+\texttt{ia-bpo} platforms (Lambda functions, Confluence inventory),
+then extended to all six platforms --- \texttt{automationhub},
+\texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian}, and
+\texttt{rpacfs1} --- covering Lambda, EC2, ECS, EKS, SQS, and
+supporting AWS services. Each dashboard uses BudgetCode as
+the primary tag filter and AppName as the mandatory fallback
+discriminator for \texttt{meridian} and \texttt{citcoworks} platforms.
+
+\textbf{SQS Registry Architecture:} A three-tier fallback model for
+resilient SQS queue data retrieval: live CloudWatch API, S3-cached
+snapshot on API failure, and locally bundled queue inventory as the
+final fallback.
+
+\textbf{Key limitation:} CloudWatch Metric Insights SQL does not support
+pattern matching on dimension values, making dynamic resource enumeration
+for Grafana template variables impractical --- this directly motivated the
+Inventory API (WS3).
+
 
 \subsection{Centralized Grafana SRE Dashboard (IISS-487)}
 
@@ -100,10 +123,11 @@ multi-resource panels --- a single query returns per-resource time series
 across the full fleet. CloudWatch Logs Insights used for log-derived
 error panels with structured JSON field extraction.
 
-\textbf{Dashboard structure:} 14 collapsible rows, one per AWS service
-category --- Lambda, SQS, MSK/Kafka, EC2, ECR, EKS, ECS Services, ECS
-Target Groups, RDS Aurora, DocumentDB, Redis/Valkey, Neptune DB, and
-OpenSearch. Cross-service filtering via Grafana template variables allows
+\textbf{Dashboard structure:} 14 rows --- two aggregate overview rows
+(Health Overview and Performance Overview) followed by 12 per-service
+rows: SQS, Lambda, EC2, ECS Infrastructure, ECS APIs, MSK/Kafka,
+DocumentDB, RDS/Aurora, Redis/Valkey, Neptune DB, OpenSearch, and
+Alerts \& Incidents. Cross-service filtering via Grafana template variables allows
 operators to scope the entire workspace to a single platform or AWS
 service via dropdown selection.
 
@@ -128,34 +152,11 @@ and EC2 tags across all IA AWS accounts.
 clusters, providing task-level CPU, memory, network I/O, and storage
 telemetry surfaced in the ECS dashboard rows.
 
-\subsection{IA Infrastructure Monitoring Platform (IISS-435, 455, 461, 469, 482--486)}
-
-\textbf{Platform:} Native Amazon CloudWatch dashboards built with
-Python-based dashboard builders and CloudFormation.
-
-\textbf{Scope:} Initially scoped to the \texttt{rpacfs1} and
-\texttt{ia-bpo} platforms (Lambda functions, Confluence inventory),
-then extended to all six platforms --- \texttt{automationhub},
-\texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian}, and
-\texttt{rpacfs1} --- covering Lambda, EC2, ECS, EKS, SQS, and
-supporting AWS services. Each dashboard uses \texttt{BudgetCode} as
-the primary tag filter and \texttt{AppName} as the mandatory fallback
-discriminator for \texttt{meridian} and \texttt{citcoworks} platforms.
-
-\textbf{SQS Registry Architecture:} A three-tier fallback model for
-resilient SQS queue data retrieval: live CloudWatch API, S3-cached
-snapshot on API failure, and locally bundled queue inventory as the
-final fallback.
-
-\textbf{Key limitation:} CloudWatch Metric Insights SQL does not support
-pattern matching on dimension values, making dynamic resource enumeration
-for Grafana template variables impractical --- this directly motivated the
-Inventory API (WS3).
 
 \subsection{IA Infrastructure Inventory API (IISS-507--510)}
 
-\textbf{Stack:} Python~3, \texttt{flask[async]}, \texttt{boto3},
-Pydantic, \texttt{serverless-wsgi} (Lambda deployment), \texttt{pytest}
+\textbf{Stack:} Python~3, \texttt{flask[async]}, boto3,
+Pydantic, serverless-wsgi (Lambda deployment), pytest
 and Hypothesis (property-based testing).
 
 \textbf{Discoverer Registry Pattern:} A central registry maps
@@ -166,9 +167,9 @@ infrastructure. Route handlers dispatch discoverers concurrently via
 \texttt{asyncio.gather()}.
 
 \textbf{Tag disambiguation:} The \texttt{meridian} and \texttt{citcoworks}
-platforms share the same \texttt{BudgetCode} tag value. A mandatory
-two-stage filter --- primary \texttt{BudgetCode} match, secondary
-\texttt{AppName} discriminator --- separates resources from the two
+platforms share the same BudgetCode tag value. A mandatory
+two-stage filter --- primary BudgetCode match, secondary
+AppName discriminator --- separates resources from the two
 platforms across all discoverers.
 
 \textbf{API:} REST endpoints for Lambda, ECS, EC2, SQS, S3, and health,
@@ -185,6 +186,19 @@ property-based tests.
 
 The following criteria defined whether each deliverable met its stated
 objectives.
+
+\subsection{IA Infrastructure Monitoring Platform}
+
+\begin{itemize}
+    \item \textbf{Platform coverage}: CloudWatch dashboards exist for
+          all six platforms covering the key AWS services (Lambda, ECS,
+          EC2, SQS, EKS) with tag-based resource filtering.
+
+    \item \textbf{Resilient SQS monitoring}: The SQS registry pipeline
+          remains functional during AWS service degradation via the
+          three-tier fallback model.
+\end{itemize}
+
 
 \subsection{SRE Observability Platform}
 
@@ -215,17 +229,6 @@ objectives.
           can be redeployed consistently across environments.
 \end{itemize}
 
-\subsection{IA Infrastructure Monitoring Platform}
-
-\begin{itemize}
-    \item \textbf{Platform coverage}: CloudWatch dashboards exist for
-          all six platforms covering the key AWS services (Lambda, ECS,
-          EC2, SQS, EKS) with tag-based resource filtering.
-
-    \item \textbf{Resilient SQS monitoring}: The SQS registry pipeline
-          remains functional during AWS service degradation via the
-          three-tier fallback model.
-\end{itemize}
 
 \subsection{IA Infrastructure Inventory API}
 
@@ -237,7 +240,7 @@ objectives.
 
     \item \textbf{Tag disambiguation}: Resources from the
           \texttt{meridian} and \texttt{citcoworks} platforms are
-          correctly separated despite sharing the same \texttt{BudgetCode}
+          correctly separated despite sharing the same BudgetCode
           tag value.
 
     \item \textbf{Extensibility}: New platforms or AWS service types
