@@ -3,6 +3,17 @@
 Complete inventory of all development JIRAs assigned to Bhavik Kantilal Bhagat
 during the Citco CTM internship (March 15 – August 31, 2026).
 
+## Fusion Project Reference
+
+### IISS-403 — Intelligent Automation (Fusion Project 4098002-KY2050)
+- **Fusion Project**: 4098002-KY2050 — Intelligent Automation
+- **Space**: Innovation IT SRE and Support
+- **Description**: Parent Fusion project that all IA monitoring and automation work
+  is tracked against. All IISS-48x, IISS-50x, and IISS-82x tickets reference this
+  Fusion project code for billing and time-tracking purposes.
+- **Used in**: IISS-509 (Frontend Dashboard), IISS-487 (Grafana AMG), IISS-507
+  (Inventory API), and all sub-tasks under IISS-482.
+
 ## Primary Deliverable
 
 ### IISS-487 — Amazon Managed Grafana: Meridian Platform Monitoring Dashboard
@@ -88,9 +99,43 @@ during the Citco CTM internship (March 15 – August 31, 2026).
 - 6 tasks: core extension, AUTOMATIONHUB, MERIDIAN, aggregation, export API, tag strategy
 - Full BUDGET_CODE_CONFIG with 4 budget codes + AppName fallback
 
-### IISS-509 — Frontend — IA Resources (To Do)
-- 7 tasks: layout, EC2/ECS/EKS/Lambda widgets, export, state indicators
-- Depends on backend completion
+### IISS-509 — Frontend — IA Infrastructure Inventory Dashboard (To Do)
+- **Parent**: IISS-507 (full-stack), IISS-482 (IA Resources Monitoring)
+- **Fusion Project**: 4098002-KY2050 — Intelligent Automation
+- **Depends on**: IISS-508 (Backend API completion)
+- **Description**: Implement all frontend components, widgets, and UI logic for the
+  IA Resources Monitoring Dashboard. Displays EC2, ECS, EKS, and Lambda resources
+  across all budget codes with export-to-Excel functionality.
+
+**Scope (7 tasks):**
+
+| # | Task | Details |
+|---|------|---------|
+| 1 | Dashboard Layout | Main layout with budget code navigation and filtering |
+| 2 | EC2 Widget | EC2 instances per budget code — running and stopped states |
+| 3 | ECS Widget | ECS clusters/services — name-based discovery for Meridian (6 clusters, 13+ services) |
+| 4 | EKS Widget | EKS clusters — handle empty/zero node state (AUTOMATIONHUB) |
+| 5 | Lambda Widget | Lambda functions per budget code with key metrics |
+| 6 | Export to Excel | Export button per widget — formatted Excel sheet download |
+| 7 | Resource State Indicators | Visual indicators: running, stopped, degraded, empty |
+
+**Resource scope reference (4 budget codes at time of ticket):**
+
+| Resource | rpacfs1 | IA-BPO | AUTOMATIONHUB | MERIDIAN | Total |
+|----------|---------|--------|---------------|----------|-------|
+| EC2 (running) | 1 | 0 | 0 | 1 | 2 |
+| EC2 (stopped) | 0 | 0 | 4 | 1 | 5 |
+| ECS Clusters | 5 | 6 | 0 | 6 | 17 |
+| ECS Services | 5 | 6 | 0 | 13+ | 24+ |
+| Lambda | ~30 | ~30 | 22 | 32 | ~114 |
+| EKS | 0 | 0 | 1 | 0 | 1 |
+
+**Acceptance criteria:**
+- EC2, ECS, EKS, Lambda widgets displayed per budget code
+- Stopped/empty resource states visually indicated
+- Export to Excel functional on all widgets
+- Budget code filter/navigation working
+- Dashboard responsive and accessible; tested across supported browsers
 
 ## Auto-Healing & Roadmap
 
