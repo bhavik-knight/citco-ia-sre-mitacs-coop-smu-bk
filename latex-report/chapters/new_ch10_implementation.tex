@@ -45,6 +45,48 @@ relate to each other and to the underlying IA platform infrastructure.
 \label{fig:platform_overview}
 \end{figure}
 
+Figure~\ref{fig:amg_system_arch} shows the full system architecture of the
+Grafana AMG observability platform, detailing how each monitored AWS service
+feeds CloudWatch, how the Lambda provisioner reads alarm templates from S3,
+and how the SNS routing delivers email notifications.
+
+\begin{figure}[ht]
+\centering
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
+  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
++---------------------------------------------------------------+
+| AWS Account (eu-west-1)                                        |
+|                                                               |
+|  [SQS]  [Lambda]  [ECS]  [MSK]  [EC2]  [ECR]  [EKS]         |
+|  [DocumentDB] [Neptune] [OpenSearch] [Redis] [RDS]            |
+|         |                                                     |
+|         v                                                     |
+|  +-------------------------------+                            |
+|  |     Amazon CloudWatch         |                            |
+|  |  (Metrics + Alarms)           |                            |
+|  +----------+--------------------+                            |
+|             |                |                                |
+|             v                v                                |
+|  +-------------------+  +-------------------+                |
+|  | Amazon Managed    |  | SNS Topic         |                |
+|  | Grafana (AMG)     |  | (Alarms)          |                |
+|  | 17 rows / 152     |  |        |          |                |
+|  | panels            |  |        v          |                |
+|  +--------^----------+  | Email Notification|                |
+|           |             +-------------------+                |
+|           |                                                   |
+|  +-------------------+                                       |
+|  | S3 Bucket         |  <- Dashboard JSON + CFN templates     |
+|  | Lambda Packages   |  <- Provisioner fetches at deploy time |
+|  +-------------------+                                       |
+|           ^                                                   |
+|  Lambda Provisioner synthesises alarms from thresholds.yaml  |
++---------------------------------------------------------------+
+\end{lstlisting}
+\caption{AMG Observability Platform --- System Architecture}
+\label{fig:amg_system_arch}
+\end{figure}
+
 The \textbf{infrastructure layer} is the monitored subject: five budget
 platforms housing Lambda functions, ECS clusters, EC2
 instances, and the full spectrum of AWS database and messaging services
@@ -431,6 +473,38 @@ enables reuse across DEV, UAT, and PROD without code changes. The budget
 code, alarm thresholds, and SNS topic ARN are all externalised as
 SAM parameters, satisfying NFR5 (multi-environment reuse).
 
+Figure~\ref{fig:cicd_pipeline} shows the CodePipeline CI/CD deployment
+flow that delivers all stacks across the three environments.
+
+\begin{figure}[ht]
+\centering
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
+  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
++------------------------------------------------------------+
+|                    CI/CD Pipeline                           |
+|                                                            |
+|  [CodeCommit] --> [CodeBuild] --> [Deploy DEV]             |
+|                                       |                    |
+|                               [Deploy UAT]                  |
+|                                       |                    |
+|                               Manual Approval              |
+|                                       |                    |
+|                               [Deploy PROD]                |
++------------------------------------------------------------+
+  Deploy order per environment:
+  1. stack-ia-it-sre-resource-monitoring-grafana
+     (Grafana workspace + Lambda provisioner)
+  2. stack-ia-it-sre-platform-alarms
+     (CloudWatch alarms + SNS topic + 4 alarm Lambdas)
+
+  IAM roles:
+  CITCO-CloudFormationBuild   -> alarms stack
+  ia-it-sre-grafana-cfn-role  -> grafana-workspace stack only
+\end{lstlisting}
+\caption{CI/CD Deployment Pipeline --- CodePipeline across DEV / UAT / PROD}
+\label{fig:cicd_pipeline}
+\end{figure}
+
 \subsection{Grafana Version Upgrade: Architectural Resilience Test}
 
 On \textbf{May~13, 2026} --- two days after the initial infrastructure
@@ -571,6 +645,42 @@ being onboarded before the IA team established per-platform
 BudgetCode uniqueness requirements. A naive
 BudgetCode lookup would conflate resources from two operationally
 distinct environments.
+
+Figure~\ref{fig:grafana_inventory_integration} shows how the Inventory API integrates
+with the Grafana AMG dashboard --- the cache-refresh Lambda writes S3 snapshots and
+publishes CloudWatch metrics, which Grafana reads via template variables and Metric
+Insights SQL panels.
+
+\begin{figure}[ht]
+\centering
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
+  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
++---------------------------+     +---------------------------+
+| Lambda: cache_refresh     |     | Lambda API: handler_      |
+|                           |     | resources                 |
+| 1. Discover AWS resources |     |                           |
+|    (all 13 service types) |     | 1. Read S3 cache          |
+| 2. Write S3 cache         |---->| 2. Return JSON            |
+|    (latest.json per row)  |     |                           |
+| 3. Publish CW metrics     |     +---------------------------+
+|    (platform/Monitoring)  |              |
++---------------------------+              v
+           |                   +---------------------------+
+           v                   | Grafana AMG               |
++---------------------------+  |                           |
+| CloudWatch                |  | Variables (dimensionValues|
+| platform/Monitoring       |->|   -> lambda_function etc) |
+| LambdaFunctionActive      |  |                           |
+| SQSQueueActive            |  | Panels (Metric Insights   |
+| MSKClusterActive ...      |  |   SQL per resource)       |
++---------------------------+  |                           |
+                               | Deep-links (AWS Console   |
+                               |   URLs per resource)      |
+                               +---------------------------+
+\end{lstlisting}
+\caption{Inventory API --- Grafana AMG Integration (cache refresh, CW metrics, template variables)}
+\label{fig:grafana_inventory_integration}
+\end{figure}
 
 My solution is a \textbf{two-stage filter} implemented in both the
 \texttt{CitcoWorksECSDiscoverer} and \texttt{MeridianECSDiscoverer}:
@@ -1282,6 +1392,45 @@ arn for direct AWS Console linkage.
 
 I designed the route handlers to use \texttt{asyncio.gather()} to dispatch all discoverers for
 a given resource type concurrently rather than sequentially. For a
+
+Figure~\ref{fig:concurrency_model} illustrates how the event loop, thread pool,
+and boto3 clients interact to achieve parallel discovery across all 13 AWS service types.
+
+\begin{figure}[ht]
+\centering
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
+  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
++----------------------------------------------------------+
+|  Lambda Handler / Flask Request (synchronous)             |
+|                                                          |
+|  asyncio.run(_get_resource_counts(...))                  |
+|       |                                                  |
+|       v                                                  |
+|  +-----------------------------------------------+      |
+|  |  Event Loop                                   |      |
+|  |                                               |      |
+|  |  asyncio.gather(                              |      |
+|  |    run_in_executor(pool, discover, "lambda"), |      |
+|  |    run_in_executor(pool, discover, "sqs"),    |      |
+|  |    run_in_executor(pool, discover, "ec2"),    |      |
+|  |    ... (13 concurrent tasks)                  |      |
+|  |  )                                            |      |
+|  +-----------------------------------------------+      |
+|       |                                                  |
+|       v                                                  |
+|  +-----------------------------------------------+      |
+|  |  ThreadPoolExecutor (max_workers=12)           |      |
+|  |  [T1:SQS] [T2:EC2] [T3:ECS] [T4:RDS] [...]   |      |
+|  |      |        |        |        |              |      |
+|  |    boto3   boto3    boto3    boto3              |      |
+|  +-----------------------------------------------+      |
+|  Result: all 13 services discovered in parallel;         |
+|  total latency = slowest single service (~<10s)          |
++----------------------------------------------------------+
+\end{lstlisting}
+\caption{Inventory API --- Concurrent Discovery Engine (asyncio + ThreadPoolExecutor)}
+\label{fig:concurrency_model}
+\end{figure}
 \texttt{GET /api/v1/lambda} request without a budget-code filter, this reduces
 the response time from the sequential sum of five discoverer latencies to
 approximately the latency of the single slowest AWS API call --- consistently
