@@ -1,0 +1,158 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Create branch and update main.tex + abstract.tex": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770286
+      },
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304778691
+      },
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304972785
+      }
+    ],
+    "2. Write ch1_introduction.tex — Introduction & Learning Goals (~2 pages)": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770385
+      },
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304980963
+      },
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786305180195
+      }
+    ],
+    "3. Write ch2_org_context.tex — Organizational & Team Context (~3 pages)": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770480
+      },
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786305183268
+      },
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786305468322
+      }
+    ],
+    "4. Write ch3_tools.tex — Tools & Technologies (~3-4 pages)": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770554
+      },
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786305472533
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786306605294
+      }
+    ],
+    "5. Write ch4_project_overview.tex — Project Overview & Objectives (~3 pages)": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770631
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786305932835
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786306606206
+      }
+    ],
+    "6. Write ch5_sre_methodology.tex — SRE Methodology & Requirements (~4 pages)": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770703
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786306611774
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786306868222
+      }
+    ],
+    "7. Write ch6_architecture.tex — Technical Architecture & Design (~8 pages)": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770783
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786306871047
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786307629189
+      }
+    ],
+    "8. Write ch7_implementation.tex — Implementation (~10 pages)": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770875
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786307632264
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786308464502
+      }
+    ],
+    "9. Write ch8_results_conclusion.tex — Results, Evaluation & Conclusion (~4 pages)": [
+      {
+        "executionId": "82f19a9a-f652-4296-a3ae-4f4808870390",
+        "chatSessionId": "sess_e56c8504-9c03-4c76-9c0f-c2355d38baae",
+        "timestamp": 1786304770953
+      },
+      {
+        "executionId": "830ba3a0-cc62-4d68-8ca5-a0f24ffde4cc",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786308467606
+      },
+      {
+        "executionId": "f99a8fe7-4702-4da3-83c5-28c420b766a4",
+        "chatSessionId": "sess_924cd8f5-df62-492a-a8d9-a21e3e30780c",
+        "timestamp": 1786311174815
+      }
+    ]
+  }
+}

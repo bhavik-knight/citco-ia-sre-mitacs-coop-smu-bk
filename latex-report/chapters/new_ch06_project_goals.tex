@@ -1,0 +1,270 @@
+﻿% ============================================================
+% CHAPTER 5: PROJECT GOALS & DELIVERABLES
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Project Goals \& Deliverables}
+\label{chap:project_goals}
+
+I set the following engineering objectives at the outset of the internship,
+guided by the two motivating incidents and the requirements sessions with
+Kishor and Kri. Each objective maps directly to one of the four work streams
+described in Chapter~\ref{chap:project}.
+
+% ────────────────────────────────────────────────────────────
+\section{Project Goals}
+\label{sec:project_goals}
+% ────────────────────────────────────────────────────────────
+
+The primary goals of the internship project were as follows:
+
+\begin{itemize}
+
+    \item \textbf{Eliminate reactive-only incident detection.} Replace the
+          dependency on business-team escalation as the primary detection
+          mechanism with proactive CloudWatch alarms that fire within seconds
+          of a threshold being crossed, directly addressing the failure modes
+          exposed by the CAIS-Pricing Silent Outage and the Meridian Incident.
+
+    \item \textbf{Build a centralized observability platform for the IA-IT-SRE
+          Infrastructure.} Provide an eagle-eye view across all six
+          platforms and all 13 AWS service categories, enabling the SRE team
+          to assess platform health, drill down to individual AWS services, and
+          respond to incidents without navigating six separate CloudWatch consoles.
+
+    \item \textbf{Automate AWS service discovery and inventory.} Replace manual
+          Confluence-maintained Lambda lists with a programmatic, always-current
+          inventory API that enumerates all deployed AWS services per platform
+          and exposes them via REST endpoints for use by the dashboard and other
+          downstream tooling.
+
+    \item \textbf{Evaluate AWS-native observability as a Dynatrace alternative.}
+          Conduct a structured feature-parity analysis comparing the AWS-native
+          stack (CloudWatch, Grafana AMG, X-Ray, Application Signals) against
+          Dynatrace capabilities, quantifying the achievable parity percentage
+          and the incremental monthly cost at each tier.
+
+    \item \textbf{Deliver Infrastructure-as-Code for all monitoring components.}
+          Ensure all alarms, dashboards, IAM roles, and supporting infrastructure
+          are provisioned via parameterized CloudFormation templates and AWS SAM,
+          making the platform reproducible, version-controlled, and
+          environment-portable.
+
+    \item \textbf{Establish engineering quality standards.} Produce a test suite
+          for the inventory API with 99\% code coverage, document all
+          architectural decisions and limitations, and maintain a Confluence
+          knowledge base for the Lambda inventory, runbooks, and incident
+          post-mortems.
+
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Deliverables and Technical Scope}
+\label{sec:deliverables_scope}
+% ────────────────────────────────────────────────────────────
+
+This section documents the technical scope and stack for each primary
+deliverable. Detailed implementation decisions are covered in
+Chapter~\ref{chap:implementation}.
+
+\begin{table}[ht]
+\centering
+\caption{Project Deliverables --- JIRA Scope}
+\label{tab:jira_deliverables}
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{lX}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{JIRA}} & \textcolor{white}{\textbf{Title / Scope}} \\
+\hline
+IISS-435, 455, 461, 469 & CloudWatch Lambda Monitoring Dashboard and inventory \\
+IISS-482--486 & IA Infrastructure Monitoring Platform (CloudWatch dashboards extended to all platforms) \\
+IISS-487 & Centralized Grafana AMG SRE Dashboard (primary deliverable) \\
+IISS-507--510 & IA Infrastructure Inventory API (Flask REST API) \\
+IISS-706, 538, 741, 753, 876 & RPA Production Support Incidents \\
+\hline
+\end{tabularx}
+\end{table}
+
+
+\subsection{IA Infrastructure Monitoring Platform (IISS-435, 455, 461, 469, 482--486)}
+
+\textbf{Platform:} Native Amazon CloudWatch dashboards built with
+Python-based dashboard builders and CloudFormation.
+
+\textbf{Scope:} Initially scoped to the \texttt{rpacfs1} and
+\texttt{ia-bpo} platforms (Lambda functions, Confluence inventory),
+then extended to all six platforms --- \texttt{automationhub},
+\texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian}, and
+\texttt{rpacfs1} --- covering Lambda, EC2, ECS, EKS, SQS, and
+supporting AWS services. Each dashboard uses BudgetCode as
+the primary tag filter and AppName as the mandatory fallback
+discriminator for \texttt{meridian} and \texttt{citcoworks} platforms.
+
+\textbf{SQS Registry Architecture:} A three-tier fallback model for
+resilient SQS queue data retrieval: live CloudWatch API, S3-cached
+snapshot on API failure, and locally bundled queue inventory as the
+final fallback.
+
+\textbf{Key limitation:} CloudWatch Metric Insights SQL does not support
+pattern matching on dimension values, making dynamic resource enumeration
+for Grafana template variables impractical --- this directly motivated the
+Inventory API (WS3).
+
+
+\subsection{Centralized Grafana SRE Dashboard (IISS-487)}
+
+\textbf{Platform:} Amazon Managed Grafana (AMG) v12.4, with Amazon
+CloudWatch as the sole data source via the native Grafana CloudWatch
+plugin.
+
+\textbf{Data layer:} CloudWatch Metric Insights SQL used for all
+multi-resource panels --- a single query returns per-resource time series
+across the full fleet. CloudWatch Logs Insights used for log-derived
+error panels with structured JSON field extraction.
+
+\textbf{Dashboard structure:} 14 rows --- two aggregate overview rows
+(Health Overview and Performance Overview) followed by 12 per-service
+rows: SQS, Lambda, EC2, ECS Infrastructure, ECS APIs, MSK/Kafka,
+DocumentDB, RDS/Aurora, Redis/Valkey, Neptune DB, OpenSearch, and
+Alerts \& Incidents. Cross-service filtering via Grafana template variables allows
+operators to scope the entire workspace to a single platform or AWS
+service via dropdown selection.
+
+\textbf{Alerting layer:} CloudWatch alarms provisioned across all
+monitored AWS services, each wired to an SNS topic routing to the SRE
+team. Composite alarms aggregate per-service states into platform-level
+health signals.
+
+\textbf{Infrastructure-as-Code (IaC):} AWS SAM with parameterized
+CloudFormation YAML templates (one template per AWS service category).
+A Lambda-backed CloudFormation provisioner dynamically discovers the
+current fleet at deploy time and synthesizes alarm resource definitions,
+deployed across four stacks: Lambda, ECS, SQS, and MSK alarms.
+Templates are staged in S3 (migrated from Secrets Manager due to the
+64~KB payload limit) and fetched by the provisioner Lambda at runtime.
+
+\textbf{IAM model:} 16-role cross-account agent permission model granting
+the Grafana service account read-only access to CloudWatch metrics, logs,
+and EC2 tags across all IA AWS accounts.
+
+\textbf{Container Insights:} Enabled on five of the six Meridian ECS
+clusters, providing task-level CPU, memory, network I/O, and storage
+telemetry surfaced in the ECS dashboard rows.
+
+
+\subsection{IA Infrastructure Inventory API (IISS-507--510)}
+
+\textbf{Stack:} Python~3, \texttt{flask[async]}, boto3,
+Pydantic, serverless-wsgi (Lambda deployment), pytest
+and Hypothesis (property-based testing).
+
+\textbf{Discoverer Registry Pattern:} A central registry maps
+\texttt{(resource\_type, platform)} tuples to concrete discoverer
+classes. New platforms or AWS service types are onboarded by implementing
+a single class, with zero changes to routing, serialization, or test
+infrastructure. Route handlers dispatch discoverers concurrently via
+\texttt{asyncio.gather()}.
+
+\textbf{Tag disambiguation:} The \texttt{meridian} and \texttt{citcoworks}
+platforms share the same BudgetCode tag value. A mandatory
+two-stage filter --- primary BudgetCode match, secondary
+AppName discriminator --- separates resources from the two
+platforms across all discoverers.
+
+\textbf{API:} REST endpoints for Lambda, ECS, EC2, SQS, S3, and health,
+each supporting an optional \texttt{?platform=} filter. Each resource
+response carries name, type, platform, tags, and ARN.
+
+\textbf{Test suite:} 99\% code coverage across unit, integration, and
+property-based tests.
+
+% ────────────────────────────────────────────────────────────
+\section{Acceptance Criteria}
+\label{sec:acceptance_criteria}
+% ────────────────────────────────────────────────────────────
+
+The following criteria defined whether each deliverable met its stated
+objectives.
+
+\subsection{IA Infrastructure Monitoring Platform}
+
+\begin{itemize}
+    \item \textbf{Platform coverage}: CloudWatch dashboards exist for
+          all six platforms covering the key AWS services (Lambda, ECS,
+          EC2, SQS, EKS) with tag-based resource filtering.
+
+    \item \textbf{Resilient SQS monitoring}: The SQS registry pipeline
+          remains functional during AWS service degradation via the
+          three-tier fallback model.
+\end{itemize}
+
+
+\subsection{SRE Observability Platform}
+
+\begin{itemize}
+    \item \textbf{Proactive incident detection}: The team can be alerted
+          to Kafka consumer lag, Lambda error rate spikes, ECS CPU
+          saturation, and SQS queue backlogs before business teams
+          escalate --- directly addressing the failure modes exposed by
+          the CAIS-Pricing Silent Outage and the Meridian Incident.
+
+    \item \textbf{Cross-platform visibility}: The SRE team can assess
+          the health of all six platforms and all monitored AWS services
+          from a single Grafana workspace without navigating individual
+          CloudWatch consoles.
+
+    \item \textbf{Alarm coverage}: CloudWatch alarms are deployed and
+          active across all monitored AWS services on all six platforms,
+          with SNS notifications routed to the SRE team.
+
+    \item \textbf{Container-level telemetry}: Task-level CPU and memory
+          metrics are available for the Meridian ECS clusters, enabling
+          resource saturation to be detected before service degradation
+          occurs.
+
+    \item \textbf{Reproducible infrastructure}: All monitoring
+          infrastructure --- Grafana workspace, alarms, IAM roles, S3
+          storage --- is provisioned as Infrastructure-as-Code and
+          can be redeployed consistently across environments.
+\end{itemize}
+
+
+\subsection{IA Infrastructure Inventory API}
+
+\begin{itemize}
+    \item \textbf{Dynamic discovery}: The API returns a current,
+          accurate list of deployed AWS services per platform at query
+          time, enabling Grafana template variables to reflect the live
+          fleet without manual updates.
+
+    \item \textbf{Tag disambiguation}: Resources from the
+          \texttt{meridian} and \texttt{citcoworks} platforms are
+          correctly separated despite sharing the same BudgetCode
+          tag value.
+
+    \item \textbf{Extensibility}: New platforms or AWS service types
+          can be onboarded by implementing a single discoverer class
+          with no changes to the API routing or test infrastructure.
+
+    \item \textbf{Test coverage}: 99\% automated test coverage across
+          unit, integration, and property-based tests.
+\end{itemize}
+
+\subsection{RPA Production Support}
+
+\begin{itemize}
+    \item \textbf{Incident response}: Production incidents are triaged,
+          root-caused, and either resolved within the support shift or
+          escalated with a documented RCA and proposed fix.
+
+    \item \textbf{SLA compliance}: Tickets are acknowledged within the
+          L2 response SLA and carried over with complete handover notes
+          per the IA Support Model.
+\end{itemize}
+
+
+% ────────────────────────────────────────────────────────────
+% NOTE: Team composition and mandate are documented in Chapter 1
+% (About Company & Organization, Section 2.2 Team Structure).
+% ────────────────────────────────────────────────────────────

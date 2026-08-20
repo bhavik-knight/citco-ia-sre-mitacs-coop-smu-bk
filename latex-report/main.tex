@@ -11,49 +11,60 @@
 \pagenumbering{roman}
 \input{pages/acknowledgements}
 \input{pages/certificate}
-\input{pages/abstract}
+
 
 % Table of Contents & Lists
 \clearpage
 \tableofcontents
-\clearpage
 \listoffigures
-\clearpage
 \listoftables
 \clearpage
 
-% Main Body Chapters (Neeyati Mehta Standard Structure)
+% Main Body Chapters (14-Chapter Structure)
 \pagenumbering{arabic}
+\firstchaptertrue  % reset so Chapter 1 gets no rule above it
 
-\input{chapters/about_company}
-\clearpage
+% Chapter 1: About Citco
+\input{chapters/new_ch01_about_citco}
 
-\input{chapters/project_overview}
-\clearpage
+% Chapter 2: Executive Summary
+\input{chapters/new_ch02_executive_summary}
 
-\input{chapters/learning_goals}
-\clearpage
+% Chapter 3: Tools & Technologies
+\input{chapters/new_ch03_tools}
 
-\input{chapters/tools_technologies}
-\clearpage
+% Chapter 4: Project Overview
+\input{chapters/new_ch04_project}
 
-\input{chapters/requirements_elicitation}
-\clearpage
+% Chapter 5: Project Goals & Deliverables
+\input{chapters/new_ch05_project_goals}
 
-\input{chapters/methodologies}
-\clearpage
+% Chapter 6: Learning Goals
+\input{chapters/new_ch06_learning_goals}
 
-\input{chapters/implementation}
-\clearpage
+% Chapter 7: Methodologies
+\input{chapters/new_ch07_methodologies}
 
-\input{chapters/weekly_breakdown}
-\clearpage
+% Chapter 8: Requirements Elicitation
+\input{chapters/new_ch08_requirements_elicitation}
 
-\input{chapters/challenges_achievements}
-\clearpage
+% Chapter 9: Implementation & Architecture
+\input{chapters/new_ch09_implementation}
 
-\input{chapters/conclusion}
-\clearpage
+% Chapter 10: Weekly Breakdown
+\input{chapters/new_ch10_weekly_breakdown}
+
+% Chapter 11: Conclusions
+\input{chapters/new_ch11_conclusions}
+
+% Chapter 12: Achievements & Business Value
+\input{chapters/new_ch12_achievements}
+
+% Chapter 13: Challenges & Mitigations
+\input{chapters/new_ch13_challenges}
+
+% Chapter 14: Future Work
+\input{chapters/new_ch14_future_work}
 
 % Appendices
 \appendix
