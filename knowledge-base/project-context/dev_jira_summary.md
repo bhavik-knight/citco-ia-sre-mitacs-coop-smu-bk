@@ -14,6 +14,44 @@ during the Citco CTM internship (March 15 – August 31, 2026).
 - **Used in**: IISS-509 (Frontend Dashboard), IISS-487 (Grafana AMG), IISS-507
   (Inventory API), and all sub-tasks under IISS-482.
 
+## Enterprise Custom UI (Citco)
+
+### IISS-919 — Infrastructure Monitoring Dashboard — Citco Enterprise (To Do)
+- **Space**: Innovation IT SRE and Support
+- **Description**: Add a new infrastructure monitoring dashboard page to the existing
+  `ia-config-portal` UI (built by Soundarya/Sridhar). This will be Citco's
+  **Enterprise Custom UI** — eliminating the limitations of CloudWatch Dashboards
+  and Grafana (no drag-and-drop, limited panel types, no config-driven customisation).
+
+**Repositories:**
+- IA Config Portal UI: Bitbucket repo (`ia_config_service_portal`)
+- AWS CodeCommit repo (linked)
+
+**Pipelines:**
+- Infrastructure Pipeline
+- ECR Pipeline
+
+**Key requirements:**
+1. Add a new dashboard page within the `ia-config-portal` UI
+2. Data source: AWS CloudWatch for metrics
+3. Use the existing **My Resources API** to fetch resources in real time
+4. Dashboard must be **config-driven** — panels/widgets defined via configuration
+5. **Drag-and-drop** panel rearrangement and layout customisation
+6. Experiment with chart/panel types: line, bar, gauge, heatmap, etc.
+7. Replace CloudWatch + Grafana limitations with a fully customisable enterprise UI
+
+**Subtasks:** TBD (none defined at ticket creation)
+
+**Context / Why this matters:**
+- CloudWatch dashboards are siloed per service, no cross-service filtering
+- Grafana AMG (IISS-487) achieves ~60% Dynatrace parity but has fixed panel types
+  and no drag-and-drop layout customisation
+- The `ia-config-portal` is an existing internal UI (React/Next.js) already used for
+  IA configuration management — adding a monitoring page here gives the SRE team a
+  single Citco-owned interface without external tool dependency
+- Depends on IISS-509 (inventory API frontend) and IISS-507 (My Resources API) being
+  available as data sources
+
 ## Primary Deliverable
 
 ### IISS-487 — Amazon Managed Grafana: Meridian Platform Monitoring Dashboard
