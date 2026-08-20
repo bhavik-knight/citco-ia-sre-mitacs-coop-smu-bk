@@ -341,13 +341,26 @@ NAV calculations. Log group PR merged; SRE Observability Platform
 
 IISS-824: Gained access to \texttt{ml-rpa-status-llm-agent} and
 \texttt{core-smart-rpa-llm-ecr-image} CodeCommit repositories.
-Resolved \textbf{11 critical bugs} across 6 Lambda functions:
-OOM Lambda (\texttt{event\_service}), Athena SSE-KMS inconsistency,
-SSL verification scoping, idempotent KB sync, and event schema validation.
-Refactored a 1,140-line monolithic \texttt{function.py} into 8 focused
-modules. Wrote \textbf{194 unit tests} with 99\% code coverage. Deployed
-structlog migration across all Lambda functions. Versions v1.1.1
-through v1.1.32 released this week.
+Studied the \textbf{Ask Citco RPA} chatbot architecture --- a RAG
+pipeline using Amazon Bedrock (Claude), OpenSearch Serverless (1024-dim
+FAISS/HNSW vectors), and 11 Lambda functions ingesting from SharePoint,
+Databricks, and BPM API (see Section~\ref{sec:rpa_llm_agent}).
+
+CloudWatch log analysis (93-day PROD window) revealed the
+\texttt{IRCOEKBExtractLambda} was hitting the 300s timeout on 52\% of
+runs. Root cause: unconditional re-upload of all $\sim$980 wiki pages
+daily. Implemented two-phase hybrid sync reducing steady-state time
+from 291s average to $\sim$25s.
+
+Resolved \textbf{8 additional production bugs}: OpenSearch silent delete,
+Lambda fire-and-forget reporting, Athena SSE inconsistency, Athena race
+condition, SSL verification disabled, bare \texttt{except:} in usage
+report, and CFN custom resource no-timeout hang.
+
+Refactored 1,140-line monolithic \texttt{function.py} into 8 focused
+modules. Wrote \textbf{194 unit tests} at 99\% code coverage.
+Deployed structlog migration across all 11 Lambda functions. Uploaded
+NavChecklist PDFs to production KB. Versions v1.1.1--v1.1.32 released.
 
 % ────────────────────────────────────────────────────────────
 \section{Week 22: AMG Cleanup \& X-Ray Research (Aug~10--14)}

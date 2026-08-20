@@ -226,9 +226,65 @@ during the Citco CTM internship (March 15 – August 31, 2026).
 
 ## ML/AI
 
-### IISS-824 — Understand Document Agent in ML-RPA-Status LLM Repos (To Do)
-- Two CodeCommit repos: ml-rpa-status-llm-agent + core-smart-rpa-llm-ecr-image
-- Research/documentation task
+### IISS-824 — RPA LLM Agent: Study, Fixes, KB Enrichment \& Improvements (Aug 2026)
+- **Repos**: `ml-rpa-status-llm-agent` + `core-smart-rpa-llm-ecr-image` (CodeCommit, coredev, us-east-1)
+- **Status**: Critical bugs in production, KB sync fixes deployed; dev best-practice approval pending
+
+**System Overview — Ask Citco RPA Chatbot (RAG Architecture):**
+
+```
+LibreChat UI → ECS Fargate (FastAPI) → Bedrock Agent (Claude)
+                                          ├── Action Groups (Lambda) → Event Service, SDM, LE
+                                          └── Knowledge Base (OpenSearch) → IRCOEKB wiki pages
+```
+
+**11 Lambda Functions:**
+
+| Lambda | Purpose | Schedule |
+|--------|---------|----------|
+| `RPABedrockAgent` | Action groups: process status, SDM tickets, LE lookup | On-demand |
+| `IRCOEKBExtractLambda` | SharePoint wiki → S3 (49 libraries, ~5,000 pages) | Daily 12:00 UTC |
+| `RPALLMKBIngestionFunction` | Trigger Bedrock KB sync S3 → OpenSearch | Daily 14:00 UTC |
+| `RPALLMIndexCreatorFunction` | Create OpenSearch 1024-dim FAISS/HNSW vector index | On deploy |
+| `EventStoreExtractLambda` | Databricks event store → S3 CSV for process lookups | Daily 12:00 UTC |
+| `ClientFundMappingLambda` | BPM API client/fund master data → S3 JSON | Every 3 hours |
+| `AthenaTableLambda` | Create usage tracking Athena table (Parquet/KMS) | On deploy |
+| `AthenaRepairLambda` | `MSCK REPAIR TABLE` for new S3 partitions | Every 10 min |
+| `RPALLMUsageReportLambda` | Weekly usage report via SES | Fridays 16:00 UTC |
+| `UploadFileFunction` | Upload API schema to S3 | On deploy |
+| `ALBTestFunction` | ALB connectivity diagnostic (DEV only) | Manual |
+
+**Critical Production Bugs Fixed (IISS-824, Aug 2026):**
+
+1. **IRCOEKB Lambda 52% timeout rate** (most critical): 77 of 148 PROD runs hit 300s timeout (May–Aug 2026, 93-day CloudWatch analysis). Root cause: unconditional re-upload of all ~980 wiki pages daily. Fix (v1.1.x + v1.1.18): Two-phase hybrid sync — Phase 1 checks each of 49 libraries with `filter=Modified gt last_synced_at` (25s total); Phase 2 processes only changed libraries. Per-page idempotency using SharePoint `Modified` timestamp in S3 metadata. Steady-state time reduced from 291s avg → **~25 seconds**.
+
+2. **OpenSearch silent delete bug** (v1.1.1): On index creation failure, code silently deleted the index and reported CloudFormation SUCCESS. Fixed: raise exception properly, add `index_exists()` idempotency check before create.
+
+3. **Athena SSE encryption inconsistency**: `athena_repair.py` used `SSE_S3`; fix unified to `SSE_KMS` across all Athena queries.
+
+4. **SSL verification disabled**: `client_and_fund_report.py` used `verify=False` on BPM API. Fixed to `verify=True`.
+
+5. **Lambda fire-and-forget pattern**: `EventStoreExtractLambda` and `ClientFundMappingLambda` always reported SUCCESS regardless of actual outcome (caught `BotoError` which doesn't exist; `ClientError` not imported). Fixed: proper exception imports and re-raise.
+
+6. **Athena race condition**: `MSCK REPAIR TABLE` ran immediately after `CREATE TABLE` before table existed. Fixed: `wait_for_query()` polling loop.
+
+**KB Content Added:**
+- NAV Checklist PDFs uploaded to S3 (`RPA Processes/NAV Checklist/`) via idempotent upload script and triggered KB ingestion. Now in PROD KB.
+
+**Additional Work:**
+- Refactored 1,140-line `function.py` → 8 focused modules
+- Structlog migration across all 11 Lambda functions
+- Type hints, Google docstrings, Pydantic models added
+- 194 unit tests at 99% code coverage (v1.1.x series)
+- X-Ray tracing instrumented (Powertools Tracer, DEV only pending approval)
+- Kill switch pattern via SSM Parameter Store (`/{Env}/rpa-llm/ircoekb/process-run-status`)
+- Versions v1.1.1 through v1.1.32 released during Aug 3–20 2026
+
+**Proposed (not yet implemented): Hybrid Graph-RAG Architecture**
+- Observation: Citco RPA domain is highly relational — clients, funds, processes, platforms (BP/UiPath), process knowledge are interconnected entities
+- Proposal: Add Graph-RAG layer (Amazon Neptune or similar) alongside existing vector RAG
+- Rationale: Graph traversal over entity relationships (client → funds → processes → platform) would improve chatbot accuracy for complex multi-hop queries (e.g. "What processes run on Blue Prism for client X?")
+- Status: Identified during IISS-824 engagement; to be formally proposed as IISS follow-on
 
 ## Support/Incident JIRAs
 

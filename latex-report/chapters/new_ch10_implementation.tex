@@ -987,6 +987,211 @@ team members can revisit any decision as the platform's monitoring
 maturity evolves.
 
 % ────────────────────────────────────────────────────────────
+\section{Work Stream 4: RPA LLM Agent --- Ask Citco RPA (IISS-824)}
+\label{sec:rpa_llm_agent}
+% ────────────────────────────────────────────────────────────
+
+During Week~21 I engaged with a parallel work stream outside the SRE
+monitoring scope: the \textbf{Ask Citco RPA} support chatbot, implemented
+across two CodeCommit repositories (\texttt{ml-rpa-status-llm-agent} and
+\texttt{core-smart-rpa-llm-ecr-image}). My engagement began as a research
+and documentation task but expanded to production bug-fixing after log
+analysis revealed critical reliability failures.
+
+\subsection{System Architecture}
+
+The chatbot is a \textbf{Retrieval-Augmented Generation (RAG)} pipeline
+built on Amazon Bedrock, designed to answer RPA operator queries about
+process status, procedures, and Legal Entity assignments without requiring
+developers to be on-call for routine questions.
+
+\begin{figure}[ht]
+\centering
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
+  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
++--------------------------------------------------------------+
+|  CONSUMERS                                                    |
+|  LibreChat UI  (web)                                          |
++-------------------------------+------------------------------+
+                                |  HTTP / SSE
++-------------------------------v------------------------------+
+|  COMPUTE                                                      |
+|  ECS Fargate  FastAPI (core-smart-rpa-llm-ecr-image)         |
+|  - LDAP auth  - OpenAI-format streaming  - Usage tracking    |
++-------------------------------+------------------------------+
+                                |  invoke_agent()
++-------------------------------v------------------------------+
+|  BEDROCK AGENT  (Claude)                                      |
+|                                                               |
+|  Action Groups (Lambda)     Knowledge Base (OpenSearch)       |
+|  get-project-code            49 SharePoint libraries          |
+|  get-process-status-info     ~5,000 wiki pages                |
+|  get-le-assignment           1024-dim FAISS/HNSW vectors      |
+|  post-create-sdm-ticket      HYBRID search (vector + BM25)    |
++--------------------------------------------------------------+
+                                |
++-------------------------------v------------------------------+
+|  DATA SOURCES                                                 |
+|  SharePoint IRCOEKB  Databricks Event Service  BPM API       |
+|  (wiki pages)        (process/project master)  (client/fund) |
++--------------------------------------------------------------+
+\end{lstlisting}
+\caption{Ask Citco RPA --- RAG Architecture (IISS-824)}
+\label{fig:rpa_llm_arch}
+\end{figure}
+
+The \textbf{ECS Fargate} layer runs the FastAPI container, authenticates
+users via LDAP (checking \texttt{rpa\_support\_agent\_user} AD group), invokes
+the Bedrock agent, and streams responses back in OpenAI SSE format. The
+\textbf{Bedrock Agent} (Claude) orchestrates between action groups and
+the Knowledge Base depending on the query type: process status queries
+hit the Event Service Lambda; procedural questions retrieve chunks from
+OpenSearch via hybrid vector and keyword search.
+
+\subsection{Knowledge Base Pipeline}
+
+The KB ingestion pipeline runs daily in two stages:
+
+\begin{enumerate}
+    \item \textbf{12:00 UTC --- \texttt{IRCOEKBExtractLambda}}: Syncs
+          49 SharePoint IRCOEKB wiki libraries ($\sim$5,000 pages) to S3
+          as plain-text files with SharePoint metadata preserved.
+    \item \textbf{14:00 UTC --- \texttt{RPALLMKBIngestionFunction}}: Triggers
+          Bedrock KB ingestion, which chunks (hierarchical: 1,200 token
+          parent / 300 token child), embeds (1024-dim), and indexes into
+          OpenSearch Serverless (FAISS/HNSW, L2 distance).
+\end{enumerate}
+
+Static documents (PDFs, process guides) are uploaded separately via an
+idempotent upload script (\texttt{scripts/upload\_kb\_content.py}) that
+compares content hashes before writing to S3.
+
+\subsection{Production Reliability Issues Identified and Fixed}
+
+My engagement began with CloudWatch log analysis. Analysis of
+\textbf{93 days of production logs} (May~5 -- Aug~5, 2026; 148 Lambda
+runs) revealed a critical reliability failure in the KB sync:
+
+\begin{itemize}
+    \item \textbf{52\% timeout rate on \texttt{IRCOEKBExtractLambda}.}
+          77 of 148 production runs hit the 300-second Lambda timeout.
+          June 2026 was the worst month at 71\% timeout rate. Average
+          run duration was 291 seconds --- every run within 36 seconds of
+          the limit. When the Lambda timed out, the Knowledge Base was
+          incomplete for that day: pages not yet uploaded when the timeout
+          fired were missing from the KB until the next successful run.
+
+    \item \textbf{Root cause: unconditional full re-upload.}
+          The original code re-uploaded all $\sim$980 pages on every daily
+          run regardless of whether content had changed. The
+          \texttt{KB Articles} library alone (1,266 pages at $\sim$220ms
+          per S3 \texttt{head\_object} call) required 278 seconds just
+          for change detection I/O.
+\end{itemize}
+
+I implemented a two-phase hybrid sync (\textbf{v1.1.x + v1.1.18}) that
+reduced steady-state run time from 291 seconds average to approximately
+\textbf{25 seconds}:
+
+\begin{enumerate}
+    \item \textbf{Phase 1 --- Library-level change detection ($\sim$25s
+          for all 49 libraries).} One lightweight ALB call per library
+          using a SharePoint \texttt{filter=Modified gt \{last\_synced\_at\}}
+          query. Zero results means the entire library is unchanged and
+          is skipped with no further I/O.
+    \item \textbf{Phase 2 --- Conditional sync.} Only changed libraries
+          are processed. Sequential if five or fewer changed; parallel
+          via \texttt{ThreadPoolExecutor(max\_workers=3)} if more than
+          five changed.
+    \item \textbf{Per-page idempotency.} Within each synced library,
+          each page's SharePoint \texttt{Modified} timestamp is compared
+          to the \texttt{sp-modified} field stored in S3 object metadata.
+          Unchanged pages skip HTML extraction and S3 upload entirely.
+\end{enumerate}
+
+Beyond the KB sync, log analysis also surfaced seven additional
+production bugs fixed across versions v1.1.1--v1.1.32:
+
+\begin{itemize}
+    \item \textbf{OpenSearch silent delete} (v1.1.1): index creation
+          failure silently deleted the index and reported CloudFormation
+          SUCCESS. Fixed with proper exception handling and idempotency
+          check.
+    \item \textbf{Fire-and-forget Lambda pattern}: \texttt{EventStoreExtractLambda}
+          and \texttt{ClientFundMappingLambda} always reported SUCCESS
+          regardless of actual outcome due to incorrect exception class
+          references (\texttt{boto3.exceptions.BotoError} does not exist).
+    \item \textbf{Athena SSE encryption inconsistency}: queries used
+          \texttt{SSE\_S3} instead of \texttt{SSE\_KMS} in some Lambdas.
+    \item \textbf{Athena race condition}: \texttt{MSCK REPAIR TABLE}
+          executed immediately after \texttt{CREATE TABLE} without
+          waiting for completion.
+    \item \textbf{SSL verification disabled}: BPM API calls used
+          \texttt{verify=False}.
+\end{itemize}
+
+\subsection{Knowledge Base Enrichment: NavChecklist Documents}
+
+As part of IISS-824, I uploaded the NavChecklist process documentation
+PDFs (\textit{Architecture -- NAV CHECKLIST.pdf}, \textit{FAQ -- NAV
+CHECKLIST.pdf}) to the KB S3 bucket under
+\texttt{RPA Processes/NAV Checklist/} using the idempotent upload
+script. These documents --- describing the NAV calculation checklist
+process flow --- are now indexed in the production Knowledge Base and
+searchable by the chatbot.
+
+\subsection{Code Quality and Engineering Improvements}
+
+Alongside the bug fixes, I delivered the following engineering quality
+improvements to bring the codebase in line with IA Best Practice
+guidelines (pending dev approval gate):
+
+\begin{itemize}
+    \item \textbf{Module refactor}: the 1,140-line monolithic
+          \texttt{function.py} split into 8 focused modules
+          (\texttt{handler.py}, \texttt{event\_service\_api.py},
+          \texttt{secrets.py}, \texttt{project\_lookup.py}, etc.)
+    \item \textbf{structlog migration}: replaced \texttt{print()} and
+          root logger across all 11 Lambda functions with structlog
+          structured logging
+    \item \textbf{Type hints and docstrings}: PEP~484 type hints and
+          Google-style docstrings added to all functions and classes
+    \item \textbf{Test suite}: 194 unit tests at 99\% code coverage
+          (v1.1.x series)
+    \item \textbf{Pydantic models}: Databricks API response and BPM
+          API response wrapped in Pydantic validation models
+    \item \textbf{Kill switch}: SSM Parameter Store kill switch pattern
+          (\texttt{/{Env}/rpa-llm/ircoekb/process-run-status}: RUN/STOP)
+          implemented across IRCOEKB, Event Store, and Mapping Lambdas
+    \item \textbf{X-Ray tracing}: AWS Lambda Powertools Tracer
+          instrumented on all functions (enabled in DEV; pending approval
+          for UAT/PROD)
+\end{itemize}
+
+Versions v1.1.1 through v1.1.32 were released during Aug~3--20, 2026.
+
+\subsection{Proposed: Hybrid Graph-RAG Architecture}
+
+During the codebase analysis I identified a structural limitation of
+the current flat-vector RAG approach for the Citco RPA domain. The
+entities in this domain are highly relational: clients have funds, funds
+run specific processes, processes execute on either Blue Prism or UiPath,
+and each platform has its own operational knowledge base. A standard
+vector similarity search treats all these entities as independent text
+chunks, losing the relational structure.
+
+I propose a \textbf{Hybrid Graph-RAG} enhancement: adding Amazon Neptune
+as a graph layer alongside the existing OpenSearch vector store. The
+graph would model the entity relationship network (client--fund--process--platform),
+enabling the Bedrock agent to traverse relationships for multi-hop queries
+(\textit{``Which Blue Prism processes handle FX Closeouts for client X?''}),
+then retrieve dense context from the vector KB for the identified process
+entities. The dual-path retrieval would improve answer accuracy for
+complex operational queries while maintaining the existing RAG pipeline
+for straightforward procedural lookups. This proposal will be submitted
+as a formal IISS follow-on ticket.
+
+% ────────────────────────────────────────────────────────────
 % Phased delivery narrative, support incidents, and JIRA scope
 % are covered in Chapter 11 (Weekly Implementation Breakdown).
 % ────────────────────────────────────────────────────────────
