@@ -55,9 +55,9 @@ and how the SNS routing delivers email notifications.
 \begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
   rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
 +---------------------------------------------------------------+
-| AWS Account (eu-west-1)                                        |
+| AWS Account (eu-west-1)                                       |
 |                                                               |
-|  [SQS]  [Lambda]  [ECS]  [MSK]  [EC2]  [ECR]  [EKS]         |
+|  [SQS]  [Lambda]  [ECS]  [MSK]  [EC2]  [ECR]  [EKS]           |
 |  [DocumentDB] [Neptune] [OpenSearch] [Redis] [RDS]            |
 |         |                                                     |
 |         v                                                     |
@@ -67,20 +67,20 @@ and how the SNS routing delivers email notifications.
 |  +----------+--------------------+                            |
 |             |                |                                |
 |             v                v                                |
-|  +-------------------+  +-------------------+                |
-|  | Amazon Managed    |  | SNS Topic         |                |
-|  | Grafana (AMG)     |  | (Alarms)          |                |
-|  | 17 rows / 152     |  |        |          |                |
-|  | panels            |  |        v          |                |
-|  +--------^----------+  | Email Notification|                |
-|           |             +-------------------+                |
+|  +-------------------+  +-------------------+                 |
+|  | Amazon Managed    |  | SNS Topic         |                 |
+|  | Grafana (AMG)     |  | (Alarms)          |                 |
+|  | 17 rows / 152     |  |        |          |                 |
+|  | panels            |  |        v          |                 |
+|  +--------^----------+  | Email Notification|                 |
+|           |             +-------------------+                 |
 |           |                                                   |
-|  +-------------------+                                       |
+|  +-------------------+                                        |
 |  | S3 Bucket         |  <- Dashboard JSON + CFN templates     |
 |  | Lambda Packages   |  <- Provisioner fetches at deploy time |
-|  +-------------------+                                       |
+|  +-------------------+                                        |
 |           ^                                                   |
-|  Lambda Provisioner synthesises alarms from thresholds.yaml  |
+|  Lambda Provisioner synthesises alarms from thresholds.yaml   |
 +---------------------------------------------------------------+
 \end{lstlisting}
 \caption{AMG Observability Platform --- System Architecture}
@@ -110,11 +110,11 @@ dashboard during incident response, the IA Resources Inventory REST API
 team's email distribution list that receives SNS alarm notifications.
 
 % ────────────────────────────────────────────────────────────
-\section{CloudWatch Dashboard Platform (IISS-455/469/482--486)}
+\section{CloudWatch Dashboard Platform}
 \label{sec:cw_dashboard_platform}
 % ────────────────────────────────────────────────────────────
 
-\subsection{Initial Lambda Dashboard (IISS-455)}
+\subsection{Initial Lambda Dashboard}
 
 My earliest monitoring work, completed in Apr~2026, produced a native
 Amazon CloudWatch dashboard covering the \texttt{rpacfs1} and
@@ -128,36 +128,26 @@ The architectural pattern for this early work was straightforward:
 CloudWatch native widgets queried the \texttt{AWS/Lambda} namespace using
 \texttt{SEARCH()} expressions to enumerate all functions matching a
 \texttt{FunctionName} prefix. This approach worked adequately for small,
-homogeneous fleets but surfaced two structural limitations that would
-drive the later Metric Insights SQL migration:
+homogeneous fleets but surfaced two structural limitations that drove
+the later Metric Insights SQL migration: the \textbf{SEARCH() visibility
+gap} (idle functions disappear from panels) and \textbf{no cross-environment
+aggregation} (a single expression cannot span multiple tag dimensions
+simultaneously). Both are documented in full in
+Chapter~\ref{chap:challenges}.
 
-\begin{itemize}
-    \item \textbf{SEARCH() visibility gap}: The \texttt{SEARCH()} function
-          only returns metrics for resources with recent data points.
-          Lambda functions that have not been invoked within the lookback
-          window become invisible to the dashboard, creating a false
-          impression of a smaller fleet.
+\subsection{Extended Dashboard and Architecture Analysis}
 
-    \item \textbf{No cross-environment aggregation}: A single
-          \texttt{SEARCH()} expression could not span multiple tag
-          dimensions simultaneously, making it difficult to aggregate
-          across the six platforms (\texttt{rpacfs1},
-          \texttt{ia-bpo}, \texttt{automationhub}, \texttt{meridian},
-          \texttt{citcoworks}) without duplicating panels.
-\end{itemize}
-
-\subsection{Extended Dashboard and Architecture Analysis (IISS-469)}
-
-IISS-469 extended the initial dashboard with additional tag dimensions
-covering \texttt{cfsbpm}, \texttt{citcoworks}, and \texttt{meridian}
-budget codes, and introduced CloudWatch Logs Insights widgets for error
-log surfacing. Rather than relying solely on \texttt{Errors} metrics from
+I extended the initial dashboard with additional tag dimensions
+covering \texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks}, 
+and \texttt{meridian} budget codes, and introduced CloudWatch Logs Insights 
+widgets for error log surfacing. 
+Rather than relying solely on \texttt{Errors} metrics from
 the \texttt{AWS/Lambda} namespace, the Logs Insights widgets queried the
 \texttt{/aws/lambda/} log group prefix directly, enabling pattern-matched
 error extraction regardless of whether Lambda had published a
 corresponding metric.
 
-A significant architectural investigation within IISS-469 evaluated the
+A significant architectural investigation within this task evaluated the
 feasibility of a fully centralized log aggregation approach using
 CloudWatch metric subscription filters. My analysis quantified the
 infrastructure cost of this design: routing log events from all IA Lambda
@@ -181,9 +171,9 @@ with its detection latency, cost, and permission requirements.
 This analysis informed the Container Insights cost evaluation I conducted
 under IISS-483 and the alarm design in IISS-487.
 
-\subsection{IA Infrastructure Monitoring Sub-Stories (IISS-482 to IISS-486)}
+\subsection{IA Infrastructure Monitoring Sub-Stories}
 
-\subsubsection{EC2 Inventory and Tag Mismatch Discovery (IISS-483)}
+\subsubsection{EC2 Inventory and Tag Mismatch Discovery}
 
 My gap analysis of the EC2 inventory scanned \textbf{83~instances} across
 the six platforms. This scan revealed a critical tagging
@@ -197,7 +187,7 @@ back to filtering by \texttt{AppName="rpacfs1"}. This fallback became
 the standard for all resource discovery in the inventory API (see
 Section~\ref{sec:inventory_api}).
 
-\subsubsection{Container Insights Cost Analysis (IISS-484)}
+\subsubsection{Container Insights Cost Analysis}
 
 With ECS task-level telemetry absent from five of the six Meridian ECS
 clusters, IISS-484 evaluated four Container Insights deployment options:

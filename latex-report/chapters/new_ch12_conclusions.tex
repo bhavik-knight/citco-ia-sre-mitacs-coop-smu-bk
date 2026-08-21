@@ -1,5 +1,5 @@
 ﻿% ============================================================
-% CHAPTER 11: CONCLUSIONS
+% CHAPTER 12: CONCLUSIONS
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
 % ============================================================
@@ -17,42 +17,100 @@ delivered outcomes and reflect on the broader impact of the engagement.
 \label{sec:learning_goals_eval}
 % ────────────────────────────────────────────────────────────
 
-Chapter~\ref{chap:learning_goals} established eight technical and five non-technical
+Chapter~\ref{chap:learning_goals} established technical and non-technical
 learning goals at the outset of my internship. Table~\ref{tab:learning_goals_eval}
 evaluates each goal against evidence gathered from my delivered work.
 
-\begin{table}[ht]
-\centering
+\definecolor{statusgreen}{RGB}{168,208,141}
+
+\begin{longtable}{p{0.7cm}p{4.0cm}Xp{2.2cm}}
+\rowcolor{smubrand}
+  \textcolor{white}{\textbf{S.N.}} &
+  \textcolor{white}{\textbf{Task}} &
+  \textcolor{white}{\textbf{Description}} &
+  \textcolor{white}{\textbf{Status}} \\
+\hline
+\endfirsthead
+\rowcolor{smubrand}
+  \textcolor{white}{\textbf{S.N.}} &
+  \textcolor{white}{\textbf{Task}} &
+  \textcolor{white}{\textbf{Description}} &
+  \textcolor{white}{\textbf{Status}} \\
+\hline
+\endhead
+\multicolumn{4}{r}{\small\itshape continued on next page} \\
+\endfoot
 \caption{Learning Goals --- Self-Evaluation at Internship Completion}
 \label{tab:learning_goals_eval}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{Xp{2.2cm}p{5.0cm}}
-\hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Learning Goal}} & \textcolor{white}{\textbf{Status}} & \textcolor{white}{\textbf{Evidence}} \\
-\hline
-AWS Cloud Services \& Infrastructure & \textcolor{smumaroon}{\textbf{Met}} & 13 AWS service namespaces monitored across all six platforms; Lambda, ECS, EC2 inventoried; full DB spectrum (DocumentDB, Neptune, RDS, Redis, OpenSearch) \\
-Site Reliability Engineering Principles & \textcolor{smumaroon}{\textbf{Met}} & Four golden signals applied; SLOs defined for Lambda, ECS, MSK, SQS; MSK lag alarm reduces MTTD from 3.5h to $<$30s \\
-Infrastructure-as-Code & \textcolor{smumaroon}{\textbf{Met}} & 4 CloudFormation stacks deployed; Lambda-backed dynamic provisioner; S3-staged templates; \texttt{samconfig.toml} multi-env reuse \\
-Observability Platforms (AMG) & \textcolor{smumaroon}{\textbf{Met}} & 14-row / 110+ panel Grafana workspace; survived 10.4$\to$12.4 upgrade; 38 alarms wired to SNS \\
-Proactive vs.\ Reactive Reliability & \textcolor{smumaroon}{\textbf{Met}} & Alarm-backed detection replaces business escalation; Meridian Incident used as design proof point \\
-Python Development & \textcolor{smumaroon}{\textbf{Met}} & Flask REST API; 562 tests at 99\% coverage; boto3 concurrent discovery; Hypothesis PBT; structlog \\
-Software Engineering Practices & \textcolor{smumaroon}{\textbf{Met}} & TDD with pytest; spec-driven development via Kiro IDE; PR-based merges on CodeCommit \\
-AI-Augmented Engineering & \textcolor{smumaroon}{\textbf{Met}} & Kiro IDE spec workflow; Amazon~Q inline; Claude Sonnet for architecture reasoning \\
-Agile and Kanban Methodology & \textcolor{smumaroon}{\textbf{Met}} & 25+ JIRA tickets across IISS board; story decomposition, work-log discipline, sprint rituals \\
-Technical Communication & \textcolor{smumaroon}{\textbf{Met}} & RCA reports (IISS-706, Apr~17); Confluence pages; JIRA acceptance criteria; this report \\
-Production Incident Response & \textcolor{smumaroon}{\textbf{Met}} & 4 support rotations; 5 notable incidents resolved; IISS-706 hotfix within 7h \\
-Cross-Functional Collaboration & \textcolor{smumaroon}{\textbf{Met}} & Halifax--Hyderabad time-zone coordination; Meridian team architecture sessions \\
-Financial Domain Knowledge & \textcolor{smumaroon}{\textbf{Met}} & VPL queue, Corp Actions, MESO, CAIS operational familiarity; fund admin SLA awareness \\
-\hline
-\end{tabularx}
-\end{table}
+\endlastfoot
+1 & AWS Cloud Services \& Infrastructure &
+  13 AWS service namespaces monitored across all six platforms; Lambda, ECS, EC2 inventoried; full DB spectrum (DocumentDB, Neptune, RDS, Redis, OpenSearch) &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+2 & Site Reliability Engineering Principles &
+  Four golden signals applied; SLOs defined for Lambda, ECS, MSK, SQS; MSK lag alarm reduces MTTD from 3.5h to $<$30s &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+3 & Infrastructure-as-Code &
+  4 CloudFormation stacks deployed; Lambda-backed dynamic provisioner; S3-staged templates; multi-env reuse via \texttt{samconfig.toml} &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+4 & Observability Platforms (AMG) &
+  14-row / 110+ panel Grafana workspace; survived 10.4$\to$12.4 upgrade; 38 alarms wired to SNS &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+5 & Proactive vs.\ Reactive Reliability &
+  Alarm-backed detection replaces business escalation; Meridian Incident used as design proof point &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+6 & Python Development &
+  Flask REST API; 562 tests at 99\% coverage; boto3 concurrent discovery; Hypothesis PBT; structlog &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+7 & Software Engineering Practices &
+  TDD with pytest; spec-driven development via Kiro IDE; PR-based merges on CodeCommit &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+8 & AI-Augmented Engineering &
+  Kiro IDE spec workflow; Amazon~Q inline; Claude Sonnet for architecture reasoning &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+9 & Agile and Kanban Methodology &
+  25+ JIRA tickets across IISS board; story decomposition, work-log discipline, sprint rituals &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+10 & Technical Communication &
+  RCA reports (IISS-706, Apr~17); Confluence pages; JIRA acceptance criteria; this report &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+11 & Production Incident Response &
+  4 support rotations; 5 notable incidents resolved; IISS-706 hotfix within 7h &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+12 & Cross-Functional Collaboration &
+  Halifax--Hyderabad time-zone coordination; Meridian team architecture sessions &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+13 & Financial Domain Knowledge &
+  VPL queue, Corp Actions, MESO, CAIS operational familiarity; fund admin SLA awareness &
+  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+\end{longtable}
 
-All 13 learning goals were met by my internship completion. The deepest
+All my learning goals were met by my internship completion. The deepest
 learning occurred at the intersection of engineering and operations:
 the direct experience of the Meridian Incident, followed
 immediately by building the instrumentation that would have detected
 it in under 30 seconds, compressed months of abstract SRE theory
 into a single, concrete engineering outcome.
+
+% ────────────────────────────────────────────────────────────
+\section{Internship Hours Summary}
+\label{sec:hours_summary}
+% ────────────────────────────────────────────────────────────
+
+\begin{table}[H]
+\centering
+\caption{Internship Hours Summary}
+\label{tab:hours_summary}
+\begin{tabularx}{\textwidth}{Xr}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Work}} & \textcolor{white}{\textbf{Duration (hours)}} \\
+\hline
+Citco CTM Internship (IISS-487, IISS-507, IISS-824, support rotations) & 900 \\
+Report Writing (MCDA 5585 / 5586 Major Project Report) & 120 \\
+\hline
+\rowcolor{tablerowA}\textbf{Total} & \textbf{1020} \\
+\hline
+\end{tabularx}
+\end{table}
 
 % ────────────────────────────────────────────────────────────
 \section{Conclusion and Future Work}
