@@ -74,6 +74,16 @@
 \usepackage{array}
 \usepackage{wrapfig}
 \usepackage{subfig}
+\usepackage{placeins}  % Provides \FloatBarrier to keep floats in their section
+
+% Float placement parameters — allow more flexibility for figures
+\renewcommand{\topfraction}{0.85}      % Max fraction of page for floats at top
+\renewcommand{\bottomfraction}{0.70}   % Max fraction of page for floats at bottom
+\renewcommand{\textfraction}{0.15}     % Min fraction of page for text
+\renewcommand{\floatpagefraction}{0.70} % Min fraction for a float-only page
+\setcounter{topnumber}{3}              % Max floats at top of page
+\setcounter{bottomnumber}{2}           % Max floats at bottom of page
+\setcounter{totalnumber}{5}            % Max floats per page
 
 % --- CODE HIGHLIGHTING ---
 \usepackage{listings}
@@ -101,6 +111,16 @@
 \usepackage[backend=biber, backref=true, sorting=nyt, style=numeric]{biblatex}
 \addbibresource{references.bib}
 
+% --- TABLE OF CONTENTS FORMATTING ---
+\usepackage{tocloft}
+% Remove automatic page breaks before List of Figures and List of Tables
+\renewcommand{\cftloftitlefont}{\large\bfseries\color{smubrand}}
+\renewcommand{\cftlottitlefont}{\large\bfseries\color{smubrand}}
+\setlength{\cftbeforeloftitleskip}{1em}
+\setlength{\cftafterloftitleskip}{0.5em}
+\setlength{\cftbeforelottitleskip}{1em}
+\setlength{\cftafterlottitleskip}{0.5em}
+
 \usepackage[pdftex,hypertexnames=true,colorlinks]{hyperref}
 \hypersetup{
     pdftitle={MCDA Major Project Report - Bhavik Bhagat},
@@ -126,11 +146,13 @@
 \renewcommand{\footrulewidth}{0.4pt}
 
 % Plain style (used on chapter-opening pages and front matter):
-% footer rule + maroon centered page number, no header
+% Include header on chapter-opening pages to match Neeyati's format
 \fancypagestyle{plain}{%
   \fancyhf{}
+  \fancyhead[L]{MCDA 5585 / 5586 Major Project Report}
+  \fancyhead[R]{\nouppercase{\leftmark}}
   \fancyfoot[C]{\textcolor{smubrand}{\thepage~of~\pageref{LastPage}}}
-  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\headrulewidth}{0.4pt}
   \renewcommand{\footrulewidth}{0.4pt}
 }
 \captionsetup{margin=10pt,font=small,labelfont=bf}
@@ -141,7 +163,7 @@
 \def\@makechapterhead#1{%
   {\parindent \z@ \centering
     \interlinepenalty\@M
-    \fontsize{16}{19}\selectfont \bfseries \textcolor{smubrand}{Chapter \thechapter.\enspace #1}\par\nobreak
+    \fontsize{16}{19}\selectfont \bfseries \textcolor{smubrand}{\thechapter.\enspace #1}\par\nobreak
     \vskip 8\p@
   }}
 
@@ -152,23 +174,6 @@
     \vskip 8\p@
   }}
 
-% Remove the forced new page before \chapter in report class
-\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
-
-% Horizontal rule before chapter title, only when NOT at top of page
-\newif\iffirstchapter
-\firstchaptertrue
-\preto\chapter{%
-  \iffirstchapter
-    \global\firstchapterfalse
-  \else
-    % \ifdim measures how far down the page we are;
-    % if \pagetotal > 1pt we're mid-page, so draw the rule
-    \ifdim\pagetotal>1pt
-      \par\vspace{0.5em}%
-      \noindent\rule{\textwidth}{0.4pt}%
-      \par\vspace{0.5em}%
-    \fi
-  \fi
-}
+% Chapters start on a new page (default report class behavior)
+% No horizontal rules between chapters — clean page breaks instead
 \makeatother
