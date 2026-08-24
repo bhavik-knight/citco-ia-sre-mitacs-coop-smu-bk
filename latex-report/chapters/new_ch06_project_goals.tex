@@ -1,5 +1,5 @@
 ﻿% ============================================================
-% CHAPTER 5: PROJECT GOALS & DELIVERABLES
+% CHAPTER 6: PROJECT GOALS & DELIVERABLES
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
 % ============================================================
@@ -9,7 +9,7 @@
 
 I set the following engineering objectives at the outset of the internship,
 guided by the two motivating incidents and the requirements sessions with
-Kishor and Kri. Each objective maps directly to one of the four work streams
+Kishor and Kri. Each objective maps directly to one of the six work streams
 described in Chapter~\ref{chap:project}.
 
 % ────────────────────────────────────────────────────────────
@@ -51,8 +51,8 @@ The primary goals of the internship project were as follows:
           making the platform reproducible, version-controlled, and
           environment-portable.
 
-    \item \textbf{Establish engineering quality standards.} Produce a test suite
-          for the inventory API with 99\% code coverage, document all
+    \item \textbf{Establish engineering quality standards.} Produce a comprehensive test suite
+          for the inventory API, document all
           architectural decisions and limitations, and maintain a Confluence
           knowledge base for the Lambda inventory, runbooks, and incident
           post-mortems.
@@ -81,7 +81,9 @@ IISS-435, 455, 461, 469 & CloudWatch Lambda Monitoring Dashboard and inventory \
 IISS-482--486 & IA Infrastructure Monitoring Platform (CloudWatch dashboards extended to all platforms) \\
 IISS-487 & Centralized Grafana AMG SRE Dashboard (primary deliverable) \\
 IISS-507--510 & IA Infrastructure Inventory API (Flask REST API) \\
-IISS-706, 538, 741, 753, 876 & RPA Production Support Incidents \\
+IISS-707, 538, 741, 753, 876 & RPA Production Support Incidents \\
+IISS-509, IISS-919 & Citco Enterprise Custom UI Dashboards (Infrastructure Inventory + Monitoring) \\
+IISS-824 & RPA LLM Agent --- Ask Citco RPA (bug fixes, KB sync, quality improvements) \\
 \hline
 \end{tabularx}
 \end{table}
@@ -123,9 +125,9 @@ multi-resource panels --- a single query returns per-resource time series
 across the full fleet. CloudWatch Logs Insights used for log-derived
 error panels with structured JSON field extraction.
 
-\textbf{Dashboard structure:} 14 rows --- two aggregate overview rows
-(Health Overview and Performance Overview) followed by 12 per-service
-rows: SQS, Lambda, EC2, ECS Infrastructure, ECS APIs, MSK/Kafka,
+\textbf{Dashboard structure:} Multiple rows --- two aggregate overview rows
+(Health Overview and Performance Overview) followed by per-service
+rows for SQS, Lambda, EC2, ECS Infrastructure, ECS APIs, MSK/Kafka,
 DocumentDB, RDS/Aurora, Redis/Valkey, Neptune DB, OpenSearch, and
 Alerts \& Incidents. Cross-service filtering via Grafana template variables allows
 operators to scope the entire workspace to a single platform or AWS
@@ -176,8 +178,65 @@ platforms across all discoverers.
 each supporting an optional \texttt{?platform=} filter. Each resource
 response carries name, type, platform, tags, and ARN.
 
-\textbf{Test suite:} 99\% code coverage across unit, integration, and
-property-based tests.
+
+\subsection{RPA LLM Agent --- Ask Citco RPA (IISS-824)}
+
+\textbf{Repositories:} CodeCommit \texttt{ml-rpa-status-llm-agent} and
+\texttt{core-smart-rpa-llm-ecr-image} (coredev, us-east-1).
+
+\textbf{Architecture:} Retrieval-Augmented Generation (RAG) pipeline:
+LibreChat UI → ECS Fargate (FastAPI) → Amazon Bedrock Agent (Claude) →
+Action Groups (Lambda) + Knowledge Base (OpenSearch Serverless, 1024-dim
+FAISS/HNSW vectors). 11~Lambda functions handle SharePoint wiki sync,
+Event Store extraction, client/fund mapping, Athena usage tracking, and
+Bedrock agent action groups.
+
+\textbf{Scope of work:}
+\begin{itemize}
+    \item \textbf{Critical bug fixes}: 52\% Lambda timeout rate resolved
+          (two-phase hybrid KB sync: 291s → 25s); OpenSearch silent delete;
+          fire-and-forget Lambda pattern; Athena encryption inconsistency;
+          SSL verification disabled; Athena race condition.
+    \item \textbf{KB enrichment}: NavChecklist PDFs uploaded to production
+          Knowledge Base.
+    \item \textbf{Code quality}: 1,140-line monolith refactored to 8 modules;
+          structlog migration; type hints and docstrings; Pydantic models;
+          comprehensive unit tests; X-Ray tracing instrumented.
+    \item \textbf{Proposed}: Hybrid Graph-RAG architecture using Amazon
+          Neptune for relational entity traversal (client → fund → process
+          → platform).
+\end{itemize}
+
+\textbf{Status:} Critical production bugs fixed and deployed (v1.1.1--v1.1.32).
+Code quality improvements awaiting dev approval per IA Best Practice guidelines.
+
+
+\subsection{Citco Enterprise Custom UI Dashboards (IISS-509, IISS-919) --- Planning}
+
+\textbf{Status:} Planning phase complete; implementation deferred to
+Sep--Dec~2026 internship extension period.
+
+\textbf{Deliverable:} 865-line implementation plan documenting:
+\begin{itemize}
+    \item Gap analysis: 45 documented Grafana AMG limitations with
+          severity ratings
+    \item Technology stack decisions: charting libraries, service map
+          rendering, component framework integration
+    \item Backend API design: 4 new Lambda handlers with schemas
+    \item 12-task implementation breakdown
+\end{itemize}
+
+\textbf{Target platform:} The existing \texttt{ia-config-portal}
+(React~19/TypeScript, ECS Fargate) built by Soundarya Venkataraman
+and Sridhar Vadla will be extended with two new dashboard pages.
+
+\textbf{Planned dashboards:}
+\begin{itemize}
+    \item \textbf{Infrastructure Inventory (IISS-509)}: Frontend for
+          the Inventory API, displaying resources across all platforms
+    \item \textbf{Infrastructure Monitoring (IISS-919)}: Config-driven
+          panels with drag-and-drop layout, replacing Grafana limitations
+\end{itemize}
 
 % ────────────────────────────────────────────────────────────
 \section{Acceptance Criteria}
@@ -246,9 +305,6 @@ objectives.
     \item \textbf{Extensibility}: New platforms or AWS service types
           can be onboarded by implementing a single discoverer class
           with no changes to the API routing or test infrastructure.
-
-    \item \textbf{Test coverage}: 99\% automated test coverage across
-          unit, integration, and property-based tests.
 \end{itemize}
 
 \subsection{RPA Production Support}
@@ -264,7 +320,49 @@ objectives.
 \end{itemize}
 
 
+\subsection{RPA LLM Agent}
+
+\begin{itemize}
+    \item \textbf{KB sync reliability}: The \texttt{IRCOEKBExtractLambda}
+          completes within the 300-second timeout on every daily run,
+          with steady-state duration under 60 seconds for unchanged
+          content.
+
+    \item \textbf{Production stability}: All identified bugs (OpenSearch
+          silent delete, fire-and-forget pattern, Athena race condition,
+          SSL verification, encryption inconsistency) are resolved and
+          deployed.
+
+    \item \textbf{Code quality}: Test coverage exceeds 95\%; all functions
+          have type hints and docstrings; structlog structured logging
+          replaces all \texttt{print()} statements.
+
+    \item \textbf{KB content}: NavChecklist documents are indexed and
+          retrievable via the chatbot.
+\end{itemize}
+
+
+\subsection{Citco Enterprise Custom UI Dashboards (Planning)}
+
+\textit{Note: IISS-509 and IISS-919 are planned for the internship extension period (Sep--Dec~2026). Planning phase complete; implementation not yet started.}
+
+\begin{itemize}
+    \item \textbf{Planning document}: Comprehensive 865-line implementation
+          plan with gap analysis, technology decisions, and task breakdown.
+
+    \item \textbf{Backend API design}: Four new Lambda handlers designed
+          with request/response schemas and IAM permissions documented.
+
+    \item \textbf{Component specifications}: SRE-specific UI components
+          (honeycomb, service map, trace waterfall) specified with library
+          selections and integration patterns.
+\end{itemize}
+
+
 % ────────────────────────────────────────────────────────────
 % NOTE: Team composition and mandate are documented in Chapter 1
 % (About Company & Organization, Section 2.2 Team Structure).
 % ────────────────────────────────────────────────────────────
+
+% Keep all floats within this chapter
+\FloatBarrier

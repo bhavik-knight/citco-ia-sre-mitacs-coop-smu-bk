@@ -1,5 +1,5 @@
 ﻿% ============================================================
-% CHAPTER 3: TOOLS & TECHNOLOGIES
+% CHAPTER 4: TOOLS & TECHNOLOGIES
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
 % ============================================================
@@ -83,7 +83,7 @@ develop the inventory API, and support RPA production operations.
 
     \item \textbf{Amazon S3} --- Object storage used for CloudFormation
           template staging, Lambda deployment packages, and automation
-          output artefacts.
+          output artifacts.
 
     \item \textbf{AWS Secrets Manager} --- Credential management service
           used to store and rotate API keys, database passwords, and
@@ -107,7 +107,7 @@ develop the inventory API, and support RPA production operations.
 
     \item \textbf{Amazon Managed Grafana (AMG)} --- Fully managed
           Grafana service used to build the centralized IA-IT-SRE
-          Infrastructure dashboard with 14 rows covering all monitored
+          Infrastructure dashboard with multiple rows covering all monitored
           AWS services across all six platforms.
 
     \item \textbf{CloudWatch Container Insights} --- Managed telemetry
@@ -159,13 +159,32 @@ develop the inventory API, and support RPA production operations.
           99\% code coverage with unit, integration, and property-based tests.
 
     \item \textbf{TypeScript / ReactJS / MUI} --- Frontend technology
-          stack used for the inventory dashboard UI (IISS-509), with
+          stack used for the inventory dashboard UI, with
           ReactJS for component-based UI, MUI (Material UI) for
           design-system components, and TypeScript for type-safe
           frontend development.
 
+    \item \textbf{Chart.js / Recharts} --- JavaScript charting libraries
+          proposed for the custom UI dashboard (Work Stream~6 planning).
+          Chart.js for real-time streaming metrics with 30-second refresh
+          intervals (canvas-based for smooth rendering); Recharts for
+          static comparisons, bar charts, and gauges.
+
+    \item \textbf{Cytoscape.js} --- Graph visualization library proposed
+          for X-Ray service map rendering in the custom UI dashboard,
+          replacing Grafana's crash-prone nodeGraph plugin with a stable
+          dagre layout implementation.
+
+    \item \textbf{D3.js (hexbin)} --- Data visualization library proposed
+          for Dynatrace-style honeycomb health grids in the custom UI
+          dashboard planning document.
+
     \item \textbf{Postman} --- API testing tool used to validate and
           document the inventory REST API endpoints during development.
+
+    \item \textbf{Apache JMeter} --- Load testing tool used to validate
+          API performance and throughput for the inventory REST API
+          under simulated concurrent request loads.
 
     \item \textbf{DBeaver} --- Universal database client used to inspect
           and query RDS, DocumentDB, and other database services across
@@ -215,7 +234,7 @@ develop the inventory API, and support RPA production operations.
           for inline boto3 completions and project-level
           context retrieval.
 
-    \item \textbf{Claude Sonnet & Opus (Anthropic)} --- Large language model
+    \item \textbf{Claude Sonnet \& Opus (Anthropic)} --- Large language model
           accessed via Kiro, used for architecture reasoning,
           CloudFormation template drafting, and test strategy design.
 
@@ -236,6 +255,25 @@ develop the inventory API, and support RPA production operations.
           for new automation development and Blue Prism migrations,
           operated via UiPath Orchestrator with SQS-triggered job
           invocations.
+
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────
+\section{Communication \& Collaboration}
+\label{sec:tools_comms}
+% ─────────────────────────────────────────────────────────────
+
+\begin{itemize}
+
+    \item \textbf{Microsoft Teams} --- Primary communication platform
+          used for daily standups, sprint planning meetings, technical
+          discussions with the SRE team, and screen-sharing during
+          incident investigation and pair debugging sessions.
+
+    \item \textbf{Microsoft Outlook} --- Email client used for formal
+          communications, meeting scheduling, calendar management,
+          and receiving production alert notifications from CloudWatch
+          SNS topics.
 
 \end{itemize}
 
