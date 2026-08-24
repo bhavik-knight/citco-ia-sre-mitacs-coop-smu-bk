@@ -1,5 +1,5 @@
 ﻿% ============================================================
-% CHAPTER 14: FUTURE WORK
+% CHAPTER 15: FUTURE WORK
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
 % ============================================================
@@ -8,11 +8,11 @@
 \label{chap:future_work}
 
 The work I delivered in this internship establishes a monitoring foundation ---
-not an endpoint. Several planned extensions are already defined in the JIRA
-backlog and are scoped for implementation during the Mitacs BSI renewal
+not an endpoint. I have already defined several planned extensions in the JIRA
+backlog, scoped for implementation during the Mitacs BSI renewal
 (Sep~1 -- Dec~31, 2026).
 
-\paragraph{IISS-489: Distributed Tracing with X-Ray.}
+\paragraph{Distributed Tracing with X-Ray.}
 The most technically compelling near-term extension is the integration of
 AWS~X-Ray distributed tracing into the IA Lambda fleet using the
 \texttt{aws-lambda-powertools[tracer]} library. X-Ray would provide
@@ -25,16 +25,16 @@ observability enhancement. A Grafana X-Ray data source plugin is available
 for AMG, meaning trace data would flow directly into the existing workspace
 without requiring a separate visualization tool.
 
-\subsubsection{IISS-488: Auto-Healing Agent}
+\subsubsection{Auto-Healing Agent}
 \label{sec:autohealing_agent}
 
-The alarm infrastructure I delivered by IISS-487 closes the detection gap ---
-the 2--3 hour window between failure onset and SRE awareness that the
-Meridian Incident exposed. But detection without automated remediation still
-leaves a response gap: a human must receive the SNS notification, triage the
-alarm, identify the correct recovery action, and execute it. For the most
-common and well-understood failure modes on the IA platform, this human step
-is unnecessary. \textbf{IISS-488} is the project that eliminates it.
+The alarm infrastructure I delivered closes the detection gap --- the 2--3 hour
+window between failure onset and SRE awareness that the Meridian Incident
+exposed. But detection without automated remediation still leaves a response
+gap: a human must receive the SNS notification, triage the alarm, identify
+the correct recovery action, and execute it. For the most common and
+well-understood failure modes on the IA platform, this human step is
+unnecessary. The \textbf{auto-healing agent} eliminates it.
 
 \paragraph{Concept.}
 The auto-healing agent is an event-driven remediation layer that sits between
@@ -47,7 +47,7 @@ structured PROCESS\_EVENT codes so that every automated intervention is
 fully auditable.
 
 \paragraph{Architecture.}
-The proposed architecture connects directly to the existing IISS-487 alarm
+The proposed architecture connects directly to the existing dashboard alarm
 infrastructure without requiring changes to the Grafana dashboard or
 CloudFormation alarm stacks:
 
@@ -77,7 +77,7 @@ CloudFormation alarm stacks:
 \end{enumerate}
 
 \paragraph{Remediation Catalogue (Initial Scope).}
-The first phase of IISS-488 targets the failure modes observed or anticipated
+The first phase of the auto-healing agent targets the failure modes observed or anticipated
 from the four support rotation weeks:
 
 \begin{table}[ht]
@@ -85,7 +85,7 @@ from the four support rotation weeks:
 \caption{Auto-Healing Agent --- Initial Remediation Catalogue}
 \label{tab:autohealing_catalogue}
 \rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{Xp{4.0cm}p{3.5cm}}
+\begin{tabularx}{\textwidth}{p{0.22\textwidth}p{0.48\textwidth}p{0.22\textwidth}}
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Alarm / Trigger}} & \textcolor{white}{\textbf{Recovery Action}} & \textcolor{white}{\textbf{Escalation if Fails}} \\
 \hline
@@ -133,7 +133,7 @@ reliable detection layer is fragile --- automated actions triggered by
 false alarms cause more harm than the failures they prevent. Now that the
 detection infrastructure has been in production for several months, the
 signal quality of the alarms is validated, and the false-positive rate
-is well-characterised. IISS-488 can therefore be implemented against a
+is well-characterized. The auto-healing agent can therefore be implemented against a
 tested alarm baseline rather than a hypothetical one.
 
 This progression --- detect first, then automate remediation --- is the
@@ -142,7 +142,7 @@ services environment, where an incorrectly triggered service restart during
 a VPL pricing window or a CAIS Deadline processing run would itself
 constitute a production incident.
 
-\paragraph{IISS-838/839: RPA Bot CloudWatch Integration.}
+\paragraph{RPA Bot CloudWatch Integration.}
 Two follow-on stories in my JIRA backlog propose bridging the Blue Prism
 (BPM) and UiPath Cloud operational metrics into CloudWatch via a polling
 Lambda function. The Lambda would query the Blue Prism API and UiPath
@@ -165,7 +165,7 @@ distinguish incidents that require immediate response from those that are
 within the acceptable error budget envelope.
 
 \paragraph{Tag Compliance Automation.}
-The AppName tagging obligation I identified in Challenge~4 above currently
+The AppName tagging obligation I identified in Section~\ref{sec:challenges-infra} currently
 relies on a reactive CloudWatch alarm: the alarm fires after a non-compliant
 resource has already been deployed. A proactive alternative would query the
 inventory API on a schedule, compare the returned resource list against an
@@ -176,7 +176,11 @@ activity to a governance workflow.
 \paragraph{Mitacs BSI Renewal Scope.}
 The approved Mitacs BSI renewal (Sep~1 -- Dec~31, 2026) will extend
 my industrial collaboration with a focus on three themes: X-Ray tracing
-integration (IISS-489), IaC hardening and drift detection for the CloudFormation
+integration, IaC hardening and drift detection for the CloudFormation
 stacks I delivered in this period, and capacity forecasting using CloudWatch
 anomaly detection models trained on the historical metric data now being
 accumulated by the deployed dashboards.
+
+
+% Keep all floats within this chapter
+\FloatBarrier

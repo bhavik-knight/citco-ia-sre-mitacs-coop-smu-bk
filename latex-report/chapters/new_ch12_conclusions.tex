@@ -21,67 +21,66 @@ Chapter~\ref{chap:learning_goals} established technical and non-technical
 learning goals at the outset of my internship. Table~\ref{tab:learning_goals_eval}
 evaluates each goal against evidence gathered from my delivered work.
 
-\definecolor{statusgreen}{RGB}{168,208,141}
-
-\begin{longtable}{p{0.7cm}p{4.0cm}Xp{2.2cm}}
+% Column widths: 30% + 60% + 10% of \textwidth
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.58\textwidth}>{\centering\arraybackslash}p{0.08\textwidth}}
+\caption{Learning Goals --- Self-Evaluation at Internship Completion}
+\label{tab:learning_goals_eval} \\
 \rowcolor{smubrand}
-  \textcolor{white}{\textbf{S.N.}} &
-  \textcolor{white}{\textbf{Task}} &
-  \textcolor{white}{\textbf{Description}} &
+  \textcolor{white}{\textbf{Goal}} &
+  \textcolor{white}{\textbf{Evidence}} &
   \textcolor{white}{\textbf{Status}} \\
 \hline
 \endfirsthead
 \rowcolor{smubrand}
-  \textcolor{white}{\textbf{S.N.}} &
-  \textcolor{white}{\textbf{Task}} &
-  \textcolor{white}{\textbf{Description}} &
+  \textcolor{white}{\textbf{Goal}} &
+  \textcolor{white}{\textbf{Evidence}} &
   \textcolor{white}{\textbf{Status}} \\
 \hline
 \endhead
-\multicolumn{4}{r}{\small\itshape continued on next page} \\
+\hline
+\multicolumn{3}{r}{\small\itshape continued on next page} \\
 \endfoot
-\caption{Learning Goals --- Self-Evaluation at Internship Completion}
-\label{tab:learning_goals_eval}
+\hline
 \endlastfoot
-1 & AWS Cloud Services \& Infrastructure &
-  13 AWS service namespaces monitored across all six platforms; Lambda, ECS, EC2 inventoried; full DB spectrum (DocumentDB, Neptune, RDS, Redis, OpenSearch) &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-2 & Site Reliability Engineering Principles &
-  Four golden signals applied; SLOs defined for Lambda, ECS, MSK, SQS; MSK lag alarm reduces MTTD from 3.5h to $<$30s &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-3 & Infrastructure-as-Code &
-  4 CloudFormation stacks deployed; Lambda-backed dynamic provisioner; S3-staged templates; multi-env reuse via \texttt{samconfig.toml} &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-4 & Observability Platforms (AMG) &
-  14-row / 110+ panel Grafana workspace; survived 10.4$\to$12.4 upgrade; 38 alarms wired to SNS &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-5 & Proactive vs.\ Reactive Reliability &
-  Alarm-backed detection replaces business escalation; Meridian Incident used as design proof point &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-6 & Python Development &
-  Flask REST API; 562 tests at 99\% coverage; boto3 concurrent discovery; Hypothesis PBT; structlog &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-7 & Software Engineering Practices &
-  TDD with pytest; spec-driven development via Kiro IDE; PR-based merges on CodeCommit &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-8 & AI-Augmented Engineering &
-  Kiro IDE spec workflow; Amazon~Q inline; Claude Sonnet for architecture reasoning &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-9 & Agile and Kanban Methodology &
-  25+ JIRA tickets across IISS board; story decomposition, work-log discipline, sprint rituals &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-10 & Technical Communication &
-  RCA reports (IISS-706, Apr~17); Confluence pages; JIRA acceptance criteria; this report &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-11 & Production Incident Response &
+\rowcolor{tablerowA}AWS Cloud Services \& Infrastructure &
+  13 AWS service namespaces monitored; Lambda, ECS, EC2 inventoried; full DB spectrum covered &
+  \checkmark \\
+\rowcolor{tablerowB}Site Reliability Engineering Principles &
+  Four golden signals applied; SLOs defined; MSK lag alarm reduces MTTD from 3.5h to $<$30s &
+  \checkmark \\
+\rowcolor{tablerowA}Infrastructure-as-Code &
+  4 CloudFormation stacks; Lambda-backed provisioner; S3-staged templates &
+  \checkmark \\
+\rowcolor{tablerowB}Observability Platforms (AMG) &
+  Multi-environment Grafana workspace; survived 10.4$\to$12.4 upgrade &
+  \checkmark \\
+\rowcolor{tablerowA}Proactive vs.\ Reactive Reliability &
+  Alarm-backed detection replaces business escalation; Meridian Incident proof point &
+  \checkmark \\
+\rowcolor{tablerowB}Python Development &
+  Flask REST API; comprehensive tests at 99\% coverage; Hypothesis PBT; structlog &
+  \checkmark \\
+\rowcolor{tablerowA}Software Engineering Practices &
+  TDD with pytest; spec-driven development via Kiro IDE; PR-based merges &
+  \checkmark \\
+\rowcolor{tablerowB}AI-Augmented Engineering &
+  Kiro IDE spec workflow; Amazon~Q inline; Claude Sonnet for architecture &
+  \checkmark \\
+\rowcolor{tablerowA}Agile and Kanban Methodology &
+  25+ JIRA tickets; story decomposition; work-log discipline; sprint rituals &
+  \checkmark \\
+\rowcolor{tablerowB}Technical Communication &
+  RCA reports; Confluence pages; JIRA acceptance criteria; this report &
+  \checkmark \\
+\rowcolor{tablerowA}Production Incident Response &
   4 support rotations; 5 notable incidents resolved; IISS-706 hotfix within 7h &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-12 & Cross-Functional Collaboration &
-  Halifax--Hyderabad time-zone coordination; Meridian team architecture sessions &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
-13 & Financial Domain Knowledge &
-  VPL queue, Corp Actions, MESO, CAIS operational familiarity; fund admin SLA awareness &
-  \cellcolor{statusgreen}\centering\textbf{Completed} \\
+  \checkmark \\
+\rowcolor{tablerowB}Cross-Functional Collaboration &
+  Halifax--Hyderabad coordination; Meridian team architecture sessions &
+  \checkmark \\
+\rowcolor{tablerowA}Financial Domain Knowledge &
+  VPL queue, Corp Actions, MESO, CAIS familiarity; fund admin SLA awareness &
+  \checkmark \\
 \end{longtable}
 
 All my learning goals were met by my internship completion. The deepest
@@ -104,7 +103,7 @@ into a single, concrete engineering outcome.
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Work}} & \textcolor{white}{\textbf{Duration (hours)}} \\
 \hline
-Citco CTM Internship (IISS-487, IISS-507, IISS-824, support rotations) & 900 \\
+Citco CTM Internship (Grafana dashboard, inventory API, RPA LLM agent, support rotations) & 900 \\
 Report Writing (MCDA 5585 / 5586 Major Project Report) & 120 \\
 \hline
 \rowcolor{tablerowA}\textbf{Total} & \textbf{1020} \\
@@ -112,80 +111,12 @@ Report Writing (MCDA 5585 / 5586 Major Project Report) & 120 \\
 \end{tabularx}
 \end{table}
 
-% ────────────────────────────────────────────────────────────
-\section{Conclusion and Future Work}
-\label{sec:conclusion}
-% ────────────────────────────────────────────────────────────
-
-\subsection{Summary of Outcomes}
-
-This internship delivered a reactive-to-proactive transformation of the IA
-platform's observability posture across three distinct work streams. The
-Grafana AMG centralized dashboard (IISS-487) replaced an entirely manual
-monitoring process with a continuously refreshed, alarm-backed, 110-panel
-workspace covering every service category in the IA infrastructure. The
-CloudWatch monitoring platform (IISS-455/469/482--486) catalogued the full
-AWS service fleet, produced a reusable IaC alarm provisioner, and resolved a
-fundamental tag ambiguity that had been silently skewing resource inventory
-counts. The inventory REST API (IISS-507) wrapped that fleet discovery logic
-into a tested, extensible service layer that downstream tooling can consume
-programmatically. These three streams were complementary rather than
-sequential: each fed information into the others, with the inventory API's
-discovery logic underpinning the Grafana dashboard's resource enumeration,
-and the Grafana alarms surfacing gaps in the inventory's coverage.
-
-Against the learning goals set at the outset, all objectives were met. AWS
-service proficiency was achieved at production depth across CloudWatch,
-Lambda, ECS, MSK, SQS, S3, Secrets Manager, and CloudFormation. SRE
-principles were applied concretely: the four golden signals were mapped to
-real metric namespaces, SLO targets were articulated for each monitored
-service, and the MSK consumer lag alarm reduced the detection window for a
-category of incidents that had previously cost hours of undetected fund
-impact. Python development progressed from scripted analysis to a
-production-quality API with 99\% automated test coverage. The Kiro IDE's
-spec-driven workflow accelerated my design-to-code velocity across the inventory
-API and this report itself --- providing practical experience with AI-native
-engineering in a regulated financial services environment.
-
-The following chapters (\ref{chap:achievements}--\ref{chap:future_work}) present the detailed evidence for each of these outcomes: Chapter~\ref{chap:achievements} covers deliverables and impact, Chapter~\ref{chap:challenges} documents the engineering obstacles, and Chapter~\ref{chap:future_work} outlines the planned next steps.
-
-\subsection{Personal Reflection}
-
-Looking back across five months of full-time engineering in a financial services
-SRE context, what stands out most is how profoundly the work changed the mental
-model I brought to reliability problems. The part-time onboarding phase in March
-and Apr introduced an environment where production failures were detected by
-business users noticing missing outputs --- a model that, from the outside, seemed
-merely inconvenient. The Meridian Incident reframed that impression sharply:
-nine million queued Kafka messages and a 7.5-hour processing delay affecting
-client funds is not an inconvenience; it is a service reliability failure of
-exactly the kind that SRE practice exists to prevent. Building the instrumentation
-that would have caught that incident in under thirty seconds, and then watching
-the MSK consumer lag alarm arm itself and begin monitoring live production
-traffic, gave a concreteness to ``observability'' that no course module had
-provided.
-
-The broader lesson from my internship is that SRE is not a set of tools --- it is
-a discipline of making implicit system behaviors explicit and measurable. The
-Grafana dashboard, the alarm provisioner, and the inventory API are artifacts of
-that discipline applied to one team's infrastructure. Each one makes something
-previously invisible visible: which Lambda functions are erroring, which ECS
-services are approaching CPU saturation, which Kafka consumer groups are falling
-behind. That act of making things visible is the foundation on which every
-subsequent improvement --- auto-healing, anomaly detection, capacity forecasting ---
-must be built. Arriving at that understanding through the work, rather than reading
-about it, is the internship's most durable outcome.
-
-The technical skills accumulated across these five months --- production-level
-fluency with AWS observability services, IaC authoring under real deadline
-pressure, Python API development with a property-based test suite, and
-AI-augmented engineering with the Kiro IDE --- are immediately applicable to
-the renewal period and to any future SRE or platform engineering role. The
-non-technical skills --- production incident response under time pressure,
-cross-timezone stakeholder communication, and the discipline of writing things
-down in the form others can act on --- turned out to matter just as much.
-
 \vspace{1em}
 \noindent
-\textit{This report was submitted in partial fulfillment of the requirements
-for MCDA~5585 and MCDA~5586, Saint Mary's University, Halifax, NS, Canada.}
+The following chapters present the detailed evidence for each outcome:
+Chapter~\ref{chap:achievements} covers deliverables and impact,
+Chapter~\ref{chap:challenges} documents the engineering obstacles,
+and Chapter~\ref{chap:future_work} outlines the planned next steps.
+
+% Keep all floats within this chapter
+\FloatBarrier

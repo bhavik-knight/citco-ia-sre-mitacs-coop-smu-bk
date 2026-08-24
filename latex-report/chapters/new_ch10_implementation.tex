@@ -1,5 +1,5 @@
 ﻿% ============================================================
-% CHAPTER 9: IMPLEMENTATION & ARCHITECTURE
+% CHAPTER 10: IMPLEMENTATION & ARCHITECTURE
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
 % ============================================================
@@ -15,32 +15,9 @@ The three deliverables of my internship form a coherent four-layer
 observability stack. Figure~\ref{fig:platform_overview} shows how the layers
 relate to each other and to the underlying IA platform infrastructure.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
-\begin{lstlisting}[language={}, basicstyle=\ttfamily\footnotesize, frame=none, backgroundcolor=\color{white}, numbers=none]
- +---------------------------------------------------------------+
- |                   CONSUMERS / OPERATORS                       |
- |  Grafana AMG Dashboard . Inventory REST API . CW Dashboard    |
- +------------------------------+--------------------------------+
-                                |
- +------------------------------v--------------------------------+
- |             VISUALIZATION & ALERTING LAYER                    |
- |  Amazon Managed Grafana (AMG)       CloudWatch Alarms         |
- |  14 rows . 110+ panels . variables  38 alarms . SNS routing   |
- +------------------------------+--------------------------------+
-                                |
- +------------------------------v--------------------------------+
- |                       DATA LAYER                              |
- |  Amazon CloudWatch | CloudWatch Logs Insights |  X-Ray        |
- |  Metric Insights SQL | Saved queries (30x7)   |  (PoC)        |
- +------------------------------+--------------------------------+
-                                |
- +------------------------------v--------------------------------+
- |      INFRASTRUCTURE LAYER (6 Budget Code Environments)        |
- |  SQS . Lambda . ECS . MSK/Kafka . EC2                         |
- |  DocumentDB . Neptune . OpenSearch . RDS . Redis              |
- +---------------------------------------------------------------+
-\end{lstlisting}
+\includegraphics[width=0.95\textwidth]{figures/fig-ia-sre-observability-platform.png}
 \caption{IA-SRE Observability Platform --- High-Level Architecture (four layers)}
 \label{fig:platform_overview}
 \end{figure}
@@ -50,64 +27,44 @@ Grafana AMG observability platform, detailing how each monitored AWS service
 feeds CloudWatch, how the Lambda provisioner reads alarm templates from S3,
 and how the SNS routing delivers email notifications.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
-\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
-  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
-+---------------------------------------------------------------+
-| AWS Account (eu-west-1)                                       |
-|                                                               |
-|  [SQS]  [Lambda]  [ECS]  [MSK]  [EC2]  [ECR]  [EKS]           |
-|  [DocumentDB] [Neptune] [OpenSearch] [Redis] [RDS]            |
-|         |                                                     |
-|         v                                                     |
-|  +-------------------------------+                            |
-|  |     Amazon CloudWatch         |                            |
-|  |  (Metrics + Alarms)           |                            |
-|  +----------+--------------------+                            |
-|             |                |                                |
-|             v                v                                |
-|  +-------------------+  +-------------------+                 |
-|  | Amazon Managed    |  | SNS Topic         |                 |
-|  | Grafana (AMG)     |  | (Alarms)          |                 |
-|  | 17 rows / 152     |  |        |          |                 |
-|  | panels            |  |        v          |                 |
-|  +--------^----------+  | Email Notification|                 |
-|           |             +-------------------+                 |
-|           |                                                   |
-|  +-------------------+                                        |
-|  | S3 Bucket         |  <- Dashboard JSON + CFN templates     |
-|  | Lambda Packages   |  <- Provisioner fetches at deploy time |
-|  +-------------------+                                        |
-|           ^                                                   |
-|  Lambda Provisioner synthesises alarms from thresholds.yaml   |
-+---------------------------------------------------------------+
-\end{lstlisting}
+\includegraphics[width=0.95\textwidth]{figures/fig-amg-observability-platform.png}
 \caption{AMG Observability Platform --- System Architecture}
 \label{fig:amg_system_arch}
 \end{figure}
 
-The \textbf{infrastructure layer} is the monitored subject: five budget
+Figure~\ref{fig:amg_arch_diagram} provides a rendered view of the same
+architecture from the project documentation.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig-amg-architecture.png}
+\caption{AMG Observability Platform --- Architecture Diagram (from documentation)}
+\label{fig:amg_arch_diagram}
+\end{figure}
+
+The \textbf{infrastructure layer} is the monitored subject: six budget
 platforms housing Lambda functions, ECS clusters, EC2
 instances, and the full spectrum of AWS database and messaging services
 used by the Meridian and Citco Works platforms.
 
 The \textbf{data layer} ingests, stores, and queries observability signals
-from the infrastructure layer. Amazon CloudWatch is the sole data source ---
-a deliberate architectural decision (see Section~\ref{sec:decision_cloudwatch_only})
+from the infrastructure layer. Amazon CloudWatch serves as the sole data source.
+This was a deliberate architectural decision (see Section~\ref{sec:decision_cloudwatch_only})
 that eliminates the operational overhead of a self-managed Prometheus stack.
-CloudWatch Metric Insights SQL provides the per-resource aggregation capability
-that drives multi-service panels without requiring one panel per resource.
+CloudWatch Metric Insights SQL provides per-resource aggregation, enabling
+multi-service panels without requiring one panel per resource.
 
-The \textbf{visualization and alerting layer} is split between Amazon Managed
-Grafana (AMG), which renders the 14-row dashboard for human operators, and
-CloudWatch Alarms with SNS routing, which fires machine-readable notifications
-when monitored metrics breach their SLO-aligned thresholds.
+The \textbf{visualization and alerting layer} splits between two components.
+Amazon Managed Grafana (AMG) renders the multi-row dashboard for human operators.
+CloudWatch Alarms with SNS routing fires notifications when metrics breach
+their SLO-aligned thresholds.
 
-The \textbf{consumers layer} includes the operators who use the Grafana
-dashboard during incident response, the IA Resources Inventory REST API
-(IISS-507) that exposes the AWS service fleet programmatically, and the SRE
-team's email distribution list that receives SNS alarm notifications.
+The \textbf{consumers layer} includes three groups: operators who use the
+Grafana dashboard during incident response, the IA Resources Inventory REST
+API that exposes the AWS service fleet programmatically, and the SRE team's
+email distribution list that receives SNS alarm notifications.
 
 % ────────────────────────────────────────────────────────────
 \section{CloudWatch Dashboard Platform}
@@ -118,11 +75,10 @@ team's email distribution list that receives SNS alarm notifications.
 
 My earliest monitoring work, completed in Apr~2026, produced a native
 Amazon CloudWatch dashboard covering the \texttt{rpacfs1} and
-\texttt{ia-bpo} Lambda function fleets --- a combined inventory of
-\textbf{51~functions} at the time of first publication. The dashboard
-provided per-function panels for invocation counts, error rates, duration
-averages, and throttle events, and I accompanied it with a Confluence
-inventory page mapping each function.
+\texttt{ia-bpo} Lambda function fleets --- 51 functions total. The dashboard
+displayed per-function panels for invocation counts, error rates, duration
+averages, and throttle events. I also created a Confluence inventory page
+mapping each function.
 
 The architectural pattern for this early work was straightforward:
 CloudWatch native widgets queried the \texttt{AWS/Lambda} namespace using
@@ -134,6 +90,16 @@ gap} (idle functions disappear from panels) and \textbf{no cross-environment
 aggregation} (a single expression cannot span multiple tag dimensions
 simultaneously). Both are documented in full in
 Chapter~\ref{chap:challenges}.
+
+Figure~\ref{fig:cloudwatch_dashboard} shows a live screenshot of the
+CloudWatch Lambda dashboard displaying invocation and error metrics.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig-cloudwatch-lambda-dashboard.png}
+\caption{CloudWatch Lambda Dashboard --- Live Screenshot (ia-resources-monitoring)}
+\label{fig:cloudwatch_dashboard}
+\end{figure}
 
 \subsection{Extended Dashboard and Architecture Analysis}
 
@@ -168,8 +134,7 @@ enhanced monitoring extension; (3) CloudWatch Lambda Insights
 (paid tier); (4) custom metric emission on memory threshold breach; and
 (5) structured log parsing via a metric filter pattern. I documented each approach
 with its detection latency, cost, and permission requirements.
-This analysis informed the Container Insights cost evaluation I conducted
-under IISS-483 and the alarm design in IISS-487.
+This analysis informed the Container Insights cost evaluation and the alarm design for the dashboard.
 
 \subsection{IA Infrastructure Monitoring Sub-Stories}
 
@@ -190,7 +155,7 @@ Section~\ref{sec:inventory_api}).
 \subsubsection{Container Insights Cost Analysis}
 
 With ECS task-level telemetry absent from five of the six Meridian ECS
-clusters, IISS-484 evaluated four Container Insights deployment options:
+clusters, I evaluated four Container Insights deployment options:
 
 \begin{enumerate}
     \item \textbf{No Container Insights} --- zero cost, zero task-level visibility.
@@ -212,7 +177,7 @@ on May~11--12, 2026.
 
 \subsubsection{SQS Registry Architecture (IISS-482 SQS Feature)}
 
-The SQS monitoring feature I added on Jun~12, 2026 introduced a
+The SQS monitoring feature I added on introduced a
 \textbf{registry-based architecture with a three-tier fallback model} for
 resilient SQS queue data retrieval. The three tiers operated as follows:
 
@@ -232,18 +197,19 @@ resilient SQS queue data retrieval. The three tiers operated as follows:
 \end{enumerate}
 
 This three-tier model ensured the SQS monitoring pipeline remained
-functional even during AWS service degradation events. I accompanied the feature with \textbf{960~automated tests} covering the registry
+functional even during AWS service degradation events. I accompanied 
+the feature with \textbf{automated tests} covering the registry
 dispatch logic, fallback transitions, and queue metadata serialization.
 
 % ────────────────────────────────────────────────────────────
-\section{Grafana AMG Observability Platform (IISS-487)}
+\section{Grafana AMG Observability Platform}
 \label{sec:grafana_amg_platform}
 % ────────────────────────────────────────────────────────────
 
-IISS-487 was my primary deliverable, consuming
-\textbf{140~hours} over May~6--Jun~18, 2026. It delivered a centralized
-Amazon Managed Grafana workspace with 14~dashboard rows, 110+~panels,
-38~CloudWatch alarms, and a Lambda-backed IaC provisioner --- all built
+This was my primary deliverable over significant duration. 
+It delivered a centralized Amazon Managed Grafana workspace 
+with various dashboard rows and panels, dynamic CloudWatch alarms,
+and a Lambda-backed IaC provisioner --- all built
 on a four-layer architecture described below.
 
 \subsection{Architectural Layers}
@@ -269,7 +235,21 @@ The data layer is characterized by:
           \texttt{cloudwatch:ListMetrics}, \texttt{cloudwatch:DescribeAlarms},
           \texttt{logs:StartQuery}, \texttt{logs:GetQueryResults}, and
           \texttt{ec2:DescribeTags} (for tag-based resource enumeration).
+          Figure~\ref{fig:iam_role_model} shows the three-role IAM
+          architecture required because \texttt{CTM-Developer} cannot
+          create IAM roles directly and the shared
+          \texttt{CITCO-CloudFormationBuild} role lacks
+          \texttt{grafana:*} permissions.
+\end{itemize}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/fig-IAM-Role-Architecture.png}
+\caption{IAM Role Architecture --- Three-Role Model for Grafana AMG Deployment}
+\label{fig:iam_role_model}
+\end{figure}
+
+\begin{itemize}
     \item \textbf{Metric Insights SQL}: The primary query language for
           multi-resource panels. CloudWatch Metric Insights enables
           SQL-like aggregation across all resources in a namespace with
@@ -279,11 +259,11 @@ The data layer is characterized by:
 
 \subsubsection{Layer 2: Visualization Layer}
 
-The Grafana AMG workspace hosts \textbf{14~dashboard rows} organized by
+The Grafana AMG workspace hosts \textbf{17~dashboard rows} organized by
 monitored service category. Table~\ref{tab:dashboard_rows} summarizes the
 dashboard structure.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Grafana AMG Dashboard --- Row Structure (Rows 1--15 shown; Rows 16--17: Alarms \& Notifications, X-Ray Traces)}
 \label{tab:dashboard_rows}
@@ -292,7 +272,7 @@ dashboard structure.
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Row}} & \textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Panels and Metrics}} \\
 \hline
-1 & Health Overview & Colour-coded stat tile per service (Lambda, SQS, MSK, EC2, ECR, EKS, ECS, RDS, DocumentDB, Redis, Neptune, OpenSearch); critical/warning alarm counts \\
+1 & Health Overview & Color-coded stat tile per service (Lambda, SQS, MSK, EC2, ECR, EKS, ECS, RDS, DocumentDB, Redis, Neptune, OpenSearch); critical/warning alarm counts \\
 2 & Performance Overview & Top-10 bargauge comparisons per service --- highest queue depth, Lambda errors, ECS CPU, Kafka consumer lag, Redis memory, etc. \\
 3 & Lambda & Invocations, errors, throttles, concurrent executions, duration P50/P99; Logs Insights error panel \\
 4 & SQS & Queue depth (\texttt{ApproximateNumberOfMessagesVisible}), oldest message age, DLQ depth \\
@@ -300,7 +280,7 @@ dashboard structure.
 6 & EC2 & CPU (avg/max), memory (CloudWatch Agent), network I/O, disk I/O, status checks \\
 7 & ECR & Container image pull activity \\
 8 & EKS & Kubernetes node and pod metrics \\
-9 & ECS Services & CPU and memory utilisation per cluster and service; Container Insights task-level metrics \\
+9 & ECS Services & CPU and memory utilization per cluster and service; Container Insights task-level metrics \\
 10 & ECS Target Groups & ALB request throughput, response time P50/P95/P99, HTTP 5xx/4xx error counts \\
 11 & RDS / Aurora & CPU, database connections, read/write latency, IOPS, freeable memory \\
 12 & DocumentDB & CPU, disk queue depth, active connections, read/write latency, IOPS \\
@@ -310,6 +290,54 @@ dashboard structure.
 \hline
 \end{tabularx}
 \end{table}
+
+Figures~\ref{fig:grafana_overview}--\ref{fig:grafana_ecs} show live
+screenshots from the deployed Grafana AMG dashboard, demonstrating the
+Health Overview, Lambda monitoring, and ECS monitoring rows.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig-grafana-overview-row.png}
+\caption{Grafana AMG Dashboard --- Health Overview Row (Live Screenshot)}
+\label{fig:grafana_overview}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig-grafana-lambda-row.png}
+\caption{Grafana AMG Dashboard --- Lambda Monitoring Row (Live Screenshot)}
+\label{fig:grafana_lambda}
+\end{figure}
+
+The Lambda Monitoring Row (Figure~\ref{fig:grafana_lambda}) provides
+real-time visibility into all Lambda functions across the selected
+environment. The top table displays function names, trigger types,
+runtime versions, memory allocations, and timeout configurations ---
+enabling operators to identify misconfigured functions at a glance.
+Below the table, four time-series panels track the four golden signals:
+\textbf{Total Errors} (count of failed invocations), \textbf{Invocations}
+(throughput), \textbf{Concurrent Executions} (saturation indicator), and
+\textbf{Throttles} (capacity limit breaches). The legend below each panel
+enables drill-down to individual functions, with color-coding to identify
+anomalous patterns.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig-grafana-ecs-row.png}
+\caption{Grafana AMG Dashboard --- ECS Monitoring Row (Live Screenshot)}
+\label{fig:grafana_ecs}
+\end{figure}
+
+The ECS Monitoring Row (Figure~\ref{fig:grafana_ecs}) surfaces
+Container Insights metrics for all ECS services in the selected cluster.
+The service table shows cluster assignment, desired count, and running
+count --- highlighting any discrepancies that indicate failed deployments
+or scaling issues. The four time-series panels display CPU and memory
+utilization (both average and maximum) across all tasks, enabling
+operators to identify resource saturation before it impacts service
+availability. This row was particularly valuable for monitoring the
+Meridian ECS services, where memory pressure had previously gone
+undetected until task failures occurred.
 
 \subsubsection{Grafana Template Variables}
 
@@ -342,27 +370,10 @@ platform.
 
 CloudWatch Metric Insights SQL is the key architectural pattern that
 enables per-resource drill-down across large fleets within a single query.
-The standard form used throughout the dashboard is:
-
-\begin{lstlisting}[language=SQL, caption={Metric Insights SQL --- Per-Function Lambda Duration Average}]
-SELECT AVG(Duration)
-FROM "AWS/Lambda"
-GROUP BY FunctionName
-ORDER BY AVG() DESC
-LIMIT 10
-\end{lstlisting}
-
-This single query returns the average duration for each Lambda function
-as a separate time series, covering all Lambda functions across all
-codes without requiring one panel per function. The \texttt{WHERE}
-clause can filter by tag or dimension:
-
-\begin{lstlisting}[language=SQL, caption={Metric Insights SQL --- Platform-Filtered ECS CPU}]
-SELECT AVG(CpuUtilized)
-FROM "ECS/ContainerInsights"
-WHERE ClusterName LIKE 'meridian-%'
-GROUP BY ServiceName
-\end{lstlisting}
+The standard form uses \texttt{SELECT ... FROM ... GROUP BY} to return
+metrics for each resource as a separate time series, covering all resources
+without requiring one panel per function. The \texttt{WHERE} clause can
+filter by tag or dimension to scope results to specific platforms.
 
 \paragraph{Percentile Limitation and Workaround.}
 A fundamental constraint of Metric Insights SQL is that the
@@ -374,20 +385,9 @@ not a Grafana limitation.
 
 For panels requiring true latency percentiles, the workaround is to use
 the \emph{standard CloudWatch metrics} query mode with a wildcard
-dimension value:
-
-\begin{lstlisting}[language={}, basicstyle=\ttfamily\small, caption={Grafana CloudWatch Panel --- Wildcard Dimension for p99}]
-{
-  "metricName": "Duration",
-  "namespace": "AWS/Lambda",
-  "statistics": ["p99"],
-  "dimensions": { "FunctionName": ["*"] }
-}
-\end{lstlisting}
-
-The wildcard \texttt{FunctionName: ["*"]} returns individual time series
-for each function that has emitted \texttt{Duration} metrics within the
-selected time window. The tradeoff is that only recently active functions
+dimension value (e.g., \texttt{FunctionName: ["*"]}). This returns
+individual time series for each function that has emitted metrics within
+the selected time window. The tradeoff is that only recently active functions
 appear --- the same ``visibility gap'' limitation noted for \texttt{SEARCH()}.
 For the Lambda duration P50/P95 panels, I accepted this tradeoff:
 a function that has not been invoked recently has no meaningful latency
@@ -395,7 +395,7 @@ distribution to display.
 
 \subsubsection{Layer 3: Alerting Layer}
 
-I provisioned \textbf{38~CloudWatch alarms} across all monitored
+I provisioned \textbf{dynamic CloudWatch alarms} across all monitored
 platforms, each connected to an SNS topic that routes notifications to
 the IA-SRE team's email distribution list. Alarm categories include:
 
@@ -404,7 +404,7 @@ the IA-SRE team's email distribution list. Alarm categories include:
           5-minute rolling window; throttle count exceeding threshold;
           concurrent execution count approaching account limit.
 
-    \item \textbf{ECS alarms}: CPU utilisation sustained above 80\%
+    \item \textbf{ECS alarms}: CPU utilization sustained above 80\%
           over a 5-minute evaluation period; task desired count $\neq$
           running count (task failure detection).
 
@@ -413,15 +413,16 @@ the IA-SRE team's email distribution list. Alarm categories include:
           addresses the Meridian Incident: it would have fired within
           minutes of the lag beginning to build, compared to the 3.5-hour
           detection gap that occurred under the reactive model.
+\end{itemize}
 
+\begin{itemize}
     \item \textbf{SQS alarms}: Queue depth exceeding configurable
           threshold per queue; \texttt{ApproximateAgeOfOldestMessage}
           exceeding 1~hour (configurable per SLA).
 
     \item \textbf{Composite alarms}: Platform-level health signals that
           aggregate per-service alarm states into a single
-          OK/ALARM indicator per budget code
-          environment. Displayed on Row~12 of the dashboard.
+          OK/ALARM indicator per budget code environment.
 \end{itemize}
 
 \subsubsection{Layer 4: Infrastructure-as-Code Provisioner}
@@ -463,36 +464,25 @@ enables reuse across DEV, UAT, and PROD without code changes. The budget
 code, alarm thresholds, and SNS topic ARN are all externalised as
 SAM parameters, satisfying NFR5 (multi-environment reuse).
 
-Figure~\ref{fig:cicd_pipeline} shows the CodePipeline CI/CD deployment
+Figure~\ref{fig:alarm_notification_flow} illustrates the alarm notification
+flow from CloudWatch alarm state change through SNS topic fan-out to the
+IA-SRE team's email distribution list.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/fig-alarm-notification-flow.png}
+\caption{Alarm Notification Flow --- CloudWatch to SNS to Email Distribution}
+\label{fig:alarm_notification_flow}
+\end{figure}
+
+Figure~\ref{fig:amg_deployment_flow} shows the CodePipeline CI/CD deployment
 flow that delivers all stacks across the three environments.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
-\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
-  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
-+------------------------------------------------------------+
-|                    CI/CD Pipeline                           |
-|                                                            |
-|  [CodeCommit] --> [CodeBuild] --> [Deploy DEV]             |
-|                                       |                    |
-|                               [Deploy UAT]                  |
-|                                       |                    |
-|                               Manual Approval              |
-|                                       |                    |
-|                               [Deploy PROD]                |
-+------------------------------------------------------------+
-  Deploy order per environment:
-  1. stack-ia-it-sre-resource-monitoring-grafana
-     (Grafana workspace + Lambda provisioner)
-  2. stack-ia-it-sre-platform-alarms
-     (CloudWatch alarms + SNS topic + 4 alarm Lambdas)
-
-  IAM roles:
-  CITCO-CloudFormationBuild   -> alarms stack
-  ia-it-sre-grafana-cfn-role  -> grafana-workspace stack only
-\end{lstlisting}
-\caption{CI/CD Deployment Pipeline --- CodePipeline across DEV / UAT / PROD}
-\label{fig:cicd_pipeline}
+\includegraphics[width=0.95\textwidth]{figures/fig-amg-deployment-flow.png}
+\caption{CI/CD Deployment Pipeline --- CodeCommit to AMG Deployment Flow}
+\label{fig:amg_deployment_flow}
 \end{figure}
 
 \subsection{Grafana Version Upgrade: Architectural Resilience Test}
@@ -517,23 +507,72 @@ The upgrade introduced breaking changes in two areas:
           to fail to resolve correctly after the upgrade.
 \end{itemize}
 
-I resolved this through a systematic audit of all 110+~panels to identify
+I resolved this through a systematic audit of all panels to identify
 affected queries. The migration reinforced a key design principle
 documented as NFR6: \textbf{use only standard CloudWatch plugin queries
 and avoid AMG-version-specific syntax}. I migrated all panel queries
 to the stable Grafana 12.4 CloudWatch query model, and the workspace has
 remained stable through subsequent Grafana patch releases.
 
+\subsection{X-Ray Distributed Tracing (PoC)}
+
+As part of the observability stack, I integrated AWS X-Ray tracing to
+provide distributed trace visibility across the IA platform. The X-Ray
+integration enables service map visualization and trace waterfall
+analysis --- capabilities that contribute to the 60\% Dynatrace parity
+achieved by the CloudWatch + Grafana + X-Ray stack (see
+Section~\ref{sec:dynatrace_parity}).
+
+Figure~\ref{fig:xray_service_map} shows the X-Ray service map displaying
+the trace topology for the RPA-LLM platform, illustrating how requests
+flow through Lambda functions, external APIs, and AWS services.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig-xray-service-map.png}
+\caption{AWS X-Ray Service Map --- Distributed Trace Topology (Live Screenshot)}
+\label{fig:xray_service_map}
+\end{figure}
+
+The X-Ray integration delivers three key capabilities:
+
+\begin{itemize}
+    \item \textbf{Service Map}: Visual representation of service
+          dependencies and request flow, enabling rapid identification
+          of bottlenecks and failure points.
+    \item \textbf{Trace Waterfall}: Detailed timing breakdown for
+          individual requests, showing latency contribution from each
+          service in the call chain.
+    \item \textbf{Error Analysis}: Automatic capture of exceptions and
+          error responses with stack traces, correlated to specific
+          trace segments.
+\end{itemize}
+
+X-Ray tracing is currently enabled in DEV environment only; UAT and PROD
+enablement is pending senior approval due to the additional CloudWatch
+costs associated with trace segment storage.
+
 % ────────────────────────────────────────────────────────────
 \section{IA Resources Inventory API (IISS-507)}
 \label{sec:inventory_api}
 % ────────────────────────────────────────────────────────────
 
-IISS-507 delivered a \textbf{Flask REST API} that I built for programmatic discovery
+The inventory API delivered a \textbf{Flask REST API} that I built for programmatic discovery
 of all IA platform cloud resources. I housed the project in the
 \texttt{ia-sre-resources-inventory} repository and scaffolded it on
 Jun~11, 2026; it reached production-ready state with 562~automated
 tests and 99\%~code coverage.
+
+Figure~\ref{fig:inventory_api_arch} shows the high-level architecture of
+the Inventory API, illustrating how discoverers query AWS services and
+return unified resource models.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.90\textwidth]{figures/fig-inventory-api-architecture.png}
+\caption{IA Resources Inventory API --- Architecture Overview}
+\label{fig:inventory_api_arch}
+\end{figure}
 
 \subsection{Technology Stack}
 
@@ -553,59 +592,19 @@ tests and 99\%~code coverage.
 
 \subsection{Discoverer Registry Pattern}
 
-My core architectural contribution in IISS-507 is the
+My core architectural contribution in the inventory API is the
 \textbf{Discoverer Registry pattern}. Rather than routing resource
 discovery logic through a monolithic handler, the API maintains a
 registry that maps \texttt{(resource\_type, budget\_code)} tuples to
-concrete discoverer classes:
-
-\begin{lstlisting}[language=Python, caption={Discoverer Registry --- Core Pattern}]
-from abc import ABC, abstractmethod
-from typing import List
-
-class BaseDiscoverer(ABC):
-    """Abstract base class for all resource discoverers."""
-
-    @abstractmethod
-    async def discover(self) -> List[Resource]:
-        """Discover all resources of this type for the budget code."""
-        ...
-
-# Registry maps (resource_type, budget_code) -> discoverer class
-REGISTRY: dict = {
-    ("lambda",  "rpacfs1"):      RPACFSLambdaDiscoverer,
-    ("lambda",  "ia-bpo"):       IABPOLambdaDiscoverer,
-    ("ecs",     "meridian"):     MeridianECSDiscoverer,
-    ("ecs",     "citcoworks"):   CitcoWorksECSDiscoverer,
-    ("ec2",     "rpacfs1"):      RPACFSEc2Discoverer,
-    # ... 7 more stub discoverers
-}
-
-async def discover_resources(
-    resource_type: str,
-    budget_code: str | None = None
-) -> List[Resource]:
-    """Route discovery request to the appropriate discoverer."""
-    results = []
-    for (rtype, bc), discoverer_cls in REGISTRY.items():
-        if rtype != resource_type:
-            continue
-        if budget_code and bc != budget_code:
-            continue
-        discoverer = discoverer_cls()
-        results.extend(await discoverer.discover())
-    return results
-\end{lstlisting}
-
-Each discoverer implements the single abstract method
-\texttt{async def discover() -> List[Resource]}. Adding support for a
+concrete discoverer classes. Each discoverer implements a single abstract
+method \texttt{async def discover() -> List[Resource]}. Adding support for a
 new platform or resource type requires implementing one class and
 registering one entry --- zero changes to routing, serialization, or
 test infrastructure.
 
 \subsection{API Endpoints}
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{IA Resources Inventory API --- Endpoint Summary}
 \label{tab:api_endpoints}
@@ -641,63 +640,35 @@ with the Grafana AMG dashboard --- the cache-refresh Lambda writes S3 snapshots 
 publishes CloudWatch metrics, which Grafana reads via template variables and Metric
 Insights SQL panels.
 
-\begin{figure}[ht]
-\centering
-\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
-  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
-+---------------------------+     +---------------------------+
-| Lambda: cache_refresh     |     | Lambda API: handler_      |
-|                           |     | resources                 |
-| 1. Discover AWS resources |     |                           |
-|    (all 13 service types) |     | 1. Read S3 cache          |
-| 2. Write S3 cache         |---->| 2. Return JSON            |
-|    (latest.json per row)  |     |                           |
-| 3. Publish CW metrics     |     +---------------------------+
-|    (platform/Monitoring)  |              |
-+---------------------------+              v
-           |                   +---------------------------+
-           v                   | Grafana AMG               |
-+---------------------------+  |                           |
-| CloudWatch                |  | Variables (dimensionValues|
-| platform/Monitoring       |->|   -> lambda_function etc) |
-| LambdaFunctionActive      |  |                           |
-| SQSQueueActive            |  | Panels (Metric Insights   |
-| MSKClusterActive ...      |  |   SQL per resource)       |
-+---------------------------+  |                           |
-                               | Deep-links (AWS Console   |
-                               |   URLs per resource)      |
-                               +---------------------------+
+\begin{figure}[htbp]
+\begin{center}
+\begin{minipage}{0.92\textwidth}
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=none, backgroundcolor=\color{white}, numbers=none]
++------------------+   +------------------+   +------------------+
+| Lambda:          |   | CloudWatch:      |   | Grafana AMG:     |
+| cache_refresh    |-->| platform/Monitor |-->| Variables        |
+| Discovers AWS    |   | LambdaActive     |   | dimensionValues  |
+| Writes S3 cache  |   | SQSQueueActive   |   | Panels: Metric   |
++------------------+   | MSKClusterActive |   | Insights SQL     |
+         |             +------------------+   | Deep-links       |
+         v                                    +------------------+
++------------------+   +------------------+
+| S3: latest.json  |-->| Lambda API:      |
+| per service/plat |   | handler_resources|
++------------------+   | Returns JSON     |
+                       +------------------+
 \end{lstlisting}
-\caption{Inventory API --- Grafana AMG Integration (cache refresh, CW metrics, template variables)}
+\end{minipage}
+\end{center}
+\caption{Inventory API --- Grafana AMG Integration}
 \label{fig:grafana_inventory_integration}
 \end{figure}
 
 My solution is a \textbf{two-stage filter} implemented in both the
-\texttt{CitcoWorksECSDiscoverer} and \texttt{MeridianECSDiscoverer}:
-
-\begin{lstlisting}[language=Python,
-  caption={Two-Stage Filter --- Disambiguating Shared BudgetCode}]
-class MeridianECSDiscoverer(BaseDiscoverer):
-    """Discovers ECS resources for the Meridian environment."""
-
-    async def discover(self) -> List[Resource]:
-        client = boto3.client("ecs")
-        all_clusters = []
-
-        # Stage 1: filter by BudgetCode (shared with \texttt{citcoworks})
-        paginator = client.get_paginator("list_clusters")
-        async for page in paginator.paginate():
-            for arn in page["clusterArns"]:
-                tags = await self._get_tags(arn)
-                if tags.get("BudgetCode") != "Shared Cloud Artifacts":
-                    continue
-                # Stage 2: AppName discriminates Meridian vs CitcoWorks
-                if tags.get("AppName", "").lower() != "meridian":
-                    continue
-                all_clusters.append(self._build_resource(arn, tags))
-
-        return all_clusters
-\end{lstlisting}
+\texttt{CitcoWorksECSDiscoverer} and \texttt{MeridianECSDiscoverer}.
+Stage~1 filters by BudgetCode (which is shared between both platforms),
+then Stage~2 uses the AppName tag to discriminate Meridian resources
+from CitcoWorks resources.
 
 The AppName tag is now designated the \textbf{mandatory secondary
 discriminator} for all resources in the \textbf{"Shared Cloud Artifacts"}
@@ -707,38 +678,31 @@ inventory API. This risk is mitigated by a tag compliance CloudWatch
 alarm that fires if new ECS services or Lambda functions lack the
 required tags.
 
+Figure~\ref{fig:resource_discovery_flow} illustrates the complete
+resource discovery flow, showing how the API routes requests through
+the discoverer registry and applies the two-stage filter for ambiguous
+budget codes.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/fig-resource-discovery-flow.png}
+\caption{Resource Discovery Flow --- Discoverer Registry and Two-Stage Filter}
+\label{fig:resource_discovery_flow}
+\end{figure}
+
 \subsection{Async Architecture}
 
 The API uses \texttt{flask[async]} with async route handlers.
 Each handler aggregates boto3 calls concurrently using
 \texttt{asyncio.gather()}, reducing total API latency by parallelizing
-the AWS API calls within a single request:
-
-\begin{lstlisting}[language=Python,
-  caption={Async Route Handler --- Concurrent Discovery}]
-@app.route("/api/v1/lambda")
-async def get_lambda_resources():
-    budget_code = request.args.get("budget_code")
-    # All discoverers run concurrently, not sequentially
-    results = await asyncio.gather(*[
-        discoverer_cls().discover()
-        for (rtype, bc), discoverer_cls in REGISTRY.items()
-        if rtype == "lambda"
-        and (budget_code is None or bc == budget_code)
-    ])
-    all_resources = [r for sublist in results for r in sublist]
-    return jsonify([r.dict() for r in all_resources])
-\end{lstlisting}
-
-This pattern reduces the API response time for a full fleet enumeration
-from the sequential sum of all boto3 call latencies to the latency of
-the single slowest call --- consistently keeping the API within the
-10-second NFR3 target.
+the AWS API calls within a single request. All matching discoverers run
+concurrently rather than sequentially, reducing API response time from
+the sum of all boto3 call latencies to the latency of the single slowest
+call --- consistently keeping the API within the 10-second NFR3 target.
 
 \subsection{Test Strategy}
 
-My test suite for IISS-507 comprises \textbf{562~automated tests}
-achieving \textbf{99\%~code coverage}:
+My test suite for the inventory API achieves \textbf{99\%~code coverage}:
 
 \begin{itemize}
     \item \textbf{Unit tests}: Each discoverer class tested in isolation
@@ -760,6 +724,410 @@ achieving \textbf{99\%~code coverage}:
           environments, boto3 pagination edge cases (empty pages,
           single-page results, maximum page sizes).
 \end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Work Stream 4: RPA Production Support}
+\label{sec:rpa_production_support}
+% ────────────────────────────────────────────────────────────
+
+Throughout the internship I participated in dedicated RPA production support
+rotations as part of the IA team's \textbf{Follow-the-Sun model}. I held the
+North America slot (11~AM--7~PM~EST) once every four weeks, serving as the
+primary contact for RPA incidents during that window. This was not project
+work with JIRA tickets --- it was ongoing operational responsibility with
+Service Desk tickets, email triage, and ad-hoc troubleshooting.
+
+\subsection{Support Rotation Structure}
+
+Each support week followed a consistent daily rhythm:
+
+\begin{itemize}
+    \item \textbf{Shift start (11~AM~EST)}: Review the Confluence handover
+          log from the Manila shift to pick up carried-over items or
+          approaching SLA breaches. Check open tickets in the SD Portal,
+          Innovation IT email inbox, \texttt{IA\_INCIDENTS} distribution
+          list, and Teams notifications.
+
+    \item \textbf{During shift}: Monitor VPL queue health (5~PM~EST daily
+          checkpoint), respond to escalations from Dublin/London business
+          teams, triage incoming tickets, and coordinate with developers
+          when code-level fixes are required.
+
+    \item \textbf{Shift end (7~PM~EST)}: Update the Confluence handover log
+          with ticket status, any pending actions, and context for the
+          next shift (Manila).
+\end{itemize}
+
+\subsection{Support Weeks Completed}
+
+I completed four full support rotations during the internship:
+
+\begin{itemize}
+    \item \textbf{Week 8} (May~4--8): First rotation. Familiarization with
+          SD Portal, VPL queue monitoring, and the escalation ladder.
+          Shadowed Horace on Corporate Actions ticket triage.
+
+    \item \textbf{Week 12} (Jun~1--5): MESO hotfix week. Encountered
+          IISS-538 (ECS autoscaling gap) during routine monitoring ---
+          this led to a code fix, not just ticket resolution.
+
+    \item \textbf{Week 20} (Jul~27--31): IISS-876 (VPL Pricing GTL booking
+          error). Coordinated with the business team on NAV impact
+          assessment. Also handled routine queue monitoring and ticket
+          triage.
+
+    \item \textbf{Week 23} (Aug~17--21): Final rotation. Lighter ticket
+          volume; used remaining time for report writing and KT preparation.
+\end{itemize}
+
+\subsection{Notable Incidents Handled}
+
+While most support work involved routine ticket triage and queue monitoring,
+several incidents required deeper investigation or code-level fixes:
+
+\begin{itemize}
+    \item \textbf{IISS-706 (CAIS Deadline)}: UCM upload failure with
+          \texttt{SMBAuthenticationError: SpnegoError}. Seven-hour
+          investigation traced to Secrets Manager credential rotation
+          leaving empty values cached at module import time. Hotfix
+          added fail-fast validation. Filing completed before regulatory
+          deadline.
+
+    \item \textbf{IISS-538 (MESO ECS)}: Tasks stuck, not autoscaling.
+          Root cause: ECS service autoscaling policy was unconfigured.
+          Fixed the scaling policy and added an ECS \texttt{SaturationAlarm}
+          to the IISS-487 alarm set.
+
+    \item \textbf{IISS-741 (MESO Critical)}: INNOCAP and SAMLMOS funds
+          stuck in queue with no Lambda heartbeat. Manually retriggered
+          the \texttt{ia\_meso\_process} pipeline. Processing completed
+          approximately 2~hours after escalation.
+
+    \item \textbf{IISS-753 (VPL IPV)}: \AE xeo pricing window
+          \texttt{CheckpointException} in UiPath --- bot exhausted its
+          retry budget waiting for a dynamic UI element. Estimated 16~hours
+          for selector resilience fix; escalated to the development team.
+\end{itemize}
+
+\subsection{Value of Support Rotation for SRE Work}
+
+The support rotation was not separate from the SRE observability work ---
+it was \emph{complementary}. Several incidents I encountered during support
+weeks directly influenced the dashboard and alarm design:
+
+\begin{itemize}
+    \item The MESO ECS incident (IISS-538) led to adding the
+          \texttt{ECS\_CPUSaturation} alarm to the Grafana dashboard.
+
+    \item The CAIS credential failure (IISS-706) reinforced the importance
+          of fail-fast validation patterns documented in the Challenges
+          chapter.
+
+    \item VPL queue monitoring during support shifts provided real-world
+          validation of the SQS dashboard panels and queue depth alarms.
+\end{itemize}
+
+When ticket volume was low, I used remaining support shift time for
+development work on the dashboard, inventory API, or documentation ---
+maintaining productivity while remaining available for escalations.
+
+% ────────────────────────────────────────────────────────────
+\section{Work Stream 5: RPA LLM Agent --- Ask Citco RPA (IISS-824)}
+\label{sec:rpa_llm_agent}
+% ────────────────────────────────────────────────────────────
+
+During Week~21 I engaged with a parallel work stream outside the SRE
+monitoring scope: the \textbf{Ask Citco RPA} support chatbot, implemented
+across two CodeCommit repositories (\texttt{ml-rpa-status-llm-agent} and
+\texttt{core-smart-rpa-llm-ecr-image}). My engagement began as a research
+and documentation task but expanded to production bug-fixing after log
+analysis revealed critical reliability failures.
+
+\subsection{System Architecture}
+
+The chatbot is a \textbf{Retrieval-Augmented Generation (RAG)} pipeline
+built on Amazon Bedrock, designed to answer RPA operator queries about
+process status, procedures, and Legal Entity assignments without requiring
+developers to be on-call for routine questions.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.90\textwidth]{figures/fig-rpa-llm-architecture.png}
+\caption{Ask Citco RPA --- RAG Architecture (IISS-824)}
+\label{fig:rpa_llm_arch}
+\end{figure}
+
+The \textbf{ECS Fargate} layer runs the FastAPI container, authenticates
+users via LDAP (checking \texttt{rpa\_support\_agent\_user} AD group), invokes
+the Bedrock agent, and streams responses back in OpenAI SSE format. The
+\textbf{Bedrock Agent} (Claude) orchestrates between action groups and
+the Knowledge Base depending on the query type: process status queries
+hit the Event Service Lambda; procedural questions retrieve chunks from
+OpenSearch via hybrid vector and keyword search.
+
+\subsection{Knowledge Base Pipeline}
+
+The KB ingestion pipeline runs daily in two stages:
+
+\begin{enumerate}
+    \item \textbf{12:00 UTC --- \texttt{IRCOEKBExtractLambda}}: Syncs
+          49 SharePoint IRCOEKB wiki libraries ($\sim$5,000 pages) to S3
+          as plain-text files with SharePoint metadata preserved.
+    \item \textbf{14:00 UTC --- \texttt{RPALLMKBIngestionFunction}}: Triggers
+          Bedrock KB ingestion, which chunks (hierarchical: 1,200 token
+          parent / 300 token child), embeds (1024-dim), and indexes into
+          OpenSearch Serverless (FAISS/HNSW, L2 distance).
+\end{enumerate}
+
+Static documents (PDFs, process guides) are uploaded separately via an
+idempotent upload script (\texttt{scripts/upload\_kb\_content.py}) that
+compares content hashes before writing to S3.
+
+\subsection{Production Reliability Issues Identified and Fixed}
+
+My engagement began with CloudWatch log analysis. Analysis of
+\textbf{93 days of production logs} (May~5 -- Aug~5, 2026; 148 Lambda
+runs) revealed a critical reliability failure in the KB sync:
+
+\begin{itemize}
+    \item \textbf{52\% timeout rate on \texttt{IRCOEKBExtractLambda}.}
+          77 of 148 production runs hit the 300-second Lambda timeout.
+          June 2026 was the worst month at 71\% timeout rate. Average
+          run duration was 291 seconds --- every run within 36 seconds of
+          the limit. When the Lambda timed out, the Knowledge Base was
+          incomplete for that day: pages not yet uploaded when the timeout
+          fired were missing from the KB until the next successful run.
+
+    \item \textbf{Root cause: unconditional full re-upload.}
+          The original code re-uploaded all $\sim$980 pages on every daily
+          run regardless of whether content had changed. The
+          \texttt{KB Articles} library alone (1,266 pages at $\sim$220ms
+          per S3 \texttt{head\_object} call) required 278 seconds just
+          for change detection I/O.
+\end{itemize}
+
+I implemented a two-phase hybrid sync (\textbf{v1.1.x + v1.1.18}) that
+reduced steady-state run time from 291 seconds average to approximately
+\textbf{25 seconds}:
+
+\begin{enumerate}
+    \item \textbf{Phase 1 --- Library-level change detection ($\sim$25s
+          for all 49 libraries).} One lightweight ALB call per library
+          using a SharePoint \texttt{filter=Modified gt \{last\_synced\_at\}}
+          query. Zero results means the entire library is unchanged and
+          is skipped with no further I/O.
+    \item \textbf{Phase 2 --- Conditional sync.} Only changed libraries
+          are processed. Sequential if five or fewer changed; parallel
+          via \texttt{ThreadPoolExecutor(max\_workers=3)} if more than
+          five changed.
+    \item \textbf{Per-page idempotency.} Within each synced library,
+          each page's SharePoint \texttt{Modified} timestamp is compared
+          to the \texttt{sp-modified} field stored in S3 object metadata.
+          Unchanged pages skip HTML extraction and S3 upload entirely.
+\end{enumerate}
+
+Beyond the KB sync, log analysis also surfaced seven additional
+production bugs fixed across versions v1.1.1--v1.1.32:
+
+\begin{itemize}
+    \item \textbf{OpenSearch silent delete} (v1.1.1): index creation
+          failure silently deleted the index and reported CloudFormation
+          SUCCESS. Fixed with proper exception handling and idempotency
+          check.
+    \item \textbf{Fire-and-forget Lambda pattern}: \texttt{EventStoreExtractLambda}
+          and \texttt{ClientFundMappingLambda} always reported SUCCESS
+          regardless of actual outcome due to incorrect exception class
+          references (\texttt{boto3.exceptions.BotoError} does not exist).
+    \item \textbf{Athena SSE encryption inconsistency}: queries used
+          \texttt{SSE\_S3} instead of \texttt{SSE\_KMS} in some Lambdas.
+    \item \textbf{Athena race condition}: \texttt{MSCK REPAIR TABLE}
+          executed immediately after \texttt{CREATE TABLE} without
+          waiting for completion.
+    \item \textbf{SSL verification disabled}: BPM API calls used
+          \texttt{verify=False}.
+\end{itemize}
+
+\subsection{Knowledge Base Enrichment: NavChecklist Documents}
+
+As part of the RPA LLM Agent work, I uploaded the NavChecklist process documentation
+PDFs (\textit{Architecture -- NAV CHECKLIST.pdf}, \textit{FAQ -- NAV
+CHECKLIST.pdf}) to the KB S3 bucket under
+\texttt{RPA Processes/NAV Checklist/} using the idempotent upload
+script. These documents --- describing the NAV calculation checklist
+process flow --- are now indexed in the production Knowledge Base and
+searchable by the chatbot.
+
+\subsection{Code Quality and Engineering Improvements}
+
+Alongside the bug fixes, I delivered the following engineering quality
+improvements to bring the codebase in line with IA Best Practice
+guidelines (pending dev approval gate):
+
+\begin{itemize}
+    \item \textbf{Module refactor}: the 1,140-line monolithic
+          \texttt{function.py} split into 8 focused modules
+          (\texttt{handler.py}, \texttt{event\_service\_api.py},
+          \texttt{secrets.py}, \texttt{project\_lookup.py}, etc.)
+    \item \textbf{structlog migration}: replaced \texttt{print()} and
+          root logger across all 11 Lambda functions with structlog
+          structured logging
+    \item \textbf{Type hints and docstrings}: PEP~484 type hints and
+          Google-style docstrings added to all functions and classes
+    \item \textbf{Test suite}: Comprehensive unit tests at 99\% code coverage
+          (v1.1.x series)
+    \item \textbf{Pydantic models}: Databricks API response and BPM
+          API response wrapped in Pydantic validation models
+    \item \textbf{Kill switch}: SSM Parameter Store kill switch pattern
+          (\texttt{/{Env}/rpa-llm/ircoekb/process-run-status}: RUN/STOP)
+          implemented across IRCOEKB, Event Store, and Mapping Lambdas
+    \item \textbf{X-Ray tracing}: AWS Lambda Powertools Tracer
+          instrumented on all functions (enabled in DEV; pending approval
+          for UAT/PROD)
+\end{itemize}
+
+Versions v1.1.1 through v1.1.32 were released during Aug~3--20, 2026.
+
+\subsection{Proposed: Hybrid Graph-RAG Architecture}
+
+During the codebase analysis I identified a structural limitation of
+the current flat-vector RAG approach for the Citco RPA domain. The
+entities in this domain are highly relational: clients have funds, funds
+run specific processes, processes execute on either Blue Prism or UiPath,
+and each platform has its own operational knowledge base. A standard
+vector similarity search treats all these entities as independent text
+chunks, losing the relational structure.
+
+I propose a \textbf{Hybrid Graph-RAG} enhancement: adding Amazon Neptune
+as a graph layer alongside the existing OpenSearch vector store. The
+graph would model the entity relationship network (client--fund--process--platform),
+enabling the Bedrock agent to traverse relationships for multi-hop queries
+(\textit{``Which Blue Prism processes handle FX Closeouts for client X?''}),
+then retrieve dense context from the vector KB for the identified process
+entities. The dual-path retrieval would improve answer accuracy for
+complex operational queries while maintaining the existing RAG pipeline
+for straightforward procedural lookups. This proposal will be submitted
+as a formal IISS follow-on ticket.
+
+% ────────────────────────────────────────────────────────────
+\section{Work Stream 6: Citco Enterprise Custom UI Dashboards (Planning)}
+\label{sec:enterprise_ui_dashboards}
+% ────────────────────────────────────────────────────────────
+
+Work Stream~6 represents planned future work to extend the existing
+\texttt{ia-config-portal} application with two new dashboard pages.
+During this internship period, I completed an \textbf{architectural
+planning document} (IISS-919-IMPLEMENTATION-PLAN.md) that addresses
+the limitations discovered in both Grafana AMG and CloudWatch dashboards.
+Implementation is scheduled for the internship extension period
+(Sep--Dec~2026).
+
+\subsection{Planning Document Deliverable}
+
+The primary deliverable for this work stream is a comprehensive
+865-line implementation plan that documents:
+
+\begin{itemize}
+    \item \textbf{Gap analysis}: 45 documented Grafana AMG limitations
+          with severity ratings, identifying which gaps justify a
+          custom UI solution.
+
+    \item \textbf{Technology stack decisions}: Evaluation of charting
+          libraries (Chart.js vs Recharts), service map rendering
+          (Cytoscape.js for X-Ray topology), and component framework
+          integration with Citco's internal \texttt{@citco/core} and
+          \texttt{@citco/theme} packages.
+
+    \item \textbf{Backend API design}: Four new Lambda handlers
+          (\texttt{/xray/service-map}, \texttt{/xray/traces},
+          \texttt{/xray/traces/\{traceId\}}, \texttt{/alarms}) with
+          request/response schemas and IAM permission requirements.
+
+    \item \textbf{Task breakdown}: 12 implementation tasks covering
+          backend handlers, workspace scaffolding, component development,
+          and portal integration.
+\end{itemize}
+
+\subsection{Motivation: Grafana AMG Limitations}
+
+The Grafana AMG dashboard built in Work Stream~2 achieved approximately
+60\% Dynatrace feature parity, but 45 architectural limitations were
+identified. The most critical gaps driving the custom UI proposal:
+
+\begin{table}[!htbp]
+\centering
+\caption{Critical Grafana AMG Limitations Identified}
+\label{tab:grafana_limitations}
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{lXl}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Limitation}} & \textcolor{white}{\textbf{Severity}} \\
+\hline
+L1 & CloudWatch 10 TPS hard throttle --- panels error on every load & Critical \\
+L9 & X-Ray service map crashes on load --- requires Edit mode workaround & Critical \\
+L18 & Table filter does not cross-filter other panels & Critical \\
+L21 & No topology / honeycomb / Dynatrace-style health view & Critical \\
+L23 & No alarm acknowledgement or snooze & Critical \\
+L31 & Cannot embed AMG in other portals (iframe blocked) & Medium \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Planned Solution Architecture}
+
+The planning document proposes two new dashboard pages within the
+existing \texttt{ia-config-portal} (built by Soundarya Venkataraman
+and Sridhar Vadla):
+
+\begin{itemize}
+    \item \textbf{Infrastructure Inventory Dashboard (IISS-509)}:
+          Frontend for the Inventory API built in Work Stream~3,
+          displaying resources across all platforms with filtering
+          and Excel export capabilities.
+
+    \item \textbf{Infrastructure Monitoring Dashboard (IISS-919)}:
+          Config-driven monitoring interface with drag-and-drop panel
+          layout, Dynatrace-style honeycomb health visualizations,
+          and X-Ray service map integration.
+\end{itemize}
+
+Key planned components include:
+
+\begin{itemize}
+    \item \textbf{CitcoHoneycomb}: D3 hexbin-based health grid where
+          each hexagon represents one resource instance, colored by
+          real-time health status.
+
+    \item \textbf{CitcoServiceMap}: Cytoscape.js topology visualization
+          replacing the crash-prone Grafana X-Ray plugin.
+
+    \item \textbf{CitcoTraceWaterfall}: Custom Recharts component for
+          X-Ray trace span visualization.
+\end{itemize}
+
+\subsection{Status and Timeline}
+
+\begin{table}[!htbp]
+\centering
+\caption{Work Stream 6 --- Status Summary}
+\label{tab:ws6_status}
+\rowcolors{2}{tablerowA}{tablerowB}
+\begin{tabularx}{\textwidth}{lXl}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Item}} & \textcolor{white}{\textbf{Description}} & \textcolor{white}{\textbf{Status}} \\
+\hline
+Planning Document & 865-line implementation plan with gap analysis, tech stack, task breakdown & Complete \\
+Backend Handlers & 4 new Lambda API endpoints for X-Ray and Alarms & Planned \\
+Component Library & SRE-specific wrappers on \texttt{@citco/core} & Planned \\
+Inventory Dashboard & IISS-509 frontend for resource inventory & Planned \\
+Monitoring Dashboard & IISS-919 config-driven monitoring UI & Planned \\
+\hline
+\end{tabularx}
+\end{table}
+
+Implementation is deferred to the internship extension period
+(Sep--Dec~2026), allowing the Grafana AMG dashboard to stabilize in
+production and gather user feedback on which limitations are most
+impactful to address first.
 
 % ────────────────────────────────────────────────────────────
 \section{Design Decisions \& Tradeoffs}
@@ -951,12 +1319,12 @@ pipeline without deploying updated alarms. This is mitigated by
 comprehensive error logging and a manual re-invocation pathway via
 \texttt{python main.py deploy --phase 3}.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Design Decision Summary}
 \label{tab:design_decisions}
 \rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{Xp{3.5cm}p{5.0cm}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}p{0.38\textwidth}}
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Decision}} & \textcolor{white}{\textbf{Chosen Approach}} & \textcolor{white}{\textbf{Key Tradeoff}} \\
 \hline
@@ -968,7 +1336,7 @@ Alarm provisioning & Dynamic Lambda provisioner & Sequential deploy dependency; 
 \end{tabularx}
 \end{table}
 
-Taken together, these four decisions shaped an architecture that favours
+Taken together, these four decisions shaped an architecture that favors
 operational simplicity and zero-maintenance fleet coverage over strict
 metric precision, while accepting bounded and well-understood tradeoffs
 at each decision point. I documented the design in the respective
@@ -976,210 +1344,8 @@ repository README and JIRA acceptance criteria so that future
 team members can revisit any decision as the platform's monitoring
 maturity evolves.
 
-% ────────────────────────────────────────────────────────────
-\section{Work Stream 4: RPA LLM Agent --- Ask Citco RPA (IISS-824)}
-\label{sec:rpa_llm_agent}
-% ────────────────────────────────────────────────────────────
-
-During Week~21 I engaged with a parallel work stream outside the SRE
-monitoring scope: the \textbf{Ask Citco RPA} support chatbot, implemented
-across two CodeCommit repositories (\texttt{ml-rpa-status-llm-agent} and
-\texttt{core-smart-rpa-llm-ecr-image}). My engagement began as a research
-and documentation task but expanded to production bug-fixing after log
-analysis revealed critical reliability failures.
-
-\subsection{System Architecture}
-
-The chatbot is a \textbf{Retrieval-Augmented Generation (RAG)} pipeline
-built on Amazon Bedrock, designed to answer RPA operator queries about
-process status, procedures, and Legal Entity assignments without requiring
-developers to be on-call for routine questions.
-
-\begin{figure}[ht]
-\centering
-\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=single,
-  rulecolor=\color{smubrand}, backgroundcolor=\color{white}, numbers=none]
-+--------------------------------------------------------------+
-|  CONSUMERS                                                    |
-|  LibreChat UI  (web)                                          |
-+-------------------------------+------------------------------+
-                                |  HTTP / SSE
-+-------------------------------v------------------------------+
-|  COMPUTE                                                      |
-|  ECS Fargate  FastAPI (core-smart-rpa-llm-ecr-image)         |
-|  - LDAP auth  - OpenAI-format streaming  - Usage tracking    |
-+-------------------------------+------------------------------+
-                                |  invoke_agent()
-+-------------------------------v------------------------------+
-|  BEDROCK AGENT  (Claude)                                      |
-|                                                               |
-|  Action Groups (Lambda)     Knowledge Base (OpenSearch)       |
-|  get-project-code            49 SharePoint libraries          |
-|  get-process-status-info     ~5,000 wiki pages                |
-|  get-le-assignment           1024-dim FAISS/HNSW vectors      |
-|  post-create-sdm-ticket      HYBRID search (vector + BM25)    |
-+--------------------------------------------------------------+
-                                |
-+-------------------------------v------------------------------+
-|  DATA SOURCES                                                 |
-|  SharePoint IRCOEKB  Databricks Event Service  BPM API       |
-|  (wiki pages)        (process/project master)  (client/fund) |
-+--------------------------------------------------------------+
-\end{lstlisting}
-\caption{Ask Citco RPA --- RAG Architecture (IISS-824)}
-\label{fig:rpa_llm_arch}
-\end{figure}
-
-The \textbf{ECS Fargate} layer runs the FastAPI container, authenticates
-users via LDAP (checking \texttt{rpa\_support\_agent\_user} AD group), invokes
-the Bedrock agent, and streams responses back in OpenAI SSE format. The
-\textbf{Bedrock Agent} (Claude) orchestrates between action groups and
-the Knowledge Base depending on the query type: process status queries
-hit the Event Service Lambda; procedural questions retrieve chunks from
-OpenSearch via hybrid vector and keyword search.
-
-\subsection{Knowledge Base Pipeline}
-
-The KB ingestion pipeline runs daily in two stages:
-
-\begin{enumerate}
-    \item \textbf{12:00 UTC --- \texttt{IRCOEKBExtractLambda}}: Syncs
-          49 SharePoint IRCOEKB wiki libraries ($\sim$5,000 pages) to S3
-          as plain-text files with SharePoint metadata preserved.
-    \item \textbf{14:00 UTC --- \texttt{RPALLMKBIngestionFunction}}: Triggers
-          Bedrock KB ingestion, which chunks (hierarchical: 1,200 token
-          parent / 300 token child), embeds (1024-dim), and indexes into
-          OpenSearch Serverless (FAISS/HNSW, L2 distance).
-\end{enumerate}
-
-Static documents (PDFs, process guides) are uploaded separately via an
-idempotent upload script (\texttt{scripts/upload\_kb\_content.py}) that
-compares content hashes before writing to S3.
-
-\subsection{Production Reliability Issues Identified and Fixed}
-
-My engagement began with CloudWatch log analysis. Analysis of
-\textbf{93 days of production logs} (May~5 -- Aug~5, 2026; 148 Lambda
-runs) revealed a critical reliability failure in the KB sync:
-
-\begin{itemize}
-    \item \textbf{52\% timeout rate on \texttt{IRCOEKBExtractLambda}.}
-          77 of 148 production runs hit the 300-second Lambda timeout.
-          June 2026 was the worst month at 71\% timeout rate. Average
-          run duration was 291 seconds --- every run within 36 seconds of
-          the limit. When the Lambda timed out, the Knowledge Base was
-          incomplete for that day: pages not yet uploaded when the timeout
-          fired were missing from the KB until the next successful run.
-
-    \item \textbf{Root cause: unconditional full re-upload.}
-          The original code re-uploaded all $\sim$980 pages on every daily
-          run regardless of whether content had changed. The
-          \texttt{KB Articles} library alone (1,266 pages at $\sim$220ms
-          per S3 \texttt{head\_object} call) required 278 seconds just
-          for change detection I/O.
-\end{itemize}
-
-I implemented a two-phase hybrid sync (\textbf{v1.1.x + v1.1.18}) that
-reduced steady-state run time from 291 seconds average to approximately
-\textbf{25 seconds}:
-
-\begin{enumerate}
-    \item \textbf{Phase 1 --- Library-level change detection ($\sim$25s
-          for all 49 libraries).} One lightweight ALB call per library
-          using a SharePoint \texttt{filter=Modified gt \{last\_synced\_at\}}
-          query. Zero results means the entire library is unchanged and
-          is skipped with no further I/O.
-    \item \textbf{Phase 2 --- Conditional sync.} Only changed libraries
-          are processed. Sequential if five or fewer changed; parallel
-          via \texttt{ThreadPoolExecutor(max\_workers=3)} if more than
-          five changed.
-    \item \textbf{Per-page idempotency.} Within each synced library,
-          each page's SharePoint \texttt{Modified} timestamp is compared
-          to the \texttt{sp-modified} field stored in S3 object metadata.
-          Unchanged pages skip HTML extraction and S3 upload entirely.
-\end{enumerate}
-
-Beyond the KB sync, log analysis also surfaced seven additional
-production bugs fixed across versions v1.1.1--v1.1.32:
-
-\begin{itemize}
-    \item \textbf{OpenSearch silent delete} (v1.1.1): index creation
-          failure silently deleted the index and reported CloudFormation
-          SUCCESS. Fixed with proper exception handling and idempotency
-          check.
-    \item \textbf{Fire-and-forget Lambda pattern}: \texttt{EventStoreExtractLambda}
-          and \texttt{ClientFundMappingLambda} always reported SUCCESS
-          regardless of actual outcome due to incorrect exception class
-          references (\texttt{boto3.exceptions.BotoError} does not exist).
-    \item \textbf{Athena SSE encryption inconsistency}: queries used
-          \texttt{SSE\_S3} instead of \texttt{SSE\_KMS} in some Lambdas.
-    \item \textbf{Athena race condition}: \texttt{MSCK REPAIR TABLE}
-          executed immediately after \texttt{CREATE TABLE} without
-          waiting for completion.
-    \item \textbf{SSL verification disabled}: BPM API calls used
-          \texttt{verify=False}.
-\end{itemize}
-
-\subsection{Knowledge Base Enrichment: NavChecklist Documents}
-
-As part of IISS-824, I uploaded the NavChecklist process documentation
-PDFs (\textit{Architecture -- NAV CHECKLIST.pdf}, \textit{FAQ -- NAV
-CHECKLIST.pdf}) to the KB S3 bucket under
-\texttt{RPA Processes/NAV Checklist/} using the idempotent upload
-script. These documents --- describing the NAV calculation checklist
-process flow --- are now indexed in the production Knowledge Base and
-searchable by the chatbot.
-
-\subsection{Code Quality and Engineering Improvements}
-
-Alongside the bug fixes, I delivered the following engineering quality
-improvements to bring the codebase in line with IA Best Practice
-guidelines (pending dev approval gate):
-
-\begin{itemize}
-    \item \textbf{Module refactor}: the 1,140-line monolithic
-          \texttt{function.py} split into 8 focused modules
-          (\texttt{handler.py}, \texttt{event\_service\_api.py},
-          \texttt{secrets.py}, \texttt{project\_lookup.py}, etc.)
-    \item \textbf{structlog migration}: replaced \texttt{print()} and
-          root logger across all 11 Lambda functions with structlog
-          structured logging
-    \item \textbf{Type hints and docstrings}: PEP~484 type hints and
-          Google-style docstrings added to all functions and classes
-    \item \textbf{Test suite}: 194 unit tests at 99\% code coverage
-          (v1.1.x series)
-    \item \textbf{Pydantic models}: Databricks API response and BPM
-          API response wrapped in Pydantic validation models
-    \item \textbf{Kill switch}: SSM Parameter Store kill switch pattern
-          (\texttt{/{Env}/rpa-llm/ircoekb/process-run-status}: RUN/STOP)
-          implemented across IRCOEKB, Event Store, and Mapping Lambdas
-    \item \textbf{X-Ray tracing}: AWS Lambda Powertools Tracer
-          instrumented on all functions (enabled in DEV; pending approval
-          for UAT/PROD)
-\end{itemize}
-
-Versions v1.1.1 through v1.1.32 were released during Aug~3--20, 2026.
-
-\subsection{Proposed: Hybrid Graph-RAG Architecture}
-
-During the codebase analysis I identified a structural limitation of
-the current flat-vector RAG approach for the Citco RPA domain. The
-entities in this domain are highly relational: clients have funds, funds
-run specific processes, processes execute on either Blue Prism or UiPath,
-and each platform has its own operational knowledge base. A standard
-vector similarity search treats all these entities as independent text
-chunks, losing the relational structure.
-
-I propose a \textbf{Hybrid Graph-RAG} enhancement: adding Amazon Neptune
-as a graph layer alongside the existing OpenSearch vector store. The
-graph would model the entity relationship network (client--fund--process--platform),
-enabling the Bedrock agent to traverse relationships for multi-hop queries
-(\textit{``Which Blue Prism processes handle FX Closeouts for client X?''}),
-then retrieve dense context from the vector KB for the identified process
-entities. The dual-path retrieval would improve answer accuracy for
-complex operational queries while maintaining the existing RAG pipeline
-for straightforward procedural lookups. This proposal will be submitted
-as a formal IISS follow-on ticket.
+% Keep all floats within this chapter
+\FloatBarrier
 
 % ────────────────────────────────────────────────────────────
 % Phased delivery narrative, support incidents, and JIRA scope

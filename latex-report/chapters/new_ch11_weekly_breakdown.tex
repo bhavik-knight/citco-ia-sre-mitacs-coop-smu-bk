@@ -7,62 +7,134 @@
 \chapter{Weekly Implementation Breakdown}
 \label{chap:weekly_breakdown}
 
-The internship ran from Mar~15 to Aug~31, 2026 --- 24 working weeks at
-part-time intensity for Weeks~1--4 (Mar~15--Apr~12, $\sim$10--20~h/week)
-transitioning to full-time from Week~5 onwards ($\sim$40~h/week). The
-following narrative documents what I delivered, encountered, and learned
-each week, aligned to Monday--Friday calendar weeks.
+This chapter documents the work delivered each week across the 24-week
+internship (Mar~15 -- Aug~31, 2026). Weeks~1--4 operated at part-time
+intensity ($\sim$15--20~h/week) while balancing university coursework;
+full-time engagement ($\sim$40~h/week) began in Week~5.
 
-% ────────────────────────────────────────────────────────────
-\section{Weeks 1--4: Onboarding (Mar~16 -- Apr~10)}
-\label{sec:wb_weeks1_4}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 1
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 1 \hfill Mar~16--20, 2026}
+\section{Week 1: Environment Setup \& Access Onboarding (Mar~16--20)}
+\label{sec:week1}
 
-First week of engagement, part-time ($\sim$10~h). Filed Day~1 access requests
-for AWS console, JIRA, Confluence, and CodeCommit. Attended daily standups
-as the primary orientation mechanism. Reviewed Confluence architecture
-documentation for the six IA platforms (\texttt{automationhub},
-\texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian},
-\texttt{rpacfs1}) and mapped Lambda, ECS, and EC2 workloads across them.
-Security onboarding session with Kishor covered access boundaries,
-credential management policy, and JIRA workflow.
+Week~1 marked the formal start of the internship with Day-1 orientation
+on March~16. I met with manager Kishor Deotale for a comprehensive overview
+of the team structure, project scope, and internship expectations. The team
+introduction call connected me with co-interns Sridhar Vadla and Soundarya
+Venkataraman, as well as senior mentors Horace (Ho Hoi Leung) and Kri
+(Kristia Marie Labos).
 
-\subsection*{Week 2 \hfill Mar~23--27, 2026}
+The primary focus was establishing access to Citco's development infrastructure.
+I raised access request tickets for Confluence (\#14193911), JIRA (\#14193674,
+\#14193943), and BitBucket (\#14196961). AWS Core Dev access was initiated
+through the IDM portal. Local development tools were installed: VSCode with
+Python and AWS Toolkit extensions, Git with SSH key configuration, PyCharm,
+Postman, and the Amazon Q plugin for AI-assisted coding.
 
-Access requests cleared. Began first concrete deliverable: RPACFS1
-CloudWatch pipeline health dashboard (IISS-435) targeting the
+On March~20, I attended a security meeting with Kishor, Ivan Carlo, and Maria
+covering the BPM Control Questionnaire. This session provided foundational
+knowledge of Citco's security posture: Active Directory integration for
+authorization, Ping authentication (migrated from SiteMinder), penetration
+testing processes, and access logging infrastructure including ELK stack,
+Kibana, and ElasticSearch with 7--14 day retention policies. I also learned
+about Dynatrace application monitoring for anomaly detection and alerting.
+
+% ════════════════════════════════════════════════════════════
+% WEEK 2
+% ════════════════════════════════════════════════════════════
+
+\section{Week 2: AWS Services Deep Dive (Mar~23--26)}
+\label{sec:week2}
+
+With access requests progressing, Week~2 shifted to intensive AWS services
+learning. I completed a structured study of AWS database offerings: relational
+options (RDS with Single/Multi-AZ deployments, Aurora auto-scaling, Redshift
+for OLAP workloads), NoSQL options (DynamoDB, DocumentDB), and specialized
+databases (Neptune for graph queries, TimeStream for time-series, QLDB for
+immutable ledgers).
+
+The Neptune study proved directly relevant---the CitcoWorks Knowledge Graph
+uses Neptune to store L1--L5 hierarchy relationships. I learned both Gremlin
+(property graph traversal) and SPARQL (RDF pattern matching) query languages,
+understanding when each is appropriate: Gremlin for application-level traversal,
+SPARQL for semantic data integration.
+
+CloudWatch and CloudFormation consumed the remainder of Week~2. I studied
+the CloudWatch CMAA cycle (Collect, Monitor, Act, Analyze), metric types
+(EC2 1-minute detailed vs 5-minute basic), log retention policies, alarm
+configuration (metric alarms, composite alarms), and EventBridge integration.
+CloudFormation IaC fundamentals covered templates (YAML/JSON), stacks, and
+change sets---knowledge immediately applied in Week~3's dashboard work.
+
+% ════════════════════════════════════════════════════════════
+% WEEK 3
+% ════════════════════════════════════════════════════════════
+
+\section{Week 3: IISS-435 CloudWatch Dashboard (Mar~30 -- Apr~1)}
+\label{sec:week3}
+
+Week~3 transitioned from learning to delivery with the first JIRA ticket:
+IISS-435, a CloudWatch pipeline health dashboard for the
 \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure} repository.
-Dashboard included Lambda function monitoring and Logs Insights error
-widgets. Confluence documentation for Amazon tools completed.
 
-\subsection*{Week 3 \hfill Mar~30 -- Apr~3, 2026}
+On March~30, I added CloudWatch metrics instrumentation to track CTI
+(CAIS Pricing Extract) submission activities within the pipeline. The
+Pipeline Health Dashboard was created to provide operational visibility
+into system performance. I refactored the metrics code into a dedicated
+module for maintainability and added comprehensive unit tests to prevent
+regressions. Repository hygiene tasks included updating \texttt{.gitignore}
+to exclude virtual environments, pytest cache, and test artifacts.
 
-IISS-435 completed. Pivoted to IISS-455: Lambda monitoring CloudWatch
-dashboard for \texttt{rpacfs1} and \texttt{ia-bpo}, enumerating 51
-Lambda functions via \texttt{SEARCH()} expressions. Initial inventory
-work surfaced the first instance of the SEARCH() visibility gap: functions
-not invoked over the preceding weekend returned zero results on Monday morning.
+March~31 focused on the technical dashboard with a CloudWatch Logs Insights
+widget for deeper system analysis. This widget enabled error pattern extraction
+from Lambda execution logs, providing root cause analysis capabilities that
+the basic metrics dashboard lacked. I configured appropriate time ranges and
+query syntax for CTI pipeline logs.
 
-\subsection*{Week 4 \hfill Apr~6--10, 2026}
+April~1 completed the testing phase: unit tests for Logs Insights query
+functionality, CFN template validation tests, and a full test suite run.
+Code quality improvements included moving imports to
+file tops following Python best practices and adding type hints for IDE support.
 
-IISS-455 dashboard deployed; IISS-461 Confluence Lambda inventory page
-(51 functions with owner/trigger mapping) published. IISS-469 started:
-extending the dashboard to \texttt{cfsbpm}, \texttt{citcoworks}, and
-\texttt{meridian} platforms. Kishor reviewed an early prototype and
-scoped the extension requirements for IISS-487: three additional platform
-tag dimensions, multi-tag filter logic, and the Confluence inventory page.
-The IAM boundary constraint for \texttt{logs:PutSubscriptionFilter} was
-confirmed: 106 subscription filters would be needed but are blocked by
-the scoped permission set.
+% ════════════════════════════════════════════════════════════
+% WEEK 4
+% ════════════════════════════════════════════════════════════
 
-% ────────────────────────────────────────────────────────────
+\section{Week 4: IISS-455 Lambda Dashboard \& Documentation (Apr~6--8)}
+\label{sec:week4}
+
+Week~4 marked the transition from the CTI-specific dashboard to organization-wide
+Lambda monitoring. IISS-435 was merged to release/SRE on April~6, and I
+immediately pivoted to IISS-455: the IA Lambda Monitoring Dashboard.
+
+The dashboard covered all 51 Lambda functions across \texttt{rpacfs1} and
+\texttt{ia-bpo} platforms with a modular YAML widget architecture. Widgets
+included: filter info with usage instructions, overview metrics (Total
+Invocations, Errors, Throttles), error analysis (bar charts, Logs Insights
+investigation), duration metrics (Average, Max, P99 latency), and operational
+metrics (cold starts, concurrency, throttling, memory utilization). The
+modular design enabled easy maintenance---adding a new widget required only
+a new YAML file, not code changes.
+
+On April~8, I addressed PR review feedback from senior team members and
+created IISS-461, a Confluence documentation subtask. The Lambda inventory
+page cataloged all 51 functions with trigger mappings (S3, SQS, EventBridge,
+API Gateway), memory configurations, timeout settings, and budget code
+allocations for cost tracking.
+
+By Week~4's end, the part-time period delivered two production-ready CloudWatch
+dashboards, comprehensive documentation, and a passing unit test suite. This
+foundation enabled the full-time transition in Week~5 to focus on the more
+ambitious Grafana AMG centralized dashboard (IISS-487).
+
+% ════════════════════════════════════════════════════════════
+% WEEK 5
+% ════════════════════════════════════════════════════════════
+
 \section{Week 5: Training Week \& Meridian Incident (Apr~13--17)}
-\label{sec:wb_week5}
-% ────────────────────────────────────────────────────────────
-
-\subsection*{Week 5 \hfill Apr~13--17, 2026}
+\label{sec:week5}
 
 Full-time engagement began. The week was designated as a formal
 knowledge-transfer week with four structured sessions:
@@ -97,12 +169,12 @@ full restoration took 7.5~hours. No MSK consumer lag alarm existed. This
 incident directly motivated IISS-487 and established \texttt{EstimatedMaxTimeLag}
 as the primary MSK SLI. IISS-469 was completed this week.
 
-% ────────────────────────────────────────────────────────────
-\section{Week 6: Platform Extension \& IISS-487 Creation (Apr~20--24)}
-\label{sec:wb_week6}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 6
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 6 \hfill Apr~20--24, 2026}
+\section{Week 6: Platform Extension \& IISS-487 Creation (Apr~20--24)}
+\label{sec:week6}
 
 IISS-469 dashboard extension merged. EC2 monitoring gap analysis
 (IISS-483): scanned 83 instances, discovered the \texttt{rpacfs1} tagging
@@ -110,15 +182,15 @@ inconsistency (\texttt{BudgetCode="CFS/RPA"} instead of "rpacfs1"),
 and introduced the AppName fallback pattern. IISS-487 Grafana AMG
 story created and initial requirements drafted with Kishor.
 ECS monitoring dashboard (IISS-484) started; Container Insights cost
-analysis produced four-option comparison: Free/$0, Lambda-based/$10,
+analysis produced four-option comparison: Free/\$0, Lambda-based/\$10,
 Standard CI/\$10.44, Enhanced/\$18.60.
 
-% ────────────────────────────────────────────────────────────
-\section{Week 7: CloudWatch Platform Completion (Apr~27 -- May~1)}
-\label{sec:wb_week7}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 7
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 7 \hfill Apr~27 -- May~1, 2026}
+\section{Week 7: CloudWatch Platform Completion (Apr~27 -- May~1)}
+\label{sec:week7}
 
 ECS (IISS-484) and EKS (IISS-485) monitoring dashboards completed.
 EKS scope narrowed: only one EKS cluster (\texttt{uipath-eks-cluster-01},
@@ -126,14 +198,13 @@ AUTOMATIONHUB, idle); placed on hold pending cluster activation.
 IISS-482 (IA Resources Monitoring Platform parent) scaffolded. EC2 AppName
 fallback pattern documented as the standard for all \texttt{rpacfs1} resource
 types. CloudWatch dashboard platform (IISS-482--486) foundational work complete.
-Phase~1 total: \textbf{100 hours}.
 
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 8
+% ════════════════════════════════════════════════════════════
+
 \section{Week 8: Support Rotation \#1 \& IISS-487 Elevation (May~4--8)}
-\label{sec:wb_week8}
-% ────────────────────────────────────────────────────────────
-
-\subsection*{Week 8 \hfill May~4--8, 2026}
+\label{sec:week8}
 
 First RPA production support rotation (11~AM--7~PM~EST). Monitored VPL
 queue, triaged Corporate Actions tickets, and reviewed Blue Prism and UiPath
@@ -142,12 +213,12 @@ priority following the Meridian Incident post-mortem. Infrastructure deployment
 deferred to Week~9 due to support duties; used the week to scaffold the Grafana
 AMG repository and plan the four-layer architecture and IAM permission model.
 
-% ────────────────────────────────────────────────────────────
-\section{Week 9: Infrastructure Deployment Day (May~11--15)}
-\label{sec:wb_week9}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 9
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 9 \hfill May~11--15, 2026}
+\section{Week 9: Infrastructure Deployment Day (May~11--15)}
+\label{sec:week9}
 
 The most infrastructure-dense week of the internship. On \textbf{May~11},
 four CloudFormation stacks deployed in sequence:
@@ -168,12 +239,12 @@ motivated NFR6: use only standard CloudWatch plugin queries.
 Dashboard Rows~1--3 (Health Overview, Performance Overview, SQS) and early
 Lambda rows built by May~15.
 
-% ────────────────────────────────────────────────────────────
-\section{Weeks 10--11: Dashboard Build Intensive (May~18--29)}
-\label{sec:wb_weeks10_11}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 10
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 10 \hfill May~18--22, 2026}
+\section{Week 10: Dashboard Build Intensive (May~18--22)}
+\label{sec:week10}
 
 Lambda, ECS, EC2, and MSK/Kafka rows built. Metric Insights SQL percentile
 limitation confirmed: \texttt{GROUP BY} mode supports only AVG/SUM/MIN/MAX;
@@ -187,22 +258,25 @@ grew to \textbf{14,720~lines} at version~v438, triggering
 storage; provisioner updated to fetch via \texttt{s3:GetObject} at deploy
 time.
 
-\subsection*{Week 11 \hfill May~25--29, 2026}
+% ════════════════════════════════════════════════════════════
+% WEEK 11
+% ════════════════════════════════════════════════════════════
+
+\section{Week 11: Database Monitoring Rows (May~25--29)}
+\label{sec:week11}
 
 DocumentDB, Neptune, Redis/Valkey, OpenSearch, and RDS rows completed.
 OpenSearch JVM heap pressure alarm wired --- OpenSearch was the bottleneck
 in the Meridian Incident. SNS Re-Notifier Lambda deployed for ongoing alarm
 state reminders. Eight composite alarms configured to aggregate per-service
-states into per-platform OK/ALARM indicators (Row~12). Phase~2 total:
-\textbf{157 hours}. Detection latency for a Meridian Kafka event now
-projected at $<$30~seconds.
+states into per-platform OK/ALARM indicators.
 
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 12
+% ════════════════════════════════════════════════════════════
+
 \section{Week 12: Support Rotation \#2 \& MESO Hotfix (Jun~1--5)}
-\label{sec:wb_week12}
-% ────────────────────────────────────────────────────────────
-
-\subsection*{Week 12 \hfill Jun~1--5, 2026}
+\label{sec:week12}
 
 Second RPA support rotation. IISS-538: MESO \texttt{ia\_meso\_process} ECS
 tasks consuming excessive CPU and memory, not autoscaling. Root cause:
@@ -211,12 +285,12 @@ subsequently added ECS SaturationAlarm (CPU $>$80\% for 5~minutes) to the
 IISS-487 alarm set. EC2 dashboard rows (Rows~7--8) completed with AppName
 fallback pattern for all 83 instances.
 
-% ────────────────────────────────────────────────────────────
-\section{Week 13: CAIS Hotfix \& SQS Feature (Jun~8--12)}
-\label{sec:wb_week13}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 13
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 13 \hfill Jun~8--12, 2026}
+\section{Week 13: CAIS Hotfix \& SQS Feature (Jun~8--12)}
+\label{sec:week13}
 
 Most incident-dense week. IISS-706: CAIS Deadline process failed with
 \texttt{SMBAuthenticationError: SpnegoError} on UCM upload. 7-hour
@@ -228,30 +302,28 @@ Hotfix added fail-fast validation in \texttt{constants.py} and
 
 In parallel: IISS-507 inventory API scaffolded via Kiro spec-driven
 workflow (2.5~hours). IISS-482 SQS monitoring feature completed with
-\textbf{960 automated tests} covering registry dispatch, 3-tier fallback,
+\textbf{comprehensive automated tests} covering registry dispatch, 3-tier fallback,
 and dashboard builder integration.
 
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 14
+% ════════════════════════════════════════════════════════════
+
 \section{Week 14: Final Dashboard Deployment v728 (Jun~15--19)}
-\label{sec:wb_week14}
-% ────────────────────────────────────────────────────────────
+\label{sec:week14}
 
-\subsection*{Week 14 \hfill Jun~15--19, 2026}
-
-Dashboard finalised and deployed as \textbf{version v728} on Jun~18.
-Deep-link panels (Row~14) added: each resource panel links directly to
+Dashboard finalized and deployed as \textbf{version v728} on Jun~18.
+Deep-link panels added: each resource panel links directly to
 the relevant AWS Console page, reducing incident response navigation time.
 DocumentDB, Redis, and OpenSearch rows restructured for consistent panel layout.
 Main branch merge completed. IISS-487 closed at \textbf{140 hours}.
-Cumulative: 17 rows, 152 panels, 38 CloudWatch alarms, 4 CFN stacks.
-Phase~3 total: \textbf{160 hours}.
 
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 15
+% ════════════════════════════════════════════════════════════
+
 \section{Week 15: Inventory API Foundation (Jun~22--26)}
-\label{sec:wb_week15}
-% ────────────────────────────────────────────────────────────
-
-\subsection*{Week 15 \hfill Jun~22--26, 2026}
+\label{sec:week15}
 
 IISS-507 Lambda discoverers implemented for all six platforms. The
 \texttt{rpacfs1} discoverer confirmed the AppName fallback pattern:
@@ -260,12 +332,12 @@ fallback to \texttt{AppName="rpacfs1"} correctly identifies the fleet.
 Repository infrastructure (Flask async, boto3, Pydantic, serverless-wsgi,
 pytest) established.
 
-% ────────────────────────────────────────────────────────────
-\section{Week 16: MESO Critical Incident \& ECS Discoverers (Jun~29 -- Jul~3)}
-\label{sec:wb_week16}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 16
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 16 \hfill Jun~29 -- Jul~3, 2026}
+\section{Week 16: MESO Critical Incident \& ECS Discoverers (Jun~29 -- Jul~3)}
+\label{sec:week16}
 
 IISS-741 (Critical): INNOCAP and SAMLMOS MESO fund tasks stuck in queue
 with no Lambda heartbeat. Manual retrigger of \texttt{ia\_meso\_process}
@@ -277,12 +349,12 @@ BudgetCode ambiguity discovered: a naive single-stage tag lookup conflates
 resources from two operationally distinct platforms. Two-stage filter
 implemented: Stage~1 on BudgetCode, Stage~2 on AppName discriminator.
 
-% ────────────────────────────────────────────────────────────
-\section{Week 17: VPL Incident \& EC2 Discoverers (Jul~6--10)}
-\label{sec:wb_week17}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 17
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 17 \hfill Jul~6--10, 2026}
+\section{Week 17: VPL Incident \& EC2 Discoverers (Jul~6--10)}
+\label{sec:week17}
 
 IISS-753: VPL IPV \AE xeo pricing window \texttt{CheckpointException} in
 UiPath \texttt{OpenValuationAnalysis.xaml} --- bot exhausting retry budget
@@ -291,18 +363,18 @@ resilience fix; escalated to development team (Bitbucket access restriction).
 Pattern identified as systemic risk across VPL workflows targeting
 \AE xeo dynamically loading screens.
 
-EC2 discoverers completed. Pydantic response model standardised:
+EC2 discoverers completed. Pydantic response model standardized:
 name, type, \texttt{budget\_code}, tags (free-form dict), arn.
 All 83 EC2 instances confirmed in inventory.
 
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 18
+% ════════════════════════════════════════════════════════════
+
 \section{Week 18: Test Suite \& API Milestone (Jul~13--17)}
-\label{sec:wb_week18}
-% ────────────────────────────────────────────────────────────
+\label{sec:week18}
 
-\subsection*{Week 18 \hfill Jul~13--17, 2026}
-
-Automated test suite milestone reached on Jul~14: \textbf{562 tests at 99\%
+Automated test suite milestone reached on Jul~14: \textbf{99\%
 code coverage}. Suite comprised four layers: unit tests with mocked boto3
 clients, integration tests via Flask test client, property-based tests
 using Hypothesis (random tag combinations verifying two-stage filter
@@ -312,19 +384,24 @@ Async route handler architecture validated: \texttt{asyncio.gather()}
 dispatching all discoverers concurrently via \texttt{ThreadPoolExecutor}
 keeps full-fleet enumeration under the 10-second NFR target.
 
-% ────────────────────────────────────────────────────────────
-\section{Weeks 19--20: CloudWatch Logs Layer (Jul~20 -- Jul~31)}
-\label{sec:wb_weeks19_20}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 19
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 19 \hfill Jul~20--24, 2026}
+\section{Week 19: CloudWatch Logs Layer (Jul~20--24)}
+\label{sec:week19}
 
 CloudWatch Logs observability layer added to the Grafana platform:
 log group URL encoding utility and 30 Logs Insights saved queries across
-7 platforms (748 matched log groups from 3,423 total). Grafana Row~17
-(log-derived panels) added.
+7 platforms (748 matched log groups from 3,423 total). Log-derived panels
+added to the dashboard.
 
-\subsection*{Week 20 \hfill Jul~27--31, 2026}
+% ════════════════════════════════════════════════════════════
+% WEEK 20
+% ════════════════════════════════════════════════════════════
+
+\section{Week 20: Support Rotation \#3 \& Log Group PR (Jul~27--31)}
+\label{sec:week20}
 
 Third RPA support rotation. IISS-876: VPL Pricing GTL incorrect booking
 values. Root cause analysis identified targeted process logic error in
@@ -332,12 +409,12 @@ GTL booking entry calculation; coordinated with business team on affected
 NAV calculations. Log group PR merged; SRE Observability Platform
 \textbf{v2.19.9} released.
 
-% ────────────────────────────────────────────────────────────
-\section{Week 21: IISS-824 ML/LLM Agent (Aug~3--7)}
-\label{sec:wb_week21}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 21
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 21 \hfill Aug~3--7, 2026}
+\section{Week 21: IISS-824 ML/LLM Agent (Aug~3--7)}
+\label{sec:week21}
 
 IISS-824: Gained access to \texttt{ml-rpa-status-llm-agent} and
 \texttt{core-smart-rpa-llm-ecr-image} CodeCommit repositories.
@@ -358,31 +435,37 @@ condition, SSL verification disabled, bare \texttt{except:} in usage
 report, and CFN custom resource no-timeout hang.
 
 Refactored 1,140-line monolithic \texttt{function.py} into 8 focused
-modules. Wrote \textbf{194 unit tests} at 99\% code coverage.
+modules. Wrote \textbf{comprehensive unit tests} at 99\% code coverage.
 Deployed structlog migration across all 11 Lambda functions. Uploaded
 NavChecklist PDFs to production KB. Versions v1.1.1--v1.1.32 released.
 
-% ────────────────────────────────────────────────────────────
-\section{Week 22: AMG Cleanup \& X-Ray Research (Aug~10--14)}
-\label{sec:wb_week22}
-% ────────────────────────────────────────────────────────────
+% ════════════════════════════════════════════════════════════
+% WEEK 22
+% ════════════════════════════════════════════════════════════
 
-\subsection*{Week 22 \hfill Aug~10--14, 2026}
+\section{Week 22: AMG Cleanup \& X-Ray Research (Aug~10--14)}
+\label{sec:week22}
 
 AMG repository cleanup: stale stack references removed, service name
-standardised to \texttt{ia-it-sre-infrastructure-monitoring-amg},
+standardized to \texttt{ia-it-sre-infrastructure-monitoring-amg},
 dashboard title updated, CA bundle handling improved. IISS-824 continued:
 type hints, docstrings, and ruff lint cleanup across all Lambda modules.
 X-Ray tracing research (IISS-838): evaluated \texttt{aws-lambda-powertools[tracer]}
 vs legacy \texttt{aws-xray-sdk}; cost-modelled 5\% sampling rate at
 $<$\$2/month incremental cost. Deferred deployment pending IAM review.
 
-% ────────────────────────────────────────────────────────────
-\section{Weeks 23--24: Report, KT \& Handover (Aug~17--28)}
-\label{sec:wb_weeks23_24}
-% ────────────────────────────────────────────────────────────
+Work Stream~6 kicked off: IISS-919 (Infrastructure Monitoring Dashboard)
+planning initiated. Initial architecture discussions with Soundarya and Sridhar
+established the config-driven panel rendering approach and CloudWatch
+integration layer. Reviewed the \texttt{ia-config-portal} codebase
+(React/TypeScript, Express.js BFF, Ping Access SSO authentication).
 
-\subsection*{Week 23 \hfill Aug~17--21, 2026}
+% ════════════════════════════════════════════════════════════
+% WEEK 23
+% ════════════════════════════════════════════════════════════
+
+\section{Week 23: Support Rotation \#4 \& Report Writing (Aug~17--21)}
+\label{sec:week23}
 
 Fourth RPA support rotation. IISS-876 (VPL GTL) follow-up with business
 team. Report LaTeX chapters drafted: implementation, methodology, and
@@ -391,41 +474,33 @@ results chapters. IISS-824 final improvements: SharePoint change detection
 updates. AMG version \textbf{v3.1.x} series released with platform-agnostic
 rename and stale spec cleanup.
 
-\subsection*{Week 24 \hfill Aug~24--28, 2026}
+IISS-919 progress: implemented the config-driven dashboard schema
+(JSON panel definitions, grid positioning, data source configuration).
+Built initial panel type components (line chart, gauge, stat tile) using
+Recharts and MUI. Integrated CloudWatch \texttt{getMetricData} API calls
+via the Express.js BFF proxy layer.
+
+% ════════════════════════════════════════════════════════════
+% WEEK 24
+% ════════════════════════════════════════════════════════════
+
+\section{Week 24: Final Report \& KT Handover (Aug~24--28)}
+\label{sec:week24}
 
 Final report compilation. Knowledge-transfer sessions with Horace and Kri:
 handover notes for dashboard operating model, alarm runbooks, inventory API
 deployment guide, and incident escalation procedures.
 Mitacs BSI renewal confirmed for Sep~1--Dec~31, 2026 --- providing
-continuity for X-Ray tracing (IISS-837--844) and log-group discovery
-(IISS-845--873) work deferred from this engagement.
+continuity for X-Ray tracing (IISS-837--844), log-group discovery
+(IISS-845--873), and Enterprise UI Dashboards (IISS-509, IISS-919)
+work deferred from this engagement.
 
-% ────────────────────────────────────────────────────────────
-\section{Internship Hours Summary}
-\label{sec:wb_hours}
-% ────────────────────────────────────────────────────────────
+IISS-509 (Infrastructure Inventory Dashboard) frontend scaffolded:
+AG~Grid tables rendering Inventory API responses, multi-dimensional
+filtering (platform, environment, resource type), and export-to-Excel
+functionality. IISS-919 continued: drag-and-drop layout via
+\texttt{react-grid-layout}, threshold coloring for gauge panels,
+and responsive breakpoints for mobile views.
 
-\begin{table}[ht]
-\centering
-\caption{Internship Hours by Phase}
-\label{tab:wb_hours}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{lp{1.2cm}Xp{1.5cm}}
-\hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Phase}} & \textcolor{white}{\textbf{Weeks}} & \textcolor{white}{\textbf{Primary Deliverables}} & \textcolor{white}{\textbf{Hours}} \\
-\hline
-Foundation \& CloudWatch & 1--7 & IISS-435, IISS-455/461/469, IISS-482--486 scaffolding & 100 \\
-Grafana AMG Build & 8--11 & IISS-487 core (4 CFN stacks, Rows 1--11, alarms) & 157 \\
-Dashboard Completion \& Hotfixes & 12--15 & IISS-487 v728, IISS-706, IISS-538, IISS-482 SQS & 160 \\
-Inventory API, Research \& Report & 16--24 & IISS-507, IISS-741, IISS-824, X-Ray specs, report & 480 \\
-\textbf{Total} & \textbf{24} & & \textbf{897} \\
-\hline
-\end{tabularx}
-\end{table}
-
-The internship ran from Mar~15 to Aug~31, 2026, logging \textbf{897 hours}
-across 24 weeks. The remaining 3~hours to reach the 900-hour commitment are
-covered by knowledge-transfer and handover sessions in the final days of
-August and first days of September. Complete itemised work logs are provided
-in the appendix and in the accompanying \texttt{WorkLogs.xlsx} submission
-file.
+% Keep all floats within this chapter
+\FloatBarrier

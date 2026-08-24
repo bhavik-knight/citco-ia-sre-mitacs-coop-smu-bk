@@ -16,13 +16,15 @@
 % Table of Contents & Lists
 \clearpage
 \tableofcontents
+
+\vspace{1em}
 \listoffigures
+\vspace{1em}
 \listoftables
 \clearpage
 
 % Main Body Chapters (15-Chapter Structure)
 \pagenumbering{arabic}
-\firstchaptertrue  % reset so Chapter 1 gets no rule above it
 
 % Chapter 1: About Citco
 \input{chapters/new_ch01_about_citco}
@@ -45,11 +47,11 @@
 % Chapter 7: Learning Goals
 \input{chapters/new_ch07_learning_goals}
 
-% Chapter 8: Methodologies
-\input{chapters/new_ch08_methodologies}
+% Chapter 8: Requirements Elicitation
+\input{chapters/new_ch08_requirements_elicitation}
 
-% Chapter 9: Requirements Elicitation
-\input{chapters/new_ch09_requirements_elicitation}
+% Chapter 9: Methodologies
+\input{chapters/new_ch09_methodologies}
 
 % Chapter 10: Implementation & Architecture
 \input{chapters/new_ch10_implementation}
@@ -72,9 +74,8 @@
 % Appendices
 \appendix
 \input{appendices/work_logs}
-\clearpage
 
-% Bibliography
+% Bibliography / References
 \printbibliography[heading=bibintoc, title={References}]
 
 \end{document}

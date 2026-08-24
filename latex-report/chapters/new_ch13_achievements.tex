@@ -1,5 +1,5 @@
 ﻿% ============================================================
-% CHAPTER 12: ACHIEVEMENTS & BUSINESS VALUE
+% CHAPTER 13: ACHIEVEMENTS & BUSINESS VALUE
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
 % ============================================================
@@ -8,195 +8,131 @@
 \label{chap:achievements}
 
 Working on the IA-IT-SRE Infrastructure at Citco Technology Management,
-I delivered three primary engineering work streams and contributed to
-production operations across four RPA support rotations. The following
-sections document the key deliverables, quantitative metrics, and
-business value created during the internship.
+I achieved several significant milestones across observability platform
+development, API engineering, and production support operations. These
+accomplishments highlight my technical growth and the business value
+delivered during the internship.
 
 % ────────────────────────────────────────────────────────────
-\section{Key Deliverables and Metrics}
-\label{sec:key_deliverables}
+\section{Key Achievements}
+\label{sec:key_achievements}
 % ────────────────────────────────────────────────────────────
-
-Three independent deliverables were completed across my internship period.
-Each is evaluated below against its original acceptance criteria, with
-quantitative metrics cited where applicable.
-
-\subsection{IISS-487: Grafana AMG Centralized SRE Dashboard}
-
-The Grafana AMG observability platform was my primary deliverable of the
-internship, absorbing \textbf{140 hours} across May~6--Jun~18, 2026. At
-completion, the workspace contained:
-
-\begin{table}[ht]
-\centering
-\caption{IISS-487 Grafana Dashboard --- Delivery Metrics}
-\label{tab:iiss487_metrics}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{Xp{5.5cm}}
-\hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Metric}} & \textcolor{white}{\textbf{Value at Completion}} \\
-\hline
-Total dashboard rows & 14 \\
-Total panels & 110+ \\
-CloudWatch alarms provisioned & 38 \\
-Service categories monitored & 7 (SQS, Lambda, ECS, MSK, EC2, OpenSearch, DocumentDB) \\
-CloudFormation stacks deployed & 4 (May 11, 2026) \\
-Container Insights enabled & 5 of 6 Meridian ECS clusters \\
-IAM role model & 16-role cross-account agent permission model \\
-Grafana version at delivery & 12.4 (upgraded from 10.4 during development) \\
-Hours logged (JIRA) & 140 \\
-\hline
-\end{tabularx}
-\end{table}
-
-The original acceptance criteria for IISS-487 required a single Grafana workspace
-covering all six platforms (\texttt{rpacfs1}, \texttt{ia-bpo},
-\texttt{automationhub}, \texttt{meridian}, \texttt{citcoworks}) with filter
-variables enabling per-environment drill-down, at least one alarm per monitored
-platform, and an IaC-provisioned alarm stack redeployable without manual edits.
-All criteria were met. The four CloudFormation stacks deploy reproducibly via a
-single \texttt{sam deploy} invocation, and the Lambda-backed provisioner
-dynamically discovers the current function and cluster fleet at deploy time,
-ensuring that any resource added after the initial deployment is automatically
-covered on the next pipeline run.
-
-\subsection{IISS-482/455/469: CloudWatch Monitoring Platform}
-
-The earlier CloudWatch dashboard work I completed inventoried and visualized the full IA
-AWS service fleet before the Grafana migration. Key coverage outcomes:
 
 \begin{itemize}
-    \item Lambda functions inventoried across all six platforms
-          environments at the time of the final audit.
-    \item \textbf{22 ECS clusters} enumerated, with cluster- and service-level
-          CPU and memory metrics surfaced via Container Insights after May~11.
-    \item \textbf{83 EC2 instances} scanned, with a critical tagging
-          inconsistency discovered and documented: \texttt{rpacfs1} instances
-          carried \texttt{BudgetCode="CFS/RPA"} rather than the expected
-          \textbf{"rpacfs1"}, requiring the AppName fallback
-          disambiguation pattern.
-    \item \textbf{Top-K filter analysis}: a systematic evaluation determined
-          that centralizing log aggregation via CloudWatch metric subscription
-          filters would require \textbf{106 filters}---one per function per
-          metric dimension---before being blocked by the team's IAM permission
-          boundary on \texttt{logs:PutSubscriptionFilter}, redirecting effort
-          to the CloudWatch native dashboard approach.
-    \item \textbf{SQS three-tier fallback registry}: the SQS monitoring
-          feature (added Jun~12) was accompanied by \textbf{960 automated
-          tests} covering registry dispatch, fallback transitions, and queue
-          metadata serialization.
+    \item \textbf{CloudWatch Monitoring Platform:} Inventoried the complete AWS
+          service fleet including Lambda functions, ECS clusters, and EC2
+          instances. Discovered and documented a critical tagging inconsistency
+          affecting resource attribution. Developed a three-tier SQS fallback
+          registry with comprehensive automated test coverage.
+
+    \item \textbf{Grafana AMG Centralized Dashboard:} Designed and deployed a
+          comprehensive observability workspace covering all six IA platforms.
+          Implemented dynamic CloudWatch alarms via CloudFormation stacks with
+          Lambda-backed provisioning. Successfully migrated the workspace
+          through a breaking Grafana version upgrade.
+
+    \item \textbf{Infrastructure Inventory REST API:} Built a production-ready
+          Flask API with high test coverage. Implemented the Discoverer Registry
+          pattern enabling extensible resource discovery. Integrated
+          property-based testing with Hypothesis to verify tag disambiguation
+          logic.
+
+    \item \textbf{Container Insights Enablement:} Enabled ECS Container Insights
+          across Meridian clusters, surfacing previously invisible task-level
+          CPU and memory telemetry within hours of deployment.
+
+    \item \textbf{Production Incident Response:} Completed multiple RPA support
+          rotations, resolving notable production incidents. Delivered a
+          critical CAIS Deadline hotfix within hours of initial alert,
+          identifying a credential caching vulnerability during Secrets Manager
+          rotation cycles.
+
+    \item \textbf{Infrastructure-as-Code Proficiency:} Authored CloudFormation
+          stacks with S3-staged templates and multi-environment reuse.
+          Implemented a Lambda-backed dynamic provisioner that auto-discovers
+          resources at deploy time.
+
+    \item \textbf{Cross-Account IAM Architecture:} Designed a cross-account
+          permission model enabling the Grafana workspace to query CloudWatch
+          metrics across all IA platform AWS accounts.
+
+    \item \textbf{SRE Principles Application:} Mapped the four golden signals
+          (latency, traffic, errors, saturation) to concrete CloudWatch metric
+          namespaces. Defined SLO targets for Lambda, ECS, MSK, and SQS services.
+
+    \item \textbf{Test-Driven Development:} Applied TDD practices across all
+          deliverables using pytest, achieving high coverage on the inventory
+          API and SQS registry components.
+
+    \item \textbf{AI-Augmented Engineering:} Leveraged Kiro IDE's spec-driven
+          workflow for API development. Used Amazon~Q for inline code assistance
+          and Claude Sonnet for architecture reasoning.
+
+    \item \textbf{Technical Documentation:} Produced RCA reports for production
+          incidents, Confluence knowledge base articles, and comprehensive
+          acceptance criteria for all deliverables.
 \end{itemize}
 
-\subsection{IISS-507: IA Resources Inventory API}
-
-The \texttt{ia-sre-resources-inventory} Flask REST API I built reached production-ready
-state on Jul~14, 2026. Summary metrics at handoff:
-
-\begin{table}[ht]
-\centering
-\caption{IISS-507 Inventory API --- Delivery Metrics}
-\label{tab:iiss507_metrics}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{Xp{5.5cm}}
-\hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Metric}} & \textcolor{white}{\textbf{Value at Completion}} \\
-\hline
-Automated tests & 562 \\
-Code coverage & 99\% \\
-API response time (full fleet) & $<$10 seconds (NFR3 target met) \\
-Discoverer registry entries & 12 (resource type $\times$ budget code pairs) \\
-Disambiguation pattern & Two-stage AppName filter for Shared BudgetCode \\
-Property-based tests (Hypothesis) & Included in 562 total \\
-\hline
-\end{tabularx}
-\end{table}
-
-The Discoverer Registry pattern --- in which a \texttt{(resource\_type, budget\_code)}
-tuple maps to a concrete \texttt{BaseDiscoverer} subclass --- proved straightforward
-to extend: adding a new platform or resource type required implementing one class
-and registering one entry, with zero changes to routing, serialization, or test
-infrastructure. The 99\% code coverage figure was achieved through a layered test
-strategy: unit tests for each discoverer with mocked boto3 clients; integration tests
-via the Flask test client against all REST endpoints; and property-based tests using
-the Hypothesis library, which generated random tag combinations to verify that the
-two-stage filter never conflated \texttt{meridian} and \texttt{citcoworks}
-resources regardless of input.
-
-\subsection{RPA Production Support}
-
-Four on-call support rotations (Weeks 8, 12, 16, and 20) were completed
-throughout my internship. Over the course of these rotations, five incidents
-reached a point of active investigation or resolution, with the most
-significant being the \textbf{CAIS Deadline hotfix (IISS-706)} on Jun~8, 2026:
-a UCM credential validation failure caused by an empty credential set returned
-during a Secrets Manager rotation cycle, which I resolved within \textbf{7 hours} from
-initial alert to confirmed fix. The support rotations reinforced the direct
-feedback loop between production incident experience and the observability
-platform design --- each incident contributed at least one specific monitoring
-gap to the Grafana dashboard's alarm backlog.
-
 % ────────────────────────────────────────────────────────────
-\section{Impact and Business Value}
-\label{sec:impact_business_value}
+\section{Business Value}
+\label{sec:business_value}
 % ────────────────────────────────────────────────────────────
 
 The shift from a purely reactive to a proactively monitored infrastructure
-is the central business value proposition of this internship's work. Two
-measurable outcomes illustrate that shift most clearly.
+is the central business value proposition of this internship's work.
 
-\subsection{Incident Detection Improvement: MSK Consumer Lag}
+\subsection{Incident Detection: From Hours to Seconds}
 
-The Apr~17, 2026 Meridian incident --- in which approximately 9 million
-Kafka messages queued across the Action Processor consumer group, producing
-a 7.5-hour processing delay affecting multiple prime-brokerage client funds ---
-was the motivating event for the entire monitoring platform. The incident was
-detected only because a fund administrator noticed that expected outputs had
-not arrived; no automated alarm existed to catch the lag as it built.
+The Apr~17, 2026 Meridian incident---in which approximately 9 million Kafka
+messages queued, producing a 7.5-hour processing delay affecting multiple
+client funds---was detected only because a fund administrator noticed missing
+outputs. No automated alarm existed.
 
 The \texttt{EstimatedMaxTimeLag} alarm deployed as part of IISS-487 directly
-addresses this gap. Before deployment, the detection pathway required a human
-to notice missing downstream outputs and escalate through Tier~1 business
-support to the IA-SRE team --- a latency of \textbf{2--3 minutes at best,
-and hours at worst} when the delay began outside working hours. After
-deployment, the CloudWatch alarm fires within \textbf{30 seconds} of
-\texttt{EstimatedMaxTimeLag} crossing its configured threshold, routing a
-notification directly to the IA-SRE team's SNS topic. This improvement from a
-multi-minute manual detection process to a sub-30-second automated alert
-represents a qualitative step change in the team's ability to contain
+addresses this gap:
+
+\begin{itemize}
+    \item \textbf{Before:} Detection required human observation of missing
+          downstream outputs, with latency of 2--3 hours when incidents began
+          outside working hours.
+    \item \textbf{After:} CloudWatch alarm fires within \textbf{30 seconds} of
+          threshold breach, routing notification directly to the SRE team.
+\end{itemize}
+
+This improvement from multi-hour manual detection to sub-30-second automated
+alerting represents a qualitative step change in the team's ability to contain
 fund-impacting incidents before they reach business-level severity.
 
-\subsection{Operational Efficiency: Fleet Visibility}
+\subsection{Operational Efficiency: Unified Fleet Visibility}
 
-Prior to my internship, the IA-SRE team had no single view of all Lambda
-functions, ECS clusters, and EC2 instances under their operational mandate.
-Resource discovery was ad hoc --- when a new function was deployed, a
-Confluence page might be updated, but the update was manual and frequently
-lagged the deployment by days or weeks.
+Prior to this work, the IA-SRE team had no single view of all Lambda functions,
+ECS clusters, and EC2 instances under their operational mandate. Resource
+discovery was ad hoc and frequently lagged deployments by days or weeks.
 
-The combination of the Grafana dashboard and the inventory API delivers two
-distinct efficiency improvements. First, the Grafana workspace provides a
-continuously refreshed view of resource health across all six platforms, eliminating the need to navigate six separate AWS console tabs
-to assess the current state of the IA platform. Second, the inventory API
-provides a machine-readable endpoint that downstream tooling --- including the
-Grafana resource inventory panel on Row~13 of the dashboard --- can query
-programmatically, enabling future automation such as automated tag compliance
-checks and dynamic alarm threshold recalibration.
+The Grafana dashboard and inventory API together deliver:
 
-The Container Insights enablement on May~11 delivered an additional operational
-improvement: ECS task-level CPU and memory telemetry that had been entirely
-absent became available within hours of the \texttt{UpdateClusterSettings}
-call, immediately surfacing a previously invisible CPU saturation pattern on
-one of the Meridian Action Processor services.
+\begin{itemize}
+    \item \textbf{Continuous visibility:} A single workspace replaces navigation
+          across six separate AWS console tabs to assess platform health.
+    \item \textbf{Machine-readable inventory:} The REST API enables downstream
+          automation including tag compliance checks and dynamic alarm
+          threshold recalibration.
+    \item \textbf{Hidden issue discovery:} Container Insights immediately
+          surfaced a previously invisible CPU saturation pattern on one of the
+          Meridian Action Processor services.
+\end{itemize}
 
-\subsection{RPA Support Value}
+\subsection{Knowledge Transfer and Platform Resilience}
 
-The four support rotation weeks contributed operational value beyond their
-primary purpose of keeping production bots running. Each rotation produced
-a written incident summary (filed in the team's Confluence knowledge base)
-and, in the case of IISS-706, a post-incident design change: my CAIS
-hotfix analysis revealed that the module-import credential caching pattern
-used by the affected bot was fragile under Secrets Manager rotation cycles
-that returned empty strings during the rotation window. I elevated this finding
-to the team as a platform-wide architectural concern, informing
-future RPA credential-handling guidelines.
+Each support rotation produced documented incident summaries in the team's
+Confluence knowledge base. The CAIS hotfix analysis elevated a credential
+caching vulnerability to a platform-wide architectural concern, informing
+future RPA credential-handling guidelines and improving overall system
+resilience.
+
+These achievements reflect my ability to deliver production-grade engineering
+solutions while contributing directly to the operational reliability of
+Citco's Intelligent Automation platform.
+
+% Keep all floats within this chapter
+\FloatBarrier
