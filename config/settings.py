@@ -32,9 +32,9 @@ MAIN_REPORT_TEX = LATEX_DIR / "main.tex"
 COVER_LETTER_PDF = LATEX_DIR / "cover_letter.pdf"
 MAIN_REPORT_PDF = LATEX_DIR / "main.pdf"
 
-# Submission Bundle Target Artifacts (Strict 5-File Requirement)
-SUBMISSION_COVER_LETTER_PDF = OUTPUT_DIR / "CoverLetter.pdf"
-SUBMISSION_REPORT_PDF = OUTPUT_DIR / "Project_Report.pdf"
-SUBMISSION_REPORT_DOCX = OUTPUT_DIR / "Project_Report.docx"
-SUBMISSION_WORKLOGS_XLSX = OUTPUT_DIR / "WorkLogs.xlsx"
-SUBMISSION_WORKLOGS_PDF = OUTPUT_DIR / "WorkLogs.pdf"
+# Submission Bundle Target Artifacts — named per SMU submission requirements
+SUBMISSION_COVER_LETTER_PDF  = OUTPUT_DIR / "BhavikBhagat_A00494758_CoverLetter.pdf"
+SUBMISSION_REPORT_PDF        = OUTPUT_DIR / "BhavikBhagat_A00494758_MajorReport.pdf"
+SUBMISSION_REPORT_DOCX       = OUTPUT_DIR / "BhavikBhagat_A00494758_MajorReport.docx"
+SUBMISSION_WORKLOGS_XLSX     = OUTPUT_DIR / "BhavikBhagat_A00494758_WorkLogs.xlsx"
+SUBMISSION_WORKLOGS_PDF      = OUTPUT_DIR / "BhavikBhagat_A00494758_WorkLogs.pdf"

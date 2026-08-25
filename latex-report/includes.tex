@@ -1,4 +1,4 @@
-% ------------------------------------------------------
+﻿% ------------------------------------------------------
 % CENTRALIZED LATEX STYLING & PACKAGES (SMU MCDA REPORT)
 % ------------------------------------------------------
 
@@ -9,21 +9,54 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 
-% Font: Carlito (metrically identical to Calibri, 12pt via documentclass)
+% Body font: Carlito (metrically identical to Calibri)
 \usepackage[sfdefault]{carlito}
-\renewcommand*{\ttdefault}{lmtt}
+% Monospace: Inconsolata — clear 0/O and l/I distinction
+\usepackage{inconsolata}
+\renewcommand*{\ttdefault}{zi4}
 
-% Line spacing: 1.5 (Neeyati report standard)
+% Line spacing: Word-equivalent 1.5 at 12pt
+% Word: 12pt × 1.5 = 18pt. LaTeX baseline = 12 × 1.2 = 14.4pt. 18/14.4 = 1.25
 \usepackage{setspace}
-\onehalfspacing
+\setstretch{1.25}
 
 \usepackage{booktabs} % Professional tables
+\usepackage{colortbl} % \rowcolor for table header shading
+\usepackage{etoolbox} % \patchcmd
+
+% Table padding — extra cell padding for readability
+\setlength{\tabcolsep}{8pt}
+\renewcommand{\arraystretch}{1.3}
+
+% Fix colortbl + booktabs colour bleed — reset rule colour to black
+\AtBeginDocument{\arrayrulecolor{black}}
+
+% Allow extra stretch to prevent text overflowing margins
+\emergencystretch=3em
+\setlength{\hfuzz}{2pt}
+\sloppy
 
 % --- COLOR PALETTE DEFINITIONS ---
 \usepackage{xcolor}
-\definecolor{smumaroon}{RGB}{138, 0, 39}  % Official Saint Mary's University Maroon (#8A0027)
+\definecolor{smumaroon}{HTML}{8A0027}  % Official SMU Maroon — primary brand colour (#8A0027 from smu.ca)
 \definecolor{smugray}{RGB}{100, 100, 100}  % Neutral Gray for subtitles and footers
 \definecolor{codebg}{RGB}{245, 245, 245}   % Light background for code listings
+\definecolor{smubrand}{HTML}{8A0027}  % SMU primary maroon — headings, links, chapter titles (aligned with smumaroon)
+\definecolor{smubranddark}{HTML}{6D1A36}  % SMU deep wine maroon — table headers, accents
+\definecolor{tableheader}{HTML}{6D1A36}  % Deep wine maroon — table header rows (matches Excel header row)
+\definecolor{tablerowA}{HTML}{FFF8F8}   % Very light warm tint — odd rows (matches Excel ROW_ODD)
+\definecolor{tablerowB}{HTML}{FFFFFF}  % White — even rows
+
+% Convenience macro for maroon table header rows with white text
+\newcommand{\tableheaderrow}[1]{\rowcolor{tableheader}\color{white}\textbf{#1}}
+
+% --- HEADING SIZES (Neeyati report standard) ---
+% Extracted from NeeyatiMehta_A00477369_projectReport.docx
+% Heading 1 = 16pt, Heading 2 = 14pt, Heading 3 = 12pt, all bold maroon
+\usepackage{titlesec}
+\titleformat{\section}{\fontsize{14}{17}\selectfont\bfseries\color{smubrand}}{\thesection}{1em}{}
+\titleformat{\subsection}{\fontsize{12}{15}\selectfont\bfseries\color{smubrand}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\fontsize{12}{15}\selectfont\bfseries}{\thesubsubsection}{1em}{}
 
 % --- DOCUMENT LAYOUT & MARGINS ---
 \usepackage[letterpaper,hmargin=2.5cm,vmargin=2.0cm,includeheadfoot]{geometry}
@@ -45,6 +78,16 @@
 \usepackage{array}
 \usepackage{wrapfig}
 \usepackage{subfig}
+\usepackage{placeins}  % Provides \FloatBarrier to keep floats in their section
+
+% Float placement parameters — allow more flexibility for figures
+\renewcommand{\topfraction}{0.85}      % Max fraction of page for floats at top
+\renewcommand{\bottomfraction}{0.70}   % Max fraction of page for floats at bottom
+\renewcommand{\textfraction}{0.15}     % Min fraction of page for text
+\renewcommand{\floatpagefraction}{0.70} % Min fraction for a float-only page
+\setcounter{topnumber}{3}              % Max floats at top of page
+\setcounter{bottomnumber}{2}           % Max floats at bottom of page
+\setcounter{totalnumber}{5}            % Max floats per page
 
 % --- CODE HIGHLIGHTING ---
 \usepackage{listings}
@@ -72,6 +115,16 @@
 \usepackage[backend=biber, backref=true, sorting=nyt, style=numeric]{biblatex}
 \addbibresource{references.bib}
 
+% --- TABLE OF CONTENTS FORMATTING ---
+\usepackage{tocloft}
+% Remove automatic page breaks before List of Figures and List of Tables
+\renewcommand{\cftloftitlefont}{\large\bfseries\color{smubrand}}
+\renewcommand{\cftlottitlefont}{\large\bfseries\color{smubrand}}
+\setlength{\cftbeforeloftitleskip}{1em}
+\setlength{\cftafterloftitleskip}{0.5em}
+\setlength{\cftbeforelottitleskip}{1em}
+\setlength{\cftafterlottitleskip}{0.5em}
+
 \usepackage[pdftex,hypertexnames=true,colorlinks]{hyperref}
 \hypersetup{
     pdftitle={MCDA Major Project Report - Bhavik Bhagat},
@@ -79,39 +132,52 @@
     pdfsubject={Master of Science in Computing and Data Analytics},
     pdfkeywords={Site Reliability Engineering, Intelligent Automation, Machine Learning, Financial Services, Citco},
     colorlinks=true,
-    citecolor=smumaroon,
+    citecolor=smubrand,
     filecolor=black,
-    linkcolor=smumaroon,
-    urlcolor=smumaroon
+    linkcolor=smubrand,
+    urlcolor=smubrand
 }
+\usepackage[all]{hypcap} % anchors \ref to top of float, not caption
 
 % --- HEADER AND FOOTER STYLE ---
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[R]{\nouppercase{\leftmark}}
 \fancyhead[L]{MCDA 5585 / 5586 Major Project Report}
-\fancyfoot[C]{\thepage~of~\pageref{LastPage}}
+\fancyfoot[C]{\textcolor{smubrand}{\thepage~of~\pageref{LastPage}}}
 
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
+
+% Plain style (used on chapter-opening pages and front matter):
+% Include header on chapter-opening pages to match Neeyati's format
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[L]{MCDA 5585 / 5586 Major Project Report}
+  \fancyhead[R]{\nouppercase{\leftmark}}
+  \fancyfoot[C]{\textcolor{smubrand}{\thepage~of~\pageref{LastPage}}}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
 \captionsetup{margin=10pt,font=small,labelfont=bf}
 
 
 % --- CUSTOM CHAPTER HEADING OVERRIDES (SMU MAROON THEME) ---
 \makeatletter
 \def\@makechapterhead#1{%
-  \vspace*{10\p@}%
-  {\parindent \z@ \raggedright
+  {\parindent \z@ \centering
     \interlinepenalty\@M
-    \Huge \bfseries \textcolor{smumaroon}{\thechapter \space #1}\par\nobreak
-    \vskip 20\p@
+    \fontsize{16}{19}\selectfont \bfseries \textcolor{smubrand}{\thechapter.\enspace #1}\par\nobreak
+    \vskip 8\p@
   }}
 
 \def\@makeschapterhead#1{%
-  \vspace*{10\p@}%
-  {\parindent \z@ \raggedright
+  {\parindent \z@ \centering
     \interlinepenalty\@M
-    \Huge \bfseries \textcolor{smumaroon}{#1}\par\nobreak
-    \vskip 20\p@
+    \fontsize{16}{19}\selectfont \bfseries \textcolor{smubrand}{#1}\par\nobreak
+    \vskip 8\p@
   }}
+
+% Chapters start on a new page (default report class behavior)
+% No horizontal rules between chapters — clean page breaks instead
 \makeatother

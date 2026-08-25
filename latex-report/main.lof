@@ -8,5 +8,26 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {9.1}{\ignorespaces Request Flow Through Monitored Services --- Golden Signals at Each Stage}}{33}{figure.caption.9}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {10.1}{\ignorespaces IA-SRE Observability Platform --- High-Level Architecture (four layers)}}{38}{figure.caption.13}%
+\contentsline {figure}{\numberline {10.2}{\ignorespaces AMG Observability Platform --- System Architecture}}{39}{figure.caption.14}%
+\contentsline {figure}{\numberline {10.3}{\ignorespaces AMG Observability Platform --- Architecture Diagram (from documentation)}}{40}{figure.caption.15}%
+\contentsline {figure}{\numberline {10.4}{\ignorespaces CloudWatch Lambda Dashboard --- Live Screenshot (ia-resources-monitoring)}}{41}{figure.caption.16}%
+\contentsline {figure}{\numberline {10.5}{\ignorespaces IAM Role Architecture --- Three-Role Model for Grafana AMG Deployment}}{45}{figure.caption.21}%
+\contentsline {figure}{\numberline {10.6}{\ignorespaces Grafana AMG Dashboard --- Health Overview Row (Live Screenshot)}}{45}{figure.caption.24}%
+\contentsline {figure}{\numberline {10.7}{\ignorespaces Grafana AMG Dashboard --- Lambda Monitoring Row (Live Screenshot)}}{45}{figure.caption.25}%
+\contentsline {figure}{\numberline {10.8}{\ignorespaces Grafana AMG Dashboard --- ECS Monitoring Row (Live Screenshot)}}{47}{figure.caption.26}%
+\contentsline {figure}{\numberline {10.9}{\ignorespaces Alarm Notification Flow --- CloudWatch to SNS to Email Distribution}}{50}{figure.caption.32}%
+\contentsline {figure}{\numberline {10.10}{\ignorespaces CI/CD Deployment Pipeline --- CodeCommit to AMG Deployment Flow}}{51}{figure.caption.33}%
+\contentsline {figure}{\numberline {10.11}{\ignorespaces AWS X-Ray Service Map --- Distributed Trace Topology (Live Screenshot)}}{52}{figure.caption.34}%
+\contentsline {figure}{\numberline {10.12}{\ignorespaces IA Resources Inventory API --- Architecture Overview}}{54}{figure.caption.35}%
+\contentsline {figure}{\numberline {10.13}{\ignorespaces Inventory API --- Grafana AMG Integration}}{55}{figure.caption.37}%
+\contentsline {figure}{\numberline {10.14}{\ignorespaces Resource Discovery Flow --- Discoverer Registry and Two-Stage Filter}}{56}{figure.caption.38}%
+\contentsline {figure}{\numberline {10.15}{\ignorespaces Ask Citco RPA --- RAG Architecture (IISS-824)}}{60}{figure.caption.39}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

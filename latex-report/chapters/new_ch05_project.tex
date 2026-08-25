@@ -1,0 +1,147 @@
+﻿% ============================================================
+% CHAPTER 5: PROJECT OVERVIEW
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Project Overview}
+\label{chap:project}
+
+% ────────────────────────────────────────────────────────────
+\section{Project Background and the Motivating Incident}
+\label{sec:project_background}
+% ────────────────────────────────────────────────────────────
+
+\subsection{Pre-Internship Monitoring Posture}
+
+Before my internship began in mid-Mar~2026, the IA-SRE team operated
+without a centralized observability stack. Monitoring relied entirely on
+an \emph{ad~hoc} model: business teams in Dublin, London, and Halifax
+would notice anomalies in fund processing outputs and raise tickets. There
+were no CloudWatch alarms, no dashboards aggregating health across the six
+platforms, and no mechanism for the SRE team to receive proactive
+notification of degrading conditions --- the team was blind to
+\emph{saturation} and \emph{error rate} signals until they had already
+caused downstream business impact.
+
+\subsection{CAIS-Pricing Silent Outage (Jan--Feb 2026)}
+\label{sec:cais_silent_outage}
+
+Between \textbf{Jan~20 and Feb~17, 2026}, the CAIS-Pricing Extract GenAI
+pipeline under the \texttt{rpacfs1} platform stopped delivering output for
+\textbf{29 consecutive days} without a single alert firing. The root cause
+was gradual exhaustion of the external CTI AI model API token, which
+controls the async SQS callback that triggers the downstream Lambda
+stages; without that callback, three downstream functions dropped to zero
+invocations while two upstream functions kept running, making the pipeline
+appear healthy. The outage was detected only when business users reported
+missing pricing data --- 29~days after onset. The post-mortem
+identified the absence of throughput alarms, SQS queue depth monitoring,
+and end-to-end output verification as the root causes of the failure going
+unnoticed. A sub-task was assigned directly to me as the immediate
+remediation and became the starting point for the full monitoring programme.
+
+\subsection{The Meridian Incident (Apr~2026)}
+
+The Meridian platform processes daily statements, reconciliations, and
+event notifications across fund administration operations. A surge of
+automated system events from Citco Recs overwhelmed
+Meridian's OpenSearch consumption layer, causing Kafka consumer lag to
+reach approximately \textbf{9~million messages} and halting daily
+statement processing for 7.5~hours. The SRE team received no alert; the
+Dublin business team escalated over three and a half hours after the
+first failure signal. The post-mortem recorded: \textit{``No proactive
+monitoring/alerting in place on the SRE side for Meridian event volume
+anomalies.''} This became the primary driver for the centralized dashboard project.
+
+\subsection{From Incident to Programme}
+
+Both incidents shared the same root cause: no proactive monitoring. The
+post-mortems established two specific gaps --- no Kafka consumer lag alarm,
+and no centralized visibility across the IA-IT-SRE Infrastructure --- that
+directly motivated the six work streams described in the following
+section. Kishor elevated the dashboard project to \textbf{Critical} priority on
+May~6, 2026, and my internship pivoted from exploratory dashboard research
+to a full-scale observability platform build.
+
+% ────────────────────────────────────────────────────────────
+\section{Work Streams Overview}
+\label{sec:project_overview}
+% ────────────────────────────────────────────────────────────
+
+The two motivating incidents established a clear engineering mandate: build
+proactive observability across the entire IA-IT-SRE Infrastructure. Six
+work streams were pursued, each directly motivated by the findings and
+limitations of the previous. Full technical scope and acceptance criteria
+for each deliverable are documented in Chapter~\ref{chap:project_goals}.
+
+\subsection{Work Stream 1: CloudWatch Dashboards and IA Infrastructure Monitoring}
+
+Following the CAIS-Pricing Silent Outage, I built unified CloudWatch
+dashboards starting with Lambda --- the AWS service at the center of that
+incident. The scope extended incrementally to SQS queues, EC2 instances,
+ECS clusters, EKS nodes, and database services across all six platforms.
+This work established the tag-based resource discovery patterns that all
+later work built upon.
+
+These dashboards exposed a fundamental limitation: CloudWatch dashboards
+are siloed per AWS service and do not support cross-service filtering.
+This limitation directly motivated Work Stream~2.
+\textit{Key deliverables: IISS-435, IISS-455, IISS-461, IISS-469, IISS-482--486.}
+
+\subsection{Work Stream 2: Grafana AMG Centralized Dashboard}
+
+Following the Meridian Incident, Kishor elevated the dashboard project to
+\textbf{Critical} priority. I built a proof-of-concept centralized
+observability platform using Amazon Managed Grafana (AMG) --- addressing
+what CloudWatch dashboards could not: a unified, cross-platform view of the
+entire IA-IT-SRE Infrastructure in a single workspace. The broader research
+objective was to evaluate whether this AWS-native stack could achieve
+Dynatrace-equivalent observability.
+\textit{Key deliverable: IISS-487 (140 hours).}
+
+\subsection{Work Stream 3: IA Infrastructure Inventory API}
+
+A critical limitation surfaced during the Grafana build: CloudWatch Metric
+Insights SQL does not support pattern-based filtering on dimension values.
+To solve this, I extended the Lambda discovery scripts into a full Flask
+REST API that discovers AWS services dynamically across all platforms.
+\textit{Key deliverable: IISS-507.}
+
+\subsection{Work Stream 4: RPA Production Support}
+
+In parallel with the engineering work streams, I participated in dedicated
+RPA production support rotations as part of the team's Follow the Sun model.
+I held the North America slot (11~AM--7~PM~EST) once every four weeks,
+serving as the primary contact for RPA incidents.
+
+At the start of each shift I reviewed open items across the SD Portal,
+Innovation IT email inbox, IA\_INCIDENTS distribution list, and Teams
+notifications. I also reviewed the Confluence handover log from the Manila
+shift to pick up carried-over items or approaching SLA breaches.
+
+Notable incidents included the CAIS Deadline credential failure (Secrets
+Manager rotation gap, resolved with a fail-fast hotfix), a MESO month-end
+stuck task, and a VPL Pricing GTL booking issue.
+\textit{Key incidents: IISS-706, IISS-538, IISS-741, IISS-876.}
+
+\subsection{Work Stream 5: RPA LLM Agent --- Ask Citco RPA}
+
+This ML/AI engagement began as a research task but expanded to critical
+production bug-fixing after CloudWatch log analysis revealed a
+\textbf{52\% timeout rate} on the Knowledge Base sync Lambda. I resolved
+this and seven additional production bugs, refactored a 1,140-line monolith
+into 8 modules, and added comprehensive unit tests.
+\textit{Key deliverable: IISS-824. Status: Critical bugs fixed; quality
+improvements pending approval.}
+
+\subsection{Work Stream 6: Citco Enterprise Custom UI Dashboards}
+
+While the Grafana AMG dashboard achieved approximately 60\% Dynatrace feature
+parity, it remained constrained by fixed panel types and no drag-and-drop
+layout. Kishor identified the need for a Citco-owned enterprise UI. I created
+a comprehensive \textbf{865-line implementation plan} documenting gap analysis,
+technology stack decisions, API design, and task breakdown for extending the
+existing \texttt{ia-config-portal} (built by Soundarya and Sridhar).
+\textit{Key deliverables: IISS-509, IISS-919. Status: In progress;
+implementation deferred to Sep--Dec~2026.}

@@ -1,0 +1,138 @@
+﻿% ============================================================
+% CHAPTER 13: ACHIEVEMENTS & BUSINESS VALUE
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Achievements \& Business Value}
+\label{chap:achievements}
+
+Working on the IA-IT-SRE Infrastructure at Citco Technology Management,
+I achieved several significant milestones across observability platform
+development, API engineering, and production support operations. These
+accomplishments highlight my technical growth and the business value
+delivered during the internship.
+
+% ────────────────────────────────────────────────────────────
+\section{Key Achievements}
+\label{sec:key_achievements}
+% ────────────────────────────────────────────────────────────
+
+\begin{itemize}
+    \item \textbf{CloudWatch Monitoring Platform:} Inventoried the complete AWS
+          service fleet including Lambda functions, ECS clusters, and EC2
+          instances. Discovered and documented a critical tagging inconsistency
+          affecting resource attribution. Developed a three-tier SQS fallback
+          registry with comprehensive automated test coverage.
+
+    \item \textbf{Grafana AMG Centralized Dashboard:} Designed and deployed a
+          comprehensive observability workspace covering all six IA platforms.
+          Implemented dynamic CloudWatch alarms via CloudFormation stacks with
+          Lambda-backed provisioning. Successfully migrated the workspace
+          through a breaking Grafana version upgrade.
+
+    \item \textbf{Infrastructure Inventory REST API:} Built a production-ready
+          Flask API with high test coverage. Implemented the Discoverer Registry
+          pattern enabling extensible resource discovery. Integrated
+          property-based testing with Hypothesis to verify tag disambiguation
+          logic.
+
+    \item \textbf{Container Insights Enablement:} Enabled ECS Container Insights
+          across Meridian clusters, surfacing previously invisible task-level
+          CPU and memory telemetry within hours of deployment.
+
+    \item \textbf{Production Incident Response:} Completed multiple RPA support
+          rotations, resolving notable production incidents. Delivered a
+          critical CAIS Deadline hotfix within hours of initial alert,
+          identifying a credential caching vulnerability during Secrets Manager
+          rotation cycles.
+
+    \item \textbf{Infrastructure-as-Code Proficiency:} Authored CloudFormation
+          stacks with S3-staged templates and multi-environment reuse.
+          Implemented a Lambda-backed dynamic provisioner that auto-discovers
+          resources at deploy time.
+
+    \item \textbf{Cross-Account IAM Architecture:} Designed a cross-account
+          permission model enabling the Grafana workspace to query CloudWatch
+          metrics across all IA platform AWS accounts.
+
+    \item \textbf{SRE Principles Application:} Mapped the four golden signals
+          (latency, traffic, errors, saturation) to concrete CloudWatch metric
+          namespaces. Defined SLO targets for Lambda, ECS, MSK, and SQS services.
+
+    \item \textbf{Test-Driven Development:} Applied TDD practices across all
+          deliverables using pytest, achieving high coverage on the inventory
+          API and SQS registry components.
+
+    \item \textbf{AI-Augmented Engineering:} Leveraged Kiro IDE's spec-driven
+          workflow for API development. Used Amazon~Q for inline code assistance
+          and Claude Sonnet for architecture reasoning.
+
+    \item \textbf{Technical Documentation:} Produced RCA reports for production
+          incidents, Confluence knowledge base articles, and comprehensive
+          acceptance criteria for all deliverables.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Business Value}
+\label{sec:business_value}
+% ────────────────────────────────────────────────────────────
+
+The shift from a purely reactive to a proactively monitored infrastructure
+is the central business value proposition of this internship's work.
+
+\subsection{Incident Detection: From Hours to Seconds}
+
+The Apr~17, 2026 Meridian incident---in which approximately 9 million Kafka
+messages queued, producing a 7.5-hour processing delay affecting multiple
+client funds---was detected only because a fund administrator noticed missing
+outputs. No automated alarm existed.
+
+The \texttt{EstimatedMaxTimeLag} alarm deployed as part of IISS-487 directly
+addresses this gap:
+
+\begin{itemize}
+    \item \textbf{Before:} Detection required human observation of missing
+          downstream outputs, with latency of 2--3 hours when incidents began
+          outside working hours.
+    \item \textbf{After:} CloudWatch alarm fires within \textbf{30 seconds} of
+          threshold breach, routing notification directly to the SRE team.
+\end{itemize}
+
+This improvement from multi-hour manual detection to sub-30-second automated
+alerting represents a qualitative step change in the team's ability to contain
+fund-impacting incidents before they reach business-level severity.
+
+\subsection{Operational Efficiency: Unified Fleet Visibility}
+
+Prior to this work, the IA-SRE team had no single view of all Lambda functions,
+ECS clusters, and EC2 instances under their operational mandate. Resource
+discovery was ad hoc and frequently lagged deployments by days or weeks.
+
+The Grafana dashboard and inventory API together deliver:
+
+\begin{itemize}
+    \item \textbf{Continuous visibility:} A single workspace replaces navigation
+          across six separate AWS console tabs to assess platform health.
+    \item \textbf{Machine-readable inventory:} The REST API enables downstream
+          automation including tag compliance checks and dynamic alarm
+          threshold recalibration.
+    \item \textbf{Hidden issue discovery:} Container Insights immediately
+          surfaced a previously invisible CPU saturation pattern on one of the
+          Meridian Action Processor services.
+\end{itemize}
+
+\subsection{Knowledge Transfer and Platform Resilience}
+
+Each support rotation produced documented incident summaries in the team's
+Confluence knowledge base. The CAIS hotfix analysis elevated a credential
+caching vulnerability to a platform-wide architectural concern, informing
+future RPA credential-handling guidelines and improving overall system
+resilience.
+
+These achievements reflect my ability to deliver production-grade engineering
+solutions while contributing directly to the operational reliability of
+Citco's Intelligent Automation platform.
+
+% Keep all floats within this chapter
+\FloatBarrier

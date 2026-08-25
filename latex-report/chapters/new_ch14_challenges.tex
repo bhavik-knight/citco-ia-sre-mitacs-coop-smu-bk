@@ -1,0 +1,220 @@
+﻿% ============================================================
+% CHAPTER 14: CHALLENGES & MITIGATIONS
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Challenges \& Mitigations}
+\label{chap:challenges}
+
+Throughout this internship, I encountered engineering challenges spanning AWS
+service limitations, Grafana platform constraints, corporate policy
+restrictions, and production incident responses. This chapter documents the
+most significant challenges that shaped delivery plans and produced lessons
+applicable to future SRE work.
+
+% ────────────────────────────────────────────────────────────
+\section{AWS CloudWatch Limitations}
+\label{sec:challenges-cloudwatch}
+% ────────────────────────────────────────────────────────────
+
+CloudWatch imposes several hard limits encountered at modest operational scale
+(54 Lambda functions, 100+ dashboard panels):
+
+\begin{itemize}
+    \item \textbf{Metrics Insights SQL 10 TPS limit:} With 90+ panels firing
+          queries simultaneously, throttling caused intermittent panel errors.
+          \textit{Mitigation:} Collapsed rows by default, 5-minute refresh interval.
+
+    \item \textbf{Log Insights 50 log group maximum:} The IA environment has 54+
+          Lambda log groups, exceeding the per-query limit.
+          \textit{Mitigation:} Filter to active log groups; separate saved query
+          for full coverage.
+
+    \item \textbf{SEARCH() visibility gap:} Functions without recent activity
+          disappear from dashboards---the same root cause that made CAIS-Pricing
+          invisible for 29 days.
+          \textit{Mitigation:} Replaced SEARCH() with Metric Insights SQL which
+          enumerates all deployed functions.
+
+    \item \textbf{No percentiles in GROUP BY mode:} P50/P99 statistics unavailable
+          when grouping by dimension.
+          \textit{Mitigation:} Wildcard dimension queries for percentile panels;
+          accepted tradeoff of missing idle functions.
+
+    \item \textbf{51\,KB CloudFormation dashboard limit:} Generated JSON exceeds
+          inline CFN limits at scale.
+          \textit{Mitigation:} Python \texttt{put\_dashboard} API deployment
+          (no size limit).
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Grafana Platform Constraints}
+\label{sec:challenges-grafana}
+% ────────────────────────────────────────────────────────────
+
+Amazon Managed Grafana (AMG) with the CloudWatch plugin presented several
+limitations:
+
+\begin{itemize}
+    \item \textbf{Mid-development version upgrade (10.4 → 12.4):} Breaking changes
+          in query syntax required one full day of panel migration.
+          \textit{Lesson:} Design for portability across AMG versions.
+
+    \item \textbf{Metrics Insights SQL no regex in WHERE clause:} The
+          \texttt{WHERE} clause supports only \texttt{LIKE} patterns with
+          simple wildcards, not regular expressions. Tag-based filtering
+          (\texttt{WHERE tag.AppName = 'MERIDIAN'}) is also unsupported.
+          \textit{Mitigation:} Implemented dashboard-level variables
+          (\texttt{\$platform}, \texttt{\$environment}) with Infinity
+          datasource backed by static inventory JSON files.
+
+    \item \textbf{Dashboard freezing from excessive datapoints:} Before
+          dashboard-level variables were introduced, panels rendered all
+          resources simultaneously---54+ Lambda functions, 17+ ALBs, 30+ ECS
+          services. The browser froze for 10--15 seconds on load as Grafana
+          attempted to render thousands of data points across 113 panels.
+          \textit{Mitigation:} Platform variable filters reduced visible
+          resources per dashboard load; collapsed rows defer queries until
+          user expansion.
+
+    \item \textbf{Single SQL query per panel:} Cannot combine multiple Metrics
+          Insights queries on one panel---attempting to add a second query
+          produces ``Maximum number of queries exceeded'' error.
+          \textit{Mitigation:} Split into separate panels (e.g., ``Running
+          Tasks'' and ``Desired Tasks'' instead of one combined panel).
+
+    \item \textbf{No percentiles in Metrics Insights SQL:} Aggregation functions
+          like \texttt{PERCENTILE(Duration, 50)} are not supported. Percentile
+          statistics (\texttt{p50}, \texttt{p99}) are only available via the
+          standard Metric Search API, which lacks \texttt{GROUP BY} capability.
+          \textit{Tradeoff:} Accept either per-function grouping (Metrics
+          Insights, no percentiles) or percentiles (Metric Search, only active
+          functions visible).
+
+    \item \textbf{No cross-panel filtering:} Clicking a resource in one panel
+          does not filter other panels.
+          \textit{Mitigation:} Dashboard-level template variables with
+          coordinated queries across all panels.
+
+    \item \textbf{IAM credential rotation:} Monthly rotation breaks AMG access
+          until trust policy is manually updated.
+          \textit{Mitigation:} Documented runbook with calendar reminders.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Infrastructure \& Corporate Policy Challenges}
+\label{sec:challenges-infra}
+% ────────────────────────────────────────────────────────────
+
+Enterprise environment constraints required adaptation of standard AWS patterns:
+
+\begin{itemize}
+    \item \textbf{Static metrics at deploy time:} Dashboard does not auto-discover
+          new resources.
+          \textit{Mitigation:} Documented redeploy procedure with 3-tier fallback.
+
+    \item \textbf{Lambda Insights layer stripped on redeploy:} Other teams'
+          deployments remove the monitoring layer.
+          \textit{Mitigation:} Periodic enforcement script
+          (\texttt{add\_lambda\_insights.py}).
+
+    \item \textbf{ECS Fargate no free cluster metrics:} Requires Container
+          Insights at \$0.30/metric/month.
+          \textit{Mitigation:} Manual per-cluster enablement with cost approval.
+
+    \item \textbf{CloudFormation ResourceExistenceCheck hook:} Corporate guardrail
+          blocked alarm stack deployment.
+          \textit{Mitigation:} Dynamic Lambda provisioner bypasses CFN constraints.
+
+    \item \textbf{IAM permission boundaries:} Subscription filter approach required
+          permissions outside team scope.
+          \textit{Mitigation:} Redesigned to use Metric Insights SQL instead.
+
+    \item \textbf{S3 encryption policy:} Silent failures without
+          \texttt{ServerSideEncryption=AES256}.
+          \textit{Mitigation:} Pre-commit hook to flag missing encryption headers.
+\end{itemize}
+
+% ────────────────────────────────────────────────────────────
+\section{Production Incidents}
+\label{sec:challenges-incidents}
+% ────────────────────────────────────────────────────────────
+
+Production incidents provided valuable learning experiences:
+
+\subsection{CAIS Deadline Pipeline Hotfix (June 2026)}
+
+The CAIS data pipeline failed silently---no error notifications, no data
+delivered. I delivered a 3-part hotfix:
+
+\begin{enumerate}
+    \item \textbf{UCM credential expiry:} SMB mount returned empty data on
+          expired credentials without error. \textit{Fix:} Explicit validation
+          step verifying expected files exist.
+
+    \item \textbf{Empty list SQL error:} \texttt{WHERE id IN ()} generated
+          invalid SQL. \textit{Fix:} Empty list guard before query construction.
+
+    \item \textbf{Module-level credential caching:} Stale credentials persisted
+          across Secrets Manager rotation. \textit{Fix:} Fresh credential
+          retrieval before each use.
+\end{enumerate}
+
+\textbf{Key lesson:} Silent failures are worse than loud failures. Validate
+expected state, not just absence of exceptions.
+
+\subsection{RPA LLM Agent Lambda Memory Exhaustion (August 2026)}
+
+Business users reported the RPA Status Bot intermittently failing to respond
+to queries. CloudWatch logs revealed out-of-memory (OOM) errors on the
+\texttt{rpa\_llm\_agent\_event\_service\_cicd} Lambda function, which handles
+Bedrock Agent API calls for process status lookups.
+
+\textbf{Root cause:} The Lambda was using CloudFormation's implicit default
+of 128\,MB memory. Functions using pandas, boto3, and JSON serialization
+together exceeded this allocation during peak query loads.
+
+\textbf{Fix:} Increased \texttt{MemorySize} from 128\,MB to 256\,MB in the
+CloudFormation template. Additionally standardized all nine Lambda functions
+in the RPA LLM stack to explicit 256\,MB allocations, making memory settings
+visible and intentional in Infrastructure-as-Code rather than relying on
+implicit defaults.
+
+\textbf{Key lesson:} Never rely on CloudFormation default values for
+production workloads. Explicit resource allocations prevent silent
+degradation and make capacity constraints visible in code review.
+
+% ────────────────────────────────────────────────────────────
+\section{Summary}
+\label{sec:challenges-summary}
+% ────────────────────────────────────────────────────────────
+
+\textbf{Key themes from these challenges:}
+
+\begin{enumerate}
+    \item \textbf{AWS service limits are real constraints} encountered at modest
+          scale---not edge cases. The 10~TPS Metrics Insights throttle affected
+          dashboard load with only 90 panels.
+
+    \item \textbf{Silent failures are dangerous:} Multiple incidents involved
+          operations that ``succeeded'' but produced no useful output.
+
+    \item \textbf{Enterprise environments add complexity:} Corporate policies
+          break standard AWS patterns; budget time for adaptations.
+
+    \item \textbf{Managed services still require operational planning:} AMG's
+          ``serverless'' nature does not eliminate IAM credential lifecycle
+          overhead or CloudWatch API throttling mitigation.
+
+    \item \textbf{Query language limitations shape architecture:} Metrics
+          Insights SQL's lack of regex filtering and percentile aggregation
+          required alternative approaches---dashboard variables backed by
+          static inventory files and separate percentile panels using the
+          legacy Metric Search API.
+\end{enumerate}
+
+These themes inform the recommendations in Chapter~\ref{chap:future_work}.
+
+% Keep all floats within this chapter
+\FloatBarrier

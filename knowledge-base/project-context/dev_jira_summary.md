@@ -3,6 +3,65 @@
 Complete inventory of all development JIRAs assigned to Bhavik Kantilal Bhagat
 during the Citco CTM internship (March 15 – August 31, 2026).
 
+## Fusion Project Reference
+
+### IISS-403 — Intelligent Automation (Fusion Project 4098002-KY2050)
+- **Fusion Project**: 4098002-KY2050 — Intelligent Automation
+- **Space**: Innovation IT SRE and Support
+- **Description**: Parent Fusion project that all IA monitoring and automation work
+  is tracked against. All IISS-48x, IISS-50x, and IISS-82x tickets reference this
+  Fusion project code for billing and time-tracking purposes.
+- **Used in**: IISS-509 (Frontend Dashboard), IISS-487 (Grafana AMG), IISS-507
+  (Inventory API), and all sub-tasks under IISS-482.
+
+## Enterprise Custom UI (Citco)
+
+### IISS-919 — Infrastructure Monitoring Dashboard — Citco Enterprise (To Do)
+- **Space**: Innovation IT SRE and Support
+- **Description**: Add a new infrastructure monitoring dashboard page to the existing
+  `ia-config-portal` UI (built by Soundarya/Sridhar). This will be Citco's
+  **Enterprise Custom UI** — eliminating the limitations of CloudWatch Dashboards
+  and Grafana (no drag-and-drop, limited panel types, no config-driven customisation).
+
+**Repositories:**
+- IA Config Portal UI: Bitbucket repo (`ia_config_service_portal`)
+- AWS CodeCommit repo (linked)
+
+**Pipelines:**
+- Infrastructure Pipeline
+- ECR Pipeline
+
+**Key requirements:**
+1. Add a new dashboard page within the `ia-config-portal` UI
+2. Data source: AWS CloudWatch for metrics
+3. Use the existing **My Resources API** to fetch resources in real time
+4. Dashboard must be **config-driven** — panels/widgets defined via configuration
+5. **Drag-and-drop** panel rearrangement and layout customisation
+6. Experiment with chart/panel types: line, bar, gauge, heatmap, etc.
+7. Replace CloudWatch + Grafana limitations with a fully customisable enterprise UI
+
+**Subtasks:** TBD (none defined at ticket creation)
+
+**Context / Why this matters:**
+- CloudWatch dashboards are siloed per service, no cross-service filtering
+- Grafana AMG (IISS-487) achieves ~60% Dynatrace parity but has fixed panel types
+  and no drag-and-drop layout customisation
+- The `ia-config-portal` is an existing internal UI (React 19/TypeScript with Rsbuild
+  bundler, Express.js BFF) already used for IA configuration management — adding a
+  monitoring page here gives the SRE team a single Citco-owned interface without
+  external tool dependency
+- Depends on IISS-509 (inventory API frontend) and IISS-507 (My Resources API) being
+  available as data sources
+
+**Technology Stack:**
+- Frontend: React 19, TypeScript, MUI, AG Grid Enterprise, Tailwind CSS, Framer Motion
+- Backend: Express.js BFF (server.js), proxies to CloudWatch and Inventory API
+- Auth: Ping Access SSO (SM_USER header) + AuthMaster API (role-based access)
+- Deployment: ECS Fargate, internal ALB, 3 envs (DEV auto-deploy, UAT/PROD IT approval)
+
+**Status:** In Progress (collaborative with Soundarya/Sridhar; Bhavik focuses on
+CloudWatch integration and config-driven panel rendering)
+
 ## Primary Deliverable
 
 ### IISS-487 — Amazon Managed Grafana: Meridian Platform Monitoring Dashboard
@@ -88,9 +147,43 @@ during the Citco CTM internship (March 15 – August 31, 2026).
 - 6 tasks: core extension, AUTOMATIONHUB, MERIDIAN, aggregation, export API, tag strategy
 - Full BUDGET_CODE_CONFIG with 4 budget codes + AppName fallback
 
-### IISS-509 — Frontend — IA Resources (To Do)
-- 7 tasks: layout, EC2/ECS/EKS/Lambda widgets, export, state indicators
-- Depends on backend completion
+### IISS-509 — Frontend — IA Infrastructure Inventory Dashboard (To Do)
+- **Parent**: IISS-507 (full-stack), IISS-482 (IA Resources Monitoring)
+- **Fusion Project**: 4098002-KY2050 — Intelligent Automation
+- **Depends on**: IISS-508 (Backend API completion)
+- **Description**: Implement all frontend components, widgets, and UI logic for the
+  IA Resources Monitoring Dashboard. Displays EC2, ECS, EKS, and Lambda resources
+  across all budget codes with export-to-Excel functionality.
+
+**Scope (7 tasks):**
+
+| # | Task | Details |
+|---|------|---------|
+| 1 | Dashboard Layout | Main layout with budget code navigation and filtering |
+| 2 | EC2 Widget | EC2 instances per budget code — running and stopped states |
+| 3 | ECS Widget | ECS clusters/services — name-based discovery for Meridian (6 clusters, 13+ services) |
+| 4 | EKS Widget | EKS clusters — handle empty/zero node state (AUTOMATIONHUB) |
+| 5 | Lambda Widget | Lambda functions per budget code with key metrics |
+| 6 | Export to Excel | Export button per widget — formatted Excel sheet download |
+| 7 | Resource State Indicators | Visual indicators: running, stopped, degraded, empty |
+
+**Resource scope reference (4 budget codes at time of ticket):**
+
+| Resource | rpacfs1 | IA-BPO | AUTOMATIONHUB | MERIDIAN | Total |
+|----------|---------|--------|---------------|----------|-------|
+| EC2 (running) | 1 | 0 | 0 | 1 | 2 |
+| EC2 (stopped) | 0 | 0 | 4 | 1 | 5 |
+| ECS Clusters | 5 | 6 | 0 | 6 | 17 |
+| ECS Services | 5 | 6 | 0 | 13+ | 24+ |
+| Lambda | ~30 | ~30 | 22 | 32 | ~114 |
+| EKS | 0 | 0 | 1 | 0 | 1 |
+
+**Acceptance criteria:**
+- EC2, ECS, EKS, Lambda widgets displayed per budget code
+- Stopped/empty resource states visually indicated
+- Export to Excel functional on all widgets
+- Budget code filter/navigation working
+- Dashboard responsive and accessible; tested across supported browsers
 
 ## Auto-Healing & Roadmap
 
@@ -143,9 +236,65 @@ during the Citco CTM internship (March 15 – August 31, 2026).
 
 ## ML/AI
 
-### IISS-824 — Understand Document Agent in ML-RPA-Status LLM Repos (To Do)
-- Two CodeCommit repos: ml-rpa-status-llm-agent + core-smart-rpa-llm-ecr-image
-- Research/documentation task
+### IISS-824 — RPA LLM Agent: Study, Fixes, KB Enrichment \& Improvements (Aug 2026)
+- **Repos**: `ml-rpa-status-llm-agent` + `core-smart-rpa-llm-ecr-image` (CodeCommit, coredev, us-east-1)
+- **Status**: Critical bugs in production, KB sync fixes deployed; dev best-practice approval pending
+
+**System Overview — Ask Citco RPA Chatbot (RAG Architecture):**
+
+```
+LibreChat UI → ECS Fargate (FastAPI) → Bedrock Agent (Claude)
+                                          ├── Action Groups (Lambda) → Event Service, SDM, LE
+                                          └── Knowledge Base (OpenSearch) → IRCOEKB wiki pages
+```
+
+**11 Lambda Functions:**
+
+| Lambda | Purpose | Schedule |
+|--------|---------|----------|
+| `RPABedrockAgent` | Action groups: process status, SDM tickets, LE lookup | On-demand |
+| `IRCOEKBExtractLambda` | SharePoint wiki → S3 (49 libraries, ~5,000 pages) | Daily 12:00 UTC |
+| `RPALLMKBIngestionFunction` | Trigger Bedrock KB sync S3 → OpenSearch | Daily 14:00 UTC |
+| `RPALLMIndexCreatorFunction` | Create OpenSearch 1024-dim FAISS/HNSW vector index | On deploy |
+| `EventStoreExtractLambda` | Databricks event store → S3 CSV for process lookups | Daily 12:00 UTC |
+| `ClientFundMappingLambda` | BPM API client/fund master data → S3 JSON | Every 3 hours |
+| `AthenaTableLambda` | Create usage tracking Athena table (Parquet/KMS) | On deploy |
+| `AthenaRepairLambda` | `MSCK REPAIR TABLE` for new S3 partitions | Every 10 min |
+| `RPALLMUsageReportLambda` | Weekly usage report via SES | Fridays 16:00 UTC |
+| `UploadFileFunction` | Upload API schema to S3 | On deploy |
+| `ALBTestFunction` | ALB connectivity diagnostic (DEV only) | Manual |
+
+**Critical Production Bugs Fixed (IISS-824, Aug 2026):**
+
+1. **IRCOEKB Lambda 52% timeout rate** (most critical): 77 of 148 PROD runs hit 300s timeout (May–Aug 2026, 93-day CloudWatch analysis). Root cause: unconditional re-upload of all ~980 wiki pages daily. Fix (v1.1.x + v1.1.18): Two-phase hybrid sync — Phase 1 checks each of 49 libraries with `filter=Modified gt last_synced_at` (25s total); Phase 2 processes only changed libraries. Per-page idempotency using SharePoint `Modified` timestamp in S3 metadata. Steady-state time reduced from 291s avg → **~25 seconds**.
+
+2. **OpenSearch silent delete bug** (v1.1.1): On index creation failure, code silently deleted the index and reported CloudFormation SUCCESS. Fixed: raise exception properly, add `index_exists()` idempotency check before create.
+
+3. **Athena SSE encryption inconsistency**: `athena_repair.py` used `SSE_S3`; fix unified to `SSE_KMS` across all Athena queries.
+
+4. **SSL verification disabled**: `client_and_fund_report.py` used `verify=False` on BPM API. Fixed to `verify=True`.
+
+5. **Lambda fire-and-forget pattern**: `EventStoreExtractLambda` and `ClientFundMappingLambda` always reported SUCCESS regardless of actual outcome (caught `BotoError` which doesn't exist; `ClientError` not imported). Fixed: proper exception imports and re-raise.
+
+6. **Athena race condition**: `MSCK REPAIR TABLE` ran immediately after `CREATE TABLE` before table existed. Fixed: `wait_for_query()` polling loop.
+
+**KB Content Added:**
+- NAV Checklist PDFs uploaded to S3 (`RPA Processes/NAV Checklist/`) via idempotent upload script and triggered KB ingestion. Now in PROD KB.
+
+**Additional Work:**
+- Refactored 1,140-line `function.py` → 8 focused modules
+- Structlog migration across all 11 Lambda functions
+- Type hints, Google docstrings, Pydantic models added
+- 194 unit tests at 99% code coverage (v1.1.x series)
+- X-Ray tracing instrumented (Powertools Tracer, DEV only pending approval)
+- Kill switch pattern via SSM Parameter Store (`/{Env}/rpa-llm/ircoekb/process-run-status`)
+- Versions v1.1.1 through v1.1.32 released during Aug 3–20 2026
+
+**Proposed (not yet implemented): Hybrid Graph-RAG Architecture**
+- Observation: Citco RPA domain is highly relational — clients, funds, processes, platforms (BP/UiPath), process knowledge are interconnected entities
+- Proposal: Add Graph-RAG layer (Amazon Neptune or similar) alongside existing vector RAG
+- Rationale: Graph traversal over entity relationships (client → funds → processes → platform) would improve chatbot accuracy for complex multi-hop queries (e.g. "What processes run on Blue Prism for client X?")
+- Status: Identified during IISS-824 engagement; to be formally proposed as IISS follow-on
 
 ## Support/Incident JIRAs
 
@@ -155,10 +304,10 @@ during the Citco CTM internship (March 15 – August 31, 2026).
 ### IISS-753 — VPL IPV UI element failure (Jul 8, 16h estimate)
 ### IISS-876 — VPL Pricing GTL incorrect booking (Jul 30)
 
-## Resource Totals Across All 5 Budget Codes
-| Resource | rpacfs1 | IA-BPO | AUTOMATIONHUB | MERIDIAN | CITCOWORKS | Total |
-|----------|---------|--------|---------------|----------|------------|-------|
-| EC2 (running) | 1 | 0 | 0 | 1 | 1 | 3 |
+## Resource Totals Across All 6 Budget Codes
+| Resource | rpacfs1 | IA-BPO | BPM | AUTOMATIONHUB | MERIDIAN | CITCOWORKS | Total |
+|----------|---------|--------|-----|---------------|----------|------------|-------|
+| EC2 (running) | 1 | 0 | 0 | 0 | 1 | 1 | 3 |
 | EC2 (stopped) | 0 | 0 | 4 | 1 | 0 | 5 |
 | ECS Clusters | 5 | 6 | 0 | 6 | 5 | 22 |
 | Lambda | ~30 | ~30 | 22 | 32 | 5 | ~119 |

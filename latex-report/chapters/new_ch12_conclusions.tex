@@ -1,0 +1,122 @@
+﻿% ============================================================
+% CHAPTER 12: CONCLUSIONS
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Conclusions}
+\label{chap:conclusions}
+
+Throughout my internship I worked toward the technical and non-technical
+goals established at the outset in consultation with Kishor Deotale and
+Dr.\ Pawan Lingras. The following sections evaluate each goal against the
+delivered outcomes and reflect on the broader impact of the engagement.
+
+% ────────────────────────────────────────────────────────────
+\section{Learning Goals Evaluation}
+\label{sec:learning_goals_eval}
+% ────────────────────────────────────────────────────────────
+
+Chapter~\ref{chap:learning_goals} established technical and non-technical
+learning goals at the outset of my internship. Table~\ref{tab:learning_goals_eval}
+evaluates each goal against evidence gathered from my delivered work.
+
+% Column widths: 30% + 60% + 10% of \textwidth
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.58\textwidth}>{\centering\arraybackslash}p{0.08\textwidth}}
+\caption{Learning Goals --- Self-Evaluation at Internship Completion}
+\label{tab:learning_goals_eval} \\
+\rowcolor{smubrand}
+  \textcolor{white}{\textbf{Goal}} &
+  \textcolor{white}{\textbf{Evidence}} &
+  \textcolor{white}{\textbf{Status}} \\
+\hline
+\endfirsthead
+\rowcolor{smubrand}
+  \textcolor{white}{\textbf{Goal}} &
+  \textcolor{white}{\textbf{Evidence}} &
+  \textcolor{white}{\textbf{Status}} \\
+\hline
+\endhead
+\hline
+\multicolumn{3}{r}{\small\itshape continued on next page} \\
+\endfoot
+\hline
+\endlastfoot
+\rowcolor{tablerowA}AWS Cloud Services \& Infrastructure &
+  13 AWS service namespaces monitored; Lambda, ECS, EC2 inventoried; full DB spectrum covered &
+  \checkmark \\
+\rowcolor{tablerowB}Site Reliability Engineering Principles &
+  Four golden signals applied; SLOs defined; MSK lag alarm reduces MTTD from 3.5h to $<$30s &
+  \checkmark \\
+\rowcolor{tablerowA}Infrastructure-as-Code &
+  4 CloudFormation stacks; Lambda-backed provisioner; S3-staged templates &
+  \checkmark \\
+\rowcolor{tablerowB}Observability Platforms (AMG) &
+  Multi-environment Grafana workspace; survived 10.4$\to$12.4 upgrade &
+  \checkmark \\
+\rowcolor{tablerowA}Proactive vs.\ Reactive Reliability &
+  Alarm-backed detection replaces business escalation; Meridian Incident proof point &
+  \checkmark \\
+\rowcolor{tablerowB}Python Development &
+  Flask REST API; comprehensive tests at 99\% coverage; Hypothesis PBT; structlog &
+  \checkmark \\
+\rowcolor{tablerowA}Software Engineering Practices &
+  TDD with pytest; spec-driven development via Kiro IDE; PR-based merges &
+  \checkmark \\
+\rowcolor{tablerowB}AI-Augmented Engineering &
+  Kiro IDE spec workflow; Amazon~Q inline; Claude Sonnet for architecture &
+  \checkmark \\
+\rowcolor{tablerowA}Agile and Kanban Methodology &
+  25+ JIRA tickets; story decomposition; work-log discipline; sprint rituals &
+  \checkmark \\
+\rowcolor{tablerowB}Technical Communication &
+  RCA reports; Confluence pages; JIRA acceptance criteria; this report &
+  \checkmark \\
+\rowcolor{tablerowA}Production Incident Response &
+  4 support rotations; 5 notable incidents resolved; IISS-706 hotfix within 7h &
+  \checkmark \\
+\rowcolor{tablerowB}Cross-Functional Collaboration &
+  Halifax--Hyderabad coordination; Meridian team architecture sessions &
+  \checkmark \\
+\rowcolor{tablerowA}Financial Domain Knowledge &
+  VPL queue, Corp Actions, MESO, CAIS familiarity; fund admin SLA awareness &
+  \checkmark \\
+\end{longtable}
+
+All my learning goals were met by my internship completion. The deepest
+learning occurred at the intersection of engineering and operations:
+the direct experience of the Meridian Incident, followed
+immediately by building the instrumentation that would have detected
+it in under 30 seconds, compressed months of abstract SRE theory
+into a single, concrete engineering outcome.
+
+% ────────────────────────────────────────────────────────────
+\section{Internship Hours Summary}
+\label{sec:hours_summary}
+% ────────────────────────────────────────────────────────────
+
+\begin{table}[H]
+\centering
+\caption{Internship Hours Summary}
+\label{tab:hours_summary}
+\begin{tabularx}{\textwidth}{Xr}
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Work}} & \textcolor{white}{\textbf{Duration (hours)}} \\
+\hline
+Citco CTM Internship (Grafana dashboard, inventory API, RPA LLM agent, support rotations) & 900 \\
+Report Writing (MCDA 5585 / 5586 Major Project Report) & 120 \\
+\hline
+\rowcolor{tablerowA}\textbf{Total} & \textbf{1020} \\
+\hline
+\end{tabularx}
+\end{table}
+
+\vspace{1em}
+\noindent
+The following chapters present the detailed evidence for each outcome:
+Chapter~\ref{chap:achievements} covers deliverables and impact,
+Chapter~\ref{chap:challenges} documents the engineering obstacles,
+and Chapter~\ref{chap:future_work} outlines the planned next steps.
+
+% Keep all floats within this chapter
+\FloatBarrier

@@ -1,5 +1,23 @@
 # Why We Needed a Centralized Observability Platform
 
+## Authoritative Platform Reference
+
+There are exactly **6 IA IT SRE budget code environments** (platforms):
+
+| Budget Code | Platform Name | Notes |
+|---|---|---|
+| `automationhub` | AutomationHub | UiPath Cloud orchestrator platform |
+| `bpm` | BPM | Blue Prism orchestrator platform |
+| `citcoworks` | CitcoWorks | Event routing, knowledge graph (Neptune), Event Store |
+| `ia-bpo` | IA BPO | BPO automation platform (CAIS, eBinder, Investran) |
+| `meridian` | Meridian | Kafka/MSK event pipeline, ECS, OpenSearch |
+| `rpacfs1` | RPACFS1 | CFS/RPA platform (CAIS Pricing, Aexeo Reporter) |
+
+- Always refer to these as **6 budget code environments / 6 platforms** — never 5
+- In prose: use title case (Meridian, CitcoWorks) as proper product names
+- In code/tag contexts: use lowercase monospace (`\texttt{meridian}`, `\texttt{citcoworks}`, etc.)
+- `meridian` and `citcoworks` share `BudgetCode="Shared Cloud Artifacts"` — requires AppName as secondary discriminator
+
 ## Source Documents
 - `smu/KnowledgeBase/Context_Why/[CAIS-PRICING EXTRACT] GenAI Pipeline — 5-Week Silent Outage-IISS-430.pdf`
 - `smu/KnowledgeBase/Context_Why/II-Incident Report — Meridian Event Processing Delay (2026-04-17)-110826-032343.pdf`
@@ -219,10 +237,10 @@ design decision in IISS-487:
 
 | IISS-430 Gap | IISS-487 Response |
 |---|---|
-| No throughput alarms on downstream Lambdas | 38 CloudWatch alarms including Lambda invocation alarms |
+| No throughput alarms on downstream Lambdas | Dynamic CloudWatch alarms including Lambda invocation alarms |
 | No SQS queue depth monitoring | SQS row with ApproximateNumberOfMessagesVisible alarms |
 | Upstream Lambdas masked the problem | Per-function panels via Metric Insights SQL GROUP BY FunctionName |
 | No end-to-end output check | MSK EstimatedMaxTimeLag alarm as pipeline health proxy |
 | Error rate stayed 0% (exceptions swallowed) | Logs Insights error panels using /ERROR/ pattern |
 | No custom business metrics | Volume metric tracking via IA Event Store VOLUME events |
-| No centralized visibility | 14-row Grafana AMG dashboard across all 5 budget code environments |
+| No centralized visibility | 14-row Grafana AMG dashboard across all 6 budget code environments |

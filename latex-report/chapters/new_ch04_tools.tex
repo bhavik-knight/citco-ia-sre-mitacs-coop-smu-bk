@@ -1,0 +1,280 @@
+﻿% ============================================================
+% CHAPTER 4: TOOLS & TECHNOLOGIES
+% MCDA 5585 / 5586 Major Project Report
+% Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
+% ============================================================
+
+\chapter{Tools \& Technologies}
+\label{chap:tools}
+
+During my internship, the following tools, AWS services, and platforms
+were used to build the IA-IT-SRE Infrastructure monitoring deliverables,
+develop the inventory API, and support RPA production operations.
+
+% ─────────────────────────────────────────────────────────────
+\section{AWS Cloud Services}
+\label{sec:tools_aws}
+% ─────────────────────────────────────────────────────────────
+
+\begin{itemize}
+
+      \item \textbf{Amazon CloudWatch} --- AWS's primary observability
+          service, used for collecting metrics, logs, and alarms across
+          all monitored AWS services. Metrics Insights SQL and Logs
+          Insights were used for dashboard queries and log analysis.
+
+      \item \textbf{AWS CloudFormation / SAM} --- Infrastructure-as-Code
+          framework used to provision CloudWatch alarms, Grafana
+          workspaces, and Lambda functions via parameterized YAML templates.
+
+    \item \textbf{AWS Lambda} --- Serverless compute service hosting
+          the automation workloads across all six platforms, and used
+          as the runtime for the CloudFormation alarm provisioner and
+          the resource inventory API.
+
+    \item \textbf{Amazon ECS (Elastic Container Service)} ---
+          Container orchestration service used to run the Meridian
+          platform services. CloudWatch Container Insights was enabled
+          to surface task-level CPU and memory telemetry.
+
+    \item \textbf{Amazon MSK (Managed Streaming for Apache Kafka)} ---
+          Managed Kafka service used as the Meridian event pipeline
+          backbone. Consumer lag metrics from MSK were the primary
+          observable for the Meridian Incident post-mortem monitoring gap.
+
+    \item \textbf{Databricks} --- Unified data analytics platform used
+          within the Meridian event pipeline for ingesting and processing
+          automated system events from Citco Recs. Events are received
+          and processed in Databricks before being consumed downstream
+          by the OpenSearch layer.
+
+    \item \textbf{Amazon SQS (Simple Queue Service)} --- Message queue
+          service used as an inter-service trigger mechanism for Lambda
+          functions. Queue depth and oldest message age were monitored
+          as leading indicators of processing backlogs.
+
+    \item \textbf{Amazon EC2} --- Virtual machine service hosting
+          RPA bot nodes and supporting infrastructure across the platforms.
+
+    \item \textbf{Amazon EKS (Elastic Kubernetes Service)} --- Managed
+          Kubernetes service used by the AutomationHub platform for
+          container workloads.
+
+    \item \textbf{Amazon ECR (Elastic Container Registry)} --- Container
+          image registry used to store and version Docker images for
+          ECS and EKS deployments.
+
+    \item \textbf{Amazon OpenSearch Service} --- Search and analytics
+          engine used by the Meridian platform as the event indexing
+          layer queried by downstream services.
+
+    \item \textbf{Amazon RDS Aurora} --- Relational database service
+          used by Meridian and other platforms for structured data storage.
+
+    \item \textbf{Amazon DocumentDB} --- MongoDB-compatible document
+          database used by Meridian for document-oriented workloads.
+
+    \item \textbf{Amazon Neptune} --- Graph database used by the
+          CitcoWorks platform for the Knowledge Graph hierarchy.
+
+    \item \textbf{Amazon ElastiCache (Redis/Valkey)} --- In-memory
+          caching service used by Meridian's ODL layer for fast
+          event state access.
+
+    \item \textbf{Amazon S3} --- Object storage used for CloudFormation
+          template staging, Lambda deployment packages, and automation
+          output artifacts.
+
+    \item \textbf{AWS Secrets Manager} --- Credential management service
+          used to store and rotate API keys, database passwords, and
+          service account tokens across all platforms.
+
+    \item \textbf{AWS IAM} --- Identity and access management service
+          used to define least-privilege roles for the Grafana data
+          source, Lambda provisioner, and inventory API.
+
+    \item \textbf{AWS CodeCommit} --- Git-based source control service
+          used to host all automation and infrastructure repositories.
+
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────
+\section{Observability \& Monitoring}
+\label{sec:tools_observability}
+% ─────────────────────────────────────────────────────────────
+
+\begin{itemize}
+
+    \item \textbf{Amazon Managed Grafana (AMG)} --- Fully managed
+          Grafana service used to build the centralized IA-IT-SRE
+          Infrastructure dashboard with multiple rows covering all monitored
+          AWS services across all six platforms.
+
+    \item \textbf{CloudWatch Container Insights} --- Managed telemetry
+          extension for ECS and EKS that surfaces task-level CPU,
+          memory, and network metrics, enabled on the Meridian clusters.
+
+    \item \textbf{AWS X-Ray} --- Distributed tracing service researched
+          and partially evaluated for Lambda and ECS instrumentation;
+          full deployment scoped as future work.
+
+    \item \textbf{AWS Application Signals} --- AWS-native SLO management
+          and service health monitoring service evaluated as part of the
+          Dynatrace parity analysis; identified as the path from 60\%
+          to $\sim$80\% AWS-native feature parity.
+
+    \item \textbf{Dynatrace} --- Enterprise APM platform already in use
+          by the team for Blue Prism automation observability, used as the
+          functional benchmark for the AWS-native observability PoC.
+
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────
+\section{Development Tools}
+\label{sec:tools_dev}
+% ─────────────────────────────────────────────────────────────
+
+\begin{itemize}
+
+    \item \textbf{Python 3} --- Primary programming language used for
+          all automation scripts, the inventory API, and CloudFormation
+          provisioner logic.
+
+    \item \textbf{boto3} --- AWS SDK for Python, used to interact with
+          all AWS services programmatically in the inventory API and
+          alarm provisioner.
+
+    \item \textbf{Flask (async)} --- Lightweight Python web framework
+          used to build the \texttt{ia-it-sre-infrastructure-inventory}
+          REST API with async route handlers.
+
+    \item \textbf{FastAPI} --- Python API framework used in the initial
+          inventory API prototype before being migrated to Flask.
+
+    \item \textbf{Pydantic} --- Data validation library used for
+          type-safe response models in the inventory API.
+
+    \item \textbf{pytest + Hypothesis} --- Testing frameworks used to
+          build the automated test suite for the inventory API, achieving
+          99\% code coverage with unit, integration, and property-based tests.
+
+    \item \textbf{TypeScript / ReactJS / MUI} --- Frontend technology
+          stack used for the inventory dashboard UI, with
+          ReactJS for component-based UI, MUI (Material UI) for
+          design-system components, and TypeScript for type-safe
+          frontend development.
+
+    \item \textbf{Chart.js / Recharts} --- JavaScript charting libraries
+          proposed for the custom UI dashboard (Work Stream~6).
+          Chart.js for real-time streaming metrics with 30-second refresh
+          intervals (canvas-based for smooth rendering); Recharts for
+          static comparisons, bar charts, and gauges.
+
+    \item \textbf{Cytoscape.js} --- Graph visualization library proposed
+          for X-Ray service map rendering in the custom UI dashboard,
+          replacing Grafana's crash-prone nodeGraph plugin with a stable
+          dagre layout implementation.
+
+    \item \textbf{D3.js (hexbin)} --- Data visualization library proposed
+          for Dynatrace-style honeycomb health grids in the custom UI
+          dashboard planning document.
+
+    \item \textbf{Postman} --- API testing tool used to validate and
+          document the inventory REST API endpoints during development.
+
+    \item \textbf{Apache JMeter} --- Load testing tool used to validate
+          API performance and throughput for the inventory REST API
+          under simulated concurrent request loads.
+
+    \item \textbf{DBeaver} --- Universal database client used to inspect
+          and query RDS, DocumentDB, and other database services across
+          the platforms during incident investigation and development.
+
+    \item \textbf{PowerShell / Shell Scripts} --- Scripting environments
+          used to automate deployment tasks, run AWS CLI commands, and
+          execute operational scripts on Windows and Linux hosts.
+
+    \item \textbf{Visual Studio Code (VS Code)} --- Primary code editor
+          used for Python, TypeScript, and YAML development, extended
+          with the Kiro IDE plugin for AI-assisted engineering.
+
+    \item \textbf{JIRA} --- Project tracking tool used for sprint
+          planning, story decomposition, and time logging across all
+          internship deliverables.
+
+    \item \textbf{Confluence} --- Internal wiki used for architecture
+          documentation, Lambda function inventory pages, and runbooks.
+
+    \item \textbf{Git / AWS CodeCommit / Bitbucket} --- Version control
+          system with two hosted repository services: AWS CodeCommit
+          for Python and IaC repositories, and Bitbucket for UiPath
+          automation repositories.
+
+    \item \textbf{Remote Desktop Connection (RDC)} --- Used to connect
+          to remote Windows machines hosting RPA bot nodes and
+          on-premises infrastructure for incident investigation and
+          configuration changes.
+
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────
+\section{AI-Native Development Tools}
+\label{sec:tools_ai}
+% ─────────────────────────────────────────────────────────────
+
+\begin{itemize}
+
+    \item \textbf{Kiro IDE} --- AI-powered development environment
+          built on VS~Code, used for spec-driven development
+          (\texttt{requirements.md} $\to$ \texttt{design.md} $\to$
+          \texttt{tasks.md}) and agentic code generation for the
+          inventory API.
+
+    \item \textbf{Amazon Q} --- AWS integrated code assistant used
+          for inline boto3 completions and project-level
+          context retrieval.
+
+    \item \textbf{Claude Sonnet \& Opus (Anthropic)} --- Large language model
+          accessed via Kiro, used for architecture reasoning,
+          CloudFormation template drafting, and test strategy design.
+
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────
+\section{RPA Platforms}
+\label{sec:tools_rpa}
+% ─────────────────────────────────────────────────────────────
+
+\begin{itemize}
+
+    \item \textbf{Blue Prism} --- Legacy RPA platform hosting
+          daily, monthly, and quarterly fund operations automation
+          processes, monitored during production support rotations.
+
+    \item \textbf{UiPath Cloud / On-Premises} --- Target RPA platform
+          for new automation development and Blue Prism migrations,
+          operated via UiPath Orchestrator with SQS-triggered job
+          invocations.
+
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────
+\section{Communication \& Collaboration}
+\label{sec:tools_comms}
+% ─────────────────────────────────────────────────────────────
+
+\begin{itemize}
+
+    \item \textbf{Microsoft Teams} --- Primary communication platform
+          used for daily standups, sprint planning meetings, technical
+          discussions with the SRE team, and screen-sharing during
+          incident investigation and pair debugging sessions.
+
+    \item \textbf{Microsoft Outlook} --- Email client used for formal
+          communications, meeting scheduling, calendar management,
+          and receiving production alert notifications from CloudWatch
+          SNS topics.
+
+\end{itemize}
+
+
