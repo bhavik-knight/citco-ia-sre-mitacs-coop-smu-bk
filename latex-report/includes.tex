@@ -38,13 +38,17 @@
 
 % --- COLOR PALETTE DEFINITIONS ---
 \usepackage{xcolor}
-\definecolor{smumaroon}{RGB}{138, 0, 39}  % Official Saint Mary's University Maroon (#8A0027)
+\definecolor{smumaroon}{HTML}{8A0027}  % Official SMU Maroon — primary brand colour (#8A0027 from smu.ca)
 \definecolor{smugray}{RGB}{100, 100, 100}  % Neutral Gray for subtitles and footers
 \definecolor{codebg}{RGB}{245, 245, 245}   % Light background for code listings
-\definecolor{smubrand}{HTML}{9E0404}  % Neeyati report maroon (headings)
-\definecolor{tableheader}{RGB}{230,230,230} % Light grey for table header rows
-\definecolor{tablerowA}{RGB}{240,230,230}  % Very light maroon tint — odd rows
-\definecolor{tablerowB}{RGB}{255,255,255}  % White — even rows
+\definecolor{smubrand}{HTML}{8A0027}  % SMU primary maroon — headings, links, chapter titles (aligned with smumaroon)
+\definecolor{smubranddark}{HTML}{6D1A36}  % SMU deep wine maroon — table headers, accents
+\definecolor{tableheader}{HTML}{6D1A36}  % Deep wine maroon — table header rows (matches Excel header row)
+\definecolor{tablerowA}{HTML}{FFF8F8}   % Very light warm tint — odd rows (matches Excel ROW_ODD)
+\definecolor{tablerowB}{HTML}{FFFFFF}  % White — even rows
+
+% Convenience macro for maroon table header rows with white text
+\newcommand{\tableheaderrow}[1]{\rowcolor{tableheader}\color{white}\textbf{#1}}
 
 % --- HEADING SIZES (Neeyati report standard) ---
 % Extracted from NeeyatiMehta_A00477369_projectReport.docx

@@ -46,11 +46,21 @@ during the Citco CTM internship (March 15 – August 31, 2026).
 - CloudWatch dashboards are siloed per service, no cross-service filtering
 - Grafana AMG (IISS-487) achieves ~60% Dynatrace parity but has fixed panel types
   and no drag-and-drop layout customisation
-- The `ia-config-portal` is an existing internal UI (React/Next.js) already used for
-  IA configuration management — adding a monitoring page here gives the SRE team a
-  single Citco-owned interface without external tool dependency
+- The `ia-config-portal` is an existing internal UI (React 19/TypeScript with Rsbuild
+  bundler, Express.js BFF) already used for IA configuration management — adding a
+  monitoring page here gives the SRE team a single Citco-owned interface without
+  external tool dependency
 - Depends on IISS-509 (inventory API frontend) and IISS-507 (My Resources API) being
   available as data sources
+
+**Technology Stack:**
+- Frontend: React 19, TypeScript, MUI, AG Grid Enterprise, Tailwind CSS, Framer Motion
+- Backend: Express.js BFF (server.js), proxies to CloudWatch and Inventory API
+- Auth: Ping Access SSO (SM_USER header) + AuthMaster API (role-based access)
+- Deployment: ECS Fargate, internal ALB, 3 envs (DEV auto-deploy, UAT/PROD IT approval)
+
+**Status:** In Progress (collaborative with Soundarya/Sridhar; Bhavik focuses on
+CloudWatch integration and config-driven panel rendering)
 
 ## Primary Deliverable
 

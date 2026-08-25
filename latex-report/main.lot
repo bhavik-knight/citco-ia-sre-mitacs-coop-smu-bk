@@ -4,30 +4,28 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces Project Deliverables --- JIRA Scope}}{17}{table.caption.4}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {6.1}{\ignorespaces Project Deliverables --- JIRA Scope}}{17}{table.caption.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {7.1}{\ignorespaces Observability Gap Analysis --- Pre- vs.\ Post-Internship}}{27}{table.caption.5}%
-\contentsline {table}{\numberline {7.2}{\ignorespaces Dynatrace Capability Parity --- AWS-Native Stack vs Dynatrace (selected features)}}{28}{table.caption.6}%
+\contentsline {table}{\numberline {8.1}{\ignorespaces Stakeholder Identification}}{26}{table.caption.2}%
+\contentsline {table}{\numberline {8.2}{\ignorespaces Functional Requirements}}{29}{table.caption.7}%
+\contentsline {table}{\numberline {8.3}{\ignorespaces Non-Functional Requirements}}{30}{table.caption.8}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {8.1}{\ignorespaces Stakeholder Identification}}{29}{table.caption.8}%
-\contentsline {table}{\numberline {8.2}{\ignorespaces Functional Requirements}}{32}{table.caption.13}%
-\contentsline {table}{\numberline {8.3}{\ignorespaces Non-Functional Requirements}}{33}{table.caption.14}%
+\contentsline {table}{\numberline {9.1}{\ignorespaces Observability Gap Analysis --- Pre- vs.\ Post-Internship}}{36}{table.caption.10}%
+\contentsline {table}{\numberline {9.2}{\ignorespaces Dynatrace Capability Parity --- AWS-Native Stack vs Dynatrace (selected features)}}{37}{table.caption.11}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {10.1}{\ignorespaces Grafana AMG Dashboard --- Row Structure (Rows 1--15 shown; Rows 16--17: Alarms \& Notifications, X-Ray Traces)}}{46}{table.caption.23}%
+\contentsline {table}{\numberline {10.2}{\ignorespaces IA Resources Inventory API --- Endpoint Summary}}{55}{table.caption.36}%
+\contentsline {table}{\numberline {10.3}{\ignorespaces Critical Grafana AMG Limitations Identified}}{64}{table.caption.40}%
+\contentsline {table}{\numberline {10.4}{\ignorespaces Work Stream 6 --- Status Summary}}{65}{table.caption.41}%
+\contentsline {table}{\numberline {10.5}{\ignorespaces Design Decision Summary}}{69}{table.caption.60}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {12.1}{\ignorespaces Learning Goals --- Self-Evaluation at Internship Completion}}{100}{table.12.1}%
+\contentsline {table}{\numberline {12.2}{\ignorespaces Internship Hours Summary}}{101}{table.caption.61}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {15.1}{\ignorespaces Auto-Healing Agent --- Initial Remediation Catalogue}}{111}{table.caption.67}%
 \addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {9.1}{\ignorespaces Grafana AMG Dashboard --- Row Structure (Rows 1--15 shown; Rows 16--17: Alarms \& Notifications, X-Ray Traces)}}{84}{table.caption.21}%
-\contentsline {table}{\numberline {9.2}{\ignorespaces IA Resources Inventory API --- Endpoint Summary}}{85}{table.caption.27}%
-\contentsline {table}{\numberline {9.3}{\ignorespaces Design Decision Summary}}{85}{table.caption.46}%
-\contentsline {table}{\numberline {9.4}{\ignorespaces Support Incident Summary}}{86}{table.caption.58}%
-\contentsline {table}{\numberline {9.5}{\ignorespaces Full JIRA Scope --- Internship Deliverables}}{87}{table.caption.59}%
-\contentsline {table}{\numberline {10.1}{\ignorespaces Internship Hours by Phase}}{88}{table.caption.61}%
-\contentsline {table}{\numberline {11.1}{\ignorespaces Learning Goals --- Self-Evaluation at Internship Completion}}{89}{table.caption.62}%
-\contentsline {table}{\numberline {12.1}{\ignorespaces IISS-487 Grafana Dashboard --- Delivery Metrics}}{90}{table.caption.63}%
-\contentsline {table}{\numberline {12.2}{\ignorespaces IISS-507 Inventory API --- Delivery Metrics}}{90}{table.caption.64}%
-\contentsline {table}{\numberline {14.1}{\ignorespaces Auto-Healing Agent --- Initial Remediation Catalogue}}{91}{table.caption.70}%
-\contentsline {table}{\numberline {A.1}{\ignorespaces Summary of internship hours by phase.}}{91}{table.caption.77}%
