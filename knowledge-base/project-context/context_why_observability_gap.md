@@ -237,7 +237,7 @@ design decision in IISS-487:
 
 | IISS-430 Gap | IISS-487 Response |
 |---|---|
-| No throughput alarms on downstream Lambdas | 38 CloudWatch alarms including Lambda invocation alarms |
+| No throughput alarms on downstream Lambdas | Dynamic CloudWatch alarms including Lambda invocation alarms |
 | No SQS queue depth monitoring | SQS row with ApproximateNumberOfMessagesVisible alarms |
 | Upstream Lambdas masked the problem | Per-function panels via Metric Insights SQL GROUP BY FunctionName |
 | No end-to-end output check | MSK EstimatedMaxTimeLag alarm as pipeline health proxy |

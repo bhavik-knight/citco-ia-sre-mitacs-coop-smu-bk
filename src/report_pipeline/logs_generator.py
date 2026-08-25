@@ -51,24 +51,28 @@ def get_major_project_data() -> list[dict]:
     """
     data = []
 
-    # Phase 1: Onboarding, CloudWatch Dashboards & Architecture Research (Weeks 1-4)
-    p1 = "Phase 1: Onboarding, CloudWatch & Architecture Research"
+    # Phase 1: Part-Time Onboarding & CloudWatch Dashboards (Weeks 1-4)
+    p1 = "Phase 1: Part-Time Onboarding & CloudWatch Dashboards"
     p1_weeks = [
-        ("Week 1", "March 15, 2026 to March 21, 2026", [
-            ("Environment Setup & Access Onboarding", "Day-1 orientation; raised AWS/JIRA/Confluence/CodeCommit access tickets; installed developer tools (VSCode, Git, AWS CLI); registered for Amazon Q.", 8.0),
-            ("Architecture Study", "Explored Meridian, CitcoWorks, Lambda fleet (51 functions), and Citco IA platform structure across 5 budget code environments.", 5.0),
+        ("Week 1", "March 16, 2026 to March 20, 2026", [
+            ("Environment Setup & Access Onboarding", "Day-1 orientation with manager Kishor Deotale; raised access tickets for Confluence (#14193911), JIRA (#14193674, #14193943), BitBucket (#14196961), AWS Core Dev; installed VSCode, Git, PyCharm, Amazon Q plugin.", 5.0),
+            ("Environment Configuration & Architecture Study", "Configured AWS CLI with SSO authentication; explored Lambda fleet (51 functions), Meridian, CitcoWorks platform documentation; studied five budget code environments.", 5.0),
+            ("Security & Compliance Training", "Attended BPM Control Questionnaire meeting; learned Active Directory integration, Ping authentication, penetration testing process, Dynatrace monitoring, ELK/Kibana logging infrastructure.", 5.0),
         ]),
-        ("Week 2", "March 22, 2026 to March 28, 2026", [
-            ("IISS-435: RPACFS1 CloudWatch Dashboard", "Designed and deployed CloudWatch pipeline health dashboard for rpacfs1-cais-pricing-extract-genai-infrastructure with CTI metrics instrumentation, Logs Insights widget, and unit tests.", 18.75),
+        ("Week 2", "March 23, 2026 to March 27, 2026", [
+            ("AWS Database Services Deep Dive", "Studied RDS (Single/Multi-AZ), Aurora, Redshift, DynamoDB, DocumentDB, Neptune Graph DB (Gremlin vs SPARQL), ElastiCache (Redis vs Memcached), TimeStream, QLDB.", 6.0),
+            ("CloudWatch & CloudFormation Study", "Learned CloudWatch CMAA cycle, metrics, logs, alarms, EventBridge; completed CloudFormation IaC fundamentals: templates, stacks, change sets.", 6.0),
+            ("AWS Lambda & Serverless Architecture", "Deep dive into Lambda execution model, memory/CPU allocation, cold starts, triggers, layers, concurrency, VPC configuration, CloudWatch logging.", 6.0),
         ]),
-        ("Week 3", "March 29, 2026 to April 04, 2026", [
-            ("IISS-435: Dashboard Completion & Tests", "Completed multi-dashboard architecture, lambda-list filtering, technical dashboard, metric filter generator, Flask registry API; 262 tests passing.", 15.0),
-            ("IISS-455: Lambda Dashboard Design", "Created IISS-461 subtask; designed CloudWatch CFN dashboard structure for Lambda monitoring across rpacfs1/IA-BPO (51 functions).", 5.0),
+        ("Week 3", "March 30, 2026 to April 03, 2026", [
+            ("IISS-435: CTI CloudWatch Metrics & Dashboard", "Added CloudWatch metrics instrumentation for CTI pipeline; created Pipeline Health Dashboard; refactored metrics into dedicated module; added unit tests; repository hygiene (.gitignore, pycache cleanup).", 7.0),
+            ("IISS-435: Technical Dashboard with Log Insights", "Added CloudWatch Logs Insights widget for error pattern extraction; configured time ranges and query syntax; documented query setup with screenshots.", 7.0),
+            ("IISS-435: Testing & Code Quality", "Added unit tests for Logs Insights queries and CFN templates; refactored imports; added type hints; ran full test suite (262 tests passing); prepared PR documentation.", 6.0),
         ]),
-        ("Week 4", "April 05, 2026 to April 11, 2026", [
-            ("IISS-455: Lambda Dashboard Completed (2h)", "Deployed Lambda monitoring CloudWatch dashboard via CFN; all 51 functions covered; verified in DEV console.", 5.0),
-            ("IISS-461: Confluence Lambda Inventory", "Published Confluence page with full Lambda inventory, trigger mapping, and budget code table.", 3.75),
-            ("IISS-469: Dashboard Improvements Research", "Investigated Top-K limitation (IAM blocks central approach — 106 metric filters needed); documented 5 OOM detection approaches; budget code filtering research.", 5.0),
+        ("Week 4", "April 06, 2026 to April 10, 2026", [
+            ("IISS-435: Merge & IISS-455: Lambda Dashboard", "Merged IISS-435 to release/SRE; created IA-Lambda-Monitoring-Dashboard with modular YAML widgets: invocations, errors, throttles, duration (Avg/Max/P99), cold starts, concurrency, memory.", 7.0),
+            ("IISS-455: Dashboard Testing & Refinement", "Added 21 unit tests; fixed text widget markdown validation; resolved circular dependencies; implemented filter propagation across widgets.", 7.0),
+            ("IISS-461: Confluence Lambda Inventory", "Published Lambda inventory page covering 51 functions with trigger mappings, memory configs, timeout settings, budget code allocations; updated team runbook.", 6.0),
         ]),
     ]
 
