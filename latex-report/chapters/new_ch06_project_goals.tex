@@ -89,7 +89,7 @@ IISS-824 & RPA LLM Agent --- Ask Citco RPA (bug fixes, KB sync, quality improvem
 \end{table}
 
 
-\subsection{IA Infrastructure Monitoring Platform (IISS-435, 455, 461, 469, 482--486)}
+\subsection{IA Infrastructure Monitoring Platform}
 
 \textbf{Platform:} Native Amazon CloudWatch dashboards built with
 Python-based dashboard builders and CloudFormation.
@@ -114,7 +114,7 @@ for Grafana template variables impractical --- this directly motivated the
 Inventory API (WS3).
 
 
-\subsection{Centralized Grafana SRE Dashboard (IISS-487)}
+\subsection{Centralized Grafana SRE Dashboard}
 
 \textbf{Platform:} Amazon Managed Grafana (AMG) v12.4, with Amazon
 CloudWatch as the sole data source via the native Grafana CloudWatch
@@ -155,7 +155,7 @@ clusters, providing task-level CPU, memory, network I/O, and storage
 telemetry surfaced in the ECS dashboard rows.
 
 
-\subsection{IA Infrastructure Inventory API (IISS-507--510)}
+\subsection{IA Infrastructure Inventory API}
 
 \textbf{Stack:} Python~3, \texttt{flask[async]}, boto3,
 Pydantic, serverless-wsgi (Lambda deployment), pytest
@@ -179,7 +179,7 @@ each supporting an optional \texttt{?platform=} filter. Each resource
 response carries name, type, platform, tags, and ARN.
 
 
-\subsection{RPA LLM Agent --- Ask Citco RPA (IISS-824)}
+\subsection{RPA LLM Agent --- Ask Citco RPA}
 
 \textbf{Repositories:} CodeCommit \texttt{ml-rpa-status-llm-agent} and
 \texttt{core-smart-rpa-llm-ecr-image} (coredev, us-east-1).
@@ -211,9 +211,9 @@ Bedrock agent action groups.
 Code quality improvements awaiting dev approval per IA Best Practice guidelines.
 
 
-\subsection{Citco Enterprise Custom UI Dashboards (IISS-509, IISS-919) --- Planning}
+\subsection{Citco Enterprise Custom UI Dashboards}
 
-\textbf{Status:} Planning phase complete; implementation deferred to
+\textbf{Status:} In progress; implementation continuing in the
 Sep--Dec~2026 internship extension period.
 
 \textbf{Deliverable:} 865-line implementation plan documenting:
@@ -342,9 +342,9 @@ objectives.
 \end{itemize}
 
 
-\subsection{Citco Enterprise Custom UI Dashboards (Planning)}
+\subsection{Citco Enterprise Custom UI Dashboards}
 
-\textit{Note: IISS-509 and IISS-919 are planned for the internship extension period (Sep--Dec~2026). Planning phase complete; implementation not yet started.}
+\textit{Note: IISS-509 and IISS-919 are in active development during the internship extension period (Sep--Dec~2026). Initial implementation complete; continuing in the extension.}
 
 \begin{itemize}
     \item \textbf{Planning document}: Comprehensive 865-line implementation

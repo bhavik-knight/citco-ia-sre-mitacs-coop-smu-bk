@@ -175,7 +175,7 @@ at negligible incremental cost relative to the existing CloudWatch spend.
 I enabled Standard Container Insights on five of the six Meridian clusters
 on May~11--12, 2026.
 
-\subsubsection{SQS Registry Architecture (IISS-482 SQS Feature)}
+\subsubsection{SQS Registry Architecture}
 
 The SQS monitoring feature I added on introduced a
 \textbf{registry-based architecture with a three-tier fallback model} for
@@ -553,7 +553,7 @@ enablement is pending senior approval due to the additional CloudWatch
 costs associated with trace segment storage.
 
 % ────────────────────────────────────────────────────────────
-\section{IA Resources Inventory API (IISS-507)}
+\section{IA Resources Inventory API}
 \label{sec:inventory_api}
 % ────────────────────────────────────────────────────────────
 
@@ -609,7 +609,7 @@ test infrastructure.
 \caption{IA Resources Inventory API --- Endpoint Summary}
 \label{tab:api_endpoints}
 \rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{Xp{7.0cm}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}p{0.65\textwidth}}
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Endpoint}} & \textcolor{white}{\textbf{Description}} \\
 \hline
@@ -832,7 +832,7 @@ development work on the dashboard, inventory API, or documentation ---
 maintaining productivity while remaining available for escalations.
 
 % ────────────────────────────────────────────────────────────
-\section{Work Stream 5: RPA LLM Agent --- Ask Citco RPA (IISS-824)}
+\section{Work Stream 5: RPA LLM Agent --- Ask Citco RPA}
 \label{sec:rpa_llm_agent}
 % ────────────────────────────────────────────────────────────
 
@@ -1009,17 +1009,16 @@ for straightforward procedural lookups. This proposal will be submitted
 as a formal IISS follow-on ticket.
 
 % ────────────────────────────────────────────────────────────
-\section{Work Stream 6: Citco Enterprise Custom UI Dashboards (Planning)}
+\section{Work Stream 6: Citco Enterprise Custom UI Dashboards}
 \label{sec:enterprise_ui_dashboards}
 % ────────────────────────────────────────────────────────────
 
-Work Stream~6 represents planned future work to extend the existing
+Work Stream~6 is in active development, extending the existing
 \texttt{ia-config-portal} application with two new dashboard pages.
 During this internship period, I completed an \textbf{architectural
-planning document} (IISS-919-IMPLEMENTATION-PLAN.md) that addresses
-the limitations discovered in both Grafana AMG and CloudWatch dashboards.
-Implementation is scheduled for the internship extension period
-(Sep--Dec~2026).
+implementation plan} (IISS-919-IMPLEMENTATION-PLAN.md) and began
+initial implementation. Development is continuing during the internship
+extension period (Sep--Dec~2026).
 
 \subsection{Planning Document Deliverable}
 
@@ -1118,8 +1117,8 @@ Key planned components include:
 Planning Document & 865-line implementation plan with gap analysis, tech stack, task breakdown & Complete \\
 Backend Handlers & 4 new Lambda API endpoints for X-Ray and Alarms & Planned \\
 Component Library & SRE-specific wrappers on \texttt{@citco/core} & Planned \\
-Inventory Dashboard & IISS-509 frontend for resource inventory & Planned \\
-Monitoring Dashboard & IISS-919 config-driven monitoring UI & Planned \\
+Inventory Dashboard & IISS-509 frontend for resource inventory & In Progress \\
+Monitoring Dashboard & IISS-919 config-driven monitoring UI & In Progress \\
 \hline
 \end{tabularx}
 \end{table}
@@ -1324,7 +1323,7 @@ comprehensive error logging and a manual re-invocation pathway via
 \caption{Design Decision Summary}
 \label{tab:design_decisions}
 \rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}p{0.38\textwidth}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.32\textwidth}>{\raggedright\arraybackslash}p{0.37\textwidth}}
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Decision}} & \textcolor{white}{\textbf{Chosen Approach}} & \textcolor{white}{\textbf{Key Tradeoff}} \\
 \hline
