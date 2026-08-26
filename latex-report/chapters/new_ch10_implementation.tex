@@ -11,7 +11,7 @@
 \label{sec:platform_overview}
 % ────────────────────────────────────────────────────────────
 
-The three deliverables of my internship form a coherent four-layer
+The three deliverables of my co-op placement form a coherent four-layer
 observability stack. Figure~\ref{fig:platform_overview} shows how the layers
 relate to each other and to the underlying IA platform infrastructure.
 
@@ -197,8 +197,8 @@ resilient SQS queue data retrieval. The three tiers operated as follows:
 \end{enumerate}
 
 This three-tier model ensured the SQS monitoring pipeline remained
-functional even during AWS service degradation events. I accompanied 
-the feature with \textbf{automated tests} covering the registry
+functional even during AWS service degradation events. The feature
+was validated with \textbf{automated tests} covering the registry
 dispatch logic, fallback transitions, and queue metadata serialization.
 
 % ────────────────────────────────────────────────────────────
@@ -228,14 +228,15 @@ The data layer is characterized by:
           IAM role. No additional data collectors, agents, or scrapers
           are required.
 
-    \item \textbf{IAM role model}: A \textbf{16-role agent permission
-          model} provides the Grafana service account with cross-account
-          read access across all IA AWS accounts. Each role grants the
-          minimum permissions required: \texttt{cloudwatch:GetMetricData},
+    \item \textbf{IAM role model}: A \textbf{16-role deployment} (one role
+          per AWS account, covering all six IA platform accounts) built on a
+          \textbf{three-role IAM chaining architecture} provides the Grafana
+          service account with cross-account read access across all IA AWS accounts.
+          Each role grants the minimum permissions required: \texttt{cloudwatch:GetMetricData},
           \texttt{cloudwatch:ListMetrics}, \texttt{cloudwatch:DescribeAlarms},
           \texttt{logs:StartQuery}, \texttt{logs:GetQueryResults}, and
           \texttt{ec2:DescribeTags} (for tag-based resource enumeration).
-          Figure~\ref{fig:iam_role_model} shows the three-role IAM
+          Figure~\ref{fig:iam_role_model} shows the three-role IAM chaining
           architecture required because \texttt{CTM-Developer} cannot
           create IAM roles directly and the shared
           \texttt{CITCO-CloudFormationBuild} role lacks
@@ -641,25 +642,8 @@ publishes CloudWatch metrics, which Grafana reads via template variables and Met
 Insights SQL panels.
 
 \begin{figure}[htbp]
-\begin{center}
-\begin{minipage}{0.92\textwidth}
-\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, frame=none, backgroundcolor=\color{white}, numbers=none]
-+------------------+   +------------------+   +------------------+
-| Lambda:          |   | CloudWatch:      |   | Grafana AMG:     |
-| cache_refresh    |-->| platform/Monitor |-->| Variables        |
-| Discovers AWS    |   | LambdaActive     |   | dimensionValues  |
-| Writes S3 cache  |   | SQSQueueActive   |   | Panels: Metric   |
-+------------------+   | MSKClusterActive |   | Insights SQL     |
-         |             +------------------+   | Deep-links       |
-         v                                    +------------------+
-+------------------+   +------------------+
-| S3: latest.json  |-->| Lambda API:      |
-| per service/plat |   | handler_resources|
-+------------------+   | Returns JSON     |
-                       +------------------+
-\end{lstlisting}
-\end{minipage}
-\end{center}
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig-grafana_inventory_integration.png}
 \caption{Inventory API --- Grafana AMG Integration}
 \label{fig:grafana_inventory_integration}
 \end{figure}
@@ -730,7 +714,7 @@ My test suite for the inventory API achieves \textbf{99\%~code coverage}:
 \label{sec:rpa_production_support}
 % ────────────────────────────────────────────────────────────
 
-Throughout the internship I participated in dedicated RPA production support
+Throughout the co-op placement I participated in dedicated RPA production support
 rotations as part of the IA team's \textbf{Follow-the-Sun model}. I held the
 North America slot (11~AM--7~PM~EST) once every four weeks, serving as the
 primary contact for RPA incidents during that window. This was not project
@@ -760,7 +744,7 @@ Each support week followed a consistent daily rhythm:
 
 \subsection{Support Weeks Completed}
 
-I completed four full support rotations during the internship:
+I completed four full support rotations during the co-op placement:
 
 \begin{itemize}
     \item \textbf{Week 8} (May~4--8): First rotation. Familiarization with
@@ -1015,9 +999,9 @@ as a formal IISS follow-on ticket.
 
 Work Stream~6 is in active development, extending the existing
 \texttt{ia-config-portal} application with two new dashboard pages.
-During this internship period, I completed an \textbf{architectural
+During this co-op placement period, I completed an \textbf{architectural
 implementation plan} (IISS-919-IMPLEMENTATION-PLAN.md) and began
-initial implementation. Development is continuing during the internship
+initial implementation. Development is continuing during the co-op placement
 extension period (Sep--Dec~2026).
 
 \subsection{Planning Document Deliverable}
@@ -1133,7 +1117,7 @@ impactful to address first.
 \label{sec:design_decisions}
 % ────────────────────────────────────────────────────────────
 
-Four design decisions during my internship warranted explicit
+Four design decisions during my co-op placement warranted explicit
 documentation because each involved a meaningful tradeoff between
 competing engineering constraints. This section records the decision,
 the alternatives considered, and the rationale for the chosen approach.

@@ -3,17 +3,32 @@
 % ------------------------------------------------------
 
 % --- FONT ENCODING & TYPOGRAPHY ---
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{lmodern}
-\usepackage{amssymb}
+% Using XeLaTeX + fontspec to load real Calibri from system fonts
+\usepackage{fontspec}
 \usepackage{amsmath}
+\usepackage{amssymb}
 
-% Body font: Carlito (metrically identical to Calibri)
-\usepackage[sfdefault]{carlito}
-% Monospace: Inconsolata — clear 0/O and l/I distinction
-\usepackage{inconsolata}
-\renewcommand*{\ttdefault}{zi4}
+% Body font: Calibri (system font from C:/Windows/Fonts)
+\setmainfont{Calibri}[
+  Path           = C:/Windows/Fonts/,
+  Extension      = .ttf,
+  UprightFont    = calibri,
+  BoldFont       = calibrib,
+  ItalicFont     = calibrii,
+  BoldItalicFont = calibriz,
+  Ligatures      = TeX
+]
+
+% Monospace: Consolas (system font, clear 0/O and l/I distinction)
+\setmonofont{Consolas}[
+  Path           = C:/Windows/Fonts/,
+  Extension      = .ttf,
+  UprightFont    = consola,
+  BoldFont       = consolab,
+  ItalicFont     = consolai,
+  BoldItalicFont = consolaz,
+  Scale          = MatchLowercase
+]
 
 % Line spacing: Word-equivalent 1.5 at 12pt
 % Word: 12pt × 1.5 = 18pt. LaTeX baseline = 12 × 1.2 = 14.4pt. 18/14.4 = 1.25
@@ -35,6 +50,18 @@
 \emergencystretch=3em
 \setlength{\hfuzz}{2pt}
 \sloppy
+
+% Disable automatic hyphenation — keep words whole, wrap to next line
+\usepackage[none]{hyphenat}
+\tolerance=1000
+\emergencystretch=\maxdimen
+
+% URL line-breaking — allow breaks at / . - _ ~ (no spaces inserted)
+\usepackage{url}
+\urlstyle{same}
+\makeatletter
+\g@addto@macro\UrlBreaks{\UrlOrds}
+\makeatother
 
 % --- COLOR PALETTE DEFINITIONS ---
 \usepackage{xcolor}
@@ -64,7 +91,7 @@
 \usepackage{lastpage}
 \usepackage{parskip}
 
-\setlength{\headheight}{14.5pt}
+\setlength{\headheight}{14pt}
 \setlength{\parindent}{0em}
 \setlength{\parskip}{0.8em}
 
@@ -117,7 +144,12 @@
 
 % --- TABLE OF CONTENTS FORMATTING ---
 \usepackage{tocloft}
-% Remove automatic page breaks before List of Figures and List of Tables
+
+% Rename "Contents" → "Table of Contents"
+\renewcommand{\contentsname}{Table of Contents}
+
+% Style the ToC/LoF/LoT title to match chapter headings (SMU maroon, centered)
+\renewcommand{\cfttoctitlefont}{\fontsize{16}{19}\selectfont\bfseries\color{smubrand}}
 \renewcommand{\cftloftitlefont}{\large\bfseries\color{smubrand}}
 \renewcommand{\cftlottitlefont}{\large\bfseries\color{smubrand}}
 \setlength{\cftbeforeloftitleskip}{1em}
@@ -125,7 +157,7 @@
 \setlength{\cftbeforelottitleskip}{1em}
 \setlength{\cftafterlottitleskip}{0.5em}
 
-\usepackage[pdftex,hypertexnames=true,colorlinks]{hyperref}
+\usepackage[xetex,hypertexnames=true,colorlinks]{hyperref}
 \hypersetup{
     pdftitle={MCDA Major Project Report - Bhavik Bhagat},
     pdfauthor={Bhavik Kantilal Bhagat},
@@ -140,6 +172,9 @@
 \usepackage[all]{hypcap} % anchors \ref to top of float, not caption
 
 % --- HEADER AND FOOTER STYLE ---
+% Override \chaptermark so right header shows "N. Chapter Name" (no "Chapter" prefix, mixed case)
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[R]{\nouppercase{\leftmark}}
@@ -159,7 +194,7 @@
   \renewcommand{\headrulewidth}{0.4pt}
   \renewcommand{\footrulewidth}{0.4pt}
 }
-\captionsetup{margin=10pt,font=small,labelfont=bf}
+\captionsetup{margin=10pt,font={small,it},labelfont=bf}
 
 
 % --- CUSTOM CHAPTER HEADING OVERRIDES (SMU MAROON THEME) ---
@@ -167,14 +202,14 @@
 \def\@makechapterhead#1{%
   {\parindent \z@ \centering
     \interlinepenalty\@M
-    \fontsize{16}{19}\selectfont \bfseries \textcolor{smubrand}{\thechapter.\enspace #1}\par\nobreak
+    \fontsize{16}{19}\selectfont \bfseries \textcolor{smubrand}{\thechapter.\enspace \MakeUppercase{#1}}\par\nobreak
     \vskip 8\p@
   }}
 
 \def\@makeschapterhead#1{%
   {\parindent \z@ \centering
     \interlinepenalty\@M
-    \fontsize{16}{19}\selectfont \bfseries \textcolor{smubrand}{#1}\par\nobreak
+    \fontsize{16}{19}\selectfont \bfseries \textcolor{smubrand}{\MakeUppercase{#1}}\par\nobreak
     \vskip 8\p@
   }}
 

@@ -7,7 +7,7 @@
 \chapter{Methodologies}
 \label{chap:methodologies}
 
-During my internship I adopted Site Reliability Engineering as the primary
+During my co-op placement I adopted Site Reliability Engineering as the primary
 methodology. I applied the four golden signals framework and SLI/SLO discipline
 to address the observability gap exposed by the CAIS-Pricing Silent Outage and
 the Meridian Incident. This chapter covers three areas: the SRE principles I
@@ -23,7 +23,7 @@ Site Reliability Engineering is an operational discipline that applies
 software engineering thinking to keeping production systems reliable at scale.
 Its core concepts --- golden signals, Service Level Indicators (SLIs),
 Service Level Objectives (SLOs), and error budgets --- provided the theoretical
-backbone for every design decision I made during this internship.
+backbone for every design decision I made during this co-op placement.
 
 \subsection{The Four Golden Signals}
 
@@ -109,6 +109,7 @@ values --- each alarm fires when its SLI crosses the SLO boundary and
 routes an SNS notification to the SRE team. This constitutes
 \textbf{SLO-aligned alerting}: the alarms enforce the objectives but do
 not compute running error budget consumption or burn rate.
+This distinction is elaborated in the following subsection.
 
 \subsection{Error Budgets}
 
@@ -117,13 +118,13 @@ amount of unreliability before the objective is breached. For example,
 if the Lambda error rate SLO is below 1\% over 24 hours, the error
 budget is that 1\% of invocations permitted to fail.
 
-During this internship I did not implement automated error budget
+During this co-op placement I did not implement automated error budget
 tracking. The Grafana dashboard surfaces current SLI values and the
 CloudWatch alarms fire at SLO breach --- which provides a reactive
 signal that the budget has been consumed, but does not calculate how
 quickly it is being drawn down. Full burn-rate alerting (requiring
 Metric Math expressions dividing rolling error counts against the
-rolling SLO budget) was identified as a post-internship enhancement
+rolling SLO budget) was identified as a post-placement enhancement
 and is scoped in Chapter~\ref{chap:future_work}.
 
 % ────────────────────────────────────────────────────────────
@@ -136,9 +137,9 @@ current state of observability. Before I wrote a single line of code
 for the centralized dashboard, I performed a structured gap analysis to characterize
 what the IA platform could and could not see about itself.
 
-\subsection{Pre-Internship Monitoring Posture}
+\subsection{Pre-Co-op Placement Monitoring Posture}
 
-At the commencement of my internship in Mar~2026, the IA-SRE team's
+At the commencement of my co-op placement in Mar~2026, the IA-SRE team's
 monitoring posture exhibited the following deficiencies:
 
 \begin{itemize}
@@ -202,18 +203,18 @@ monitoring posture exhibited the following deficiencies:
 
 \subsection{Gap Analysis Summary}
 
-Table~\ref{tab:gap_analysis} summarizes the pre-internship gaps and the
-post-internship resolutions for each monitoring domain.
+Table~\ref{tab:gap_analysis} summarizes the pre-placement gaps and the
+post-placement resolutions for each monitoring domain.
 
 \begin{table}[!htbp]
 \centering
-\caption{Observability Gap Analysis --- Pre- vs.\ Post-Internship}
+\caption{Observability Gap Analysis --- Pre- vs.\ Post-Co-op Placement}
 \label{tab:gap_analysis}
 \rowcolors{2}{tablerowA}{tablerowB}
 \small  % Reduce font size slightly to help fit
 \begin{tabularx}{\textwidth}{lXX}
 \hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Domain}} & \textcolor{white}{\textbf{Pre-Internship State}} & \textcolor{white}{\textbf{Post-Internship State}} \\
+\rowcolor{smubrand}\textcolor{white}{\textbf{Domain}} & \textcolor{white}{\textbf{Pre-Co-op Placement State}} & \textcolor{white}{\textbf{Post-Co-op Placement State}} \\
 \hline
 CloudWatch Alarms & 0 alarms on any IA resource & Dynamic alarms across 7 AWS service categories \\
 Centralized Dashboard & None & Multiple rows and panels (Grafana AMG) \\
@@ -231,7 +232,7 @@ Incident Detection & Business team escalation & Proactive alarm with SNS routing
 \label{sec:dynatrace_parity}
 % ────────────────────────────────────────────────────────────
 
-A key framing question for my internship --- introduced in
+A key framing question for my co-op placement --- introduced in
 Chapter~\ref{chap:executive_summary} and developed here in methodological
 detail --- is how closely an AWS-native observability stack can replicate
 the capabilities of Dynatrace, and at what incremental cost. The PoC
@@ -276,10 +277,10 @@ available in any OSS tool). These account for approximately 9--10\% of
 the functional gap that no combination of AWS tools can close.
 
 \paragraph{Adopted stack.}
-The PoC I delivered in this internship corresponds to the
+The PoC I delivered in this co-op placement corresponds to the
 \textbf{CloudWatch + Grafana + X-Ray} column: 60\% parity at approximately
 \$77/month. Application Signals (the path to 80\% parity) requires deploying
-an ADOT sidecar on each ECS service and is scoped as post-internship work.
+an ADOT sidecar on each ECS service and is scoped as post-placement work.
 The gap-to-tooling mapping is used throughout Chapter~\ref{chap:implementation}
 and Chapter~\ref{chap:achievements} to contextualize what the PoC does and does
 not cover.

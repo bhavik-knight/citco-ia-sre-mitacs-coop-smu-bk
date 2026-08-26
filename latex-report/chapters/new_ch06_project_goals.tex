@@ -7,7 +7,7 @@
 \chapter{Project Goals \& Deliverables}
 \label{chap:project_goals}
 
-I set the following engineering objectives at the outset of the internship,
+I set the following engineering objectives at the outset of the co-op placement,
 guided by the two motivating incidents and the requirements sessions with
 Kishor and Kri. Each objective maps directly to one of the six work streams
 described in Chapter~\ref{chap:project}.
@@ -17,7 +17,7 @@ described in Chapter~\ref{chap:project}.
 \label{sec:project_goals}
 % ────────────────────────────────────────────────────────────
 
-The primary goals of the internship project were as follows:
+The primary goals of the co-op placement project were as follows:
 
 \begin{itemize}
 
@@ -28,7 +28,7 @@ The primary goals of the internship project were as follows:
           exposed by the CAIS-Pricing Silent Outage and the Meridian Incident.
 
     \item \textbf{Build a centralized observability platform for the IA-IT-SRE
-          Infrastructure.} Provide an eagle-eye view across all six
+          Infrastructure.} Provide a single-pane-of-glass view across all six
           platforms and all 13 AWS service categories, enabling the SRE team
           to assess platform health, drill down to individual AWS services, and
           respond to incidents without navigating six separate CloudWatch consoles.
@@ -91,152 +91,140 @@ IISS-824 & RPA LLM Agent --- Ask Citco RPA (bug fixes, KB sync, quality improvem
 
 \subsection{IA Infrastructure Monitoring Platform}
 
-\textbf{Platform:} Native Amazon CloudWatch dashboards built with
-Python-based dashboard builders and CloudFormation.
+\textbf{Current State:}\\
+No CloudWatch dashboards existed for any of the six
+IA platforms. Lambda function health was monitored only through the AWS
+Console on an ad-hoc basis. No tag-based resource discovery was in place
+and the Lambda inventory was maintained manually on Confluence.
 
-\textbf{Scope:} Initially scoped to the \texttt{rpacfs1} and
-\texttt{ia-bpo} platforms (Lambda functions, Confluence inventory),
-then extended to all six platforms --- \texttt{automationhub},
-\texttt{bpm}, \texttt{citcoworks}, \texttt{ia-bpo}, \texttt{meridian}, and
-\texttt{rpacfs1} --- covering Lambda, EC2, ECS, EKS, SQS, and
-supporting AWS services. Each dashboard uses BudgetCode as
-the primary tag filter and AppName as the mandatory fallback
-discriminator for \texttt{meridian} and \texttt{citcoworks} platforms.
+\textbf{Scope:}\\
+Build unified CloudWatch dashboards covering all six
+platforms --- \texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks},
+\texttt{ia-bpo}, \texttt{meridian}, and \texttt{rpacfs1} --- across Lambda,
+EC2, ECS, EKS, SQS, and supporting AWS services. Implement a tag-based
+resource discovery pipeline using BudgetCode as the primary filter and
+AppName as the mandatory fallback discriminator for the
+\texttt{meridian}/\texttt{citcoworks} shared BudgetCode ambiguity.
 
-\textbf{SQS Registry Architecture:} A three-tier fallback model for
-resilient SQS queue data retrieval: live CloudWatch API, S3-cached
-snapshot on API failure, and locally bundled queue inventory as the
-final fallback.
-
-\textbf{Key limitation:} CloudWatch Metric Insights SQL does not support
-pattern matching on dimension values, making dynamic resource enumeration
-for Grafana template variables impractical --- this directly motivated the
-Inventory API (WS3).
+\textbf{Deliverables:}\\
+CloudWatch dashboards for all six platforms; a
+resilient three-tier SQS registry pipeline (live API → S3 cache → bundled
+inventory); a Python-based dashboard builder framework deployed via
+CloudFormation.
 
 
 \subsection{Centralized Grafana SRE Dashboard}
 
-\textbf{Platform:} Amazon Managed Grafana (AMG) v12.4, with Amazon
-CloudWatch as the sole data source via the native Grafana CloudWatch
-plugin.
+\textbf{Current State:}\\
+No centralized observability workspace existed.
+Platform health required navigating six separate CloudWatch consoles.
+No Kafka consumer lag alarm existed for the Meridian platform, which was
+the direct cause of the April~2026 incident going undetected for over
+three hours.
 
-\textbf{Data layer:} CloudWatch Metric Insights SQL used for all
-multi-resource panels --- a single query returns per-resource time series
-across the full fleet. CloudWatch Logs Insights used for log-derived
-error panels with structured JSON field extraction.
+\textbf{Scope:}\\
+Build a centralized Amazon Managed Grafana (AMG) workspace
+providing a unified cross-platform view across all six platforms and all
+monitored AWS service categories. Implement proactive CloudWatch alarms
+across all services, an SNS notification pipeline to the SRE team, and
+Grafana template variables backed by the Inventory API for dynamic
+resource filtering.
 
-\textbf{Dashboard structure:} Multiple rows --- two aggregate overview rows
-(Health Overview and Performance Overview) followed by per-service
-rows for SQS, Lambda, EC2, ECS Infrastructure, ECS APIs, MSK/Kafka,
-DocumentDB, RDS/Aurora, Redis/Valkey, Neptune DB, OpenSearch, and
-Alerts \& Incidents. Cross-service filtering via Grafana template variables allows
-operators to scope the entire workspace to a single platform or AWS
-service via dropdown selection.
-
-\textbf{Alerting layer:} CloudWatch alarms provisioned across all
-monitored AWS services, each wired to an SNS topic routing to the SRE
-team. Composite alarms aggregate per-service states into platform-level
-health signals.
-
-\textbf{Infrastructure-as-Code (IaC):} AWS SAM with parameterized
-CloudFormation YAML templates (one template per AWS service category).
-A Lambda-backed CloudFormation provisioner dynamically discovers the
-current fleet at deploy time and synthesizes alarm resource definitions,
-deployed across four stacks: Lambda, ECS, SQS, and MSK alarms.
-Templates are staged in S3 (migrated from Secrets Manager due to the
-64~KB payload limit) and fetched by the provisioner Lambda at runtime.
-
-\textbf{IAM model:} 16-role cross-account agent permission model granting
-the Grafana service account read-only access to CloudWatch metrics, logs,
-and EC2 tags across all IA AWS accounts.
-
-\textbf{Container Insights:} Enabled on five of the six Meridian ECS
-clusters, providing task-level CPU, memory, network I/O, and storage
-telemetry surfaced in the ECS dashboard rows.
+\textbf{Deliverables:}\\
+Grafana AMG workspace with 13+ dashboard rows
+covering all service categories; CloudWatch alarms deployed across all
+six platforms; SNS alarm notification pipeline; Infrastructure-as-Code
+(AWS SAM / CloudFormation) for reproducible deployment.
 
 
 \subsection{IA Infrastructure Inventory API}
 
-\textbf{Stack:} Python~3, \texttt{flask[async]}, boto3,
-Pydantic, serverless-wsgi (Lambda deployment), pytest
-and Hypothesis (property-based testing).
+\textbf{Current State:}\\
+No programmatic AWS resource inventory existed.
+Lambda function lists were manually maintained on Confluence and became
+stale quickly. CloudWatch Metric Insights SQL lacked support for
+pattern-based dimension filtering, making dynamic Grafana template variable
+population impractical.
 
-\textbf{Discoverer Registry Pattern:} A central registry maps
-\texttt{(resource\_type, platform)} tuples to concrete discoverer
-classes. New platforms or AWS service types are onboarded by implementing
-a single class, with zero changes to routing, serialization, or test
-infrastructure. Route handlers dispatch discoverers concurrently via
-\texttt{asyncio.gather()}.
+\textbf{Scope:}\\
+Build a Flask REST API that dynamically discovers all
+deployed AWS services per platform across all six IA platforms. Implement
+a discoverer registry pattern for extensibility, a two-stage tag filter
+to resolve the \texttt{meridian}/\texttt{citcoworks} BudgetCode ambiguity,
+and an S3-backed cache layer to keep enumeration latency within the
+API Gateway 30-second timeout.
 
-\textbf{Tag disambiguation:} The \texttt{meridian} and \texttt{citcoworks}
-platforms share the same BudgetCode tag value. A mandatory
-two-stage filter --- primary BudgetCode match, secondary
-AppName discriminator --- separates resources from the two
-platforms across all discoverers.
+\textbf{Deliverables:}\\
+REST endpoints for Lambda, ECS, EC2, SQS, S3, and
+health resources; per-platform filtering support; S3 cache with
+CloudWatch metrics publishing; Lambda deployment via API Gateway.
 
-\textbf{API:} REST endpoints for Lambda, ECS, EC2, SQS, S3, and health,
-each supporting an optional \texttt{?platform=} filter. Each resource
-response carries name, type, platform, tags, and ARN.
+
+\subsection{RPA Production Support}
+
+\textbf{Current State:}\\
+The IA-SRE team operates a Follow the Sun support
+model with shifts across Manila (APAC), Dublin (EMEA), and Halifax (NA).
+The NA slot required a dedicated engineer covering 11~AM--7~PM~EST, one
+week in every four.
+
+\textbf{Scope:}\\
+Cover the North America RPA production support rotation,
+handling incidents escalated through the SD Portal, IA\_INCIDENTS
+distribution list, and Teams channels. Triage, investigate, and resolve
+or escalate RPA process failures within the defined SLA, and maintain
+daily Confluence shift handover logs.
+
+\textbf{Deliverables:}\\
+Five completed support rotations (W8, W12, W16,
+W20, W24); incident triage and resolution for all escalated tickets;
+Confluence handover logs maintained for each shift day.
 
 
 \subsection{RPA LLM Agent --- Ask Citco RPA}
 
-\textbf{Repositories:} CodeCommit \texttt{ml-rpa-status-llm-agent} and
-\texttt{core-smart-rpa-llm-ecr-image} (coredev, us-east-1).
+\textbf{Current State:}\\
+The \textbf{Ask Citco RPA} chatbot was a
+production RAG pipeline using Amazon Bedrock (Claude), OpenSearch
+Serverless (1024-dim FAISS/HNSW vectors), and 11 Lambda functions
+ingesting from SharePoint, Databricks, and the BPM API. The system
+had multiple known reliability issues including a recurring KB sync
+timeout and several production bugs identified via CloudWatch log analysis.
 
-\textbf{Architecture:} Retrieval-Augmented Generation (RAG) pipeline:
-LibreChat UI → ECS Fargate (FastAPI) → Amazon Bedrock Agent (Claude) →
-Action Groups (Lambda) + Knowledge Base (OpenSearch Serverless, 1024-dim
-FAISS/HNSW vectors). 11~Lambda functions handle SharePoint wiki sync,
-Event Store extraction, client/fund mapping, Athena usage tracking, and
-Bedrock agent action groups.
+\textbf{Scope:}\\
+Resolve production reliability issues, enrich the
+Knowledge Base, and improve code quality across all Lambda functions
+per the IA Best Practice checklist. Evaluate and propose a Hybrid
+Graph-RAG architecture extension using Amazon Neptune.
 
-\textbf{Scope of work:}
-\begin{itemize}
-    \item \textbf{Critical bug fixes}: 52\% Lambda timeout rate resolved
-          (two-phase hybrid KB sync: 291s → 25s); OpenSearch silent delete;
-          fire-and-forget Lambda pattern; Athena encryption inconsistency;
-          SSL verification disabled; Athena race condition.
-    \item \textbf{KB enrichment}: NavChecklist PDFs uploaded to production
-          Knowledge Base.
-    \item \textbf{Code quality}: 1,140-line monolith refactored to 8 modules;
-          structlog migration; type hints and docstrings; Pydantic models;
-          comprehensive unit tests; X-Ray tracing instrumented.
-    \item \textbf{Proposed}: Hybrid Graph-RAG architecture using Amazon
-          Neptune for relational entity traversal (client → fund → process
-          → platform).
-\end{itemize}
-
-\textbf{Status:} Critical production bugs fixed and deployed (v1.1.1--v1.1.32).
-Code quality improvements awaiting dev approval per IA Best Practice guidelines.
+\textbf{Deliverables:}\\
+Production bug fixes deployed; NavChecklist PDFs
+added to Knowledge Base; modular code structure with structured logging,
+Pydantic validation, tenacity retry, kill switch, and X-Ray tracing;
+comprehensive unit test suite; architecture proposal for Graph-RAG extension.
 
 
 \subsection{Citco Enterprise Custom UI Dashboards}
 
-\textbf{Status:} In progress; implementation continuing in the
-Sep--Dec~2026 internship extension period.
+\textbf{Current State:}\\
+The Grafana AMG dashboard provided approximately
+60\% Dynatrace feature parity but was constrained by fixed panel types,
+no drag-and-drop layout, and limited custom visualization options. A
+Citco-owned enterprise UI was identified as the next step to close
+the remaining observability gap.
 
-\textbf{Deliverable:} 865-line implementation plan documenting:
-\begin{itemize}
-    \item Gap analysis: 45 documented Grafana AMG limitations with
-          severity ratings
-    \item Technology stack decisions: charting libraries, service map
-          rendering, component framework integration
-    \item Backend API design: 4 new Lambda handlers with schemas
-    \item 12-task implementation breakdown
-\end{itemize}
+\textbf{Scope:}\\
+Extend the existing \texttt{ia-config-portal}
+(React~19/TypeScript, ECS Fargate, built by Soundarya and Sridhar)
+with two new dashboard pages --- an Infrastructure Inventory dashboard
+(IISS-509) and an Infrastructure Monitoring dashboard (IISS-919) ---
+using a config-driven panel schema and CloudWatch data integration.
 
-\textbf{Target platform:} The existing \texttt{ia-config-portal}
-(React~19/TypeScript, ECS Fargate) built by Soundarya Venkataraman
-and Sridhar Vadla will be extended with two new dashboard pages.
-
-\textbf{Planned dashboards:}
-\begin{itemize}
-    \item \textbf{Infrastructure Inventory (IISS-509)}: Frontend for
-          the Inventory API, displaying resources across all platforms
-    \item \textbf{Infrastructure Monitoring (IISS-919)}: Config-driven
-          panels with drag-and-drop layout, replacing Grafana limitations
-\end{itemize}
+\textbf{Deliverables:}\\
+Architectural implementation plan covering gap
+analysis, technology stack decisions, API design, and task breakdown;
+initial frontend scaffolding with AG~Grid resource tables and
+config-driven panel components; continuing in Sep--Dec~2026 extension.
 
 % ────────────────────────────────────────────────────────────
 \section{Acceptance Criteria}
@@ -333,10 +321,6 @@ objectives.
           SSL verification, encryption inconsistency) are resolved and
           deployed.
 
-    \item \textbf{Code quality}: Test coverage exceeds 95\%; all functions
-          have type hints and docstrings; structlog structured logging
-          replaces all \texttt{print()} statements.
-
     \item \textbf{KB content}: NavChecklist documents are indexed and
           retrievable via the chatbot.
 \end{itemize}
@@ -344,13 +328,12 @@ objectives.
 
 \subsection{Citco Enterprise Custom UI Dashboards}
 
-\textit{Note: IISS-509 and IISS-919 are in active development during the internship extension period (Sep--Dec~2026). Initial implementation complete; continuing in the extension.}
-
 \begin{itemize}
-    \item \textbf{Planning document}: Comprehensive 865-line implementation
-          plan with gap analysis, technology decisions, and task breakdown.
+    \item \textbf{Architecture plan}: A comprehensive implementation plan
+          covering gap analysis, technology decisions, API design, and
+          task breakdown is produced before implementation begins.
 
-    \item \textbf{Backend API design}: Four new Lambda handlers designed
+    \item \textbf{Backend API design}: New Lambda handlers designed
           with request/response schemas and IAM permissions documented.
 
     \item \textbf{Component specifications}: SRE-specific UI components

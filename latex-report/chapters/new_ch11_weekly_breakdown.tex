@@ -8,7 +8,7 @@
 \label{chap:weekly_breakdown}
 
 This chapter documents the work delivered each week across the 24-week
-internship (Mar~15 -- Aug~31, 2026). Weeks~1--4 operated at part-time
+co-op placement (Mar~15 -- Aug~31, 2026). Weeks~1--4 operated at part-time
 intensity ($\sim$15--20~h/week) while balancing university coursework;
 full-time engagement ($\sim$40~h/week) began in Week~5.
 
@@ -19,9 +19,9 @@ full-time engagement ($\sim$40~h/week) began in Week~5.
 \section{Week 1: Environment Setup \& Access Onboarding (Mar~16--20)}
 \label{sec:week1}
 
-Week~1 marked the formal start of the internship with Day-1 orientation
+Week~1 marked the formal start of the co-op placement with Day-1 orientation
 on March~16. I met with manager Kishor Deotale for a comprehensive overview
-of the team structure, project scope, and internship expectations. The team
+of the team structure, project scope, and co-op placement expectations. The team
 introduction call connected me with co-interns Sridhar Vadla and Soundarya
 Venkataraman, as well as senior mentors Horace (Ho Hoi Leung) and Kri
 (Kristia Marie Labos).
@@ -113,7 +113,7 @@ documentation on Confluence.
 The week opened on
 April~6 with the successful merge of IISS-435 (CTI CloudWatch Dashboard)
 into the \texttt{release/SRE} branch, closing the first JIRA ticket of
-the internship. I immediately transitioned to IISS-455, which required
+the co-op placement. I immediately transitioned to IISS-455, which required
 building a monitoring solution covering all 51 Lambda functions across
 the \texttt{rpacfs1} and \texttt{ia-bpo} platforms. Unlike the CTI
 dashboard, which targeted a single pipeline, IISS-455 needed to serve
@@ -165,7 +165,7 @@ the part-time phase and setting the stage for full-time engagement.
 Week~5 marked the beginning of full-time engagement and was structured
 primarily as a formal knowledge-transfer week, with four dedicated sessions
 covering the platforms I would be monitoring and supporting throughout the
-internship. It also included a critical production incident that would shape
+co-op placement. It also included a critical production incident that would shape
 the entire direction of IISS-487.
 
 \textbf{RPA Support Model Knowledge Transfer (Horace):}\\
@@ -252,7 +252,7 @@ sub-modules for long-term maintainability.
 
 \textbf{ia-resources-monitoring Repository Creation (IISS-455):}\\
 On
-April~24---the most commit-dense day of the internship with 39 commits
+April~24---the most commit-dense day of the co-op placement with 39 commits
 across two repositories---I set up the centralized \texttt{ia-resources-monitoring}
 repository. All three monitoring packages (Lambda, EC2, and the API)
 were migrated from \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure}
@@ -440,7 +440,7 @@ cluster-name-based fallback strategy to ensure complete fleet coverage.
 \section{Week 9: Infrastructure Deployment Day (May~11--15)}
 \label{sec:week9}
 
-Week~9 was the most infrastructure-dense week of the internship,
+Week~9 was the most infrastructure-dense week of the co-op placement,
 involving the full deployment of the Grafana AMG stack, the first
 live CloudWatch alarms, a forced Grafana version migration, and the
 construction of the first three dashboard rows.
@@ -462,8 +462,9 @@ IAM bootstrap permission issues, and the \texttt{IamPermissionResolver}
 agent was added to automatically diagnose and fix permission errors
 in future deployments. The day concluded by importing the Meridian
 dashboard via the Lambda provisioner and storing its JSON in
-Secrets Manager---the first alarm that would have detected the
-April incident was now armed against live production traffic.
+Secrets Manager. With this deployment complete, the MSK consumer lag
+alarm was live against production traffic --- the alarm that would
+have detected the April Meridian Incident was now operational.
 
 \textbf{Documentation Sprint and 100\% Test Coverage (May~12):}\\
 May~12 delivered the complete documentation suite: release notes,
@@ -525,7 +526,7 @@ threshold while avoiding false positives during normal processing.
 A three-hour knowledge transfer workshop with Kishor, Nathaniel,
 and two additional team members (May~13, 188 minutes) provided
 deep context on the Meridian operational model that informed
-dashboard panel design decisions for the remainder of the internship.
+dashboard panel design decisions for the remainder of the co-op placement.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 10
@@ -580,13 +581,12 @@ development, workflow, safety), the \texttt{aws\_config\_troubleshooter}
 role added, and all subprocess-dependent tests fixed to prevent
 hanging in CI. The test suite reached \textbf{597 tests at 100\%
 coverage}---the largest single-day test milestone of the
-internship. ProvisionerVersion was bumped to 355 after two
+co-op placement. ProvisionerVersion was bumped to 355 after two
 sequential deploys validating the refactored architecture.
 
 By the end of Week~10, Rows~1--9 of the dashboard were built
 and deployed, the Secrets Manager storage constraint was resolved
-via S3 migration, the percentile limitation was documented, and
-the agentic AI subsystem reached 597 tests at full coverage.
+via S3 migration, and the percentile limitation was documented.
 
 \textbf{Dashboard Variable Architecture:}\\
 The \texttt{\$platform} variable
@@ -600,11 +600,6 @@ panels to the SQS console page for that specific queue. The Aurora/RDS
 row was added on May~20 as an additional row, requiring all subsequent
 row numbers to be incremented by one --- the \texttt{renumbering.md}
 migration document established a convention for future row additions.
-On May~22, the agentic AI subsystem was refactored to group the
-23 agents into five capability tiers, and the test suite reached
-\textbf{597 tests at 100\% coverage}
-in a single session --- the
-largest single-day test milestone of the internship.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 11
@@ -747,7 +742,7 @@ to release.
 \section{Week 13: CAIS Hotfix \& Per-Panel Folder Refactor (Jun~8--12)}
 \label{sec:week13}
 
-Week~13 was the most incident-dense week of the internship, beginning
+Week~13 was the most incident-dense week of the co-op placement, beginning
 with an emergency hotfix for a regulatory deadline and continuing with
 significant IISS-487 structural improvements.
 
@@ -810,7 +805,7 @@ messages on \texttt{NoSuchKey} failures during template retrieval.
 \label{sec:week14}
 
 Week~14 delivered the final Grafana AMG dashboard deployment and formally
-closed IISS-487 at 140 logged hours.
+closed IISS-487.
 
 \textbf{Deep-Link Panels for All Service Rows:}\\
 Deep-link panels were added
@@ -847,8 +842,8 @@ criteria were verified: MSK consumer lag alarm live against production
 traffic, all 14 rows rendering correctly in the AMG workspace,
 deep-links functional for all nine service types, and alert emails
 delivering to the configured SNS distribution list. The release PR
-was merged to main and IISS-487 was closed at \textbf{140~hours}---the
-largest single JIRA of the internship.
+was merged to main and IISS-487 was closed --- the
+largest single JIRA of the co-op placement.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 15
@@ -1228,7 +1223,7 @@ support team member for the September continuation period.
 \section{Week 21: LLM Agent Major Refactor (Aug~3--7)}
 \label{sec:week21}
 
-Week~21 was the delivery-densest week of the internship's second half,
+Week~21 was the delivery-densest week of the co-op placement's second half,
 focused on a comprehensive quality and reliability improvement programme
 for the \textbf{Ask Citco RPA} LLM agent (IISS-824).
 
@@ -1370,7 +1365,7 @@ the production S3 bucket.
 \section{Week 23: LLM Agent Completion, X-Ray Instrumentation \& AMG Alarm Emails (Aug~17--21)}
 \label{sec:week23}
 
-Week~23 was one of the most productive delivery weeks of the internship,
+Week~23 was one of the most productive delivery weeks of the co-op placement,
 completing the IISS-824 quality sprint, instrumenting X-Ray tracing across
 the LLM agent, delivering Citco-branded alarm emails for the AMG platform,
 and making initial progress on the IISS-919 Enterprise Dashboard.
@@ -1480,10 +1475,10 @@ were formally scoped for the Sep--Dec extension.
 % WEEK 25
 % ════════════════════════════════════════════════════════════
 
-\section{Week 25: Final Day \& Internship Conclusion (Aug~31)}
+\section{Week 25: Final Day \& Co-op Placement Conclusion (Aug~31)}
 \label{sec:week25}
 
-August~31 marked the final day of the internship. A final knowledge
+August~31 marked the final day of the co-op placement. A final knowledge
 transfer session was held with Horace and Kri to confirm operational
 handover of the infrastructure monitoring dashboard and RPA support
 rotation model. Incident escalation procedures and alarm runbook

@@ -12,9 +12,9 @@
 \label{sec:project_background}
 % ────────────────────────────────────────────────────────────
 
-\subsection{Pre-Internship Monitoring Posture}
+\subsection{Pre-Co-op Placement Monitoring Posture}
 
-Before my internship began in mid-Mar~2026, the IA-SRE team operated
+Before my co-op placement began in mid-Mar~2026, the IA-SRE team operated
 without a centralized observability stack. Monitoring relied entirely on
 an \emph{ad~hoc} model: business teams in Dublin, London, and Halifax
 would notice anomalies in fund processing outputs and raise tickets. There
@@ -61,7 +61,7 @@ post-mortems established two specific gaps --- no Kafka consumer lag alarm,
 and no centralized visibility across the IA-IT-SRE Infrastructure --- that
 directly motivated the six work streams described in the following
 section. Kishor elevated the dashboard project to \textbf{Critical} priority on
-May~6, 2026, and my internship pivoted from exploratory dashboard research
+May~6, 2026, and my co-op placement pivoted from exploratory dashboard research
 to a full-scale observability platform build.
 
 % ────────────────────────────────────────────────────────────
@@ -77,71 +77,69 @@ for each deliverable are documented in Chapter~\ref{chap:project_goals}.
 
 \subsection{Work Stream 1: CloudWatch Dashboards and IA Infrastructure Monitoring}
 
-Following the CAIS-Pricing Silent Outage, I built unified CloudWatch
-dashboards starting with Lambda --- the AWS service at the center of that
-incident. The scope extended incrementally to SQS queues, EC2 instances,
-ECS clusters, EKS nodes, and database services across all six platforms.
-This work established the tag-based resource discovery patterns that all
-later work built upon.
+Following the CAIS-Pricing Silent Outage, the objective was to build unified
+CloudWatch dashboards starting with Lambda --- the AWS service at the center
+of that incident. The scope extended incrementally to SQS queues, EC2 instances,
+ECS clusters, EKS nodes, and database services across all six platforms,
+establishing the tag-based resource discovery patterns that all later work
+built upon.
 
-These dashboards exposed a fundamental limitation: CloudWatch dashboards
-are siloed per AWS service and do not support cross-service filtering.
-This limitation directly motivated Work Stream~2.
+A fundamental limitation became apparent: CloudWatch dashboards are siloed
+per AWS service and do not support cross-service filtering across platforms.
+This directly motivated Work Stream~2.
 \textit{Key deliverables: IISS-435, IISS-455, IISS-461, IISS-469, IISS-482--486.}
 
 \subsection{Work Stream 2: Grafana AMG Centralized Dashboard}
 
-Following the Meridian Incident, Kishor elevated the dashboard project to
-\textbf{Critical} priority. I built a proof-of-concept centralized
+Following the Meridian Incident, the project was elevated to
+\textbf{Critical} priority. The objective was to build a centralized
 observability platform using Amazon Managed Grafana (AMG) --- addressing
 what CloudWatch dashboards could not: a unified, cross-platform view of the
 entire IA-IT-SRE Infrastructure in a single workspace. The broader research
 objective was to evaluate whether this AWS-native stack could achieve
 Dynatrace-equivalent observability.
-\textit{Key deliverable: IISS-487 (140 hours).}
+\textit{Key deliverable: IISS-487.}
 
 \subsection{Work Stream 3: IA Infrastructure Inventory API}
 
 A critical limitation surfaced during the Grafana build: CloudWatch Metric
 Insights SQL does not support pattern-based filtering on dimension values.
-To solve this, I extended the Lambda discovery scripts into a full Flask
-REST API that discovers AWS services dynamically across all platforms.
+To solve this, the Lambda discovery scripts were extended into a full Flask
+REST API to discover AWS services dynamically across all platforms, enabling
+the Grafana dashboard variables to be populated from live infrastructure
+rather than static configuration.
 \textit{Key deliverable: IISS-507.}
 
 \subsection{Work Stream 4: RPA Production Support}
 
-In parallel with the engineering work streams, I participated in dedicated
-RPA production support rotations as part of the team's Follow the Sun model.
-I held the North America slot (11~AM--7~PM~EST) once every four weeks,
-serving as the primary contact for RPA incidents.
+In parallel with the engineering work streams, dedicated RPA production
+support rotations were carried out as part of the team's Follow the Sun
+model. The North America slot (11~AM--7~PM~EST) was covered once every four
+weeks, serving as the primary contact for RPA incidents escalated through
+the SD Portal, Innovation IT email inbox, IA\_INCIDENTS distribution list,
+and Teams channels.
 
-At the start of each shift I reviewed open items across the SD Portal,
-Innovation IT email inbox, IA\_INCIDENTS distribution list, and Teams
-notifications. I also reviewed the Confluence handover log from the Manila
-shift to pick up carried-over items or approaching SLA breaches.
-
-Notable incidents included the CAIS Deadline credential failure (Secrets
-Manager rotation gap, resolved with a fail-fast hotfix), a MESO month-end
-stuck task, and a VPL Pricing GTL booking issue.
-\textit{Key incidents: IISS-706, IISS-538, IISS-741, IISS-876.}
+Each shift began with a review of the Confluence handover log from the Manila
+shift and a queue scan to identify open items or approaching SLA breaches.
+Incidents were triaged, investigated, and either resolved or escalated to
+the development team with documented findings.
+\textit{Key incident tickets: IISS-706, IISS-538, IISS-741, IISS-876.}
 
 \subsection{Work Stream 5: RPA LLM Agent --- Ask Citco RPA}
 
-This ML/AI engagement began as a research task but expanded to critical
-production bug-fixing after CloudWatch log analysis revealed a
-\textbf{52\% timeout rate} on the Knowledge Base sync Lambda. I resolved
-this and seven additional production bugs, refactored a 1,140-line monolith
-into 8 modules, and added comprehensive unit tests.
-\textit{Key deliverable: IISS-824. Status: Critical bugs fixed; quality
-improvements pending approval.}
+This work stream involved a production quality and reliability improvement
+programme for the \textbf{Ask Citco RPA} chatbot --- a RAG pipeline using
+Amazon Bedrock, OpenSearch Serverless, and 11 Lambda functions. The scope
+covered production bug resolution, code quality improvements, structured
+logging migration, and X-Ray distributed tracing instrumentation.
+\textit{Key deliverable: IISS-824.}
 
 \subsection{Work Stream 6: Citco Enterprise Custom UI Dashboards}
 
-While the Grafana AMG dashboard achieved approximately 60\% Dynatrace feature
-parity, it remained constrained by fixed panel types and no drag-and-drop
-layout. Kishor identified the need for a Citco-owned enterprise UI. I created
-a comprehensive \textbf{865-line implementation plan} documenting gap analysis,
-technology stack decisions, API design, and task breakdown for extending the
-existing \texttt{ia-config-portal} (built by Soundarya and Sridhar).
+While the Grafana AMG dashboard addressed the primary observability gap,
+it remained constrained by fixed panel types and no drag-and-drop layout.
+This work stream focused on designing and building a Citco-owned enterprise
+monitoring UI by extending the existing \texttt{ia-config-portal} application
+(built by Soundarya and Sridhar) with two new dashboard pages.
 \textit{Key deliverables: IISS-509, IISS-919. Status: In progress;
-implementation deferred to Sep--Dec~2026.}
+implementation continuing in Sep--Dec~2026 extension.}

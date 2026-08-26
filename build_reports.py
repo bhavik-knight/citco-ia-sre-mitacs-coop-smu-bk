@@ -1,13 +1,26 @@
 #!/usr/bin/env python3
 """
-CLI entry point for SMU MCDA Major Project Report Build Pipeline.
-Orchestrates LaTeX compilation, PDF-to-DOCX conversion, and bundle packaging.
+Build pipeline for SMU MCDA Major Project Report.
+
+Steps:
+  1. Generate WorkLogs Excel from daily markdown files
+  2. Compile cover_letter.tex → PDF (xelatex)
+  3. Compile main.tex → PDF (xelatex × 3 passes + biber)
+  4. Copy PDFs to output/
+
+Run:
+    uv run python build_reports.py
+
+Output files:
+    output/BhavikBhagat_A00494758_CoverLetter.pdf
+    output/BhavikBhagat_A00494758_MajorReport.pdf
+    output/BhavikBhagat_A00494758_WorkLogs.xlsx
 """
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
-# Add project root to Python path
 ROOT_DIR = Path(__file__).resolve().parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
@@ -19,49 +32,57 @@ from config import (
     MAIN_REPORT_PDF,
     SUBMISSION_COVER_LETTER_PDF,
     SUBMISSION_REPORT_PDF,
-    SUBMISSION_REPORT_DOCX,
-    REPORT_TYPE,
 )
-from src.report_pipeline import LaTeXBuilder, DocxConverter, get_logger, generate_all_logs
+from src.report_pipeline import LaTeXBuilder, get_logger
 
 logger = get_logger("MainPipeline")
 
-def main():
-    logger.info("pipeline_started", root_dir=str(ROOT_DIR), output_dir=str(OUTPUT_DIR), report_type=REPORT_TYPE)
+
+def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    
-    # 1. Instantiate LaTeX Builder
+    logger.info("pipeline_started", output_dir=str(OUTPUT_DIR))
+
+    # ── 1. Generate WorkLogs Excel ────────────────────────────────────
+    logger.info("step_generate_worklogs")
+    result = subprocess.run(
+        ["uv", "run", "python", "scripts/generate_worklogs_excel.py"],
+        cwd=ROOT_DIR,
+    )
+    if result.returncode != 0:
+        logger.error("worklogs_generation_failed")
+    else:
+        logger.info("worklogs_generated")
+
+    # ── 2. Compile LaTeX ──────────────────────────────────────────────
     builder = LaTeXBuilder(latex_dir=LATEX_DIR)
-    
-    # 2. Compile Documents
+
     logger.info("step_compile_cover_letter")
     builder.compile_cover_letter()
-    
+
     logger.info("step_compile_main_report")
     builder.compile_main_report()
-    
-    # 3. Copy PDFs to output/
+
+    # ── 3. Copy PDFs to output/ ───────────────────────────────────────
     if COVER_LETTER_PDF.exists():
         shutil.copy(COVER_LETTER_PDF, SUBMISSION_COVER_LETTER_PDF)
-        logger.info("artifact_copied", src=COVER_LETTER_PDF.name, dest=str(SUBMISSION_COVER_LETTER_PDF))
+        logger.info("artifact_copied", file=SUBMISSION_COVER_LETTER_PDF.name)
+    else:
+        logger.error("cover_letter_pdf_missing")
 
     if MAIN_REPORT_PDF.exists():
         shutil.copy(MAIN_REPORT_PDF, SUBMISSION_REPORT_PDF)
-        logger.info("artifact_copied", src=MAIN_REPORT_PDF.name, dest=str(SUBMISSION_REPORT_PDF))
-        
-        # 4. Convert Main Report PDF to DOCX
-        logger.info("step_convert_docx")
-        DocxConverter.convert_pdf_to_docx(SUBMISSION_REPORT_PDF, SUBMISSION_REPORT_DOCX)
+        logger.info("artifact_copied", file=SUBMISSION_REPORT_PDF.name)
+    else:
+        logger.error("main_report_pdf_missing")
 
-    # 5. Generate and Sync Work Logs
-    logger.info("step_generate_work_logs")
-    generate_all_logs(OUTPUT_DIR, active_type=REPORT_TYPE)
+    # ── 4. Summary ────────────────────────────────────────────────────
+    logger.info("pipeline_completed")
+    print("\n=== Output bundle ===")
+    for f in sorted(OUTPUT_DIR.iterdir()):
+        if f.is_file() and not f.name.startswith("~$"):
+            size_kb = f.stat().st_size // 1024
+            print(f"  {f.name:<55} {size_kb:>6} KB")
 
-    # 6. Output Summary
-    logger.info("pipeline_completed", output_directory=str(OUTPUT_DIR))
-    for artifact in sorted(OUTPUT_DIR.iterdir()):
-        if artifact.is_file():
-            logger.info("bundle_artifact", filename=artifact.name, size_bytes=artifact.stat().st_size)
 
 if __name__ == "__main__":
     main()

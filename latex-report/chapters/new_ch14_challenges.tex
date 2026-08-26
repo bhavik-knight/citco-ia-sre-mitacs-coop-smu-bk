@@ -7,7 +7,7 @@
 \chapter{Challenges \& Mitigations}
 \label{chap:challenges}
 
-Throughout this internship, I encountered engineering challenges spanning AWS
+Throughout this co-op placement, I encountered engineering challenges spanning AWS
 service limitations, Grafana platform constraints, corporate policy
 restrictions, and production incident responses. This chapter documents the
 most significant challenges that shaped delivery plans and produced lessons
@@ -161,7 +161,8 @@ delivered. I delivered a 3-part hotfix:
           retrieval before each use.
 \end{enumerate}
 
-\textbf{Key lesson:} Silent failures are worse than loud failures. Validate
+\textbf{Key lesson:}\\
+Silent failures are worse than loud failures. Validate
 expected state, not just absence of exceptions.
 
 \subsection{RPA LLM Agent Lambda Memory Exhaustion (August 2026)}
@@ -171,17 +172,20 @@ to queries. CloudWatch logs revealed out-of-memory (OOM) errors on the
 \texttt{rpa\_llm\_agent\_event\_service\_cicd} Lambda function, which handles
 Bedrock Agent API calls for process status lookups.
 
-\textbf{Root cause:} The Lambda was using CloudFormation's implicit default
+\textbf{Root cause:}\\
+The Lambda was using CloudFormation's implicit default
 of 128\,MB memory. Functions using pandas, boto3, and JSON serialization
 together exceeded this allocation during peak query loads.
 
-\textbf{Fix:} Increased \texttt{MemorySize} from 128\,MB to 256\,MB in the
+\textbf{Fix:}\\
+Increased \texttt{MemorySize} from 128\,MB to 256\,MB in the
 CloudFormation template. Additionally standardized all nine Lambda functions
 in the RPA LLM stack to explicit 256\,MB allocations, making memory settings
 visible and intentional in Infrastructure-as-Code rather than relying on
 implicit defaults.
 
-\textbf{Key lesson:} Never rely on CloudFormation default values for
+\textbf{Key lesson:}\\
+Never rely on CloudFormation default values for
 production workloads. Explicit resource allocations prevent silent
 degradation and make capacity constraints visible in code review.
 
