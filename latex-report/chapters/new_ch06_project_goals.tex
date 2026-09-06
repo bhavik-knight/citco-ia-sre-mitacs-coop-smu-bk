@@ -1,21 +1,23 @@
 ﻿% ============================================================
-% CHAPTER 6: PROJECT GOALS & DELIVERABLES
+% CHAPTER 6: PROJECT GOALS
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
 % ============================================================
 
-\chapter{Project Goals \& Deliverables}
+\chapter{Project Goals}
 \label{chap:project_goals}
 
 I set the following engineering objectives at the outset of the co-op placement,
 guided by the two motivating incidents and the requirements sessions with
-Kishor and Kri. Each objective maps directly to one of the six work streams
+Mr.\ Deotale and Ms.\ Labos. Each objective maps directly to one of the six work streams
 described in Chapter~\ref{chap:project}.
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Project Goals}
 \label{sec:project_goals}
-% ────────────────────────────────────────────────────────────
+
 
 The primary goals of the co-op placement project were as follows:
 
@@ -29,7 +31,7 @@ The primary goals of the co-op placement project were as follows:
 
     \item \textbf{Build a centralized observability platform for the IA-IT-SRE
           Infrastructure.} Provide a single-pane-of-glass view across all six
-          platforms and all 13 AWS service categories, enabling the SRE team
+          platforms and all AWS service categories used by the IA infrastructure, enabling the SRE team
           to assess platform health, drill down to individual AWS services, and
           respond to incidents without navigating six separate CloudWatch consoles.
 
@@ -59,45 +61,27 @@ The primary goals of the co-op placement project were as follows:
 
 \end{itemize}
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Deliverables and Technical Scope}
 \label{sec:deliverables_scope}
-% ────────────────────────────────────────────────────────────
+
 
 This section documents the technical scope and stack for each primary
 deliverable. Detailed implementation decisions are covered in
 Chapter~\ref{chap:implementation}.
 
-\begin{table}[ht]
-\centering
-\caption{Project Deliverables --- JIRA Scope}
-\label{tab:jira_deliverables}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{lX}
-\hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{JIRA}} & \textcolor{white}{\textbf{Title / Scope}} \\
-\hline
-IISS-435, 455, 461, 469 & CloudWatch Lambda Monitoring Dashboard and inventory \\
-IISS-482--486 & IA Infrastructure Monitoring Platform (CloudWatch dashboards extended to all platforms) \\
-IISS-487 & Centralized Grafana AMG SRE Dashboard (primary deliverable) \\
-IISS-507--510 & IA Infrastructure Inventory API (Flask REST API) \\
-IISS-707, 538, 741, 753, 876 & RPA Production Support Incidents \\
-IISS-509, IISS-919 & Citco Enterprise Custom UI Dashboards (Infrastructure Inventory + Monitoring) \\
-IISS-824 & RPA LLM Agent --- Ask Citco RPA (bug fixes, KB sync, quality improvements) \\
-\hline
-\end{tabularx}
-\end{table}
-
 
 \subsection{IA Infrastructure Monitoring Platform}
 
-\textbf{Current State:}\\
+\textbf{Current State:} 
 No CloudWatch dashboards existed for any of the six
 IA platforms. Lambda function health was monitored only through the AWS
 Console on an ad-hoc basis. No tag-based resource discovery was in place
 and the Lambda inventory was maintained manually on Confluence.
 
-\textbf{Scope:}\\
+\textbf{Scope:} 
 Build unified CloudWatch dashboards covering all six
 platforms --- \texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks},
 \texttt{ia-bpo}, \texttt{meridian}, and \texttt{rpacfs1} --- across Lambda,
@@ -106,7 +90,7 @@ resource discovery pipeline using BudgetCode as the primary filter and
 AppName as the mandatory fallback discriminator for the
 \texttt{meridian}/\texttt{citcoworks} shared BudgetCode ambiguity.
 
-\textbf{Deliverables:}\\
+\textbf{Deliverables:} 
 CloudWatch dashboards for all six platforms; a
 resilient three-tier SQS registry pipeline (live API → S3 cache → bundled
 inventory); a Python-based dashboard builder framework deployed via
@@ -115,14 +99,14 @@ CloudFormation.
 
 \subsection{Centralized Grafana SRE Dashboard}
 
-\textbf{Current State:}\\
+\textbf{Current State:} 
 No centralized observability workspace existed.
 Platform health required navigating six separate CloudWatch consoles.
 No Kafka consumer lag alarm existed for the Meridian platform, which was
 the direct cause of the April~2026 incident going undetected for over
 three hours.
 
-\textbf{Scope:}\\
+\textbf{Scope:} 
 Build a centralized Amazon Managed Grafana (AMG) workspace
 providing a unified cross-platform view across all six platforms and all
 monitored AWS service categories. Implement proactive CloudWatch alarms
@@ -130,7 +114,7 @@ across all services, an SNS notification pipeline to the SRE team, and
 Grafana template variables backed by the Inventory API for dynamic
 resource filtering.
 
-\textbf{Deliverables:}\\
+\textbf{Deliverables:} 
 Grafana AMG workspace with 13+ dashboard rows
 covering all service categories; CloudWatch alarms deployed across all
 six platforms; SNS alarm notification pipeline; Infrastructure-as-Code
@@ -139,14 +123,14 @@ six platforms; SNS alarm notification pipeline; Infrastructure-as-Code
 
 \subsection{IA Infrastructure Inventory API}
 
-\textbf{Current State:}\\
+\textbf{Current State:} 
 No programmatic AWS resource inventory existed.
 Lambda function lists were manually maintained on Confluence and became
 stale quickly. CloudWatch Metric Insights SQL lacked support for
 pattern-based dimension filtering, making dynamic Grafana template variable
 population impractical.
 
-\textbf{Scope:}\\
+\textbf{Scope:} 
 Build a Flask REST API that dynamically discovers all
 deployed AWS services per platform across all six IA platforms. Implement
 a discoverer registry pattern for extensibility, a two-stage tag filter
@@ -154,7 +138,7 @@ to resolve the \texttt{meridian}/\texttt{citcoworks} BudgetCode ambiguity,
 and an S3-backed cache layer to keep enumeration latency within the
 API Gateway 30-second timeout.
 
-\textbf{Deliverables:}\\
+\textbf{Deliverables:} 
 REST endpoints for Lambda, ECS, EC2, SQS, S3, and
 health resources; per-platform filtering support; S3 cache with
 CloudWatch metrics publishing; Lambda deployment via API Gateway.
@@ -162,20 +146,20 @@ CloudWatch metrics publishing; Lambda deployment via API Gateway.
 
 \subsection{RPA Production Support}
 
-\textbf{Current State:}\\
+\textbf{Current State:} 
 The IA-SRE team operates a Follow the Sun support
 model with shifts across Manila (APAC), Dublin (EMEA), and Halifax (NA).
-The NA slot required a dedicated engineer covering 11~AM--7~PM~EST, one
-week in every four.
+The NA slot (11~AM--7~PM~EST) rotated weekly among the four NA-based
+SRE team members.
 
-\textbf{Scope:}\\
+\textbf{Scope:} 
 Cover the North America RPA production support rotation,
 handling incidents escalated through the SD Portal, IA\_INCIDENTS
 distribution list, and Teams channels. Triage, investigate, and resolve
 or escalate RPA process failures within the defined SLA, and maintain
 daily Confluence shift handover logs.
 
-\textbf{Deliverables:}\\
+\textbf{Deliverables:} 
 Five completed support rotations (W8, W12, W16,
 W20, W24); incident triage and resolution for all escalated tickets;
 Confluence handover logs maintained for each shift day.
@@ -183,7 +167,7 @@ Confluence handover logs maintained for each shift day.
 
 \subsection{RPA LLM Agent --- Ask Citco RPA}
 
-\textbf{Current State:}\\
+\textbf{Current State:} 
 The \textbf{Ask Citco RPA} chatbot was a
 production RAG pipeline using Amazon Bedrock (Claude), OpenSearch
 Serverless (1024-dim FAISS/HNSW vectors), and 11 Lambda functions
@@ -191,13 +175,13 @@ ingesting from SharePoint, Databricks, and the BPM API. The system
 had multiple known reliability issues including a recurring KB sync
 timeout and several production bugs identified via CloudWatch log analysis.
 
-\textbf{Scope:}\\
+\textbf{Scope:} 
 Resolve production reliability issues, enrich the
 Knowledge Base, and improve code quality across all Lambda functions
 per the IA Best Practice checklist. Evaluate and propose a Hybrid
 Graph-RAG architecture extension using Amazon Neptune.
 
-\textbf{Deliverables:}\\
+\textbf{Deliverables:} 
 Production bug fixes deployed; NavChecklist PDFs
 added to Knowledge Base; modular code structure with structured logging,
 Pydantic validation, tenacity retry, kill switch, and X-Ray tracing;
@@ -206,30 +190,32 @@ comprehensive unit test suite; architecture proposal for Graph-RAG extension.
 
 \subsection{Citco Enterprise Custom UI Dashboards}
 
-\textbf{Current State:}\\
+\textbf{Current State:} 
 The Grafana AMG dashboard provided approximately
 60\% Dynatrace feature parity but was constrained by fixed panel types,
 no drag-and-drop layout, and limited custom visualization options. A
 Citco-owned enterprise UI was identified as the next step to close
 the remaining observability gap.
 
-\textbf{Scope:}\\
+\textbf{Scope:} 
 Extend the existing \texttt{ia-config-portal}
-(React~19/TypeScript, ECS Fargate, built by Soundarya and Sridhar)
+(React~19/TypeScript, ECS Fargate, built by Ms.\ Venkataraman and Mr.\ Vadla)
 with two new dashboard pages --- an Infrastructure Inventory dashboard
-(IISS-509) and an Infrastructure Monitoring dashboard (IISS-919) ---
+and an Infrastructure Monitoring dashboard ---
 using a config-driven panel schema and CloudWatch data integration.
 
-\textbf{Deliverables:}\\
+\textbf{Deliverables:} 
 Architectural implementation plan covering gap
 analysis, technology stack decisions, API design, and task breakdown;
 initial frontend scaffolding with AG~Grid resource tables and
 config-driven panel components; continuing in Sep--Dec~2026 extension.
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Acceptance Criteria}
 \label{sec:acceptance_criteria}
-% ────────────────────────────────────────────────────────────
+
 
 The following criteria defined whether each deliverable met its stated
 objectives.
@@ -303,8 +289,9 @@ objectives.
           escalated with a documented RCA and proposed fix.
 
     \item \textbf{SLA compliance}: Tickets are acknowledged within the
-          L2 response SLA and carried over with complete handover notes
-          per the IA Support Model.
+          L2 (Innovation IT) response SLA and carried over with complete
+          handover notes per the IA Support Model. L3 (SRE) is escalated
+          for incidents requiring infrastructure access or code-level fixes.
 \end{itemize}
 
 
@@ -342,10 +329,10 @@ objectives.
 \end{itemize}
 
 
-% ────────────────────────────────────────────────────────────
+
 % NOTE: Team composition and mandate are documented in Chapter 1
 % (About Company & Organization, Section 2.2 Team Structure).
-% ────────────────────────────────────────────────────────────
+
 
 % Keep all floats within this chapter
 \FloatBarrier

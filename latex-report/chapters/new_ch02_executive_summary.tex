@@ -9,7 +9,7 @@
 
 This report documents my Mitacs Business Strategy Internship (BSI)
 at Citco Technology Management (CTM), Halifax, Nova Scotia, conducted between
-\textbf{Mar~15 and Aug~31, 2026} under the project title
+\textbf{March~15 and August~31, 2026} under the project title
 \textit{``Intelligent Automation and Reliability Engineering for Financial
 Services''} (Mitacs reference IT49539).
 
@@ -19,7 +19,7 @@ for the IA-IT-SRE Infrastructure --- a collection of six platforms
 \texttt{meridian}, \texttt{rpacfs1}) spanning Lambda functions, ECS clusters,
 EC2 instances, MSK Kafka pipelines, and a range of database and messaging AWS
 services. Two documented production failures --- a 29-day silent outage of the
-CAIS-Pricing GenAI pipeline and a 7.5-hour Meridian event processing
+CAIS-Pricing (Citco Alternative Investment Services) GenAI pipeline and a 7.5-hour Meridian event processing
 delay --- both went undetected until business teams escalated them,
 exposing the team's reliance on reactive, manual incident detection. The
 research question framed for this engagement was: \textit{can AWS-native
@@ -32,8 +32,8 @@ all six platforms. I then developed a
 registry-based IA Infrastructure inventory API that queries the AWS
 API dynamically and returns live, per-platform lists of all deployed AWS
 services. Finally, I built a centralized Amazon
-Managed Grafana (AMG) workspace as a proof-of-concept, covering all 13 AWS
-service categories across all six platforms via dynamic platform template
+Managed Grafana (AMG) workspace as a proof-of-concept, covering all AWS
+service categories used by the IA infrastructure across all six platforms via dynamic platform template
 variables. The RPA production support rotations ran in parallel
 throughout the co-op placement.
 

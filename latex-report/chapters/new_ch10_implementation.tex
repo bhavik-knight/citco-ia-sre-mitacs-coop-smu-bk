@@ -1,31 +1,31 @@
 ﻿% ============================================================
-% CHAPTER 10: IMPLEMENTATION & ARCHITECTURE
+% CHAPTER 10: IMPLEMENTATION
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
 % ============================================================
 
-\chapter{Implementation \& Architecture}
+\chapter{Implementation}
 \label{chap:implementation}
+
+\FloatBarrier
 
 \section{Platform Overview: Four-Layer Architecture}
 \label{sec:platform_overview}
-% ────────────────────────────────────────────────────────────
 
-The three deliverables of my co-op placement form a coherent four-layer
-observability stack. Figure~\ref{fig:platform_overview} shows how the layers
-relate to each other and to the underlying IA platform infrastructure.
+
+I designed and built three deliverables during my co-op placement that together form a coherent four-layer observability stack. Figure~\ref{fig:platform_overview} shows how I structured the layers and how they relate to the underlying IA platform infrastructure.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig-ia-sre-observability-platform.png}
-\caption{IA-SRE Observability Platform --- High-Level Architecture (four layers)}
+\caption[IA-SRE Observability Platform --- High-Level Architecture]{IA-SRE Observability Platform --- High-Level Architecture (four layers)}
 \label{fig:platform_overview}
 \end{figure}
 
 Figure~\ref{fig:amg_system_arch} shows the full system architecture of the
-Grafana AMG observability platform, detailing how each monitored AWS service
-feeds CloudWatch, how the Lambda provisioner reads alarm templates from S3,
-and how the SNS routing delivers email notifications.
+Grafana AMG observability platform I built, detailing how each monitored AWS service
+feeds CloudWatch, how the Lambda provisioner I wrote reads alarm templates from S3,
+and how the SNS routing I configured delivers email notifications.
 
 \begin{figure}[htbp]
 \centering
@@ -34,46 +34,48 @@ and how the SNS routing delivers email notifications.
 \label{fig:amg_system_arch}
 \end{figure}
 
-Figure~\ref{fig:amg_arch_diagram} provides a rendered view of the same
-architecture from the project documentation.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig-amg-architecture.png}
-\caption{AMG Observability Platform --- Architecture Diagram (from documentation)}
-\label{fig:amg_arch_diagram}
-\end{figure}
-
-The \textbf{infrastructure layer} is the monitored subject: six budget
+The \textbf{infrastructure layer} is the monitored subject I targeted: six budget
 platforms housing Lambda functions, ECS clusters, EC2
 instances, and the full spectrum of AWS database and messaging services
 used by the Meridian and Citco Works platforms.
 
 The \textbf{data layer} ingests, stores, and queries observability signals
-from the infrastructure layer. Amazon CloudWatch serves as the sole data source.
-This was a deliberate architectural decision (see Section~\ref{sec:decision_cloudwatch_only})
+from the infrastructure layer. I chose Amazon CloudWatch as the sole data source ---
+a deliberate architectural decision (see Section~\ref{sec:decision_cloudwatch_only})
 that eliminates the operational overhead of a self-managed Prometheus stack.
-CloudWatch Metric Insights SQL provides per-resource aggregation, enabling
+I used CloudWatch Metric Insights SQL to provide per-resource aggregation, enabling
 multi-service panels without requiring one panel per resource.
 
-The \textbf{visualization and alerting layer} splits between two components.
-Amazon Managed Grafana (AMG) renders the multi-row dashboard for human operators.
-CloudWatch Alarms with SNS routing fires notifications when metrics breach
+The \textbf{visualization and alerting layer} splits between two components I built.
+I used Amazon Managed Grafana (AMG) to render the multi-row dashboard for human operators,
+and I configured CloudWatch Alarms with SNS routing to fire notifications when metrics breach
 their SLO-aligned thresholds.
 
 The \textbf{consumers layer} includes three groups: operators who use the
-Grafana dashboard during incident response, the IA Resources Inventory REST
-API that exposes the AWS service fleet programmatically, and the SRE team's
-email distribution list that receives SNS alarm notifications.
+Grafana dashboard I built during incident response, the IA Resources Inventory REST
+API I developed that exposes the AWS service fleet programmatically, and the SRE team's
+email distribution list that receives SNS alarm notifications I configured. This layered architecture ensures separation of concerns: the data layer handles metric collection and storage, the visualization layer transforms raw metrics into actionable insights, and the consumer layer delivers those insights to the appropriate stakeholders through purpose-built interfaces.
 
-% ────────────────────────────────────────────────────────────
+Figure~\ref{fig:amg_arch_diagram} provides a rendered view of the same
+architecture from the project documentation.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth, trim=0 0 0 80, clip]{figures/fig-amg-architecture.png}
+\caption[AMG Observability Platform --- Architecture Diagram]{AMG Observability Platform --- Architecture Diagram (from documentation)}
+\label{fig:amg_arch_diagram}
+\end{figure}
+
+
+\FloatBarrier
+
 \section{CloudWatch Dashboard Platform}
 \label{sec:cw_dashboard_platform}
-% ────────────────────────────────────────────────────────────
+
 
 \subsection{Initial Lambda Dashboard}
 
-My earliest monitoring work, completed in Apr~2026, produced a native
+My earliest monitoring work, completed in April~2026, produced a native
 Amazon CloudWatch dashboard covering the \texttt{rpacfs1} and
 \texttt{ia-bpo} Lambda function fleets --- 51 functions total. The dashboard
 displayed per-function panels for invocation counts, error rates, duration
@@ -88,8 +90,7 @@ homogeneous fleets but surfaced two structural limitations that drove
 the later Metric Insights SQL migration: the \textbf{SEARCH() visibility
 gap} (idle functions disappear from panels) and \textbf{no cross-environment
 aggregation} (a single expression cannot span multiple tag dimensions
-simultaneously). Both are documented in full in
-Chapter~\ref{chap:challenges}.
+simultaneously).
 
 Figure~\ref{fig:cloudwatch_dashboard} shows a live screenshot of the
 CloudWatch Lambda dashboard displaying invocation and error metrics.
@@ -97,7 +98,7 @@ CloudWatch Lambda dashboard displaying invocation and error metrics.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig-cloudwatch-lambda-dashboard.png}
-\caption{CloudWatch Lambda Dashboard --- Live Screenshot (ia-resources-monitoring)}
+\caption[CloudWatch Lambda Dashboard --- Live Screenshot]{CloudWatch Lambda Dashboard --- Live Screenshot (ia-resources-monitoring)}
 \label{fig:cloudwatch_dashboard}
 \end{figure}
 
@@ -137,6 +138,8 @@ with its detection latency, cost, and permission requirements.
 This analysis informed the Container Insights cost evaluation and the alarm design for the dashboard.
 
 \subsection{IA Infrastructure Monitoring Sub-Stories}
+
+The following sub-stories document specific discoveries and architectural patterns that emerged during the CloudWatch dashboard development.
 
 \subsubsection{EC2 Inventory and Tag Mismatch Discovery}
 
@@ -201,43 +204,44 @@ functional even during AWS service degradation events. The feature
 was validated with \textbf{automated tests} covering the registry
 dispatch logic, fallback transitions, and queue metadata serialization.
 
-% ────────────────────────────────────────────────────────────
+\FloatBarrier
+
 \section{Grafana AMG Observability Platform}
 \label{sec:grafana_amg_platform}
-% ────────────────────────────────────────────────────────────
 
-This was my primary deliverable over significant duration. 
-It delivered a centralized Amazon Managed Grafana workspace 
-with various dashboard rows and panels, dynamic CloudWatch alarms,
-and a Lambda-backed IaC provisioner --- all built
-on a four-layer architecture described below.
+
+This was my primary deliverable over the bulk of my co-op placement.
+I built a centralised Amazon Managed Grafana workspace with 17 dashboard rows and panels,
+dynamic CloudWatch alarms, and a Lambda-backed IaC provisioner --- all structured
+across a four-layer architecture I designed from scratch.
 
 \subsection{Architectural Layers}
 
+I organised the Grafana AMG platform into a four-layer architecture that separates data collection, visualization, alerting, and infrastructure provisioning concerns.
+
 \subsubsection{Layer 1: Data Layer}
 
-Amazon CloudWatch serves as the \textbf{sole data source} for the entire
-Grafana workspace. My deliberate choice to use only the native Grafana
+I chose Amazon CloudWatch as the \textbf{sole data source} for the entire
+Grafana workspace. My deliberate decision to use only the native Grafana
 CloudWatch plugin --- rather than a self-managed Prometheus/CloudWatch
 exporter stack --- eliminated all additional infrastructure requirements.
-The data layer is characterized by:
+I structured the data layer around:
 
 \begin{itemize}
-    \item \textbf{CloudWatch plugin}: The Grafana AMG workspace connects
+    \item \textbf{CloudWatch plugin}: I connected the Grafana AMG workspace
           to CloudWatch via the built-in plugin, authenticated through an
-          IAM role. No additional data collectors, agents, or scrapers
-          are required.
+          IAM role. This required no additional data collectors, agents, or scrapers.
 
-    \item \textbf{IAM role model}: A \textbf{16-role deployment} (one role
-          per AWS account, covering all six IA platform accounts) built on a
-          \textbf{three-role IAM chaining architecture} provides the Grafana
-          service account with cross-account read access across all IA AWS accounts.
-          Each role grants the minimum permissions required: \texttt{cloudwatch:GetMetricData},
+    \item \textbf{IAM role model}: I built a \textbf{16-role deployment} (one role
+          per AWS account, covering all six IA platform accounts) on a
+          \textbf{three-role IAM chaining architecture} to give the Grafana
+          service account cross-account read access across all IA AWS accounts.
+          I scoped each role to the minimum permissions required: \texttt{cloudwatch:GetMetricData},
           \texttt{cloudwatch:ListMetrics}, \texttt{cloudwatch:DescribeAlarms},
           \texttt{logs:StartQuery}, \texttt{logs:GetQueryResults}, and
           \texttt{ec2:DescribeTags} (for tag-based resource enumeration).
           Figure~\ref{fig:iam_role_model} shows the three-role IAM chaining
-          architecture required because \texttt{CTM-Developer} cannot
+          architecture I designed because \texttt{CTM-Developer} cannot
           create IAM roles directly and the shared
           \texttt{CITCO-CloudFormationBuild} role lacks
           \texttt{grafana:*} permissions.
@@ -246,95 +250,97 @@ The data layer is characterized by:
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig-IAM-Role-Architecture.png}
-\caption{IAM Role Architecture --- Three-Role Model for Grafana AMG Deployment}
+\caption[IAM Role Architecture --- Three-Role Model]{IAM Role Architecture --- Three-Role Model for Grafana AMG Deployment}
 \label{fig:iam_role_model}
 \end{figure}
 
 \begin{itemize}
-    \item \textbf{Metric Insights SQL}: The primary query language for
-          multi-resource panels. CloudWatch Metric Insights enables
+    \item \textbf{Metric Insights SQL}: I used CloudWatch Metric Insights SQL
+          as the primary query language for
+          multi-resource panels. This enabled
           SQL-like aggregation across all resources in a namespace with
           a single query, replacing the brittle \texttt{SEARCH()} expressions
-          used in the earlier CloudWatch dashboard.
+          I had used in the earlier CloudWatch dashboard.
 \end{itemize}
 
 \subsubsection{Layer 2: Visualization Layer}
 
-The Grafana AMG workspace hosts \textbf{17~dashboard rows} organized by
-monitored service category. Table~\ref{tab:dashboard_rows} summarizes the
-dashboard structure.
+I built the Grafana AMG workspace with \textbf{17~dashboard rows} organised by
+monitored service category. Table~\ref{tab:dashboard_rows} summarises the
+dashboard structure I implemented.
 
-\begin{table}[!htbp]
-\centering
-\caption{Grafana AMG Dashboard --- Row Structure (Rows 1--15 shown; Rows 16--17: Alarms \& Notifications, X-Ray Traces)}
-\label{tab:dashboard_rows}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{lp{3.0cm}X}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\centering\arraybackslash}p{0.05\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X@{\hspace{\tabcolsep}}}
+\caption{Grafana AMG Dashboard --- Row Structure} \label{tab:dashboard_rows} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Row}} & \textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Panels and Metrics}} \\
 \hline
-1 & Health Overview & Color-coded stat tile per service (Lambda, SQS, MSK, EC2, ECR, EKS, ECS, RDS, DocumentDB, Redis, Neptune, OpenSearch); critical/warning alarm counts \\
-2 & Performance Overview & Top-10 bargauge comparisons per service --- highest queue depth, Lambda errors, ECS CPU, Kafka consumer lag, Redis memory, etc. \\
-3 & Lambda & Invocations, errors, throttles, concurrent executions, duration P50/P99; Logs Insights error panel \\
-4 & SQS & Queue depth (\texttt{ApproximateNumberOfMessagesVisible}), oldest message age, DLQ depth \\
-5 & MSK/Kafka & Consumer lag: \texttt{SumOffsetLag} and \texttt{EstimatedMaxTimeLag}; broker CPU, disk, messages in/out per second \\
-6 & EC2 & CPU (avg/max), memory (CloudWatch Agent), network I/O, disk I/O, status checks \\
-7 & ECR & Container image pull activity \\
-8 & EKS & Kubernetes node and pod metrics \\
-9 & ECS Services & CPU and memory utilization per cluster and service; Container Insights task-level metrics \\
-10 & ECS Target Groups & ALB request throughput, response time P50/P95/P99, HTTP 5xx/4xx error counts \\
-11 & RDS / Aurora & CPU, database connections, read/write latency, IOPS, freeable memory \\
-12 & DocumentDB & CPU, disk queue depth, active connections, read/write latency, IOPS \\
-13 & Redis / Valkey & Engine CPU (avg/max), memory, cache hit rate, replication lag, connections, latency \\
-14 & Neptune DB & CPU, Gremlin/SPARQL errors, freeable memory, queue depth, network throughput \\
-15 & OpenSearch & Cluster status (green/yellow/red), JVM heap pressure, indexing rate, search latency \\
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Row}} & \textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Panels and Metrics}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolor{tablerowA} 1 & Health Overview & Color-coded stat tile per service (Lambda, SQS, MSK, EC2, ECR, EKS, ECS, RDS, DocumentDB, Redis, Neptune, OpenSearch); critical/warning alarm counts \\
+\rowcolor{tablerowB} 2 & Performance Overview & Top-10 bargauge comparisons per service --- highest queue depth, Lambda errors, ECS CPU, Kafka consumer lag, Redis memory, etc. \\
+\rowcolor{tablerowA} 3 & Lambda & Invocations, errors, throttles, concurrent executions, duration P50/P99; Logs Insights error panel \\
+\rowcolor{tablerowB} 4 & SQS & Queue depth (\texttt{ApproximateNumberOfMessagesVisible}), oldest message age, DLQ depth \\
+\rowcolor{tablerowA} 5 & MSK/Kafka & Consumer lag: \texttt{SumOffsetLag} and \texttt{EstimatedMaxTimeLag}; broker CPU, disk, messages in/out per second \\
+\rowcolor{tablerowB} 6 & EC2 & CPU (avg/max), memory (CloudWatch Agent), network I/O, disk I/O, status checks \\
+\rowcolor{tablerowA} 7 & ECR & Container image pull activity \\
+\rowcolor{tablerowB} 8 & EKS & Kubernetes node and pod metrics \\
+\rowcolor{tablerowA} 9 & ECS Services & CPU and memory utilization per cluster and service; Container Insights task-level metrics \\
+\rowcolor{tablerowB} 10 & ECS Target Groups & ALB request throughput, response time P50/P95/P99, HTTP 5xx/4xx error counts \\
+\rowcolor{tablerowA} 11 & RDS / Aurora & CPU, database connections, read/write latency, IOPS, freeable memory \\
+\rowcolor{tablerowB} 12 & DocumentDB & CPU, disk queue depth, active connections, read/write latency, IOPS \\
+\rowcolor{tablerowA} 13 & Redis / Valkey & Engine CPU (avg/max), memory, cache hit rate, replication lag, connections, latency \\
+\rowcolor{tablerowB} 14 & Neptune DB & CPU, Gremlin/SPARQL errors, freeable memory, queue depth, network throughput \\
+\rowcolor{tablerowA} 15 & OpenSearch & Cluster status (green/yellow/red), JVM heap pressure, indexing rate, search latency \\
 \hline
 \end{tabularx}
-\end{table}
 
 Figures~\ref{fig:grafana_overview}--\ref{fig:grafana_ecs} show live
-screenshots from the deployed Grafana AMG dashboard, demonstrating the
-Health Overview, Lambda monitoring, and ECS monitoring rows.
+screenshots from the Grafana AMG dashboard I deployed, demonstrating the
+Health Overview, Lambda monitoring, and ECS monitoring rows I built.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig-grafana-overview-row.png}
-\caption{Grafana AMG Dashboard --- Health Overview Row (Live Screenshot)}
+\caption[Grafana AMG Dashboard --- Health Overview Row]{Grafana AMG Dashboard --- Health Overview Row (Live Screenshot)}
 \label{fig:grafana_overview}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig-grafana-lambda-row.png}
-\caption{Grafana AMG Dashboard --- Lambda Monitoring Row (Live Screenshot)}
+\caption[Grafana AMG Dashboard --- Lambda Monitoring Row]{Grafana AMG Dashboard --- Lambda Monitoring Row (Live Screenshot)}
 \label{fig:grafana_lambda}
 \end{figure}
 
-The Lambda Monitoring Row (Figure~\ref{fig:grafana_lambda}) provides
+The Lambda Monitoring Row (Figure~\ref{fig:grafana_lambda}) I built provides
 real-time visibility into all Lambda functions across the selected
 environment. The top table displays function names, trigger types,
 runtime versions, memory allocations, and timeout configurations ---
 enabling operators to identify misconfigured functions at a glance.
-Below the table, four time-series panels track the four golden signals:
+Below the table, I added four time-series panels tracking the four golden signals:
 \textbf{Total Errors} (count of failed invocations), \textbf{Invocations}
 (throughput), \textbf{Concurrent Executions} (saturation indicator), and
-\textbf{Throttles} (capacity limit breaches). The legend below each panel
-enables drill-down to individual functions, with color-coding to identify
-anomalous patterns.
+\textbf{Throttles} (capacity limit breaches). I added a colour-coded legend below each panel
+to enable drill-down to individual functions.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig-grafana-ecs-row.png}
-\caption{Grafana AMG Dashboard --- ECS Monitoring Row (Live Screenshot)}
+\caption[Grafana AMG Dashboard --- ECS Monitoring Row]{Grafana AMG Dashboard --- ECS Monitoring Row (Live Screenshot)}
 \label{fig:grafana_ecs}
 \end{figure}
 
-The ECS Monitoring Row (Figure~\ref{fig:grafana_ecs}) surfaces
+The ECS Monitoring Row (Figure~\ref{fig:grafana_ecs}) I built surfaces
 Container Insights metrics for all ECS services in the selected cluster.
-The service table shows cluster assignment, desired count, and running
+I added a service table showing cluster assignment, desired count, and running
 count --- highlighting any discrepancies that indicate failed deployments
-or scaling issues. The four time-series panels display CPU and memory
-utilization (both average and maximum) across all tasks, enabling
+or scaling issues. I also added four time-series panels displaying CPU and memory
+utilisation (both average and maximum) across all tasks, enabling
 operators to identify resource saturation before it impacts service
 availability. This row was particularly valuable for monitoring the
 Meridian ECS services, where memory pressure had previously gone
@@ -342,7 +348,7 @@ undetected until task failures occurred.
 
 \subsubsection{Grafana Template Variables}
 
-The dashboard supports environment-level filtering through three Grafana
+I implemented environment-level filtering through three Grafana
 template variables backed by CloudWatch dimension-value queries:
 
 \begin{itemize}
@@ -363,18 +369,18 @@ template variables backed by CloudWatch dimension-value queries:
 
 When a user selects a value from any variable, all panels that reference
 that variable re-execute their queries with the selected filter applied,
-effectively scoping the entire dashboard to a single environment or
-resource. This eliminates the need to maintain separate dashboards per
+scoping the entire dashboard to a single environment or
+resource. I designed it this way to eliminate the need to maintain separate dashboards per
 platform.
 
 \subsubsection{CloudWatch Metric Insights SQL: Architecture Pattern}
 
-CloudWatch Metric Insights SQL is the key architectural pattern that
-enables per-resource drill-down across large fleets within a single query.
-The standard form uses \texttt{SELECT ... FROM ... GROUP BY} to return
+CloudWatch Metric Insights SQL is the key architectural pattern I adopted to
+enable per-resource drill-down across large fleets within a single query.
+I used the standard \texttt{SELECT ... FROM ... GROUP BY} form to return
 metrics for each resource as a separate time series, covering all resources
-without requiring one panel per function. The \texttt{WHERE} clause can
-filter by tag or dimension to scope results to specific platforms.
+without requiring one panel per function. I used the \texttt{WHERE} clause to
+filter by tag or dimension and scope results to specific platforms.
 
 \paragraph{Percentile Limitation and Workaround.}
 A fundamental constraint of Metric Insights SQL is that the
@@ -429,41 +435,40 @@ the IA-SRE team's email distribution list. Alarm categories include:
 \subsubsection{Layer 4: Infrastructure-as-Code Provisioner}
 
 The IaC layer is a \textbf{Lambda-backed CloudFormation provisioner}
-deployed via AWS SAM. Its architecture addresses a specific scaling
+I deployed via AWS SAM. I designed it to address a specific scaling
 constraint: with 119~Lambda functions, a static CloudFormation template
 defining one alarm per function would contain $119 \times (\text{alarm
 types per function})$ resources, rapidly approaching the CloudFormation
 500-resource-per-stack limit.
 
-The provisioner resolves this by \emph{dynamically discovering} the
-current function fleet at deploy time and synthesizing alarm resources
+I resolved this by making the provisioner \emph{dynamically discover} the
+current function fleet at deploy time and synthesise alarm resources
 programmatically:
 
 \begin{enumerate}
-    \item The provisioner Lambda function is invoked by a CloudFormation
+    \item The provisioner Lambda function I wrote is invoked by a CloudFormation
           custom resource on every \texttt{samconfig.toml} deploy.
 
-    \item It reads parameterized CloudFormation YAML templates from an
+    \item It reads parameterised CloudFormation YAML templates I stored in an
           S3 bucket (see Section~\ref{sec:decision_secrets_s3}).
 
     \item For each template (Lambda alarms, ECS alarms, SQS alarms, MSK
           alarms), it calls the relevant AWS discovery API to enumerate
           all current resources in the specified platform.
 
-    \item It synthesizes CloudFormation \texttt{AWS::CloudWatch::Alarm}
+    \item It synthesises CloudFormation \texttt{AWS::CloudWatch::Alarm}
           resource blocks for each discovered resource and passes the
           generated template to CloudFormation for stack deployment.
 
-    \item Four CloudFormation stacks were deployed on
+    \item I deployed four CloudFormation stacks on
           \textbf{May~11, 2026}: \texttt{ia-sre-lambda-alarms},
           \texttt{ia-sre-ecs-alarms}, \texttt{ia-sre-sqs-alarms}, and
           \texttt{ia-sre-msk-alarms}.
 \end{enumerate}
 
-A \texttt{samconfig.toml} with environment-specific parameter files
-enables reuse across DEV, UAT, and PROD without code changes. The budget
-code, alarm thresholds, and SNS topic ARN are all externalised as
-SAM parameters, satisfying NFR5 (multi-environment reuse).
+I wrote a \texttt{samconfig.toml} with environment-specific parameter files
+to enable reuse across DEV, UAT, and PROD without code changes. I externalised the budget
+code, alarm thresholds, and SNS topic ARN as SAM parameters, satisfying NFR5 (multi-environment reuse).
 
 Figure~\ref{fig:alarm_notification_flow} illustrates the alarm notification
 flow from CloudWatch alarm state change through SNS topic fan-out to the
@@ -472,7 +477,7 @@ IA-SRE team's email distribution list.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig-alarm-notification-flow.png}
-\caption{Alarm Notification Flow --- CloudWatch to SNS to Email Distribution}
+\caption[Alarm Notification Flow --- CloudWatch to SNS]{Alarm Notification Flow --- CloudWatch to SNS to Email Distribution}
 \label{fig:alarm_notification_flow}
 \end{figure}
 
@@ -482,17 +487,17 @@ flow that delivers all stacks across the three environments.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig-amg-deployment-flow.png}
-\caption{CI/CD Deployment Pipeline --- CodeCommit to AMG Deployment Flow}
+\caption[CI/CD Deployment Pipeline --- CodeCommit to AMG]{CI/CD Deployment Pipeline --- CodeCommit to AMG Deployment Flow}
 \label{fig:amg_deployment_flow}
 \end{figure}
 
 \subsection{Grafana Version Upgrade: Architectural Resilience Test}
 
-On \textbf{May~13, 2026} --- two days after the initial infrastructure
+On \textbf{May~13, 2026} --- two days after my initial infrastructure
 deployment --- the Grafana AMG workspace was upgraded from version
 \textbf{10.4 to 12.4}. This was a major version migration that
 constituted an unplanned but highly informative architectural resilience
-test.
+test for the dashboard I had built.
 
 The upgrade introduced breaking changes in two areas:
 
@@ -510,18 +515,18 @@ The upgrade introduced breaking changes in two areas:
 
 I resolved this through a systematic audit of all panels to identify
 affected queries. The migration reinforced a key design principle
-documented as NFR6: \textbf{use only standard CloudWatch plugin queries
+I documented as NFR6: \textbf{use only standard CloudWatch plugin queries
 and avoid AMG-version-specific syntax}. I migrated all panel queries
 to the stable Grafana 12.4 CloudWatch query model, and the workspace has
 remained stable through subsequent Grafana patch releases.
 
 \subsection{X-Ray Distributed Tracing (PoC)}
 
-As part of the observability stack, I integrated AWS X-Ray tracing to
+As part of the observability stack I built, I integrated AWS X-Ray tracing to
 provide distributed trace visibility across the IA platform. The X-Ray
-integration enables service map visualization and trace waterfall
+integration I configured enables service map visualisation and trace waterfall
 analysis --- capabilities that contribute to the 60\% Dynatrace parity
-achieved by the CloudWatch + Grafana + X-Ray stack (see
+achieved by the CloudWatch + Grafana + X-Ray stack I assembled (see
 Section~\ref{sec:dynatrace_parity}).
 
 Figure~\ref{fig:xray_service_map} shows the X-Ray service map displaying
@@ -531,7 +536,7 @@ flow through Lambda functions, external APIs, and AWS services.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig-xray-service-map.png}
-\caption{AWS X-Ray Service Map --- Distributed Trace Topology (Live Screenshot)}
+\caption[AWS X-Ray Service Map --- Distributed Trace Topology]{AWS X-Ray Service Map --- Distributed Trace Topology (Live Screenshot)}
 \label{fig:xray_service_map}
 \end{figure}
 
@@ -549,31 +554,19 @@ The X-Ray integration delivers three key capabilities:
           trace segments.
 \end{itemize}
 
-X-Ray tracing is currently enabled in DEV environment only; UAT and PROD
-enablement is pending senior approval due to the additional CloudWatch
-costs associated with trace segment storage.
+X-Ray tracing is currently enabled in DEV environment only; I am awaiting senior approval for UAT and PROD enablement due to the additional CloudWatch costs associated with trace segment storage.
 
-% ────────────────────────────────────────────────────────────
+\FloatBarrier
+
 \section{IA Resources Inventory API}
 \label{sec:inventory_api}
-% ────────────────────────────────────────────────────────────
 
-The inventory API delivered a \textbf{Flask REST API} that I built for programmatic discovery
-of all IA platform cloud resources. I housed the project in the
-\texttt{ia-sre-resources-inventory} repository and scaffolded it on
-Jun~11, 2026; it reached production-ready state with 562~automated
+
+I built a \textbf{Flask REST API} for programmatic discovery
+of all IA platform cloud resources. I created the
+\texttt{ia-sre-resources-inventory} repository and scaffolded the project on
+Jun~11, 2026; I brought it to production-ready state with 562~automated
 tests and 99\%~code coverage.
-
-Figure~\ref{fig:inventory_api_arch} shows the high-level architecture of
-the Inventory API, illustrating how discoverers query AWS services and
-return unified resource models.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.90\textwidth]{figures/fig-inventory-api-architecture.png}
-\caption{IA Resources Inventory API --- Architecture Overview}
-\label{fig:inventory_api_arch}
-\end{figure}
 
 \subsection{Technology Stack}
 
@@ -591,43 +584,56 @@ return unified resource models.
           (property-based tests)
 \end{itemize}
 
+Figure~\ref{fig:inventory_api_arch} shows the high-level architecture of
+the Inventory API, illustrating how discoverers query AWS services and
+return unified resource models.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.90\textwidth]{figures/fig-inventory-api-architecture.png}
+\caption{IA Resources Inventory API --- Architecture Overview}
+\label{fig:inventory_api_arch}
+\end{figure}
+
 \subsection{Discoverer Registry Pattern}
 
 My core architectural contribution in the inventory API is the
 \textbf{Discoverer Registry pattern}. Rather than routing resource
-discovery logic through a monolithic handler, the API maintains a
+discovery logic through a monolithic handler, I built a
 registry that maps \texttt{(resource\_type, budget\_code)} tuples to
 concrete discoverer classes. Each discoverer implements a single abstract
 method \texttt{async def discover() -> List[Resource]}. Adding support for a
 new platform or resource type requires implementing one class and
-registering one entry --- zero changes to routing, serialization, or
+registering one entry --- zero changes to routing, serialisation, or
 test infrastructure.
 
 \subsection{API Endpoints}
 
-\begin{table}[!htbp]
-\centering
-\caption{IA Resources Inventory API --- Endpoint Summary}
-\label{tab:api_endpoints}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}p{0.65\textwidth}}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}X@{\hspace{\tabcolsep}}}
+\caption{IA Resources Inventory API --- Endpoint Summary} \label{tab:api_endpoints} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Endpoint}} & \textcolor{white}{\textbf{Description}} \\
 \hline
-\texttt{GET /api/v1/lambda} & All Lambda functions; optional
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Endpoint}} & \textcolor{white}{\textbf{Description}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolor{tablerowA} \texttt{GET /api/v1/lambda} & All Lambda functions; optional
   \texttt{?budget\_code=rpacfs1} filter \\
-\texttt{GET /api/v1/ecs} & All ECS clusters across all platforms \\
-\texttt{GET /api/v1/ec2} & All EC2 instances (tag-based discovery) \\
-\texttt{GET /api/v1/secrets} & Secrets Manager secrets inventory \\
-\texttt{GET /api/v1/s3} & S3 buckets per budget code \\
-\texttt{GET /api/v1/health} & Health check --- returns 200 OK \\
+\rowcolor{tablerowB} \texttt{GET /api/v1/ecs} & All ECS clusters across all platforms \\
+\rowcolor{tablerowA} \texttt{GET /api/v1/ec2} & All EC2 instances (tag-based discovery) \\
+\rowcolor{tablerowB} \texttt{GET /api/v1/secrets} & Secrets Manager secrets inventory \\
+\rowcolor{tablerowA} \texttt{GET /api/v1/s3} & S3 buckets per budget code \\
+\rowcolor{tablerowB} \texttt{GET /api/v1/health} & Health check --- returns 200 OK \\
 \hline
 \end{tabularx}
-\end{table}
 
 \subsection{Tag-Based Discovery and the Two-Stage Filter}
 
-The most technically interesting discovery challenge was the
+The most technically interesting discovery challenge I encountered was the
 \texttt{citcoworks} and \texttt{meridian} tag ambiguity. Both
 environments share the AWS tag value \textbf{"Shared Cloud Artifacts"}
 for the BudgetCode dimension --- a legacy of the two platforms
@@ -648,17 +654,17 @@ Insights SQL panels.
 \label{fig:grafana_inventory_integration}
 \end{figure}
 
-My solution is a \textbf{two-stage filter} implemented in both the
+I implemented a \textbf{two-stage filter} in both the
 \texttt{CitcoWorksECSDiscoverer} and \texttt{MeridianECSDiscoverer}.
 Stage~1 filters by BudgetCode (which is shared between both platforms),
 then Stage~2 uses the AppName tag to discriminate Meridian resources
 from CitcoWorks resources.
 
-The AppName tag is now designated the \textbf{mandatory secondary
-discriminator} for all resources in the \textbf{"Shared Cloud Artifacts"}
+I designated the AppName tag as the \textbf{mandatory secondary
+discriminator} for all resources in the \textbf{``Shared Cloud Artifacts''}
 BudgetCode environments. Any new resource added to either environment
 without the correct AppName tag will be invisible to the
-inventory API. This risk is mitigated by a tag compliance CloudWatch
+inventory API. I mitigated this risk with a tag compliance CloudWatch
 alarm that fires if new ECS services or Lambda functions lack the
 required tags.
 
@@ -670,15 +676,15 @@ budget codes.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig-resource-discovery-flow.png}
-\caption{Resource Discovery Flow --- Discoverer Registry and Two-Stage Filter}
+\caption[Resource Discovery Flow --- Two-Stage Filter]{Resource Discovery Flow --- Discoverer Registry and Two-Stage Filter}
 \label{fig:resource_discovery_flow}
 \end{figure}
 
 \subsection{Async Architecture}
 
-The API uses \texttt{flask[async]} with async route handlers.
+I built the API using \texttt{flask[async]} with async route handlers.
 Each handler aggregates boto3 calls concurrently using
-\texttt{asyncio.gather()}, reducing total API latency by parallelizing
+\texttt{asyncio.gather()}, reducing total API latency by parallelising
 the AWS API calls within a single request. All matching discoverers run
 concurrently rather than sequentially, reducing API response time from
 the sum of all boto3 call latencies to the latency of the single slowest
@@ -709,17 +715,33 @@ My test suite for the inventory API achieves \textbf{99\%~code coverage}:
           single-page results, maximum page sizes).
 \end{itemize}
 
-% ────────────────────────────────────────────────────────────
+\FloatBarrier
+
 \section{Work Stream 4: RPA Production Support}
 \label{sec:rpa_production_support}
-% ────────────────────────────────────────────────────────────
+
 
 Throughout the co-op placement I participated in dedicated RPA production support
-rotations as part of the IA team's \textbf{Follow-the-Sun model}. I held the
-North America slot (11~AM--7~PM~EST) once every four weeks, serving as the
-primary contact for RPA incidents during that window. This was not project
-work with JIRA tickets --- it was ongoing operational responsibility with
-Service Desk tickets, email triage, and ad-hoc troubleshooting.
+rotations as part of the IA team's \textbf{Follow-the-Sun model}. I operated within a three-tier support structure:
+
+\begin{itemize}
+    \item \textbf{L1 --- Ask Citco RPA} (Work Stream~5): The LLM-powered
+          self-service chatbot I also worked on, which answers first-line queries from RPA
+          operators about process status, procedures, and Legal Entity assignments.
+    \item \textbf{L2 --- Innovation IT Support} (Work Stream~4): The
+          human-staffed Follow-the-Sun rotation I participated in, covering Manila (APAC),
+          Dublin (EMEA), and Halifax (NA) shifts. At L2 I handled Service Desk
+          tickets that L1 could not resolve, performing triage, investigation,
+          and resolution or escalation.
+    \item \textbf{L3 --- SRE} (our team): The escalation tier for
+          infrastructure-level incidents requiring cloud access, code-level
+          fixes, or platform changes beyond L2 scope.
+\end{itemize}
+
+I held the North America L2 slot (11~AM--7~PM~EST) on a weekly rotation among the four
+NA-based SRE team members, serving as the primary contact for RPA incidents during that window. This was
+not project work with JIRA tickets --- it was ongoing operational
+responsibility with Service Desk tickets, email triage, and ad-hoc troubleshooting.
 
 \subsection{Support Rotation Structure}
 
@@ -749,13 +771,13 @@ I completed four full support rotations during the co-op placement:
 \begin{itemize}
     \item \textbf{Week 8} (May~4--8): First rotation. Familiarization with
           SD Portal, VPL queue monitoring, and the escalation ladder.
-          Shadowed Horace on Corporate Actions ticket triage.
+          Shadowed Mr.\ Leung on Corporate Actions ticket triage.
 
     \item \textbf{Week 12} (Jun~1--5): MESO hotfix week. Encountered
-          IISS-538 (ECS autoscaling gap) during routine monitoring ---
+          MESO ECS autoscaling incident (ECS autoscaling gap) during routine monitoring ---
           this led to a code fix, not just ticket resolution.
 
-    \item \textbf{Week 20} (Jul~27--31): IISS-876 (VPL Pricing GTL booking
+    \item \textbf{Week 20} (Jul~27--31): VPL GTL booking error incident (VPL Pricing GTL booking
           error). Coordinated with the business team on NAV impact
           assessment. Also handled routine queue monitoring and ticket
           triage.
@@ -770,24 +792,24 @@ While most support work involved routine ticket triage and queue monitoring,
 several incidents required deeper investigation or code-level fixes:
 
 \begin{itemize}
-    \item \textbf{IISS-706 (CAIS Deadline)}: UCM upload failure with
+    \item \textbf{CAIS Deadline Pipeline Hotfix:} The CAIS Deadline bot --- which uploads Standard Allocation Sheets to the PDS database and downloads deadline pricing reports --- failed with
           \texttt{SMBAuthenticationError: SpnegoError}. Seven-hour
           investigation traced to Secrets Manager credential rotation
           leaving empty values cached at module import time. Hotfix
           added fail-fast validation. Filing completed before regulatory
           deadline.
 
-    \item \textbf{IISS-538 (MESO ECS)}: Tasks stuck, not autoscaling.
+    \item \textbf{MESO ECS:}: Tasks stuck, not autoscaling.
           Root cause: ECS service autoscaling policy was unconfigured.
           Fixed the scaling policy and added an ECS \texttt{SaturationAlarm}
-          to the IISS-487 alarm set.
+          to the dashboard alarm set.
 
-    \item \textbf{IISS-741 (MESO Critical)}: INNOCAP and SAMLMOS funds
+    \item \textbf{MESO Critical:}: INNOCAP and SAMLMOS funds
           stuck in queue with no Lambda heartbeat. Manually retriggered
           the \texttt{ia\_meso\_process} pipeline. Processing completed
           approximately 2~hours after escalation.
 
-    \item \textbf{IISS-753 (VPL IPV)}: \AE xeo pricing window
+    \item \textbf{VPL IPV:}: \AE xeo pricing window
           \texttt{CheckpointException} in UiPath --- bot exhausted its
           retry budget waiting for a dynamic UI element. Estimated 16~hours
           for selector resilience fix; escalated to the development team.
@@ -800,10 +822,10 @@ it was \emph{complementary}. Several incidents I encountered during support
 weeks directly influenced the dashboard and alarm design:
 
 \begin{itemize}
-    \item The MESO ECS incident (IISS-538) led to adding the
+    \item The MESO ECS incident led to adding the
           \texttt{ECS\_CPUSaturation} alarm to the Grafana dashboard.
 
-    \item The CAIS credential failure (IISS-706) reinforced the importance
+    \item The CAIS Deadline credential failure reinforced the importance
           of fail-fast validation patterns documented in the Challenges
           chapter.
 
@@ -815,16 +837,17 @@ When ticket volume was low, I used remaining support shift time for
 development work on the dashboard, inventory API, or documentation ---
 maintaining productivity while remaining available for escalations.
 
-% ────────────────────────────────────────────────────────────
+\FloatBarrier
+
 \section{Work Stream 5: RPA LLM Agent --- Ask Citco RPA}
 \label{sec:rpa_llm_agent}
-% ────────────────────────────────────────────────────────────
+
 
 During Week~21 I engaged with a parallel work stream outside the SRE
 monitoring scope: the \textbf{Ask Citco RPA} support chatbot, implemented
 across two CodeCommit repositories (\texttt{ml-rpa-status-llm-agent} and
-\texttt{core-smart-rpa-llm-ecr-image}). My engagement began as a research
-and documentation task but expanded to production bug-fixing after log
+\texttt{core-smart-rpa-llm-ecr-image}). I started with a research
+and documentation task but expanded into production bug-fixing after my log
 analysis revealed critical reliability failures.
 
 \subsection{System Architecture}
@@ -832,12 +855,14 @@ analysis revealed critical reliability failures.
 The chatbot is a \textbf{Retrieval-Augmented Generation (RAG)} pipeline
 built on Amazon Bedrock, designed to answer RPA operator queries about
 process status, procedures, and Legal Entity assignments without requiring
-developers to be on-call for routine questions.
+developers to be on-call for routine questions. I studied the architecture
+in depth as part of my onboarding to the codebase before beginning my
+own contributions.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.90\textwidth]{figures/fig-rpa-llm-architecture.png}
-\caption{Ask Citco RPA --- RAG Architecture (IISS-824)}
+\caption{Ask Citco RPA --- RAG Architecture}
 \label{fig:rpa_llm_arch}
 \end{figure}
 
@@ -851,26 +876,26 @@ OpenSearch via hybrid vector and keyword search.
 
 \subsection{Knowledge Base Pipeline}
 
-The KB ingestion pipeline runs daily in two stages:
+I documented and analysed the KB ingestion pipeline, which I found runs daily in two stages.
+I traced the full flow to understand how to improve it:
 
 \begin{enumerate}
-    \item \textbf{12:00 UTC --- \texttt{IRCOEKBExtractLambda}}: Syncs
+    \item \textbf{12:00 UTC --- \texttt{IRCOEKBExtractLambda}}: I found this function syncs
           49 SharePoint IRCOEKB wiki libraries ($\sim$5,000 pages) to S3
           as plain-text files with SharePoint metadata preserved.
-    \item \textbf{14:00 UTC --- \texttt{RPALLMKBIngestionFunction}}: Triggers
+    \item \textbf{14:00 UTC --- \texttt{RPALLMKBIngestionFunction}}: This triggers
           Bedrock KB ingestion, which chunks (hierarchical: 1,200 token
           parent / 300 token child), embeds (1024-dim), and indexes into
           OpenSearch Serverless (FAISS/HNSW, L2 distance).
 \end{enumerate}
 
-Static documents (PDFs, process guides) are uploaded separately via an
-idempotent upload script (\texttt{scripts/upload\_kb\_content.py}) that
-compares content hashes before writing to S3.
+I also reviewed the static document upload script (\texttt{scripts/upload\_kb\_content.py}),
+which compares content hashes before writing to S3 to provide idempotent uploads.
 
 \subsection{Production Reliability Issues Identified and Fixed}
 
-My engagement began with CloudWatch log analysis. Analysis of
-\textbf{93 days of production logs} (May~5 -- Aug~5, 2026; 148 Lambda
+I began my work on this codebase with CloudWatch log analysis. My analysis of
+\textbf{93 days of production logs} (May~5 -- August~5, 2026; 148 Lambda
 runs) revealed a critical reliability failure in the KB sync:
 
 \begin{itemize}
@@ -931,8 +956,7 @@ production bugs fixed across versions v1.1.1--v1.1.32:
           \texttt{verify=False}.
 \end{itemize}
 
-\subsection{Knowledge Base Enrichment: NavChecklist Documents}
-
+\paragraph{Knowledge Base Enrichment.}
 As part of the RPA LLM Agent work, I uploaded the NavChecklist process documentation
 PDFs (\textit{Architecture -- NAV CHECKLIST.pdf}, \textit{FAQ -- NAV
 CHECKLIST.pdf}) to the KB S3 bucket under
@@ -961,19 +985,18 @@ guidelines (pending dev approval gate):
           (v1.1.x series)
     \item \textbf{Pydantic models}: Databricks API response and BPM
           API response wrapped in Pydantic validation models
-    \item \textbf{Kill switch}: SSM Parameter Store kill switch pattern
-          (\texttt{/{Env}/rpa-llm/ircoekb/process-run-status}: RUN/STOP)
-          implemented across IRCOEKB, Event Store, and Mapping Lambdas
+    \item \textbf{Kill switch}: SSM Parameter Store kill switch
+          (RUN/STOP) implemented across IRCOEKB, Event Store, and Mapping Lambdas
     \item \textbf{X-Ray tracing}: AWS Lambda Powertools Tracer
           instrumented on all functions (enabled in DEV; pending approval
           for UAT/PROD)
 \end{itemize}
 
-Versions v1.1.1 through v1.1.32 were released during Aug~3--20, 2026.
+Versions v1.1.1 through v1.1.32 were released during August~3--20, 2026.
 
 \subsection{Proposed: Hybrid Graph-RAG Architecture}
 
-During the codebase analysis I identified a structural limitation of
+During my codebase analysis I identified a structural limitation of
 the current flat-vector RAG approach for the Citco RPA domain. The
 entities in this domain are highly relational: clients have funds, funds
 run specific processes, processes execute on either Blue Prism or UiPath,
@@ -982,140 +1005,145 @@ vector similarity search treats all these entities as independent text
 chunks, losing the relational structure.
 
 I propose a \textbf{Hybrid Graph-RAG} enhancement: adding Amazon Neptune
-as a graph layer alongside the existing OpenSearch vector store. The
-graph would model the entity relationship network (client--fund--process--platform),
-enabling the Bedrock agent to traverse relationships for multi-hop queries
+as a graph layer alongside the existing OpenSearch vector store. I would model the entity relationship network (client--fund--process--platform)
+as a graph, enabling the Bedrock agent to traverse relationships for multi-hop queries
 (\textit{``Which Blue Prism processes handle FX Closeouts for client X?''}),
 then retrieve dense context from the vector KB for the identified process
-entities. The dual-path retrieval would improve answer accuracy for
+entities. The dual-path retrieval I am proposing would improve answer accuracy for
 complex operational queries while maintaining the existing RAG pipeline
-for straightforward procedural lookups. This proposal will be submitted
+for straightforward procedural lookups. I will submit this proposal
 as a formal IISS follow-on ticket.
 
-% ────────────────────────────────────────────────────────────
+\FloatBarrier
+
 \section{Work Stream 6: Citco Enterprise Custom UI Dashboards}
 \label{sec:enterprise_ui_dashboards}
-% ────────────────────────────────────────────────────────────
 
-Work Stream~6 is in active development, extending the existing
+
+During this co-op placement I began extending the existing
 \texttt{ia-config-portal} application with two new dashboard pages.
-During this co-op placement period, I completed an \textbf{architectural
-implementation plan} (IISS-919-IMPLEMENTATION-PLAN.md) and began
-initial implementation. Development is continuing during the co-op placement
+I completed a comprehensive \textbf{architectural implementation plan}
+(Infrastructure Monitoring Dashboard-IMPLEMENTATION-PLAN.md) and started
+initial implementation. I am continuing this development during the co-op
 extension period (Sep--Dec~2026).
 
 \subsection{Planning Document Deliverable}
 
-The primary deliverable for this work stream is a comprehensive
-865-line implementation plan that documents:
+The primary deliverable I produced for this work stream is a comprehensive
+865-line implementation plan that I wrote documenting:
 
 \begin{itemize}
-    \item \textbf{Gap analysis}: 45 documented Grafana AMG limitations
-          with severity ratings, identifying which gaps justify a
+    \item \textbf{Gap analysis}: I identified and documented 45 Grafana AMG limitations
+          with severity ratings, determining which gaps justify a
           custom UI solution.
 
-    \item \textbf{Technology stack decisions}: Evaluation of charting
+    \item \textbf{Technology stack decisions}: I evaluated charting
           libraries (Chart.js vs Recharts), service map rendering
           (Cytoscape.js for X-Ray topology), and component framework
           integration with Citco's internal \texttt{@citco/core} and
           \texttt{@citco/theme} packages.
 
-    \item \textbf{Backend API design}: Four new Lambda handlers
+    \item \textbf{Backend API design}: I designed four new Lambda handlers
           (\texttt{/xray/service-map}, \texttt{/xray/traces},
           \texttt{/xray/traces/\{traceId\}}, \texttt{/alarms}) with
           request/response schemas and IAM permission requirements.
 
-    \item \textbf{Task breakdown}: 12 implementation tasks covering
+    \item \textbf{Task breakdown}: I broke down the work into 12 implementation tasks covering
           backend handlers, workspace scaffolding, component development,
           and portal integration.
 \end{itemize}
 
 \subsection{Motivation: Grafana AMG Limitations}
 
-The Grafana AMG dashboard built in Work Stream~2 achieved approximately
-60\% Dynatrace feature parity, but 45 architectural limitations were
-identified. The most critical gaps driving the custom UI proposal:
+Through my Work Stream~2 dashboard work, I identified approximately
+60\% Dynatrace feature parity, but I also identified 45 architectural limitations.
+The most critical gaps I found that are driving the custom UI proposal:
 
-\begin{table}[!htbp]
-\centering
-\caption{Critical Grafana AMG Limitations Identified}
-\label{tab:grafana_limitations}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{lXl}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\centering\arraybackslash}p{0.05\textwidth}>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{0.12\textwidth}@{\hspace{\tabcolsep}}}
+\caption{Critical Grafana AMG Limitations Identified} \label{tab:grafana_limitations} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Limitation}} & \textcolor{white}{\textbf{Severity}} \\
 \hline
-L1 & CloudWatch 10 TPS hard throttle --- panels error on every load & Critical \\
-L9 & X-Ray service map crashes on load --- requires Edit mode workaround & Critical \\
-L18 & Table filter does not cross-filter other panels & Critical \\
-L21 & No topology / honeycomb / Dynatrace-style health view & Critical \\
-L23 & No alarm acknowledgement or snooze & Critical \\
-L31 & Cannot embed AMG in other portals (iframe blocked) & Medium \\
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Limitation}} & \textcolor{white}{\textbf{Severity}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolor{tablerowA} L1 & CloudWatch 10 TPS hard throttle --- panels error on every load & Critical \\
+\rowcolor{tablerowB} L9 & X-Ray service map crashes on load --- requires Edit mode workaround & Critical \\
+\rowcolor{tablerowA} L18 & Table filter does not cross-filter other panels & Critical \\
+\rowcolor{tablerowB} L21 & No topology / honeycomb / Dynatrace-style health view & Critical \\
+\rowcolor{tablerowA} L23 & No alarm acknowledgement or snooze & Critical \\
+\rowcolor{tablerowB} L31 & Cannot embed AMG in other portals (iframe blocked) & Medium \\
 \hline
 \end{tabularx}
-\end{table}
 
 \subsection{Planned Solution Architecture}
 
-The planning document proposes two new dashboard pages within the
-existing \texttt{ia-config-portal} (built by Soundarya Venkataraman
-and Sridhar Vadla):
+In my planning document I proposed two new dashboard pages within the
+existing \texttt{ia-config-portal} (built by Ms.\ Venkataraman
+and Mr.\ Vadla):
 
 \begin{itemize}
-    \item \textbf{Infrastructure Inventory Dashboard (IISS-509)}:
-          Frontend for the Inventory API built in Work Stream~3,
+    \item \textbf{Infrastructure Inventory Dashboard}:
+          A frontend for the Inventory API I built in Work Stream~3,
           displaying resources across all platforms with filtering
           and Excel export capabilities.
 
-    \item \textbf{Infrastructure Monitoring Dashboard (IISS-919)}:
-          Config-driven monitoring interface with drag-and-drop panel
-          layout, Dynatrace-style honeycomb health visualizations,
+    \item \textbf{Infrastructure Monitoring Dashboard}:
+          A config-driven monitoring interface with drag-and-drop panel
+          layout, Dynatrace-style honeycomb health visualisations,
           and X-Ray service map integration.
 \end{itemize}
 
-Key planned components include:
+Key planned components I designed include:
 
 \begin{itemize}
-    \item \textbf{CitcoHoneycomb}: D3 hexbin-based health grid where
-          each hexagon represents one resource instance, colored by
+    \item \textbf{CitcoHoneycomb}: A D3 hexbin-based health grid where
+          each hexagon represents one resource instance, coloured by
           real-time health status.
 
-    \item \textbf{CitcoServiceMap}: Cytoscape.js topology visualization
+    \item \textbf{CitcoServiceMap}: A Cytoscape.js topology visualisation
           replacing the crash-prone Grafana X-Ray plugin.
 
-    \item \textbf{CitcoTraceWaterfall}: Custom Recharts component for
-          X-Ray trace span visualization.
+    \item \textbf{CitcoTraceWaterfall}: A custom Recharts component for
+          X-Ray trace span visualisation.
 \end{itemize}
 
 \subsection{Status and Timeline}
 
-\begin{table}[!htbp]
-\centering
-\caption{Work Stream 6 --- Status Summary}
-\label{tab:ws6_status}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{lXl}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{0.14\textwidth}@{\hspace{\tabcolsep}}}
+\caption{Work Stream 6 --- Status Summary} \label{tab:ws6_status} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Item}} & \textcolor{white}{\textbf{Description}} & \textcolor{white}{\textbf{Status}} \\
 \hline
-Planning Document & 865-line implementation plan with gap analysis, tech stack, task breakdown & Complete \\
-Backend Handlers & 4 new Lambda API endpoints for X-Ray and Alarms & Planned \\
-Component Library & SRE-specific wrappers on \texttt{@citco/core} & Planned \\
-Inventory Dashboard & IISS-509 frontend for resource inventory & In Progress \\
-Monitoring Dashboard & IISS-919 config-driven monitoring UI & In Progress \\
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Item}} & \textcolor{white}{\textbf{Description}} & \textcolor{white}{\textbf{Status}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolor{tablerowA} Planning Document & 865-line implementation plan with gap analysis, tech stack, task breakdown & Complete \\
+\rowcolor{tablerowB} Backend Handlers & 4 new Lambda API endpoints for X-Ray and Alarms & Planned \\
+\rowcolor{tablerowA} Component Library & SRE-specific wrappers on \texttt{@citco/core} & Planned \\
+\rowcolor{tablerowB} Inventory Dashboard & Infrastructure Inventory Dashboard frontend for resource inventory & In Progress \\
+\rowcolor{tablerowA} Monitoring Dashboard & Infrastructure Monitoring Dashboard config-driven monitoring UI & In Progress \\
 \hline
 \end{tabularx}
-\end{table}
 
-Implementation is deferred to the internship extension period
-(Sep--Dec~2026), allowing the Grafana AMG dashboard to stabilize in
+I deferred full implementation to the internship extension period
+(Sep--Dec~2026), allowing the Grafana AMG dashboard I built to stabilise in
 production and gather user feedback on which limitations are most
 impactful to address first.
 
-% ────────────────────────────────────────────────────────────
+\FloatBarrier
+
 \section{Design Decisions \& Tradeoffs}
 \label{sec:design_decisions}
-% ────────────────────────────────────────────────────────────
+
 
 Four design decisions during my co-op placement warranted explicit
 documentation because each involved a meaningful tradeoff between
@@ -1302,27 +1330,29 @@ pipeline without deploying updated alarms. This is mitigated by
 comprehensive error logging and a manual re-invocation pathway via
 \texttt{python main.py deploy --phase 3}.
 
-\begin{table}[!htbp]
-\centering
-\caption{Design Decision Summary}
-\label{tab:design_decisions}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.32\textwidth}>{\raggedright\arraybackslash}p{0.37\textwidth}}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{\hspace{\tabcolsep}}}
+\caption{Design Decision Summary} \label{tab:design_decisions} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Decision}} & \textcolor{white}{\textbf{Chosen Approach}} & \textcolor{white}{\textbf{Key Tradeoff}} \\
 \hline
-Template storage & S3 (from Secrets Manager) & +\texttt{s3:GetObject} permission; $\sim$50\,ms latency \\
-Tag disambiguation & AppName mandatory secondary key & Tags governance obligation; missing tag = invisible resource \\
-Metrics data source & CloudWatch native plugin only & No p50/p99 in GROUP BY mode; AVG/MAX as proxies \\
-Alarm provisioning & Dynamic Lambda provisioner & Sequential deploy dependency; Lambda failure halts pipeline \\
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Decision}} & \textcolor{white}{\textbf{Chosen Approach}} & \textcolor{white}{\textbf{Key Tradeoff}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolor{tablerowA} Template storage & S3 (from Secrets Manager) & +\texttt{s3:GetObject} permission; $\sim$50\,ms latency \\
+\rowcolor{tablerowB} Tag disambiguation & AppName mandatory secondary key & Tags governance obligation; missing tag = invisible resource \\
+\rowcolor{tablerowA} Metrics data source & CloudWatch native plugin only & No p50/p99 in GROUP BY mode; AVG/MAX as proxies \\
+\rowcolor{tablerowB} Alarm provisioning & Dynamic Lambda provisioner & Sequential deploy dependency; Lambda failure halts pipeline \\
 \hline
 \end{tabularx}
-\end{table}
 
-Taken together, these four decisions shaped an architecture that favors
+Taken together, these four decisions shaped an architecture that favours
 operational simplicity and zero-maintenance fleet coverage over strict
 metric precision, while accepting bounded and well-understood tradeoffs
-at each decision point. I documented the design in the respective
+at each decision point. I documented each decision in the respective
 repository README and JIRA acceptance criteria so that future
 team members can revisit any decision as the platform's monitoring
 maturity evolves.
@@ -1330,7 +1360,7 @@ maturity evolves.
 % Keep all floats within this chapter
 \FloatBarrier
 
-% ────────────────────────────────────────────────────────────
+
 % Phased delivery narrative, support incidents, and JIRA scope
 % are covered in Chapter 11 (Weekly Implementation Breakdown).
-% ────────────────────────────────────────────────────────────
+

@@ -13,10 +13,12 @@ restrictions, and production incident responses. This chapter documents the
 most significant challenges that shaped delivery plans and produced lessons
 applicable to future SRE work.
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{AWS CloudWatch Limitations}
 \label{sec:challenges-cloudwatch}
-% ────────────────────────────────────────────────────────────
+
 
 CloudWatch imposes several hard limits encountered at modest operational scale
 (54 Lambda functions, 100+ dashboard panels):
@@ -48,10 +50,12 @@ CloudWatch imposes several hard limits encountered at modest operational scale
           (no size limit).
 \end{itemize}
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Grafana Platform Constraints}
 \label{sec:challenges-grafana}
-% ────────────────────────────────────────────────────────────
+
 
 Amazon Managed Grafana (AMG) with the CloudWatch plugin presented several
 limitations:
@@ -102,10 +106,12 @@ limitations:
           \textit{Mitigation:} Documented runbook with calendar reminders.
 \end{itemize}
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Infrastructure \& Corporate Policy Challenges}
 \label{sec:challenges-infra}
-% ────────────────────────────────────────────────────────────
+
 
 Enterprise environment constraints required adaptation of standard AWS patterns:
 
@@ -136,16 +142,18 @@ Enterprise environment constraints required adaptation of standard AWS patterns:
           \textit{Mitigation:} Pre-commit hook to flag missing encryption headers.
 \end{itemize}
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Production Incidents}
 \label{sec:challenges-incidents}
-% ────────────────────────────────────────────────────────────
+
 
 Production incidents provided valuable learning experiences:
 
 \subsection{CAIS Deadline Pipeline Hotfix (June 2026)}
 
-The CAIS data pipeline failed silently---no error notifications, no data
+The CAIS Deadline pipeline --- responsible for uploading allocation sheets to the PDS database and generating pricing reports for alternative investment clients --- failed silently: no error notifications, no data
 delivered. I delivered a 3-part hotfix:
 
 \begin{enumerate}
@@ -161,7 +169,7 @@ delivered. I delivered a 3-part hotfix:
           retrieval before each use.
 \end{enumerate}
 
-\textbf{Key lesson:}\\
+\textbf{Key lesson:} 
 Silent failures are worse than loud failures. Validate
 expected state, not just absence of exceptions.
 
@@ -172,27 +180,29 @@ to queries. CloudWatch logs revealed out-of-memory (OOM) errors on the
 \texttt{rpa\_llm\_agent\_event\_service\_cicd} Lambda function, which handles
 Bedrock Agent API calls for process status lookups.
 
-\textbf{Root cause:}\\
+\textbf{Root cause:} 
 The Lambda was using CloudFormation's implicit default
 of 128\,MB memory. Functions using pandas, boto3, and JSON serialization
 together exceeded this allocation during peak query loads.
 
-\textbf{Fix:}\\
+\textbf{Fix:} 
 Increased \texttt{MemorySize} from 128\,MB to 256\,MB in the
 CloudFormation template. Additionally standardized all nine Lambda functions
 in the RPA LLM stack to explicit 256\,MB allocations, making memory settings
 visible and intentional in Infrastructure-as-Code rather than relying on
 implicit defaults.
 
-\textbf{Key lesson:}\\
+\textbf{Key lesson:} 
 Never rely on CloudFormation default values for
 production workloads. Explicit resource allocations prevent silent
 degradation and make capacity constraints visible in code review.
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Summary}
 \label{sec:challenges-summary}
-% ────────────────────────────────────────────────────────────
+
 
 \textbf{Key themes from these challenges:}
 

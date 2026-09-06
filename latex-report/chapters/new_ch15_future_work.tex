@@ -10,7 +10,7 @@
 The work I delivered in this co-op placement establishes a monitoring foundation ---
 not an endpoint. I have already defined several planned extensions in the JIRA
 backlog, scoped for implementation during the Mitacs BSI renewal
-(Sep~1 -- Dec~31, 2026).
+(September~1 -- December~31, 2026).
 
 \paragraph{Distributed Tracing with X-Ray.}
 The most technically compelling near-term extension is the integration of
@@ -80,24 +80,26 @@ CloudFormation alarm stacks:
 The first phase of the auto-healing agent targets the failure modes observed or anticipated
 from the four support rotation weeks:
 
-\begin{table}[ht]
-\centering
-\caption{Auto-Healing Agent --- Initial Remediation Catalogue}
-\label{tab:autohealing_catalogue}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{p{0.22\textwidth}p{0.48\textwidth}p{0.22\textwidth}}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.22\textwidth}@{\hspace{\tabcolsep}}}
+\caption{Auto-Healing Agent --- Initial Remediation Catalogue} \label{tab:autohealing_catalogue} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Alarm / Trigger}} & \textcolor{white}{\textbf{Recovery Action}} & \textcolor{white}{\textbf{Escalation if Fails}} \\
 \hline
-ECS task desired $\neq$ running & \texttt{ecs:UpdateService} (force new deployment) & SNS alert to SRE \\
-MSK consumer lag $>$ 10{,}000 messages & Scale ECS consumer service (+1 task) & SNS + JIRA ticket (auto-created via JIRA API) \\
-Lambda error rate $>$ 1\% over 5 min & Trigger Step Functions diagnostic workflow; capture last 50 error log lines to S3 & SNS alert with S3 log link \\
-SQS queue age $>$ 1 hour & Invoke queue-processor Lambda with \texttt{force=true} parameter & SNS alert \\
-ECS CPU $>$ 80\% sustained 5 min & Trigger ECS service auto-scaling policy (\texttt{RegisterScalableTarget}) & SNS if already at max task count \\
-RPA bot missing heartbeat (future) & Call UiPath Orchestrator API to restart robot job & SNS + support ticket \\
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Alarm / Trigger}} & \textcolor{white}{\textbf{Recovery Action}} & \textcolor{white}{\textbf{Escalation if Fails}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolor{tablerowA} ECS task desired $\neq$ running & \texttt{ecs:UpdateService} (force new deployment) & SNS alert to SRE \\
+\rowcolor{tablerowB} MSK consumer lag $>$ 10{,}000 messages & Scale ECS consumer service (+1 task) & SNS + JIRA ticket (auto-created via JIRA API) \\
+\rowcolor{tablerowA} Lambda error rate $>$ 1\% over 5 min & Trigger Step Functions diagnostic workflow; capture last 50 error log lines to S3 & SNS alert with S3 log link \\
+\rowcolor{tablerowB} SQS queue age $>$ 1 hour & Invoke queue-processor Lambda with \texttt{force=true} parameter & SNS alert \\
+\rowcolor{tablerowA} ECS CPU $>$ 80\% sustained 5 min & Trigger ECS service auto-scaling policy (\texttt{RegisterScalableTarget}) & SNS if already at max task count \\
+\rowcolor{tablerowB} RPA bot missing heartbeat (future) & Call UiPath Orchestrator API to restart robot job & SNS + support ticket \\
 \hline
 \end{tabularx}
-\end{table}
 
 \paragraph{Design Principles.}
 
@@ -172,15 +174,6 @@ inventory API on a schedule, compare the returned resource list against an
 expected tag manifest, and open a JIRA ticket automatically for any resource
 found to be non-compliant. This would shift tag compliance from a detection
 activity to a governance workflow.
-
-\paragraph{Mitacs BSI Renewal Scope.}
-The approved Mitacs BSI renewal (Sep~1 -- Dec~31, 2026) will extend
-my industrial collaboration with a focus on three themes: X-Ray tracing
-integration, IaC hardening and drift detection for the CloudFormation
-stacks I delivered in this period, and capacity forecasting using CloudWatch
-anomaly detection models trained on the historical metric data now being
-accumulated by the deployed dashboards.
-
 
 % Keep all floats within this chapter
 \FloatBarrier

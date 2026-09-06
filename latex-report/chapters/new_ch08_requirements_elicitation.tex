@@ -11,38 +11,45 @@ During my co-op placement I worked with a small set of internal stakeholders
 whose needs shaped the functional and non-functional requirements of the
 IA-IT-SRE Infrastructure monitoring platform.
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Stakeholder Identification}
 \label{sec:stakeholders}
-% ────────────────────────────────────────────────────────────
+
 
 Table~\ref{tab:stakeholders} enumerates the key
 stakeholders, their roles, and their specific interests in the
 project.
 
-\begin{table}[ht]
-\centering
-\caption{Stakeholder Identification}
-\label{tab:stakeholders}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{p{2.5cm}p{3.8cm}X}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X@{\hspace{\tabcolsep}}}
+\caption{Stakeholder Identification} \label{tab:stakeholders} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Stakeholder}} & \textcolor{white}{\textbf{Role}} & \textcolor{white}{\textbf{Interest / Influence}} \\
 \hline
-Kishor & Manager, CTM; Industry Supervisor & Primary sponsor; set engineering priorities; escalated IISS-487 to Critical; final acceptance authority \\
-Horace & IT Senior Developer, RPA Platform Lead & RPA subject matter expert; delivered Blue Prism and UiPath KT; defined RPA monitoring scope \\
-Kri & IT Developer, SRE Engineer & Delivered golden signals and alarm threshold training; reviewed dashboard design \\
-IA IT SRE Team & Internal SRE consumers & Primary users of the Grafana dashboard and CloudWatch alarm notifications \\
-Meridian Team & Kafka/ECS architecture owners & Provided MSK consumer group structure, ECS cluster topology, and OpenSearch integration context \\
-Sridhar \& Soundarya & Co-interns & Parallel development of related monitoring features; design review and test validation \\
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Stakeholder}} & \textcolor{white}{\textbf{Role}} & \textcolor{white}{\textbf{Interest / Influence}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolors{2}{tablerowA}{tablerowB}
+Mr.\ Deotale & Manager, CTM (Industry Supervisor) & Primary sponsor; set engineering priorities; escalated dashboard to Critical priority; final acceptance authority \\
+Mr.\ Leung & IT Senior Developer, RPA Platform Lead & RPA expert; delivered Blue Prism and UiPath KT; defined RPA monitoring scope \\
+Ms.\ Labos & IT Developer, SRE Engineer & Delivered golden signals training; reviewed alarm thresholds and dashboard design \\
+IA IT SRE Team & Internal SRE consumers & Primary users of Grafana dashboard and CloudWatch alarm notifications \\
+Meridian Team & Kafka/ECS architecture owners & Provided MSK consumer group structure, ECS cluster topology, OpenSearch integration context \\
+Mr.\ Vadla \& Ms.\ Venkataraman & Co-interns & Parallel development of monitoring features; design review and test validation \\
 \hline
 \end{tabularx}
-\end{table}
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Requirements Elicitation}
 \label{sec:requirements_elicitation}
-% ────────────────────────────────────────────────────────────
+
 
 The elicitation methods used were appropriate for an
 in-house engineering context: structured knowledge-transfer sessions,
@@ -51,11 +58,11 @@ user interviews or focus groups.
 
 \subsection{Elicitation Methods}
 
-\paragraph{Knowledge-Transfer Sessions (Training Week, Apr 13--18, 2026).}
+\paragraph{Knowledge-Transfer Sessions (Training Week, April 13--18, 2026).}
 The first week of full-time engagement was structured as an intensive
 knowledge-transfer programme covering the full breadth of the IA
-platform. Sessions with Horace on the Blue Prism and UiPath
-architectures, with Bhanu Teja Murari on CitcoWorks and the Event Store
+platform. Sessions with Mr.\ Leung on the Blue Prism and UiPath
+architectures, with Mr.\ Bhanu Teja Murari on CitcoWorks and the Event Store
 platform, and with the Meridian team on the Kafka event pipeline
 (comprising the Event Routing Service, Action Processor, and OpenSearch
 consumer) provided the architectural grounding needed to define
@@ -73,7 +80,7 @@ detection under the reactive model, and directly specified the target
 for the lag alarm evaluation period (NFR2: $\leq$1~minute).
 
 \paragraph{Golden Signals Session (May 25, 2026).}
-Kri's dedicated SRE methodology session translated the theoretical
+Ms.\ Labos's dedicated SRE methodology session translated the theoretical
 four golden signals into concrete metric choices for the IA platform.
 This session produced the initial SLI/SLO target table and established
 the design constraint that all metrics must be queryable through
@@ -83,8 +90,8 @@ as the sole data source.
 
 \paragraph{JIRA Story Refinement.}
 The dashboard project went through multiple refinement cycles between May~6 and
-May~11 (infrastructure deployment date). These sessions with Kishor
-and Kri surfaced the infrastructure-as-code requirement (FR7), the
+May~11 (infrastructure deployment date). These sessions with Mr.\ Deotale
+and Ms.\ Labos surfaced the infrastructure-as-code requirement (FR7), the
 multi-environment reuse requirement (NFR5), and the credential
 management constraint (NFR7). The elevation of the dashboard to Critical
 priority on May~6 also functionally set NFR1 (dashboard refresh
@@ -123,10 +130,12 @@ resulting design:
           rather than a \textbf{nice-to-have}.
 \end{enumerate}
 
-% ────────────────────────────────────────────────────────────
+
+\FloatBarrier
+
 \section{Functional and Non-Functional Requirements}
 \label{sec:requirements}
-% ────────────────────────────────────────────────────────────
+
 
 The following requirements were derived from the elicitation activities
 described above. They governed the design and acceptance criteria for
@@ -135,55 +144,63 @@ all six work streams of my co-op placement.
 \subsection{Functional Requirements}
 
 Table~\ref{tab:functional_requirements} enumerates the nine functional
-requirements, each with the primary deliverable that satisfies it.
+requirements, each mapped to the primary deliverable that satisfies it.
+The requirements span three categories: dashboard visualization (FR1--FR4, FR6),
+infrastructure automation (FR5, FR7), and inventory API capabilities (FR8--FR9).
 
-\begin{table}[ht]
-\centering
-\caption{Functional Requirements}
-\label{tab:functional_requirements}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.10\textwidth}>{\raggedright\arraybackslash}p{0.49\textwidth}>{\raggedright\arraybackslash}p{0.39\textwidth}}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\raggedright\arraybackslash}p{0.06\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.32\textwidth}@{\hspace{\tabcolsep}}}
+\caption{Functional Requirements} \label{tab:functional_requirements} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requirement}} & \textcolor{white}{\textbf{Satisfied By}} \\
 \hline
-FR1 & Dashboard displays real-time Lambda metrics (invocations, errors, duration, throttles) per platform & Grafana AMG, Lambda rows (IISS-487) \\
-FR2 & Dashboard displays ECS CPU and memory utilization per cluster and service & Container Insights + ECS rows (IISS-487, IISS-483) \\
-FR3 & Dashboard displays MSK consumer lag per consumer group & MSK rows; \texttt{EstimatedMaxTimeLag} alarm (IISS-487) \\
-FR4 & Dashboard displays SQS queue depth and oldest message age & SQS rows in Grafana; SQS monitoring (IISS-482) \\
-FR5 & CloudWatch alarms provisioned for all monitored resource types with SNS routing to SRE team & Dynamic alarms via CloudFormation (IISS-487) \\
-FR6 & Dashboard supports variable-based filtering by platform and resource & Grafana template variables (IISS-487) \\
-FR7 & All monitoring infrastructure deployed as Infrastructure-as-Code & 4 CloudFormation stacks; Lambda-backed IaC provisioner (IISS-487) \\
-FR8 & Inventory API enumerates Lambda, ECS, EC2, and S3 resources per platform via REST & Flask REST API, discoverer registry (IISS-507) \\
-FR9 & Inventory API supports two-stage tag-based discovery for shared BudgetCode platforms & Two-stage AppName filter in \texttt{citcoworks}/\texttt{meridian} discoverers (IISS-507) \\
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requirement}} & \textcolor{white}{\textbf{Satisfied By}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolor{tablerowA} FR1 & Dashboard displays real-time Lambda metrics (invocations, errors, duration, throttles) per platform & Grafana AMG, Lambda rows \\
+\rowcolor{tablerowB} FR2 & Dashboard displays ECS CPU and memory utilization per cluster and service & Container Insights + ECS rows (Grafana AMG dashboard and EC2 dashboard) \\
+\rowcolor{tablerowA} FR3 & Dashboard displays MSK consumer lag per consumer group & MSK rows; \texttt{EstimatedMaxTimeLag} alarm \\
+\rowcolor{tablerowB} FR4 & Dashboard displays SQS queue depth and oldest message age & SQS rows in Grafana; SQS monitoring \\
+\rowcolor{tablerowA} FR5 & CloudWatch alarms provisioned for all monitored resource types with SNS routing to SRE team & Dynamic alarms via CloudFormation \\
+\rowcolor{tablerowB} FR6 & Dashboard supports variable-based filtering by platform and resource & Grafana template variables \\
+\rowcolor{tablerowA} FR7 & All monitoring infrastructure deployed as Infrastructure-as-Code & 4 CloudFormation stacks; Lambda-backed IaC provisioner \\
+\rowcolor{tablerowB} FR8 & Inventory API enumerates Lambda, ECS, EC2, and S3 resources per platform via REST & Flask REST API, discoverer registry \\
+\rowcolor{tablerowA} FR9 & Inventory API supports two-stage tag-based discovery for shared BudgetCode platforms & Two-stage AppName filter in \texttt{citcoworks}/\texttt{meridian} discoverers \\
 \hline
 \end{tabularx}
-\end{table}
 
 \subsection{Non-Functional Requirements}
 
-Table~\ref{tab:nonfunctional_requirements} enumerates the seven
-non-functional requirements, each with the measurable target and the
-achieved value where applicable.
+Table~\ref{tab:nonfunctional_requirements} presents the seven
+non-functional requirements with measurable targets and achieved values.
+These requirements established quantitative acceptance criteria for
+performance (NFR1--NFR3), quality (NFR4), maintainability (NFR5--NFR6),
+and security (NFR7).
 
-\begin{table}[ht]
-\centering
-\caption{Non-Functional Requirements}
-\label{tab:nonfunctional_requirements}
-\rowcolors{2}{tablerowA}{tablerowB}
-\begin{tabularx}{\textwidth}{p{0.9cm}Xp{2.2cm}p{3.0cm}}
+\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}p{0.07\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}@{\hspace{\tabcolsep}}}
+\caption{Non-Functional Requirements} \label{tab:nonfunctional_requirements} \\
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requirement}} & \textcolor{white}{\textbf{Target}} & \textcolor{white}{\textbf{Achieved}} \\
 \hline
-NFR1 & Dashboard refresh enables sub-minute incident detection & $\leq$30~sec & $\leq$30~sec \\
-NFR2 & CloudWatch alarm evaluation period for MSK lag and Lambda error rate & $\leq$1~min & 1~min \\
-NFR3 & Inventory API response time for full resource enumeration & $\leq$10~sec & $<$10~sec \\
-NFR4 & Inventory API automated test coverage & $\geq$95\% & 99\% \\
-NFR5 & CloudFormation templates parameterized for multi-environment reuse & Parameterized YAML & Achieved \\
-NFR6 & Dashboard functional after Grafana version upgrades without manual rework & Standard plugin queries & Achieved (10.4$\to$12.4) \\
-NFR7 & Zero hardcoded credentials --- all secrets via AWS Secrets Manager & No plaintext secrets & Achieved \\
+\endfirsthead
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requirement}} & \textcolor{white}{\textbf{Target}} & \textcolor{white}{\textbf{Achieved}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\rowcolor{tablerowA} NFR1 & Dashboard refresh enables sub-minute incident detection & $\leq$30~sec & $\leq$30~sec \\
+\rowcolor{tablerowB} NFR2 & CloudWatch alarm evaluation period for MSK lag and Lambda error rate & $\leq$1~min & 1~min \\
+\rowcolor{tablerowA} NFR3 & Inventory API response time for full resource enumeration & $\leq$10~sec & $<$10~sec \\
+\rowcolor{tablerowB} NFR4 & Inventory API automated test coverage & $\geq$95\% & 99\% \\
+\rowcolor{tablerowA} NFR5 & CloudFormation templates parameterized for multi-environment reuse & Parameterized YAML & Achieved \\
+\rowcolor{tablerowB} NFR6 & Dashboard functional after Grafana version upgrades without manual rework & Standard plugin queries & Achieved (10.4$\to$12.4) \\
+\rowcolor{tablerowA} NFR7 & Zero hardcoded credentials --- all secrets via AWS Secrets Manager & No plaintext secrets & Achieved \\
 \hline
 \end{tabularx}
-\end{table}
 
 \subsection{Requirements Traceability}
 
@@ -207,7 +224,7 @@ for all resource discovery going forward and was documented in the
 inventory API's README as a platform-wide architectural note.
 
 NFR7 received an unexpected real-world validation during the
-CAIS Deadline hotfix on Jun~8, 2026. The incident revealed
+CAIS Deadline hotfix on June~8, 2026. The incident revealed
 that the ECS container's credential loading pattern (reading from
 Secrets Manager once at module import time via \texttt{constants.py})
 was fragile under secret rotation. The hotfix I delivered introduced fail-fast
