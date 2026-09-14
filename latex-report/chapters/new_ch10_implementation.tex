@@ -37,7 +37,7 @@ and how the SNS routing I configured delivers email notifications.
 The \textbf{infrastructure layer} is the monitored subject I targeted: six budget
 platforms housing Lambda functions, ECS clusters, EC2
 instances, and the full spectrum of AWS database and messaging services
-used by the Meridian and Citco Works platforms.
+used by the Meridian and CitcoWorks platforms.
 
 The \textbf{data layer} ingests, stores, and queries observability signals
 from the infrastructure layer. I chose Amazon CloudWatch as the sole data source ---
@@ -56,20 +56,10 @@ Grafana dashboard I built during incident response, the IA Resources Inventory R
 API I developed that exposes the AWS service fleet programmatically, and the SRE team's
 email distribution list that receives SNS alarm notifications I configured. This layered architecture ensures separation of concerns: the data layer handles metric collection and storage, the visualization layer transforms raw metrics into actionable insights, and the consumer layer delivers those insights to the appropriate stakeholders through purpose-built interfaces.
 
-Figure~\ref{fig:amg_arch_diagram} provides a rendered view of the same
-architecture from the project documentation.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth, trim=0 0 0 80, clip]{figures/fig-amg-architecture.png}
-\caption[AMG Observability Platform --- Architecture Diagram]{AMG Observability Platform --- Architecture Diagram (from documentation)}
-\label{fig:amg_arch_diagram}
-\end{figure}
-
 
 \FloatBarrier
 
-\section{CloudWatch Dashboard Platform}
+\section{Work Stream 1: CloudWatch Dashboard Platform}
 \label{sec:cw_dashboard_platform}
 
 
@@ -106,7 +96,7 @@ CloudWatch Lambda dashboard displaying invocation and error metrics.
 
 I extended the initial dashboard with additional tag dimensions
 covering \texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks}, 
-and \texttt{meridian} budget codes, and introduced CloudWatch Logs Insights 
+and \texttt{meridian} budget\_codes, and introduced CloudWatch Logs Insights 
 widgets for error log surfacing. 
 Rather than relying solely on \texttt{Errors} metrics from
 the \texttt{AWS/Lambda} namespace, the Logs Insights widgets queried the
@@ -146,10 +136,10 @@ The following sub-stories document specific discoveries and architectural patter
 My gap analysis of the EC2 inventory scanned \textbf{83~instances} across
 the six platforms. This scan revealed a critical tagging
 inconsistency: the \texttt{rpacfs1} environment's EC2 instances were
-tagged with \texttt{BudgetCode="CFS/RPA"} rather than the expected
+tagged with \texttt{budget\_code="CFS/RPA"} rather than the expected
 \textbf{"rpacfs1"} value, making them invisible to tag-based
-BudgetCode lookups. This discovery led me to introduce the
-AppName fallback pattern: when a primary BudgetCode
+budget\_code lookups. This discovery led me to introduce the
+AppName fallback pattern: when a primary budget\_code
 lookup returns no results for \texttt{rpacfs1}, the discovery logic falls
 back to filtering by \texttt{AppName="rpacfs1"}. This fallback became
 the standard for all resource discovery in the inventory API (see
@@ -206,18 +196,18 @@ dispatch logic, fallback transitions, and queue metadata serialization.
 
 \FloatBarrier
 
-\section{Grafana AMG Observability Platform}
+\section{Work Stream 2: Grafana AMG Observability Platform}
 \label{sec:grafana_amg_platform}
 
 
 This was my primary deliverable over the bulk of my co-op placement.
-I built a centralised Amazon Managed Grafana workspace with 17 dashboard rows and panels,
+I built a centralized Amazon Managed Grafana workspace with 17 dashboard rows and panels,
 dynamic CloudWatch alarms, and a Lambda-backed IaC provisioner --- all structured
 across a four-layer architecture I designed from scratch.
 
 \subsection{Architectural Layers}
 
-I organised the Grafana AMG platform into a four-layer architecture that separates data collection, visualization, alerting, and infrastructure provisioning concerns.
+I organized the Grafana AMG platform into a four-layer architecture that separates data collection, visualization, alerting, and infrastructure provisioning concerns.
 
 \subsubsection{Layer 1: Data Layer}
 
@@ -265,8 +255,8 @@ I structured the data layer around:
 
 \subsubsection{Layer 2: Visualization Layer}
 
-I built the Grafana AMG workspace with \textbf{17~dashboard rows} organised by
-monitored service category. Table~\ref{tab:dashboard_rows} summarises the
+I built the Grafana AMG workspace with \textbf{17~dashboard rows} organized by
+monitored service category. Table~\ref{tab:dashboard_rows} summarizes the
 dashboard structure I implemented.
 
 \begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\centering\arraybackslash}p{0.05\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X@{\hspace{\tabcolsep}}}
@@ -325,7 +315,7 @@ enabling operators to identify misconfigured functions at a glance.
 Below the table, I added four time-series panels tracking the four golden signals:
 \textbf{Total Errors} (count of failed invocations), \textbf{Invocations}
 (throughput), \textbf{Concurrent Executions} (saturation indicator), and
-\textbf{Throttles} (capacity limit breaches). I added a colour-coded legend below each panel
+\textbf{Throttles} (capacity limit breaches). I added a color-coded legend below each panel
 to enable drill-down to individual functions.
 
 \begin{figure}[htbp]
@@ -340,14 +330,13 @@ Container Insights metrics for all ECS services in the selected cluster.
 I added a service table showing cluster assignment, desired count, and running
 count --- highlighting any discrepancies that indicate failed deployments
 or scaling issues. I also added four time-series panels displaying CPU and memory
-utilisation (both average and maximum) across all tasks, enabling
+utilization (both average and maximum) across all tasks, enabling
 operators to identify resource saturation before it impacts service
 availability. This row was particularly valuable for monitoring the
 Meridian ECS services, where memory pressure had previously gone
 undetected until task failures occurred.
 
-\subsubsection{Grafana Template Variables}
-
+\textbf{Grafana Template Variables.}
 I implemented environment-level filtering through three Grafana
 template variables backed by CloudWatch dimension-value queries:
 
@@ -356,7 +345,7 @@ template variables backed by CloudWatch dimension-value queries:
           environment (\texttt{rpacfs1}, \texttt{ia-bpo}, \texttt{meridian},
           \texttt{citcoworks}, \texttt{automationhub}). Backed by a
           CloudWatch \texttt{ListMetrics} call enumerating distinct
-          BudgetCode tag values.
+          budget\_code tag values.
 
     \item \texttt{\$ecs\_cluster} --- filters ECS panels to a specific
           cluster. Backed by a \texttt{dimension\_values()} query on
@@ -373,8 +362,7 @@ scoping the entire dashboard to a single environment or
 resource. I designed it this way to eliminate the need to maintain separate dashboards per
 platform.
 
-\subsubsection{CloudWatch Metric Insights SQL: Architecture Pattern}
-
+\textbf{CloudWatch Metric Insights SQL: Architecture Pattern.}
 CloudWatch Metric Insights SQL is the key architectural pattern I adopted to
 enable per-resource drill-down across large fleets within a single query.
 I used the standard \texttt{SELECT ... FROM ... GROUP BY} form to return
@@ -429,7 +417,7 @@ the IA-SRE team's email distribution list. Alarm categories include:
 
     \item \textbf{Composite alarms}: Platform-level health signals that
           aggregate per-service alarm states into a single
-          OK/ALARM indicator per budget code environment.
+          OK/ALARM indicator per budget\_code environment.
 \end{itemize}
 
 \subsubsection{Layer 4: Infrastructure-as-Code Provisioner}
@@ -442,21 +430,21 @@ types per function})$ resources, rapidly approaching the CloudFormation
 500-resource-per-stack limit.
 
 I resolved this by making the provisioner \emph{dynamically discover} the
-current function fleet at deploy time and synthesise alarm resources
+current function fleet at deploy time and synthesize alarm resources
 programmatically:
 
 \begin{enumerate}
     \item The provisioner Lambda function I wrote is invoked by a CloudFormation
           custom resource on every \texttt{samconfig.toml} deploy.
 
-    \item It reads parameterised CloudFormation YAML templates I stored in an
+    \item It reads parameterized CloudFormation YAML templates I stored in an
           S3 bucket (see Section~\ref{sec:decision_secrets_s3}).
 
     \item For each template (Lambda alarms, ECS alarms, SQS alarms, MSK
           alarms), it calls the relevant AWS discovery API to enumerate
           all current resources in the specified platform.
 
-    \item It synthesises CloudFormation \texttt{AWS::CloudWatch::Alarm}
+    \item It synthesizes CloudFormation \texttt{AWS::CloudWatch::Alarm}
           resource blocks for each discovered resource and passes the
           generated template to CloudFormation for stack deployment.
 
@@ -467,7 +455,7 @@ programmatically:
 \end{enumerate}
 
 I wrote a \texttt{samconfig.toml} with environment-specific parameter files
-to enable reuse across DEV, UAT, and PROD without code changes. I externalised the budget
+to enable reuse across DEV, UAT, and PROD without code changes. I externalized the budget
 code, alarm thresholds, and SNS topic ARN as SAM parameters, satisfying NFR5 (multi-environment reuse).
 
 Figure~\ref{fig:alarm_notification_flow} illustrates the alarm notification
@@ -524,7 +512,7 @@ remained stable through subsequent Grafana patch releases.
 
 As part of the observability stack I built, I integrated AWS X-Ray tracing to
 provide distributed trace visibility across the IA platform. The X-Ray
-integration I configured enables service map visualisation and trace waterfall
+integration I configured enables service map visualization and trace waterfall
 analysis --- capabilities that contribute to the 60\% Dynatrace parity
 achieved by the CloudWatch + Grafana + X-Ray stack I assembled (see
 Section~\ref{sec:dynatrace_parity}).
@@ -558,7 +546,7 @@ X-Ray tracing is currently enabled in DEV environment only; I am awaiting senior
 
 \FloatBarrier
 
-\section{IA Resources Inventory API}
+\section{Work Stream 3: IA Resources Inventory API}
 \label{sec:inventory_api}
 
 
@@ -584,17 +572,6 @@ tests and 99\%~code coverage.
           (property-based tests)
 \end{itemize}
 
-Figure~\ref{fig:inventory_api_arch} shows the high-level architecture of
-the Inventory API, illustrating how discoverers query AWS services and
-return unified resource models.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.90\textwidth]{figures/fig-inventory-api-architecture.png}
-\caption{IA Resources Inventory API --- Architecture Overview}
-\label{fig:inventory_api_arch}
-\end{figure}
-
 \subsection{Discoverer Registry Pattern}
 
 My core architectural contribution in the inventory API is the
@@ -604,7 +581,7 @@ registry that maps \texttt{(resource\_type, budget\_code)} tuples to
 concrete discoverer classes. Each discoverer implements a single abstract
 method \texttt{async def discover() -> List[Resource]}. Adding support for a
 new platform or resource type requires implementing one class and
-registering one entry --- zero changes to routing, serialisation, or
+registering one entry --- zero changes to routing, serialization, or
 test infrastructure.
 
 \subsection{API Endpoints}
@@ -626,7 +603,7 @@ test infrastructure.
 \rowcolor{tablerowB} \texttt{GET /api/v1/ecs} & All ECS clusters across all platforms \\
 \rowcolor{tablerowA} \texttt{GET /api/v1/ec2} & All EC2 instances (tag-based discovery) \\
 \rowcolor{tablerowB} \texttt{GET /api/v1/secrets} & Secrets Manager secrets inventory \\
-\rowcolor{tablerowA} \texttt{GET /api/v1/s3} & S3 buckets per budget code \\
+\rowcolor{tablerowA} \texttt{GET /api/v1/s3} & S3 buckets per budget\_code \\
 \rowcolor{tablerowB} \texttt{GET /api/v1/health} & Health check --- returns 200 OK \\
 \hline
 \end{tabularx}
@@ -636,10 +613,10 @@ test infrastructure.
 The most technically interesting discovery challenge I encountered was the
 \texttt{citcoworks} and \texttt{meridian} tag ambiguity. Both
 environments share the AWS tag value \textbf{"Shared Cloud Artifacts"}
-for the BudgetCode dimension --- a legacy of the two platforms
+for the budget\_code dimension --- a legacy of the two platforms
 being onboarded before the IA team established per-platform
-BudgetCode uniqueness requirements. A naive
-BudgetCode lookup would conflate resources from two operationally
+budget\_code uniqueness requirements. A naive
+budget\_code lookup would conflate resources from two operationally
 distinct environments.
 
 Figure~\ref{fig:grafana_inventory_integration} shows how the Inventory API integrates
@@ -656,13 +633,13 @@ Insights SQL panels.
 
 I implemented a \textbf{two-stage filter} in both the
 \texttt{CitcoWorksECSDiscoverer} and \texttt{MeridianECSDiscoverer}.
-Stage~1 filters by BudgetCode (which is shared between both platforms),
+Stage~1 filters by budget\_code (which is shared between both platforms),
 then Stage~2 uses the AppName tag to discriminate Meridian resources
 from CitcoWorks resources.
 
 I designated the AppName tag as the \textbf{mandatory secondary
 discriminator} for all resources in the \textbf{``Shared Cloud Artifacts''}
-BudgetCode environments. Any new resource added to either environment
+budget\_code environments. Any new resource added to either environment
 without the correct AppName tag will be invisible to the
 inventory API. I mitigated this risk with a tag compliance CloudWatch
 alarm that fires if new ECS services or Lambda functions lack the
@@ -671,7 +648,7 @@ required tags.
 Figure~\ref{fig:resource_discovery_flow} illustrates the complete
 resource discovery flow, showing how the API routes requests through
 the discoverer registry and applies the two-stage filter for ambiguous
-budget codes.
+budget\_codes.
 
 \begin{figure}[htbp]
 \centering
@@ -684,7 +661,7 @@ budget codes.
 
 I built the API using \texttt{flask[async]} with async route handlers.
 Each handler aggregates boto3 calls concurrently using
-\texttt{asyncio.gather()}, reducing total API latency by parallelising
+\texttt{asyncio.gather()}, reducing total API latency by parallelizing
 the AWS API calls within a single request. All matching discoverers run
 concurrently rather than sequentially, reducing API response time from
 the sum of all boto3 call latencies to the latency of the single slowest
@@ -710,7 +687,7 @@ My test suite for the inventory API achieves \textbf{99\%~code coverage}:
           \texttt{budget\_code=citcoworks} is specified, regardless of
           what combination of tag values is present.
 
-    \item \textbf{Edge case tests}: Malformed tags, empty budget code
+    \item \textbf{Edge case tests}: Malformed tags, empty budget\_code
           environments, boto3 pagination edge cases (empty pages,
           single-page results, maximum page sizes).
 \end{itemize}
@@ -799,17 +776,17 @@ several incidents required deeper investigation or code-level fixes:
           added fail-fast validation. Filing completed before regulatory
           deadline.
 
-    \item \textbf{MESO ECS:}: Tasks stuck, not autoscaling.
+    \item \textbf{MESO ECS}: Tasks stuck, not autoscaling.
           Root cause: ECS service autoscaling policy was unconfigured.
           Fixed the scaling policy and added an ECS \texttt{SaturationAlarm}
           to the dashboard alarm set.
 
-    \item \textbf{MESO Critical:}: INNOCAP and SAMLMOS funds
+    \item \textbf{MESO Critical}: INNOCAP and SAMLMOS funds
           stuck in queue with no Lambda heartbeat. Manually retriggered
           the \texttt{ia\_meso\_process} pipeline. Processing completed
           approximately 2~hours after escalation.
 
-    \item \textbf{VPL IPV:}: \AE xeo pricing window
+    \item \textbf{VPL IPV}: \AE xeo pricing window
           \texttt{CheckpointException} in UiPath --- bot exhausted its
           retry budget waiting for a dynamic UI element. Estimated 16~hours
           for selector resilience fix; escalated to the development team.
@@ -876,7 +853,7 @@ OpenSearch via hybrid vector and keyword search.
 
 \subsection{Knowledge Base Pipeline}
 
-I documented and analysed the KB ingestion pipeline, which I found runs daily in two stages.
+I documented and analyzed the KB ingestion pipeline, which I found runs daily in two stages.
 I traced the full flow to understand how to improve it:
 
 \begin{enumerate}
@@ -1075,7 +1052,7 @@ The most critical gaps I found that are driving the custom UI proposal:
 \rowcolor{tablerowB} L9 & X-Ray service map crashes on load --- requires Edit mode workaround & Critical \\
 \rowcolor{tablerowA} L18 & Table filter does not cross-filter other panels & Critical \\
 \rowcolor{tablerowB} L21 & No topology / honeycomb / Dynatrace-style health view & Critical \\
-\rowcolor{tablerowA} L23 & No alarm acknowledgement or snooze & Critical \\
+\rowcolor{tablerowA} L23 & No alarm acknowledgment or snooze & Critical \\
 \rowcolor{tablerowB} L31 & Cannot embed AMG in other portals (iframe blocked) & Medium \\
 \hline
 \end{tabularx}
@@ -1094,7 +1071,7 @@ and Mr.\ Vadla):
 
     \item \textbf{Infrastructure Monitoring Dashboard}:
           A config-driven monitoring interface with drag-and-drop panel
-          layout, Dynatrace-style honeycomb health visualisations,
+          layout, Dynatrace-style honeycomb health visualizations,
           and X-Ray service map integration.
 \end{itemize}
 
@@ -1102,14 +1079,14 @@ Key planned components I designed include:
 
 \begin{itemize}
     \item \textbf{CitcoHoneycomb}: A D3 hexbin-based health grid where
-          each hexagon represents one resource instance, coloured by
+          each hexagon represents one resource instance, colored by
           real-time health status.
 
-    \item \textbf{CitcoServiceMap}: A Cytoscape.js topology visualisation
+    \item \textbf{CitcoServiceMap}: A Cytoscape.js topology visualization
           replacing the crash-prone Grafana X-Ray plugin.
 
     \item \textbf{CitcoTraceWaterfall}: A custom Recharts component for
-          X-Ray trace span visualisation.
+          X-Ray trace span visualization.
 \end{itemize}
 
 \subsection{Status and Timeline}
@@ -1135,7 +1112,7 @@ Key planned components I designed include:
 \end{tabularx}
 
 I deferred full implementation to the internship extension period
-(Sep--Dec~2026), allowing the Grafana AMG dashboard I built to stabilise in
+(Sep--Dec~2026), allowing the Grafana AMG dashboard I built to stabilize in
 production and gather user feedback on which limitations are most
 impactful to address first.
 
@@ -1206,21 +1183,21 @@ that runs infrequently.
 
 \paragraph{Problem.}
 As described in Section~\ref{sec:inventory_api}, the \texttt{citcoworks}
-and \texttt{meridian} environments share \texttt{BudgetCode="Shared Cloud
-Artifacts"}. A single-stage BudgetCode lookup cannot distinguish
+and \texttt{meridian} environments share \texttt{budget\_code="Shared Cloud
+Artifacts"}. A single-stage budget\_code lookup cannot distinguish
 resources from the two environments, causing inventory contamination.
 
 \paragraph{Root Cause.}
 Both platforms were onboarded before the IA team established the
 policy requiring each platform to have a unique
-BudgetCode tag value. Retroactively changing the tag across
+budget\_code tag value. Retroactively changing the tag across
 all existing resources in two production environments would require
 a coordinated tagging campaign with risk of operational disruption.
 
 \paragraph{Decision.}
 I designated the AppName tag as the \textbf{mandatory secondary
 discriminator} for all resources in the \textbf{"Shared Cloud Artifacts"}
-BudgetCode. Discoverers for \texttt{citcoworks} and \texttt{meridian}
+budget\_code. Discoverers for \texttt{citcoworks} and \texttt{meridian}
 must implement the two-stage filter described in
 Section~\ref{sec:inventory_api}.
 
@@ -1317,7 +1294,7 @@ fleet at deploy time and synthesizes alarm resources programmatically.
           every fleet change.
 
     \item \textbf{Parameterization}: Thresholds, evaluation periods,
-          and SNS topic ARNs are all externalised as SAM parameters,
+          and SNS topic ARNs are all externalized as SAM parameters,
           enabling multi-environment reuse without code changes.
 \end{itemize}
 
@@ -1330,26 +1307,7 @@ pipeline without deploying updated alarms. This is mitigated by
 comprehensive error logging and a manual re-invocation pathway via
 \texttt{python main.py deploy --phase 3}.
 
-\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{\hspace{\tabcolsep}}}
-\caption{Design Decision Summary} \label{tab:design_decisions} \\
-\hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Decision}} & \textcolor{white}{\textbf{Chosen Approach}} & \textcolor{white}{\textbf{Key Tradeoff}} \\
-\hline
-\endfirsthead
-\hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Decision}} & \textcolor{white}{\textbf{Chosen Approach}} & \textcolor{white}{\textbf{Key Tradeoff}} \\
-\hline
-\endhead
-\hline
-\endfoot
-\rowcolor{tablerowA} Template storage & S3 (from Secrets Manager) & +\texttt{s3:GetObject} permission; $\sim$50\,ms latency \\
-\rowcolor{tablerowB} Tag disambiguation & AppName mandatory secondary key & Tags governance obligation; missing tag = invisible resource \\
-\rowcolor{tablerowA} Metrics data source & CloudWatch native plugin only & No p50/p99 in GROUP BY mode; AVG/MAX as proxies \\
-\rowcolor{tablerowB} Alarm provisioning & Dynamic Lambda provisioner & Sequential deploy dependency; Lambda failure halts pipeline \\
-\hline
-\end{tabularx}
-
-Taken together, these four decisions shaped an architecture that favours
+These design decisions shaped an architecture that favors
 operational simplicity and zero-maintenance fleet coverage over strict
 metric precision, while accepting bounded and well-understood tradeoffs
 at each decision point. I documented each decision in the respective

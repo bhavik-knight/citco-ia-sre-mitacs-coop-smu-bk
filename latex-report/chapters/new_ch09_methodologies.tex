@@ -221,8 +221,8 @@ post-placement resolutions for each monitoring domain.
 \endhead
 \hline
 \endfoot
-\rowcolor{tablerowA} CloudWatch Alarms & 0 alarms on any IA resource & Dynamic alarms across 7 AWS service categories \\
-\rowcolor{tablerowB} Centralized Dashboard & None & Multiple rows and panels (Grafana AMG) \\
+\rowcolor{tablerowA} CloudWatch Alarms & 0 alarms on any IA resource & Dynamic alarms across AWS service categories \\
+\rowcolor{tablerowB} Centralized Dashboard & None & CloudWatch, Grafana & Custom UI \\
 \rowcolor{tablerowA} Container Insights & 1 of 6 Meridian clusters & 5 of 6 Meridian clusters \\
 \rowcolor{tablerowB} MSK Consumer Lag & No monitoring & CloudWatch alarm on \texttt{EstimatedMaxTimeLag} ($<$30~sec detection) \\
 \rowcolor{tablerowA} SLO Tracking & None & SLI/SLO targets defined; dashboard exposes current values \\
@@ -238,9 +238,7 @@ post-placement resolutions for each monitoring domain.
 \label{sec:dynatrace_parity}
 
 
-A key framing question for my co-op placement --- introduced earlier in the report
-and developed here in methodological
-detail --- is how closely an AWS-native observability stack can replicate
+A key question for this co-op placement is how closely an AWS-native observability stack can replicate
 the capabilities of Dynatrace, and at what incremental cost. The PoC
 investigation evaluated 25 Dynatrace features against five AWS tool
 combinations to quantify achievable parity.

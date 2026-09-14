@@ -34,13 +34,12 @@ project.
 \endhead
 \hline
 \endfoot
-\rowcolors{2}{tablerowA}{tablerowB}
-Mr.\ Deotale & Manager, CTM (Industry Supervisor) & Primary sponsor; set engineering priorities; escalated dashboard to Critical priority; final acceptance authority \\
-Mr.\ Leung & IT Senior Developer, RPA Platform Lead & RPA expert; delivered Blue Prism and UiPath KT; defined RPA monitoring scope \\
-Ms.\ Labos & IT Developer, SRE Engineer & Delivered golden signals training; reviewed alarm thresholds and dashboard design \\
-IA IT SRE Team & Internal SRE consumers & Primary users of Grafana dashboard and CloudWatch alarm notifications \\
-Meridian Team & Kafka/ECS architecture owners & Provided MSK consumer group structure, ECS cluster topology, OpenSearch integration context \\
-Mr.\ Vadla \& Ms.\ Venkataraman & Co-interns & Parallel development of monitoring features; design review and test validation \\
+\rowcolor{tablerowA} Mr.\ Deotale & Manager, CTM (Industry Supervisor) & Primary sponsor; set engineering priorities; escalated dashboard to Critical priority; final acceptance authority \\
+\rowcolor{tablerowB} Mr.\ Leung & IT Senior Developer, RPA Platform Lead & RPA expert; delivered Blue Prism and UiPath KT; defined RPA monitoring scope \\
+\rowcolor{tablerowA} Ms.\ Labos & IT Developer, SRE Engineer & Delivered golden signals training; reviewed alarm thresholds and dashboard design \\
+\rowcolor{tablerowB} IA IT SRE Team & Internal SRE consumers & Primary users of Grafana dashboard and CloudWatch alarm notifications \\
+\rowcolor{tablerowA} Meridian Team & Kafka/ECS architecture owners & Provided MSK consumer group structure, ECS cluster topology, OpenSearch integration context \\
+\rowcolor{tablerowB} Mr.\ Vadla \& Ms.\ Venkataraman & Co-interns & Parallel development of monitoring features; design review and test validation \\
 \hline
 \end{tabularx}
 
@@ -60,13 +59,13 @@ user interviews or focus groups.
 
 \paragraph{Knowledge-Transfer Sessions (Training Week, April 13--18, 2026).}
 The first week of full-time engagement was structured as an intensive
-knowledge-transfer programme covering the full breadth of the IA
+knowledge-transfer program covering the full breadth of the IA
 platform. Sessions with Mr.\ Leung on the Blue Prism and UiPath
 architectures, with Mr.\ Bhanu Teja Murari on CitcoWorks and the Event Store
 platform, and with the Meridian team on the Kafka event pipeline
 (comprising the Event Routing Service, Action Processor, and OpenSearch
 consumer) provided the architectural grounding needed to define
-meaningful SLIs. Key requirements insight from training week: the
+meaningful SLIs. A key insight from training week: the
 \AE xeo Treasury platform (cloud-based wire approval and fund movement)
 and the MESO platform (high-memory autoscale issue encountered later) each
 had distinct resource profiles requiring separate monitoring strategies.
@@ -80,7 +79,7 @@ detection under the reactive model, and directly specified the target
 for the lag alarm evaluation period (NFR2: $\leq$1~minute).
 
 \paragraph{Golden Signals Session (May 25, 2026).}
-Ms.\ Labos's dedicated SRE methodology session translated the theoretical
+Ms.\ Labos' dedicated SRE methodology session translated the theoretical
 four golden signals into concrete metric choices for the IA platform.
 This session produced the initial SLI/SLO target table and established
 the design constraint that all metrics must be queryable through
@@ -107,9 +106,9 @@ resulting design:
     \item \textbf{Tag-based resource discovery is non-trivial at Citco
           scale.} The training week revealed that the \texttt{citcoworks}
           and \texttt{meridian} environments share the
-          \textbf{Shared Cloud Artifacts} BudgetCode tag, meaning
-          a simple BudgetCode lookup conflates resources from
-          two operationally distinct environments. This directly
+          \textbf{Shared Cloud Artifacts} budget\_code tag, meaning
+          a simple budget\_code lookup conflates resources from
+          two operationally distinct environments. This
           motivated FR9 (tag-based discovery with AppName
           fallback).
 
@@ -168,14 +167,14 @@ infrastructure automation (FR5, FR7), and inventory API capabilities (FR8--FR9).
 \rowcolor{tablerowB} FR6 & Dashboard supports variable-based filtering by platform and resource & Grafana template variables \\
 \rowcolor{tablerowA} FR7 & All monitoring infrastructure deployed as Infrastructure-as-Code & 4 CloudFormation stacks; Lambda-backed IaC provisioner \\
 \rowcolor{tablerowB} FR8 & Inventory API enumerates Lambda, ECS, EC2, and S3 resources per platform via REST & Flask REST API, discoverer registry \\
-\rowcolor{tablerowA} FR9 & Inventory API supports two-stage tag-based discovery for shared BudgetCode platforms & Two-stage AppName filter in \texttt{citcoworks}/\texttt{meridian} discoverers \\
+\rowcolor{tablerowA} FR9 & Inventory API supports two-stage tag-based discovery for shared budget\_code platforms & Two-stage AppName filter in \texttt{citcoworks}/\texttt{meridian} discoverers \\
 \hline
 \end{tabularx}
 
 \subsection{Non-Functional Requirements}
 
 Table~\ref{tab:nonfunctional_requirements} presents the seven
-non-functional requirements with measurable targets and achieved values.
+non-functional requirements with measurable targets and values achieved.
 These requirements established quantitative acceptance criteria for
 performance (NFR1--NFR3), quality (NFR4), maintainability (NFR5--NFR6),
 and security (NFR7).
@@ -197,7 +196,7 @@ and security (NFR7).
 \rowcolor{tablerowA} NFR3 & Inventory API response time for full resource enumeration & $\leq$10~sec & $<$10~sec \\
 \rowcolor{tablerowB} NFR4 & Inventory API automated test coverage & $\geq$95\% & 99\% \\
 \rowcolor{tablerowA} NFR5 & CloudFormation templates parameterized for multi-environment reuse & Parameterized YAML & Achieved \\
-\rowcolor{tablerowB} NFR6 & Dashboard functional after Grafana version upgrades without manual rework & Standard plugin queries & Achieved (10.4$\to$12.4) \\
+\rowcolor{tablerowB} NFR6 & Dashboard functional after Grafana version upgrades without manual rework & Standard Plugin queries & Achieved (10.4$\to$12.4) \\
 \rowcolor{tablerowA} NFR7 & Zero hardcoded credentials --- all secrets via AWS Secrets Manager & No plaintext secrets & Achieved \\
 \hline
 \end{tabularx}
@@ -216,7 +215,7 @@ architectural change to the underlying monitoring design.
 The most technically demanding requirement was FR9, which exposed a
 fundamental ambiguity in the AWS tagging strategy for the IA platform.
 My discovery that \texttt{citcoworks} and \texttt{meridian} share the
-same BudgetCode tag value (\textbf{Shared Cloud Artifacts})
+same budget\_code tag value (Shared Cloud Artifacts)
 was not documented anywhere before I built the inventory API. The
 solution --- designating AppName as a mandatory secondary
 discriminator for these two environments --- became the standard pattern

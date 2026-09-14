@@ -1,4 +1,4 @@
-﻿% ============================================================
+% ============================================================
 % CHAPTER 15: FUTURE WORK
 % MCDA 5585 / 5586 Major Project Report
 % Bhavik Kantilal Bhagat | A00494758 | Saint Mary's University
@@ -7,12 +7,14 @@
 \chapter{Future Work}
 \label{chap:future_work}
 
-The work I delivered in this co-op placement establishes a monitoring foundation ---
-not an endpoint. I have already defined several planned extensions in the JIRA
+The work I delivered in this co-op placement establishes a monitoring foundation --- not merely an endpoint. I have already defined several planned extensions in the JIRA
 backlog, scoped for implementation during the Mitacs BSI renewal
 (September~1 -- December~31, 2026).
 
-\paragraph{Distributed Tracing with X-Ray.}
+
+\section{Distributed Tracing with X-Ray}
+\label{sec:future_xray}
+
 The most technically compelling near-term extension is the integration of
 AWS~X-Ray distributed tracing into the IA Lambda fleet using the
 \texttt{aws-lambda-powertools[tracer]} library. X-Ray would provide
@@ -25,8 +27,9 @@ observability enhancement. A Grafana X-Ray data source plugin is available
 for AMG, meaning trace data would flow directly into the existing workspace
 without requiring a separate visualization tool.
 
-\subsubsection{Auto-Healing Agent}
-\label{sec:autohealing_agent}
+
+\section{Auto-Healing Agent}
+\label{sec:future_autohealing}
 
 The alarm infrastructure I delivered closes the detection gap --- the 2--3 hour
 window between failure onset and SRE awareness that the Meridian Incident
@@ -36,17 +39,19 @@ the correct recovery action, and execute it. For the most common and
 well-understood failure modes on the IA platform, this human step is
 unnecessary. The \textbf{auto-healing agent} eliminates it.
 
-\paragraph{Concept.}
+\subsection{Concept}
+
 The auto-healing agent is an event-driven remediation layer that sits between
 the CloudWatch alarm infrastructure and the AWS services being monitored.
 Each alarm SNS message triggers a Lambda ``healer'' function. The healer
 evaluates the alarm payload, classifies the failure type, selects the
-appropriate recovery action from a configurable remediation catalogue, and
+appropriate recovery action from a configurable remediation catalog, and
 executes it --- logging the entire sequence via the IA Event Store with
 structured PROCESS\_EVENT codes so that every automated intervention is
 fully auditable.
 
-\paragraph{Architecture.}
+\subsection{Architecture}
+
 The proposed architecture connects directly to the existing dashboard alarm
 infrastructure without requiring changes to the Grafana dashboard or
 CloudFormation alarm stacks:
@@ -54,7 +59,7 @@ CloudFormation alarm stacks:
 \begin{enumerate}
     \item A CloudWatch Alarm breaches its threshold (e.g., ECS task desired
           count $\neq$ running count on a Meridian service).
-    \item The alarm fires an SNS message to the \texttt{ia-sre-autohealing-topic}
+    \item The alarm fires an SNS message to the \texttt{ia-sre-auto-healing-topic}
           SNS topic (a new topic, parallel to the existing notification topic).
     \item The SNS topic triggers the \textbf{Healer Lambda}, which receives
           the full alarm payload including the \texttt{AlarmName},
@@ -62,7 +67,7 @@ CloudFormation alarm stacks:
           dimensions (\texttt{ClusterName}, \texttt{ServiceName},
           \texttt{FunctionName}).
     \item The Healer Lambda looks up the alarm name in a
-          \textbf{remediation catalogue} --- a DynamoDB table mapping alarm
+          \textbf{remediation catalog} --- a DynamoDB table mapping alarm
           patterns to recovery action functions.
     \item The matched recovery action is invoked: an AWS API call, a Step
           Functions state machine, or a queued message to a downstream
@@ -76,44 +81,42 @@ CloudFormation alarm stacks:
           directly.
 \end{enumerate}
 
-\paragraph{Remediation Catalogue (Initial Scope).}
+\subsection{Remediation Catalog (Initial Scope)}
+
 The first phase of the auto-healing agent targets the failure modes observed or anticipated
 from the four support rotation weeks:
 
-\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.22\textwidth}@{\hspace{\tabcolsep}}}
-\caption{Auto-Healing Agent --- Initial Remediation Catalogue} \label{tab:autohealing_catalogue} \\
+\begin{table}[htbp]
+\centering
+\caption{Auto-Healing Agent --- Initial Remediation Catalog}
+\label{tab:autohealing_catalog}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.45\textwidth} >{\raggedright\arraybackslash}p{0.22\textwidth}}
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Alarm / Trigger}} & \textcolor{white}{\textbf{Recovery Action}} & \textcolor{white}{\textbf{Escalation if Fails}} \\
 \hline
-\endfirsthead
-\hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Alarm / Trigger}} & \textcolor{white}{\textbf{Recovery Action}} & \textcolor{white}{\textbf{Escalation if Fails}} \\
-\hline
-\endhead
-\hline
-\endfoot
 \rowcolor{tablerowA} ECS task desired $\neq$ running & \texttt{ecs:UpdateService} (force new deployment) & SNS alert to SRE \\
-\rowcolor{tablerowB} MSK consumer lag $>$ 10{,}000 messages & Scale ECS consumer service (+1 task) & SNS + JIRA ticket (auto-created via JIRA API) \\
+\rowcolor{tablerowB} MSK consumer lag $>$ 10{,}000 messages & Scale ECS consumer service (+1 task) & SNS + JIRA ticket \\
 \rowcolor{tablerowA} Lambda error rate $>$ 1\% over 5 min & Trigger Step Functions diagnostic workflow; capture last 50 error log lines to S3 & SNS alert with S3 log link \\
 \rowcolor{tablerowB} SQS queue age $>$ 1 hour & Invoke queue-processor Lambda with \texttt{force=true} parameter & SNS alert \\
-\rowcolor{tablerowA} ECS CPU $>$ 80\% sustained 5 min & Trigger ECS service auto-scaling policy (\texttt{RegisterScalableTarget}) & SNS if already at max task count \\
-\rowcolor{tablerowB} RPA bot missing heartbeat (future) & Call UiPath Orchestrator API to restart robot job & SNS + support ticket \\
+\rowcolor{tablerowA} ECS CPU $>$ 80\% sustained 5 min & Trigger ECS service auto-scaling policy & SNS if at max tasks \\
+\rowcolor{tablerowB} RPA bot missing heartbeat & Call UiPath Orchestrator API to restart robot job & SNS + support ticket \\
 \hline
-\end{tabularx}
+\end{tabular}
+\end{table}
 
-\paragraph{Design Principles.}
+\subsection{Design Principles}
 
 Three design principles constrain the auto-healing agent to avoid introducing
 new failure modes:
 
 \begin{itemize}
     \item \textbf{Idempotency.} Every recovery action must be safe to invoke
-          multiple times. The DynamoDB remediation catalogue tracks the last
+          multiple times. The DynamoDB remediation catalog tracks the last
           invocation time per alarm; the Healer Lambda checks this before
           acting and skips duplicate invocations within the cool-down window.
 
     \item \textbf{Bounded autonomy.} The Healer acts on a whitelist of
-          known-safe recovery actions. Any alarm with no matching catalogue
+          known-safe recovery actions. Any alarm with no matching catalog
           entry falls through to standard SNS notification --- the agent
           does not improvise. New recovery actions are added only after
           review and approval, following the same PR process as
@@ -127,7 +130,8 @@ new failure modes:
           interventions are visible in the same audit log as manual ones.
 \end{itemize}
 
-\paragraph{Relation to the PoC.}
+\subsection{Relation to the PoC}
+
 The auto-healing agent is the direct successor to the alarm-and-notify
 posture delivered by this co-op placement. The detection layer (CloudWatch
 alarms + SNS) was built first because a remediation layer without a
@@ -144,7 +148,10 @@ services environment, where an incorrectly triggered service restart during
 a VPL pricing window or a CAIS Deadline processing run would itself
 constitute a production incident.
 
-\paragraph{RPA Bot CloudWatch Integration.}
+
+\section{RPA Bot CloudWatch Integration}
+\label{sec:future_rpa_cw}
+
 Two follow-on stories in my JIRA backlog propose bridging the Blue Prism
 (BPM) and UiPath Cloud operational metrics into CloudWatch via a polling
 Lambda function. The Lambda would query the Blue Prism API and UiPath
@@ -155,7 +162,10 @@ the last remaining visibility gap: the current dashboard covers the AWS
 infrastructure layer comprehensively but has no visibility into the RPA
 execution layer above it.
 
-\paragraph{Error Budget Burn-Rate Alerting.}
+
+\section{Error Budget Burn-Rate Alerting}
+\label{sec:future_error_budget}
+
 The current alarm model fires on threshold breaches without distinguishing
 between a momentary spike and a sustained reliability regression. Multi-window
 burn-rate alerting --- as described in the Google SRE Workbook --- uses
@@ -166,7 +176,10 @@ threshold-based detection to SLO-aware alerting, enabling the team to
 distinguish incidents that require immediate response from those that are
 within the acceptable error budget envelope.
 
-\paragraph{Tag Compliance Automation.}
+
+\section{Tag Compliance Automation}
+\label{sec:future_tag_compliance}
+
 The AppName tagging obligation I identified in Section~\ref{sec:challenges-infra} currently
 relies on a reactive CloudWatch alarm: the alarm fires after a non-compliant
 resource has already been deployed. A proactive alternative would query the

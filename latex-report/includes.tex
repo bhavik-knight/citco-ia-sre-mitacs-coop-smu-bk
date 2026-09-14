@@ -1,59 +1,65 @@
-﻿% ------------------------------------------------------
+% ==============================================================================
 % CENTRALIZED LATEX STYLING & PACKAGES (SMU MCDA REPORT)
-% ------------------------------------------------------
+% ==============================================================================
+% This file contains all styling configuration for the report.
+% Organized into logical sections for easy maintenance.
+%
+% TABLE OF CONTENTS:
+%   1. FONTS & TYPOGRAPHY     - Font family, encoding, line spacing
+%   2. COLORS                 - SMU brand colors, table colors
+%   3. PAGE LAYOUT            - Margins, geometry, paragraph spacing
+%   4. HEADINGS               - Chapter, section, subsection styling
+%   5. LISTS                  - Itemize, enumerate spacing
+%   6. TABLES                 - Table packages, padding, header macros
+%   7. FIGURES & FLOATS       - Image handling, float placement, captions
+%   8. CODE LISTINGS          - Syntax highlighting configuration
+%   9. TABLE OF CONTENTS      - TOC, LOF, LOT styling
+%  10. HYPERLINKS & REFS      - Links, bibliography
+%  11. HEADERS & FOOTERS      - Page numbering, footer style
+%  12. PAGE BORDER            - Decorative page border
+% ==============================================================================
+% 1. FONTS & TYPOGRAPHY
+% ==============================================================================
+% Calibri — Windows system font (requires XeLaTeX or LuaLaTeX)
+% Body text: 12pt Calibri with 1.5 line spacing (Word equivalent)
 
-% --- FONT ENCODING & TYPOGRAPHY ---
-% Carlito — open-source metric equivalent of Calibri (portable, no Windows font needed)
-% Uses pdflatex via the carlito package
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage[sfdefault]{carlito}   % Carlito as default sans-serif body font (Calibri equivalent)
-% No monospace font — using Carlito throughout per Neeyati's report style
-\renewcommand{\texttt}[1]{\textsf{#1}}  % Make \texttt use sans-serif (Carlito) instead of monospace
+\usepackage{fontspec}
+\setmainfont{Calibri}[
+  BoldFont = Calibri Bold,
+  ItalicFont = Calibri Italic,
+  BoldItalicFont = Calibri Bold Italic
+]
+\setsansfont{Calibri}[
+  BoldFont = Calibri Bold,
+  ItalicFont = Calibri Italic,
+  BoldItalicFont = Calibri Bold Italic
+]
+\setmonofont{Consolas}
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 
-% Line spacing: true Word-equivalent 1.5 at 12pt
-% \setstretch{1.5} sets LaTeX baselineskip = 12 × 1.2 × 1.5 = 21.6pt
-% which matches Word's "1.5 lines" = 12pt × 1.5 = 18pt visually
+% Make \texttt use sans-serif (Calibri) instead of monospace
+% Per Neeyati's report style — no monospace font used
+\renewcommand{\texttt}[1]{\textsf{#1}}
+
+% Line spacing: Word-equivalent 1.5 at 12pt base
+% LaTeX: baselineskip = 12 × 1.2 × 1.5 = 21.6pt ≈ Word's "1.5 lines"
 \usepackage{setspace}
 \setstretch{1.5}
-
-% List spacing — reduce extra space between bullet items to match 1.5 line spacing
-\usepackage{enumitem}
-\setlist[itemize]{itemsep=0pt, parsep=0pt, topsep=4pt}
-\setlist[enumerate]{itemsep=0pt, parsep=0pt, topsep=4pt}
-
-\usepackage{booktabs} % Professional tables
-\usepackage{colortbl} % \rowcolor for table header shading
-\usepackage{etoolbox} % \patchcmd
-\usepackage{calc}     % \widthof for measuring text width
-
-% Table padding — extra cell padding for readability
-\setlength{\tabcolsep}{8pt}
-\renewcommand{\arraystretch}{1.1}
-
-% Center all tables globally (tables that don't span full width)
-\AtBeginEnvironment{tabular}{\centering}
-\AtBeginEnvironment{table}{\centering}
-
-% Fix colortbl + booktabs colour bleed — reset rule colour to black
-\AtBeginDocument{\arrayrulecolor{black}}
-
-% Allow extra stretch to prevent text overflowing margins
-\emergencystretch=3em
-\setlength{\hfuzz}{2pt}
-\sloppy
 
 % Disable automatic hyphenation — keep words whole, wrap to next line
 \usepackage[none]{hyphenat}
 \tolerance=1000
 
+% Allow extra stretch to prevent text overflowing margins
+\emergencystretch=3em
+\setlength{\hfuzz}{2pt}
+
 % Prevent widows and orphans (single lines at page top/bottom)
 \widowpenalty=10000
 \clubpenalty=10000
 \brokenpenalty=10000
-\emergencystretch=\maxdimen
 
 % URL line-breaking — allow breaks at / . - _ ~ (no spaces inserted)
 \usepackage{url}
@@ -62,52 +68,41 @@
 \g@addto@macro\UrlBreaks{\UrlOrds}
 \makeatother
 
-% --- COLOR PALETTE DEFINITIONS ---
+
+% ==============================================================================
+% 2. COLORS
+% ==============================================================================
+% SMU brand colors and table styling colors
+
 \usepackage{xcolor}
-\definecolor{smumaroon}{HTML}{8A0027}  % Official SMU Maroon — primary brand colour (#8A0027 from smu.ca)
-\definecolor{smugray}{RGB}{100, 100, 100}  % Neutral Gray for subtitles and footers
-\definecolor{codebg}{RGB}{245, 245, 245}   % Light background for code listings
-\definecolor{smubrand}{HTML}{8A0027}  % SMU primary maroon — headings, links, chapter titles (aligned with smumaroon)
-\definecolor{smubranddark}{HTML}{6D1A36}  % SMU deep wine maroon — table headers, accents
-\definecolor{tableheader}{HTML}{6D1A36}  % Deep wine maroon — table header rows (matches Excel header row)
-\definecolor{tablerowA}{HTML}{FFF8F8}   % Very light warm tint — odd rows (matches Excel ROW_ODD)
-\definecolor{tablerowB}{HTML}{FFFFFF}  % White — even rows
 
-% Convenience macro for maroon table header rows with white text
-\newcommand{\tableheaderrow}[1]{\rowcolor{tableheader}\color{white}\textbf{#1}}
+% --- Primary Brand Colors ---
+\definecolor{smumaroon}{HTML}{8A0027}      % Official SMU Maroon (#8A0027 from smu.ca)
+\definecolor{smubrand}{HTML}{8A0027}       % Alias for headings, links, titles
+\definecolor{smubranddark}{HTML}{6D1A36}   % Deep wine maroon — accents
 
-% --- HEADING SIZES (Neeyati report standard) ---
-% Extracted from NeeyatiMehta_A00477369_projectReport.docx
-% Heading 1 = 16pt, Heading 2 = 14pt, Heading 3 = 12pt, all bold maroon
-\usepackage{titlesec}
-\titleformat{\section}{\fontsize{14}{14}\selectfont\bfseries\color{smubrand}}{\thesection}{1em}{}
-\titleformat{\subsection}{\fontsize{12}{12}\selectfont\bfseries\color{smubrand}}{\thesubsection}{1em}{}
-\titleformat{\subsubsection}{\fontsize{12}{12}\selectfont\bfseries}{\thesubsubsection}{1em}{}
+% --- Neutral Colors ---
+\definecolor{smugray}{RGB}{100, 100, 100}  % Gray for subtitles/footers
+\definecolor{codebg}{RGB}{245, 245, 245}   % Light background for code
 
-% Tighter spacing for sections (Neeyati standard: 8pt before from parskip, 0pt after)
-% \titlespacing{command}{left}{before-sep}{after-sep}
-\titlespacing*{\section}{0pt}{8pt}{0pt}
-\titlespacing*{\subsection}{0pt}{8pt}{0pt}
-\titlespacing*{\subsubsection}{0pt}{8pt}{0pt}
+% --- Table Colors ---
+\definecolor{tableheader}{HTML}{6D1A36}    % Deep wine maroon — header rows
+\definecolor{tablerowA}{HTML}{FFF8F8}      % Very light warm tint — odd rows
+\definecolor{tablerowB}{HTML}{FFFFFF}      % White — even rows
 
-% Prevent page breaks before sections when there's room on the page
-% \@secpenalty controls the penalty for breaking before a section (-10000 = never break, 0 = no preference)
-\makeatletter
-\renewcommand\section{\@startsection{section}{1}{\z@}%
-  {-8pt \@plus -2pt \@minus -2pt}%  % before: negative = no parindent after, abs value = skip
-  {0.1pt \@plus 0pt}%               % after: positive = separate from text
-  {\fontsize{14}{14}\selectfont\bfseries\color{smubrand}}}
-\makeatother
 
-% --- DOCUMENT LAYOUT & MARGINS ---
-% Neeyati standard: 1-inch margins all around, 0.5-inch header/footer distance
-\usepackage[letterpaper,margin=1in,headheight=0pt,headsep=0pt,footskip=0.5in]{geometry}
-\usepackage{fancyhdr}
-\usepackage{lastpage}
+% ==============================================================================
+% 3. PAGE LAYOUT
+% ==============================================================================
+% Margins, paragraph spacing, vertical alignment
+% Neeyati standard: 1-inch margins, 0.5-inch footer distance
+
+\usepackage[letterpaper, margin=1in, headheight=0pt, headsep=0pt, footskip=0.5in]{geometry}
 \usepackage{parskip}
 
-\setlength{\parindent}{0em}
-\setlength{\parskip}{8pt}  % Neeyati: 0pt before, 8pt after paragraph
+% Paragraph formatting
+\setlength{\parindent}{0em}   % No first-line indent
+\setlength{\parskip}{8pt}     % 8pt space between paragraphs
 
 % Top-align page content (don't stretch to fill page vertically)
 \raggedbottom
@@ -116,40 +111,161 @@
 \newcommand{\titlefont}{\fontsize{20}{20}\selectfont}
 \newcommand{\labelfont}{\fontsize{14}{14}\selectfont}
 
-% --- TABLES AND FIGURES ---
-\usepackage{tabularx}
-\usepackage{longtable}
-\usepackage{ltablex}  % Combines longtable + tabularx for full-width page-breaking tables
-\keepXaliases        % Keep tabularx column types (X) working in ltablex
-\usepackage{multirow}
-\usepackage{caption}
-\usepackage{float}
-\usepackage{graphicx}
-\usepackage{array}
-\usepackage{wrapfig}
-\usepackage{subfig}
-\usepackage{placeins}  % Provides \FloatBarrier to keep floats in their section
-\usepackage{chngcntr}  % For continuous numbering
 
-% Make longtable span full text width (no centering margins)
+% ==============================================================================
+% 4. HEADINGS
+% ==============================================================================
+% Chapter, section, subsection, subsubsection styling
+% Font hierarchy: Chapter=16pt, Section=14pt, Subsection=12pt, Subsubsection=11pt
+% All bold maroon, consistent 4pt before / ~0pt (0.001pt) after spacing
+%
+% IMPORTANT: All headings use \needspace to prevent orphaned headings at page bottom
+% This ensures at least 4 lines of content follow each heading on the same page
+
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\usepackage{needspace}   % Prevent orphaned headings at page bottom
+
+\makeatletter
+
+% --- Section (Level 1) — 14pt bold maroon ---
+% \Needspace* is strict: if not enough room, forces page break
+% 36pt = heading height + 1 line of content minimum
+\renewcommand\section{\Needspace*{36pt}\@startsection{section}{1}{\z@}%
+  {-12pt \@plus -2pt \@minus -2pt}%  % before: negative = no indent after
+  {6pt \@plus 2pt}%                   % after: positive = keep with following text
+  {\fontsize{14}{14}\selectfont\bfseries\color{smubrand}}}
+
+% --- Subsection (Level 2) — 12pt bold maroon ---
+% 32pt = heading + 1 line minimum
+\renewcommand\subsection{\Needspace*{32pt}\@startsection{subsection}{2}{\z@}%
+  {-10pt \@plus -2pt \@minus -2pt}%
+  {4pt \@plus 2pt}%
+  {\fontsize{12}{12}\selectfont\fontseries{b}\selectfont\color{smubrand}}}
+
+% --- Subsubsection (Level 3) — 11pt bold maroon ---
+% 28pt = heading + 1 line minimum
+\renewcommand\subsubsection{\Needspace*{28pt}\@startsection{subsubsection}{3}{\z@}%
+  {-8pt \@plus -2pt \@minus -2pt}%
+  {2pt \@plus 1pt}%
+  {\fontsize{12}{12}\selectfont\fontseries{b}\selectfont\color{smubrand}}}
+
+% --- Chapter Heading — 16pt bold maroon, centered, ALL CAPS ---
+% Remove \clearpage from chapter command — chapters continue on same page
+\patchcmd{\chapter}{\clearpage}{}{}{}
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
+
+% Shared helper for chapter headings
+% Spacing: before/after for visual separation
+% \Needspace*{40pt} ensures room for heading + at least 1 line of content
+\def\@chapterheadingline#1{%
+  \Needspace*{40pt}%  % Strict: heading (~20pt) + minimum 1 line content (~20pt)
+  \vskip 12\p@ \@plus 2\p@ \@minus 2\p@  % Space before chapter heading
+  {\parindent \z@ \centering
+   \interlinepenalty\@M
+   \fontsize{16}{16}\selectfont \bfseries \textcolor{smubrand}{#1}\par\nobreak
+   \vskip 6\p@ \@plus 2\p@}%  % Space after chapter heading
+}
+
+% Numbered chapters: "1. CHAPTER TITLE"
+\def\@makechapterhead#1{%
+  \@chapterheadingline{\thechapter.\enspace \MakeUppercase{#1}}%
+}
+
+% Unnumbered chapters (Acknowledgement, TOC, etc.): "CHAPTER TITLE"
+\def\@makeschapterhead#1{%
+  \@chapterheadingline{\MakeUppercase{#1}}%
+}
+
+\makeatother
+
+
+% ==============================================================================
+% 5. LISTS
+% ==============================================================================
+% Itemize and enumerate spacing — tight lists matching 1.5 line spacing
+
+\usepackage{enumitem}
+
+% Remove extra space between list items and reduce space before/after lists
+\setlist[itemize]{itemsep=0pt, parsep=0pt, topsep=2pt, partopsep=0pt}
+\setlist[enumerate]{itemsep=0pt, parsep=0pt, topsep=2pt, partopsep=0pt}
+
+
+% ==============================================================================
+% 6. TABLES
+% ==============================================================================
+% Table packages, cell padding, header styling macros
+
+\usepackage{booktabs}     % Professional tables (\toprule, \midrule, \bottomrule)
+\usepackage{colortbl}     % \rowcolor for header shading
+\usepackage{tabularx}     % Flexible column widths (X column type)
+\usepackage{longtable}    % Tables spanning multiple pages
+\usepackage{ltablex}      % Combines longtable + tabularx
+\keepXaliases             % Keep X column type working in ltablex
+\usepackage{xltabular}    % Modern longtable + tabularx combination
+\usepackage{multirow}     % Cells spanning multiple rows
+\usepackage{array}        % Extended column definitions
+\usepackage{calc}         % \widthof for measuring text width
+
+% Cell padding for readability
+\setlength{\tabcolsep}{8pt}
+\renewcommand{\arraystretch}{1.1}
+
+% Make longtable span full text width
 \setlength{\LTleft}{0pt}
 \setlength{\LTright}{0pt plus 1fill}
 
-% Continuous numbering for figures and tables (1, 2, 3... not 1.1, 1.2, 2.1...)
+% Center all tables globally
+\AtBeginEnvironment{tabular}{\centering}
+\AtBeginEnvironment{table}{\centering}
+
+% Fix colortbl + booktabs color bleed — reset rule color to black
+\AtBeginDocument{\arrayrulecolor{black}}
+
+% Convenience macro for maroon table header rows with white text
+\newcommand{\tableheaderrow}[1]{\rowcolor{tableheader}\color{white}\textbf{#1}}
+
+
+% ==============================================================================
+% 7. FIGURES & FLOATS
+% ==============================================================================
+% Image handling, float placement parameters, caption styling
+
+\usepackage{graphicx}     % \includegraphics
+\usepackage{float}        % [H] placement option
+\usepackage{wrapfig}      % Text wrapping around figures
+\usepackage{subfig}       % Subfigures (a), (b), etc.
+\usepackage{placeins}     % \FloatBarrier to keep floats in section
+\usepackage{chngcntr}     % For continuous numbering
+\usepackage{caption}
+
+% Continuous numbering (1, 2, 3... not 1.1, 1.2, 2.1...)
 \counterwithout{figure}{chapter}
 \counterwithout{table}{chapter}
 
-% Float placement parameters — allow more flexibility for figures
-\renewcommand{\topfraction}{0.85}      % Max fraction of page for floats at top
-\renewcommand{\bottomfraction}{0.70}   % Max fraction of page for floats at bottom
-\renewcommand{\textfraction}{0.15}     % Min fraction of page for text
-\renewcommand{\floatpagefraction}{0.70} % Min fraction for a float-only page
-\setcounter{topnumber}{3}              % Max floats at top of page
-\setcounter{bottomnumber}{2}           % Max floats at bottom of page
-\setcounter{totalnumber}{5}            % Max floats per page
+% Float placement parameters — allow more flexibility
+\renewcommand{\topfraction}{0.85}       % Max fraction of page for floats at top
+\renewcommand{\bottomfraction}{0.70}    % Max fraction of page for floats at bottom
+\renewcommand{\textfraction}{0.15}      % Min fraction of page for text
+\renewcommand{\floatpagefraction}{0.70} % Min fraction for float-only page
+\setcounter{topnumber}{3}               % Max floats at top of page
+\setcounter{bottomnumber}{2}            % Max floats at bottom of page
+\setcounter{totalnumber}{5}             % Max floats per page
 
-% --- CODE HIGHLIGHTING ---
+% Caption styling
+\captionsetup{margin=10pt, font={small,it}, labelfont=bf, skip=2pt}
+\captionsetup[table]{position=above, skip=2pt}   % Tables: caption above
+\captionsetup[figure]{position=below, skip=2pt}  % Figures: caption below
+
+
+% ==============================================================================
+% 8. CODE LISTINGS
+% ==============================================================================
+% Syntax highlighting for code blocks
+
 \usepackage{listings}
+
 \lstset{
     language=Python,
     basicstyle=\ttfamily\small,
@@ -168,33 +284,42 @@
     tabsize=4
 }
 
-% --- BIBLIOGRAPHY & HYPERLINKS ---
-\usepackage[english]{babel}
-\usepackage{csquotes}
-\usepackage[backend=biber, backref=true, sorting=nyt, style=numeric]{biblatex}
-\addbibresource{references.bib}
 
-% --- TABLE OF CONTENTS FORMATTING ---
-\usepackage[titles]{tocloft}  % 'titles' option for better control
+% ==============================================================================
+% 9. TABLE OF CONTENTS
+% ==============================================================================
+% TOC, List of Figures, List of Tables styling
 
-% TOC depth: show only chapters (level 0) and sections (level 1)
+\usepackage[titles]{tocloft}
+
+% TOC depth: show chapters (level 0) and sections (level 1) only
 \setcounter{tocdepth}{1}
 
 % Rename "Contents" → "Table of Contents"
 \renewcommand{\contentsname}{Table of Contents}
 
-% Style the ToC/LoF/LoT title to match chapter headings (SMU maroon, centered)
+% Title fonts — 16pt bold maroon, centered
 \renewcommand{\cfttoctitlefont}{\fontsize{16}{20}\selectfont\bfseries\color{smubrand}}
 \renewcommand{\cftloftitlefont}{\large\bfseries\color{smubrand}}
 \renewcommand{\cftlottitlefont}{\large\bfseries\color{smubrand}}
 
-% TOC entry font colors — black (not maroon) per Neeyati sample
+% Entry fonts — black (not maroon) per Neeyati sample
 \renewcommand{\cftchapfont}{\bfseries\color{black}}
 \renewcommand{\cftchappagefont}{\bfseries\color{black}}
+
+% Make chapter titles UPPERCASE in TOC
+\makeatletter
+\let\oldl@chapter\l@chapter
+\renewcommand*\l@chapter[2]{%
+  \oldl@chapter{\MakeUppercase{#1}}{#2}%
+}
+\makeatother
 \renewcommand{\cftsecfont}{\color{black}}
 \renewcommand{\cftsecpagefont}{\color{black}}
+\n% Section number width (fix for 11.xx sections)
+\setlength{\cftsecnumwidth}{3em}
 
-% TOC spacing: Neeyati standard (Before=0pt, Line spacing=1.08 set in main.tex)
+% Spacing — Neeyati standard (minimal spacing)
 \setlength{\cftbeforetoctitleskip}{0pt}
 \setlength{\cftaftertoctitleskip}{1em}
 \setlength{\cftbeforeloftitleskip}{0pt}
@@ -206,20 +331,24 @@
 \setlength{\cftbeforefigskip}{0pt}
 \setlength{\cftbeforetabskip}{0pt}
 
-% Remove chapter grouping gaps in LOF/LOT (report class adds space at chapter boundaries)
+
+% Add "Figure X:" and "Table X:" prefixes in LOF/LOT
+\renewcommand{\cftfigpresnum}{Figure }
+\renewcommand{\cftfigaftersnum}{:\ }
+\setlength{\cftfignumwidth}{5.5em}
+\renewcommand{\cfttabpresnum}{Table }
+\renewcommand{\cfttabaftersnum}{:\ }
+\setlength{\cfttabnumwidth}{5em}
+% Remove chapter grouping gaps in LOF/LOT
 \makeatletter
-\renewcommand*\l@figure{\@dottedtocline{1}{0em}{2.5em}}
-\renewcommand*\l@table{\@dottedtocline{1}{0em}{2.5em}}
-% Patch \@chapter to remove \addvspace from LOF/LOT
-\usepackage{etoolbox}
+% \renewcommand*\l@figure{\@dottedtocline{1}{0em}{2.5em}}  % DISABLED - conflicts with tocloft prefixes
+% \renewcommand*\l@table{\@dottedtocline{1}{0em}{2.5em}}  % DISABLED - conflicts with tocloft prefixes
 \patchcmd{\@chapter}{\addcontentsline{lof}{chapter}{\protect\numberline{\thechapter}}}{}{}{}
 \patchcmd{\@chapter}{\addcontentsline{lot}{chapter}{\protect\numberline{\thechapter}}}{}{}{}
-% Also remove the addvspace calls that report class adds
 \patchcmd{\@chapter}{\addtocontents{lof}{\protect\addvspace{10\p@}}}{}{}{}
 \patchcmd{\@chapter}{\addtocontents{lot}{\protect\addvspace{10\p@}}}{}{}{}
 
-% Prevent LOF/LOT from starting on new page (remove \clearpage from \listoffigures/\listoftables)
-% Also make headings centered, bold, maroon — matching TOC heading style
+% LOF/LOT headings — centered, bold, maroon (no page break before)
 \renewcommand{\listoffigures}{%
   {\centering\fontsize{16}{20}\selectfont\bfseries\color{smubrand}\listfigurename\par}%
   \vspace{0.5em}%
@@ -232,7 +361,18 @@
 }
 \makeatother
 
-\usepackage[pdftex,hypertexnames=true,colorlinks]{hyperref}
+
+% ==============================================================================
+% 10. HYPERLINKS & REFERENCES
+% ==============================================================================
+% PDF metadata, clickable links, bibliography
+
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage[backend=biber, backref=true, sorting=nyt, style=numeric]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage[pdftex, hypertexnames=true, colorlinks]{hyperref}
 \hypersetup{
     pdftitle={MCDA Major Project Report - Bhavik Bhagat},
     pdfauthor={Bhavik Kantilal Bhagat},
@@ -244,12 +384,48 @@
     linkcolor=black,
     urlcolor=smubrand
 }
-\usepackage[all]{hypcap} % anchors \ref to top of float, not caption
 
-% --- PAGE BORDER ---
-% Thin black border around all pages (matching Neeyati's format: single 0.5pt, 24pt from edge)
+\usepackage[all]{hypcap}  % Anchors \ref to top of float, not caption
+
+
+% ==============================================================================
+% 11. HEADERS & FOOTERS
+% ==============================================================================
+% Page numbering style — footer only, no header
+% Format: "Page X of Y" in gray
+
+\usepackage{fancyhdr}
+\usepackage{totpages}
+
+\pagestyle{fancy}
+\fancyhf{}  % Clear all headers/footers
+
+% Footer: centered page number "X of Y" in gray
+\fancyfoot[C]{\textcolor[HTML]{7F7F7F}{\thepage~of~\ref{TotPages}}}
+
+% No header rule, light gray footer rule
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\footrule}{\hbox to\headwidth{\color[HTML]{D9D9D9}\leaders\hrule height \footrulewidth\hfill}}
+
+% Plain style (chapter-opening pages) — same footer
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[C]{\textcolor[HTML]{7F7F7F}{\thepage~of~\ref{TotPages}}}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+% ==============================================================================
+% 12. PAGE BORDER
+% ==============================================================================
+% Thin black border around all pages
+% Matching Neeyati's format: 0.5pt line, ~24pt (0.85cm) from edge
+
 \usepackage{tikz}
 \usepackage{eso-pic}
+
 \AddToShipoutPictureBG{%
   \begin{tikzpicture}[overlay, remember picture]
     \draw[color=black, line width=0.5pt]
@@ -259,56 +435,7 @@
   \end{tikzpicture}%
 }
 
-% --- FOOTER STYLE (no header — footer only, matching Neeyati's format) ---
-\pagestyle{fancy}
-\fancyhf{}
-\fancyfoot[C]{\textcolor[HTML]{7F7F7F}{\thepage~of~\pageref{LastPage}}}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0.4pt}
-\renewcommand{\footrule}{\hbox to\headwidth{\color[HTML]{D9D9D9}\leaders\hrule height \footrulewidth\hfill}}
 
-% Plain style (chapter-opening pages) — same footer, no header
-\fancypagestyle{plain}{%
-  \fancyhf{}
-  \fancyfoot[C]{\textcolor[HTML]{7F7F7F}{\thepage~of~\pageref{LastPage}}}
-  \renewcommand{\headrulewidth}{0pt}
-  \renewcommand{\footrulewidth}{0.4pt}
-}
-
-% Caption setup: reduce space between caption and table/figure
-\captionsetup{margin=10pt,font={small,it},labelfont=bf,skip=2pt}
-% Tables: caption above (standard academic convention)
-\captionsetup[table]{position=above,skip=2pt}
-% Figures: caption below (standard academic convention)
-\captionsetup[figure]{position=below,skip=2pt}
-
-
-% --- CUSTOM CHAPTER HEADING OVERRIDES (SMU MAROON THEME) ---
-\makeatletter
-
-% Remove \clearpage from chapter command — chapters continue on same page
-\patchcmd{\chapter}{\clearpage}{}{}{}
-\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
-
-% Shared helper — 16pt baseline, bold, maroon, centered, ALL CAPS
-% Neeyati Heading 1: before=2pt, after=12pt
-% Space before chapter should account for parskip from previous paragraph
-\def\@chapterheadingline#1{%
-  \vskip 4\p@  % Space before chapter heading
-  {\parindent \z@ \centering
-   \interlinepenalty\@M
-   \fontsize{16}{16}\selectfont \bfseries \textcolor{smubrand}{#1}\par\nobreak
-   \vskip 2\p@}%  % Space after chapter heading
-}
-
-% Numbered chapters: "1. CHAPTER TITLE"
-\def\@makechapterhead#1{%
-  \@chapterheadingline{\thechapter.\enspace \MakeUppercase{#1}}%
-}
-
-% Unnumbered chapters (Acknowledgement, TOC, etc.): "CHAPTER TITLE"
-\def\@makeschapterhead#1{%
-  \@chapterheadingline{\MakeUppercase{#1}}%
-}
-
-\makeatother
+% ==============================================================================
+% END OF INCLUDES.TEX
+% ==============================================================================

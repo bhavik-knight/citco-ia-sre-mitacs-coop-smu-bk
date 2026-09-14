@@ -13,7 +13,7 @@
 \section{Project Background and the Motivating Incident}
 \label{sec:project_background}
 
-This section describes the observability gaps that existed before my co-op placement and the two critical incidents that directly motivated the monitoring programme I was assigned to build.
+This section describes the observability gaps that existed before my co-op placement and the two critical incidents that directly motivated the monitoring program I was assigned to build.
 
 \subsection{Pre-Co-op Placement Monitoring Posture}
 
@@ -35,14 +35,13 @@ In early 2026, the GenAI pipeline (a Citco Alternative Investment Services --- C
 under the \texttt{rpacfs1} platform stopped delivering output for
 nearly a month without a single alert firing. The root cause
 was gradual exhaustion of an external API token, which
-caused downstream Lambda functions to drop to zero
-invocations while upstream functions kept running, making the pipeline
+caused downstream Lambda invocations to drop to zero while upstream functions kept running, making the pipeline
 appear healthy. The outage was detected only when business users reported
 missing pricing data. The post-mortem
 identified the absence of throughput alarms, SQS queue depth monitoring,
 and end-to-end output verification as the root causes of the failure going
 unnoticed. A sub-task was assigned directly to me as the immediate
-remediation and became the starting point for the full monitoring programme.
+remediation and became the starting point for the full monitoring program.
 
 \subsection{The Meridian Incident (Apr~2026)}
 
@@ -56,7 +55,7 @@ first failure signal. The post-mortem recorded: \textit{``No proactive
 monitoring/alerting in place on the SRE side for Meridian event volume
 anomalies.''} This became the primary driver for the centralized dashboard project.
 
-\subsection{From Incident to Programme}
+\subsection{From Incident to Program}
 
 Both incidents shared the same root cause: no proactive monitoring. The
 post-mortems established two specific gaps --- no Kafka consumer lag alarm,
@@ -79,27 +78,23 @@ work streams were pursued, each directly motivated by the findings and
 limitations of the previous, as summarized in Table~\ref{tab:deliverables_summary}. Full technical scope and acceptance criteria
 for each deliverable are documented in Chapter~\ref{chap:project_goals}.
 
-\begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}p{0.25\textwidth}X@{\hspace{\tabcolsep}}}
-\caption{Project Deliverables Summary} \label{tab:deliverables_summary} \\
+\begin{table}[htbp]
+\centering
+\caption{Project Deliverables Summary}
+\label{tab:deliverables_summary}
+\begin{tabular}{>{\centering\arraybackslash}p{0.15\textwidth} p{0.70\textwidth}}
 \hline
 \rowcolor{smubrand}\textcolor{white}{\textbf{Work Stream}} & \textcolor{white}{\textbf{Deliverable Scope}} \\
 \hline
-\endfirsthead
+\rowcolor{tablerowA} WS1 & CloudWatch Lambda Monitoring Dashboard and inventory \\
+\rowcolor{tablerowB} WS2 & Centralized Amazon Managed Grafana Dashboard \\
+\rowcolor{tablerowA} WS3 & IA Infrastructure Inventory API \\
+\rowcolor{tablerowB} WS4 & RPA Production Support Incidents \\
+\rowcolor{tablerowA} WS5 & RPA LLM Agent --- Ask Citco RPA \\
+\rowcolor{tablerowB} WS6 & Citco Enterprise Custom UI Dashboards \\
 \hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Work Stream}} & \textcolor{white}{\textbf{Deliverable Scope}} \\
-\hline
-\endhead
-\hline
-\endfoot
-\rowcolors{2}{tablerowA}{tablerowB}
-WS1 & CloudWatch Lambda Monitoring Dashboard and inventory \\
-WS2 & Centralized Amazon Managed Grafana Dashboard \\
-WS3 & IA Infrastructure Inventory API \\
-WS4 & RPA Production Support Incidents \\
-WS5 & RPA LLM Agent --- Ask Citco RPA \\
-WS6 & Citco Enterprise Custom UI Dashboards \\
-\hline
-\end{tabularx}
+\end{tabular}
+\end{table}
 
 \subsection{Work Stream 1: CloudWatch Dashboards and IA Infrastructure Monitoring}
 
@@ -151,7 +146,7 @@ the development team with documented findings.
 \subsection{Work Stream 5: RPA LLM Agent --- Ask Citco RPA}
 
 This work stream involved a production quality and reliability improvement
-programme for the \textbf{Ask Citco RPA} chatbot --- a RAG pipeline using
+program for the \textbf{Ask Citco RPA} chatbot --- a RAG pipeline using
 Amazon Bedrock, OpenSearch Serverless, and 11 Lambda functions. The scope
 covered production bug resolution, code quality improvements, structured
 logging migration, and X-Ray distributed tracing instrumentation.

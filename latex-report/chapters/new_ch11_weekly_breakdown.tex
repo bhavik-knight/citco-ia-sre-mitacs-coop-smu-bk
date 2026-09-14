@@ -7,7 +7,7 @@
 \chapter{Weekly Implementation Breakdown}
 \label{chap:weekly_breakdown}
 
-This chapter documents the work delivered each week across the 24-week
+This chapter documents the work I delivered each week across the 24-week
 co-op placement (March~15 -- August~31, 2026). Weeks~1--4 operated at part-time
 intensity ($\sim$15--20~h/week) while balancing university coursework;
 full-time engagement ($\sim$40~h/week) began in Week~5.
@@ -21,18 +21,21 @@ full-time engagement ($\sim$40~h/week) began in Week~5.
 \section{Week 1}
 \label{sec:week1}
 
-Week~1 marked the formal start of the co-op placement with Day-1 orientation
-on March~16. I joined the Intelligent Automation SRE team at Citco Technology Management alongside co-interns
-Mr.\ Vadla and Ms.\ Venkataraman. The introductory meeting with manager Mr.\ Deotale gave me a comprehensive overview
-of the team structure, the six IA budget code platforms I would be monitoring, and the co-op placement expectations. Senior mentors Mr.\ Leung and Ms.\ Labos introduced themselves and outlined their roles: Mr.\ Leung as the RPA Platform Lead and Ms.\ Labos as the SRE engineer who would be my primary technical mentor for the monitoring work.
+Week~1 marked the formal start of the co-op placement with Day-1 orientation alongside co-interns Mr.\ Vadla and Ms.\ Venkataraman.
 
-My first task was establishing access to Citco's development infrastructure. I raised access request tickets for Confluence (ticket \#14193911), JIRA (\#14193674 and \#14193943), and BitBucket (\#14196961) through the internal ticketing system. AWS Core Dev access was initiated through the IDM portal and required a separate approval chain. I installed the full local development toolchain: VSCode with Python and AWS Toolkit extensions, Git with SSH key configuration, PyCharm for Python development, Postman for API testing, and the Amazon Q plugin for AI-assisted coding. The Amazon Q setup required a Builder ID registration and served as my first introduction to AI-augmented development tooling at Citco.
+\textbf{Team Introduction and Placement Overview:}
+I joined the Intelligent Automation SRE team at Citco Technology Management. The introductory meeting with my manager Mr.\ Deotale gave me a comprehensive overview of the team structure, the six IA \texttt{budget\_code} platforms I would be monitoring, and the co-op placement expectations. Senior mentors Mr.\ Leung and Ms.\ Labos introduced themselves and outlined their roles: Mr.\ Leung as the RPA Platform Lead and Ms.\ Labos as the SRE engineer who would be my primary technical mentor for the monitoring work.
 
-On March~19, I attended a security briefing with Mr.\ Deotale, Mr.\ Ivan Carlo, and Ms.\ Maria, covering the BPM Control Questionnaire as part of the annual security review process. This session gave me foundational context about Citco's security posture that I would carry throughout the placement. Key topics covered included: Active Directory integration for role-based authorisation across all Citco systems; the recent authentication migration from SiteMinder to Ping Identity; penetration testing procedures (the last BPM pentest was April~2024, conducted by the Red Team on UAT only to protect production uptime); and the access logging infrastructure built on ELK stack (Kibana, ElasticSearch) with 7--14 day log retention policies. I also learned about Dynatrace application monitoring for anomaly detection and alerting --- knowledge that would become directly relevant when I later evaluated Dynatrace parity as a framing question for the Grafana AMG dashboard work.
+\textbf{Access Requests and Development Environment Setup:}
+My first task was establishing access to Citco's development infrastructure. I raised access request tickets for Confluence, JIRA, and BitBucket through the internal ticketing system. I initiated AWS Core Dev access through the IDM portal, which required a separate approval chain. I installed the full local development toolchain: VSCode with Python and AWS Toolkit extensions, Git with SSH key configuration, PyCharm for Python development, Postman for API testing, and the Amazon Q plugin for AI-assisted coding. The Amazon Q setup required a Builder ID registration and served as my first introduction to AI-augmented development tooling at Citco.
 
-On March~20, I participated in an introductory call on Amazon Q and the Amazon Tools ecosystem, which included a walkthrough of the AWS developer toolchain available to the team. I familiarised myself with the Citco JIRA board (\texttt{IISS} project), read the team's active Confluence pages covering the IA platform overview, and reviewed the existing tickets on the board to understand what work was in progress before my arrival. I attended the team's daily standup for the first time and began syncing with Mr.\ Vadla and Ms.\ Venkataraman on our shared onboarding progress.
+\textbf{Security Briefing and Compliance Context:}
+I attended a security briefing with Mr.\ Deotale, Mr.\ Ivan Carlo, and Ms.\ Maria, covering the BPM Control Questionnaire as part of the annual security review process. This session gave me foundational context about Citco's security posture that I would carry throughout the placement. Key topics included: Active Directory integration for role-based authorization across all Citco systems; the recent authentication migration from SiteMinder to Ping Identity; penetration testing procedures (the last BPM pentest was conducted by the Red Team on UAT only to protect production uptime); and the access logging infrastructure built on the ELK stack (Kibana, Elasticsearch) with 7--14~day log retention policies. I also learned about Dynatrace application monitoring for anomaly detection and alerting---knowledge that would become directly relevant when I later evaluated Dynatrace parity as a framing question for the Grafana AMG dashboard work.
 
-By the end of Week~1, all access requests were submitted and in progress, the local development environment was fully operational, and I had a working understanding of Citco's security posture, the IA platform scope, and the team's operational rhythm.
+\textbf{AWS Tooling Introduction and Team Integration:}
+I participated in an introductory call on Amazon Q and the Amazon Tools ecosystem, which included a walkthrough of the AWS developer toolchain available to the team. I familiarized myself with the Citco JIRA board (\texttt{IISS} project), read the team's active Confluence pages covering the IA platform overview, and reviewed the existing tickets on the board to understand what work was in progress before my arrival. I attended the team's daily standup for the first time and began syncing with Mr.\ Vadla and Ms.\ Venkataraman on our shared onboarding progress.
+
+By the end of Week~1, all access requests were submitted and in progress, my local development environment was fully operational, and I had a solid understanding of Citco's security posture, the IA platform scope, and the team's operational rhythm.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 2
@@ -45,13 +48,17 @@ By the end of Week~1, all access requests were submitted and in progress, the lo
 
 With access requests progressing through the approval queue, Week~2 shifted to intensive self-directed AWS learning. Dr.\ Pawan had confirmed that the part-time schedule would continue through mid-April while my university courses were running, so I structured these early weeks around building the AWS knowledge foundation I would need before taking on my first JIRA tickets.
 
-I completed a structured study of the full AWS database portfolio, working through both official AWS documentation and hands-on exploration via the team's Confluence resources. For relational databases I studied Amazon RDS (including Single-AZ and Multi-AZ high availability configurations, read replicas, and automated failover), Amazon Aurora (auto-scaling clusters and the performance advantages over standard RDS for OLTP workloads), and Amazon Redshift (columnar storage, Redshift Spectrum for semi-structured data, and its positioning as an OLAP warehouse rather than a transactional database). For NoSQL options I studied DynamoDB (schema-less design, partition key selection, and the tradeoffs between strongly and eventually consistent reads) and DocumentDB (MongoDB-compatible API, collections vs tables, and its use at Citco for document-oriented workloads).
+\textbf{AWS Database Portfolio Study:}
+I completed a structured study of the full AWS database portfolio, working through both official AWS documentation and hands-on exploration via the team's Confluence resources. For relational databases, I studied Amazon RDS (including Single-AZ and Multi-AZ high availability configurations, read replicas, and automated failover), Amazon Aurora (auto-scaling clusters and the performance advantages over standard RDS for OLTP workloads), and Amazon Redshift (columnar storage, Redshift Spectrum for semi-structured data, and its positioning as an OLAP warehouse rather than a transactional database). For NoSQL options, I studied DynamoDB (schema less design, partition key selection, and the trade-offs between strongly and eventually consistent reads) and DocumentDB (MongoDB-compatible API, collections vs tables, and DocumentDB's use at Citco for document-oriented workloads).
 
+\textbf{Neptune Graph Database and CitcoWorks Context:}
 The Neptune graph database study was particularly relevant. I learned that CitcoWorks uses a Neptune graph database to store the full L1-to-L5 entity hierarchy of client, fund, and process relationships that governs event routing across the IA platform. I studied both Gremlin (property graph traversal using vertex/edge/property model) and SPARQL (RDF triple pattern matching for semantic data integration), understanding when each is appropriate: Gremlin for application-level graph traversal, SPARQL for standards-based semantic integration. This distinction proved relevant when I later worked on the RPA LLM Agent, which uses Neptune as a potential graph layer for Hybrid Graph-RAG retrieval.
 
-I also studied Amazon TimeStream (serverless time-series database for IoT and operational metrics), Amazon QLDB (immutable ledger database for audit-grade transaction logs), and Amazon ElastiCache including both Redis (advanced data structures, pub/sub messaging, geospatial support, cluster mode with multiple primary nodes) and Memcached (simpler multi-threaded caching without data replication). The Redis study was directly applicable to the dashboard work: the IA platform uses Redis/Valkey clusters for caching, and I built the Redis monitoring row in Week~11.
+\textbf{Caching and Time-Series Databases:}
+I also studied Amazon Timestream (serverless time-series database for IoT and operational metrics), Amazon QLDB (immutable ledger database for audit-grade transaction logs), and Amazon ElastiCache including both Redis (advanced data structures, pub/sub messaging, geospatial support, cluster mode with multiple primary nodes) and Memcached (simpler multi-threaded caching without data replication). The Redis study was directly applicable to the dashboard work: the IA platform uses Redis/Valkey clusters for caching, and I built the Redis monitoring row in Week~11.
 
-CloudWatch and CloudFormation consumed the second half of Week~2. For CloudWatch I studied the CMAA operational cycle (Collect, Monitor, Act, Analyze), the difference between EC2 1-minute detailed monitoring and 5-minute basic monitoring, log retention policy configuration, alarm types (metric alarms for single metrics, composite alarms for aggregated state), and EventBridge integration for alarm state routing. For CloudFormation I covered the core IaC primitives: template structure (YAML and JSON), stack lifecycle management, and change sets for controlled update previewing. I immediately applied this knowledge in Week~3's first dashboard ticket.
+\textbf{CloudWatch and CloudFormation Foundations:}
+CloudWatch and CloudFormation consumed the second half of Week~2. For CloudWatch, I studied the CMAA operational cycle (Collect, Monitor, Act, Analyze), the difference between EC2 1-minute detailed monitoring and 5-minute basic monitoring, log retention policy configuration, alarm types (metric alarms for single metrics, composite alarms for aggregated state), and EventBridge integration for alarm state routing. For CloudFormation, I covered the core IaC primitives: template structure (YAML and JSON), stack lifecycle management, and change sets for controlled update previewing. I immediately applied this knowledge in Week~3's first dashboard ticket.
 
 By the end of Week~2, I had a working knowledge of the full AWS services landscape used by the IA platform, and I understood the CloudWatch and CloudFormation primitives I would be using extensively from Week~3 onward.
 
@@ -66,13 +73,16 @@ By the end of Week~2, I had a working knowledge of the full AWS services landsca
 
 Week~3 was when I transitioned from learning to active delivery, with my first assigned task: the CTI CloudWatch Pipeline Dashboard. This was a CloudWatch pipeline health dashboard for the \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure} repository, specifically targeting the CAIS Pricing Extract (CTI) submission pipeline.
 
-On March~30 I began implementing the dashboard. I first added CloudWatch metrics instrumentation to the \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure} codebase to track CTI submission activities within the pipeline. Rather than placing metrics calls inline throughout the business logic, I refactored the instrumentation into a dedicated metrics module, which made the metrics configuration testable and maintainable independently of the pipeline logic. I created the Pipeline Health Dashboard itself with CloudWatch native widgets covering the core health signals for the CAIS pricing extract workflow. I updated the \texttt{.gitignore} to exclude virtual environment directories, pytest cache, and test artifacts --- basic repository hygiene that the codebase was missing. I also updated the dashboard configuration to meet the acceptance criteria I had been given: 1-hour metric granularity, a 7-day time range, and auto-refresh enabled so the team would see live pipeline status without manual page refreshes.
+\textbf{Dashboard Implementation and Metrics Instrumentation:}
+I began implementing the dashboard. I first added CloudWatch metrics instrumentation to the \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure} codebase to track CTI submission activity through the pipeline. Rather than placing metrics calls inline throughout the business logic, I refactored the instrumentation into a dedicated metrics module, which made the instrumentation testable and maintainable independently of the pipeline logic. I created the Pipeline Health Dashboard itself with CloudWatch native widgets covering the core health signals for the CAIS pricing extract workflow. I updated the \texttt{.gitignore} to exclude virtual environment directories, pytest cache, and test artifacts---basic repository hygiene that the codebase was missing. I also updated the dashboard configuration to meet the acceptance criteria I had been given: 1-hour metric granularity, a 7-day time range, and auto-refresh enabled so the team would see live pipeline status without manual page refreshes.
 
-On March~31, I added a technical investigation layer: a CloudWatch Logs Insights widget that enabled operators to drill into raw Lambda execution logs when the health metrics indicated a problem. The Logs Insights widget used a pattern-matched query against the \texttt{/aws/lambda/} log group prefix to surface error patterns directly in the dashboard, rather than requiring the operator to navigate to CloudWatch Logs and write a query manually. I added screenshots of the Logs Insights query setup to the PR documentation so the team could reproduce the configuration in other environments.
+\textbf{Logs Insights Investigation Widget:}
+I added a technical investigation layer: a CloudWatch Logs Insights widget that enabled operators to drill into raw Lambda execution logs when the health metrics indicated a problem. The Logs Insights widget used a pattern-matched query against the \texttt{/aws/lambda/} log group prefix to surface error patterns directly in the dashboard, rather than requiring the operator to navigate to CloudWatch Logs and write a query manually. I added screenshots of the Logs Insights query setup to the pull request description so the team could reproduce the configuration in other environments.
 
-On April~1, I completed the testing phase. I wrote unit tests for the Logs Insights query functionality, CloudFormation template validation tests (checking that the template schema was valid before deployment), and ran the full test suite to confirm no regressions. I also applied code quality improvements identified during writing the tests: moving all import statements to the top of files following Python best practices, and adding type hints to function signatures to enable better IDE support and early error detection.
+\textbf{Testing and Code Quality:}
+I completed the testing phase. I wrote unit tests for the Logs Insights query functionality, CloudFormation template validation tests (checking that the template schema was valid before deployment), and ran the full test suite to confirm no regressions. I also applied code quality improvements identified while writing the tests: moving all import statements to the top of files following Python best practices, and adding type hints to function signatures to enable better IDE support and early error detection.
 
-By the end of Week~3, the CTI CloudWatch Pipeline Dashboard was ready for PR review. The dashboard covered the CTI pipeline health signals, the Logs Insights investigation widget was functional, the test suite was passing, and the repository was in a clean state for code review. This was my first complete delivery cycle at Citco --- task assignment to implementation to tests to PR --- and it established the quality baseline I would maintain for all subsequent work.
+By the end of Week~3, the CTI CloudWatch Pipeline Dashboard was ready for pull request review. The dashboard covered the CTI pipeline health signals, the Logs Insights investigation widget was functional, the test suite was passing, and the repository was in a clean state for code review. This was my first complete delivery cycle at Citco---task assignment to implementation to tests to pull request---and it established the quality baseline I would maintain for all subsequent work.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 4
@@ -84,17 +94,16 @@ By the end of Week~3, the CTI CloudWatch Pipeline Dashboard was ready for PR rev
 \label{sec:week4}
 
 In Week~4, the focus was on completing the IA Lambda Monitoring Dashboard,
-addressing PR review feedback, and delivering structured Lambda inventory
+addressing pull request review feedback, and delivering structured Lambda inventory
 documentation on Confluence.
 
 \textbf{Merging the CTI Dashboard and Pivoting to Lambda Monitoring:} 
-The week opened on
-April~6 with the successful merge of CTI CloudWatch Pipeline Dashboard
+The week opened with the successful merge of the CTI CloudWatch Pipeline Dashboard
 into the \texttt{release/SRE} branch, closing the first JIRA ticket of
-the co-op placement. I immediately transitioned to IA Lambda Monitoring Dashboard, which required
+the co-op placement. I immediately transitioned to the IA Lambda Monitoring Dashboard, which required
 building a monitoring solution covering all 51 Lambda functions across
 the \texttt{rpacfs1} and \texttt{ia-bpo} platforms. Unlike the CTI
-dashboard, which targeted a single pipeline, IA Lambda Monitoring Dashboard needed to serve
+dashboard, which targeted a single pipeline, the IA Lambda Monitoring Dashboard needed to serve
 the entire IA Lambda fleet with a single unified view.
 
 \textbf{Dashboard Architecture and Widget Design:} 
@@ -110,9 +119,9 @@ CloudWatch Logs Insights investigation widget), duration metrics
 The unit test suite reached 21 tests covering dashboard builder
 validation and widget contract enforcement.
 
-\textbf{PR Review and Refinement:} 
-On April~8, Mr.\ Leung conducted
-a detailed PR review. Feedback focused on widget layout usability and
+\textbf{Pull Request Review and Refinement:} 
+Mr.\ Leung conducted
+a detailed pull request review. His feedback focused on widget layout usability and
 filter propagation behavior. I addressed all comments, refined the
 widget grid, and added test cases for edge cases identified during the
 review. This review interaction introduced me to the team's standard for
@@ -121,15 +130,14 @@ sufficient---the operational user experience mattered equally.
 
 \textbf{Confluence Lambda Inventory:} 
 In parallel with the
-PR review, I created Lambda Inventory documentation as a subtask to document the Lambda
-inventory on Confluence. The published page cataloged all 51 functions
+pull request review, I created the Lambda Inventory Confluence page as a supporting subtask. The published page cataloged all 51 functions
 with trigger mappings (S3, SQS, EventBridge, API Gateway), memory
-configurations, timeout settings, runtime versions, and budget code
+configurations, timeout settings, runtime versions, and \texttt{budget\_code}
 allocations for cost tracking. This page became the authoritative
 reference for the team during subsequent dashboard and support work.
 
-By the end of Week~4, The CTI CloudWatch Pipeline Dashboard work was completed and merged, IA Lambda Monitoring Dashboard
-delivered a 51-function Lambda dashboard with a passing test suite, and
+By the end of Week~4, the CTI dashboard was merged, the IA Lambda Monitoring Dashboard
+delivered a 51-function Lambda fleet view with a passing test suite, and
 the Lambda inventory documentation was live on Confluence---completing
 the part-time phase and setting the stage for full-time engagement.
 
@@ -149,20 +157,19 @@ co-op placement. It also included a critical production incident that would shap
 the entire direction of the Centralized Amazon Managed Grafana (AMG) Dashboard.
 
 \textbf{RPA Support Model Knowledge Transfer (Mr.\ Leung):} 
-Mr.\ Leung (Mr.\ Leung)
-conducted a comprehensive session on the RPA operational model. I learned the
+Mr.\ Leung conducted a comprehensive session on the RPA operational model. I learned the
 Blue Prism and UiPath platform architectures, pool and queue mechanics, and
 the VPL queue monitoring cadence (checked at 5:00~PM EST daily). The session
 covered the Corporate Actions three-track workflow (Mandatory, Voluntary, and
 Ops Transfer), and the Follow-the-Sun escalation ladder that governs how
-incidents are handed between APAC, EMEA, and NA teams. This session directly
+incidents are handed off between APAC, EMEA, and NA teams. This session directly
 prepared me for the RPA support rotations beginning in Week~8.
 
 \textbf{CitcoWorks and Event Store (Mr.\ Murari):} 
 Mr.\ Murari introduced
 the CitcoWorks Knowledge Graph---a Neptune graph database storing the full
 L1-to-L5 entity hierarchy used across all Citco fund services. He walked
-through the Event Routing Service and Action Processor deployment model,
+through the Event Routing Service and Action Processor deployment model
 and provided hands-on guidance on the Event Store structured logging library.
 Understanding the mandatory fields (\texttt{subject}, \texttt{process\_identifier},
 \texttt{run\_id}) proved essential when validating log events in later
@@ -174,26 +181,25 @@ covered the three-stage Kafka event pipeline (Event Routing Service to MSK
 topics, MSK to OpenSearch Consumer, OpenSearch to AXI), the six ECS clusters
 hosting Meridian services, and consumer lag as the primary health signal.
 The \AE xeo session explained cloud-based wire approval and fund movement
-via COMAPI and the \AE xeo Reporter Server REST API---workloads central
+via COMAPI and the \AE xeo Reporter Server REST API---capabilities central
 to MESO and E-Binder reconciliation processes.
 
-\textbf{Dev Work and Meridian Production Incident (April~13 and April~17):} 
-Despite the training schedule, I completed development on April~13 by
-refactoring the Lambda monitoring dashboard to a multi-dashboard architecture
+\textbf{Dev Work and Meridian Production Incident:} 
+Despite the training schedule, I completed development work, refactoring the Lambda monitoring dashboard to a multi-dashboard architecture
 with explicit Lambda list filtering and adding error investigation capabilities.
-On April~17 (Friday afternoon), the Meridian Incident occurred while I was
+A Meridian production incident occurred while I was
 completing the final training session: a surge of automated events from
 Citco Recs congested the OpenSearch consumption layer, causing approximately
-nine million Kafka messages to queue and halting daily statement processing
+nine million Kafka messages to accumulate and halting daily statement processing
 for 7.5 hours. The detection latency alone was 3.5 hours because no MSK
 consumer lag alarm existed. Observing the post-incident discussion in real
 time crystallized the monitoring gap I would spend the next ten weeks closing.
-The Dashboard Extension and API Refactoring was completed this week and the Grafana AMG Dashboard scope was formally defined.
+I also formally scoped the Grafana AMG Dashboard work during this week.
 
-By the end of Week~5, I had completed the formal KT programme, delivered
+By the end of Week~5, I had completed the formal KT program, delivered
 a multi-dashboard architecture refactor, and directly witnessed the production
 incident that established \texttt{EstimatedMaxTimeLag} as the primary MSK
-SLI and drove the creation of the Centralized Amazon Managed Grafana (AMG) Dashboard.
+SLI and drove creation of the Centralized Amazon Managed Grafana (AMG) Dashboard.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 6
@@ -206,63 +212,57 @@ SLI and drove the creation of the Centralized Amazon Managed Grafana (AMG) Dashb
 
 In Week~6, the focus was on extending the CloudWatch monitoring platform
 beyond Lambda to EC2, ECS, and EKS resources, creating the centralized
-\texttt{ia-resources-monitoring} repository, and formally creating
-the centralized AMG dashboard story.
+\texttt{ia-resources-monitoring} repository, and formally scoping
+the Centralized AMG Dashboard.
 
 \textbf{Dashboard Extension and API Refactoring:} 
 The week
-opened with Dashboard Extension and API Refactoring work: adding a metric filters generator, implementing
+opened with dashboard extension and API refactoring work: adding a metric filters generator, implementing
 dashboard export functionality with per-widget CSV files and a combined
 XLSX report, and converting the Lambda registry from a FastAPI service
 to a Flask application with Swagger documentation. I renamed
 \texttt{lambda\_registry\_api} to \texttt{resources\_monitoring\_api}
 to reflect its broader scope and added an S3 export endpoint with
-versioned Lambda list saving. Trigger source detection was added,
-identifying whether each Lambda function is invoked by SQS, API Gateway,
-or EventBridge. The test suite reached 262 passing tests with a clean
+versioned Lambda list saving. I added trigger source detection to identify
+whether each Lambda function is invoked by SQS, API Gateway, or EventBridge. The test suite reached 262 passing tests with a clean
 pyright status.
 
 \textbf{EC2, ECS, and EKS Resource Discovery:} 
 I extended the API to cover EC2 instances, ECS services, and EKS
-clusters. During EC2 discovery I identified the \texttt{rpacfs1} tagging
-inconsistency---the fleet uses \texttt{BudgetCode="CFS/RPA"} rather than
+clusters. During EC2 discovery, I identified the \texttt{rpacfs1} tagging
+inconsistency---the fleet uses \texttt{budget\_code="CFS/RPA"} rather than
 the expected \texttt{"rpacfs1"} value---and introduced the
-\texttt{AppName} fallback pattern as the standard workaround. EC2 response
-models were enriched with \texttt{availability\_zone} and \texttt{tags}
-fields. The \texttt{registry} package was refactored into per-resource
-sub-modules for long-term maintainability.
+\texttt{AppName} fallback pattern as the standard workaround. I enriched the EC2 response models with \texttt{availability\_zone} and \texttt{tags}
+fields. I refactored the \texttt{registry} package into per-resource
+submodules for long-term maintainability.
 
 \textbf{ia-resources-monitoring Repository Creation:} 
-On
-April~24---the most commit-dense day of the co-op placement with 39 commits
+On the most commit-dense day of the co-op placement with 39 commits
 across two repositories---I set up the centralized \texttt{ia-resources-monitoring}
-repository. All three monitoring packages (Lambda, EC2, and the API)
-were migrated from \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure}
-into this dedicated repository. Code quality tooling was established:
+repository. I migrated all three monitoring packages (Lambda, EC2, and the API)
+from \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure}
+into this dedicated repository. I established code quality tooling:
 Ruff linting, mypy type checking, deptry dependency hygiene, and
-pre-commit hooks. The \texttt{ia\_paths.py} module was introduced to
-eliminate all \texttt{sys.path.insert} calls and a unified
-\texttt{main.py} CLI entry point provided access to all deployment
-and dashboard generation commands. The \texttt{release/SRE} branch
-was merged to master, making this the first production deployment
+pre-commit hooks. I introduced the \texttt{ia\_paths.py} module to
+eliminate all \texttt{sys.path.insert} calls and created a unified
+\texttt{main.py} CLI entry point providing access to all deployment
+and dashboard generation commands. I merged the \texttt{release/SRE} branch
+to master, making this the first production deployment
 from the new repository.
 
 \textbf{Story Creation:} 
-Following the Week~5 Meridian Incident
+Following the Week~5 Meridian production incident
 and the emerging need for a platform-wide observability solution, I met
-with Mr.\ Deotale to formally scope and create the Centralized Amazon Managed Grafana (AMG) Dashboard --- the
-Grafana AMG Infrastructure Monitoring Dashboard. I created the story
+with Mr.\ Deotale to formally scope the Centralized Amazon Managed Grafana (AMG) Infrastructure Monitoring Dashboard. I created the story
 with requirements drafted to cover all Meridian-platform AWS services
 and address the MSK consumer lag gap that had caused the incident.
 
 By the end of Week~6, the CloudWatch monitoring platform covered four
 resource types, the centralized repository was established and
-production-deployed, and The Centralized Amazon Managed Grafana (AMG) Dashboard was formally created with an
-agreed scope and priority.
+production-deployed, and the Centralized Amazon Managed Grafana (AMG) Dashboard was formally scoped and prioritized.
 
 \textbf{Technical Challenges Resolved:} 
-Two infrastructure issues were
-resolved during the migration day. The \texttt{moto[all]} dependency
+I resolved two infrastructure issues during the migration day. The \texttt{moto[all]} dependency
 triggered SSL certificate download failures on Windows; switching to
 specific service extras (\texttt{moto[s3,lambda,ec2]}) resolved this.
 CloudFormation YAML files using \texttt{!Sub} and \texttt{!Ref} tags
@@ -286,44 +286,43 @@ across all packages, and pushing the overall test coverage above the
 
 \textbf{ECS Monitoring Dashboard:} 
 I built the \texttt{ia\_ecs\_monitoring\_dashboard}
-package from scratch on April~27, including health and performance
+package from scratch, including health and performance
 dashboards, YAML widget definitions, CloudFormation templates, export
 functionality, and deploy support scripts. A key technical decision was
 replacing SQL arithmetic operations in health widgets with native
 \texttt{PendingTaskCount} metrics after discovering that CloudWatch
 Metrics Insights does not support arithmetic in certain widget modes.
-On April~30, CPU and Memory reservation widgets were added alongside a
+I added CPU and memory reservation widgets alongside a
 service inventory table, giving operational teams both capacity and
 inventory views in a single dashboard.
 
 \textbf{EKS Monitoring Dashboard:} 
 The EKS dashboard was
-completed on April~28, then substantially revised on May~1 to switch
+completed, then substantially revised to switch
 from custom-namespace queries to the official \texttt{AWS/EKS} control
 plane metrics. The EKS discovery scope was subsequently narrowed: only
-one active EKS cluster (\texttt{uipath-eks-cluster-01}, AUTOMATIONHUB
-budget code) exists and it was idle at the time. The cluster was noted
+one active EKS cluster (\texttt{uipath-eks-cluster-01}, AutomationHub
+\texttt{budget\_code}) exists and it was idle at the time. The cluster was noted
 for future activation and the dashboard placed in a ready-but-deferred
-state. EKS widget YAMLs were split to one file per row for consistency
-with the ECS structure, and test coverage for the EKS package reached
+state. I split EKS widget YAMLs to one file per row for consistency
+with the ECS structure, and pushed test coverage for the EKS package to
 81\%.
 
 \textbf{Structured Logging and Test Coverage Milestone:} 
-On May~1 I replaced all \texttt{print} statements and \texttt{disable\_warnings}
+I replaced all \texttt{print} statements and \texttt{disable\_warnings}
 calls across the API, EKS, ECS, EC2, and Lambda packages with
 \texttt{structlog} structured logging, providing consistent log output
-across all components. The test suite was then pushed from 67\% to
-81\% coverage (830 tests) in three incremental PRs, crossing the
-80\% target committed in the IA Infrastructure Monitoring Platform acceptance criteria.
+across all components. I pushed the test suite from 67\% to
+81\% coverage (830 tests) across three incremental pull requests, crossing the
+80\% target set in the IA Infrastructure Monitoring Platform acceptance criteria.
 
-\textbf{Dashboard Header Standardisation and EC2 Polish:} 
-Dashboard headers were standardized across all four resource types,
+\textbf{Dashboard Header Standardization and EC2 Polish:} 
+I standardized dashboard headers across all four resource types,
 enforcing a consistent visual language. EC2 dashboard improvements
 included Fleet Status, EBS metrics, the \texttt{AppName} fallback
 for discovery, correct header height, Credit Balance widget on
 the health dashboard, and annotations with AVG line on the
-performance dashboard. Trailing spaces were added to markdown
-headers to force CloudWatch's text widget line-break rendering.
+performance dashboard. I added trailing spaces to Markdown headers to ensure correct line-break rendering in CloudWatch text widgets.
 
 By the end of Week~7, the CloudWatch monitoring platform was
 complete across Lambda, EC2, ECS, and EKS; 830 tests passed at
@@ -332,17 +331,17 @@ packages; and the repository was production-merged for the
 second time, closing the IA Infrastructure Monitoring Platform sub-stories.
 
 \textbf{Technical Decisions and Constraints:} 
-A key CloudWatch Metrics
-Insights constraint was confirmed during ECS duration panel work: the
+I confirmed a key CloudWatch Metrics
+Insights constraint during ECS duration panel work: the
 \texttt{GROUP BY} aggregation mode supports only AVG, SUM, MIN, and MAX
---- percentile functions (p50, p99) are not available in SQL mode. The
-Metrics Insights query parser also required cluster names containing
-hyphens to be substituted \emph{before} JSON serialisation; applying
-substitution post-serialisation resulted in double-escaped output. Both
-constraints were documented in a technical decisions log to prevent
-re-investigation in later weeks. Additionally, CloudWatch Logs Insights
+---percentile functions (p50, p99) are not available in SQL mode. The
+Metrics Insights query parser required cluster names containing
+hyphens to be substituted \emph{before} JSON serialization; applying
+substitution post-serialization resulted in double-escaped output. I documented both
+constraints in a technical decisions log to prevent
+reinvestigation in later weeks. Additionally, CloudWatch Logs Insights
 \texttt{put\_query\_definition} enforces a hard limit of 20 saved queries
-per account, which constrained the saved-query strategy to a
+per account, which constrained the saved-query strategy to an
 \texttt{Intelligent-Automation} folder with errors-only scope.
 
 % ════════════════════════════════════════════════════════════
@@ -358,7 +357,7 @@ In Week~8, the focus shifted to the first RPA production support
 rotation while simultaneously scaffolding the Grafana AMG repository
 and completing final CloudWatch dashboard polish.
 
-\textbf{RPA Production Support Rotation (May~4--8):} 
+\textbf{RPA Production Support Rotation:} 
 The first
 support rotation ran Monday to Friday, covering the North America
 shift from 11:00~AM to 7:00~PM EST. Each morning I reviewed the
@@ -371,50 +370,50 @@ archiving old reports), Corporate Actions file mask updates for
 new client onboarding, an Auto Rec Download configuration request
 (backing up and editing \texttt{gridview.py} and \texttt{config.ini}),
 and a VPL process exception traced through UiPath Orchestrator
-transaction details. End-of-shift handover notes were posted to
+transaction details. I posted end-of-shift handover notes to
 Confluence each evening. Following the Week~5 training and
 this first live rotation, the RPA support model became familiar
 and manageable alongside development work.
 
-\textbf{AUTOMATIONHUB Budget Code and Dynamic Tag Discovery (AUTOMATIONHUB budget code integration, dynamic tag discovery feature):} 
-During quieter periods in the support queue I completed two
-CloudWatch platform JIRAs. AUTOMATIONHUB budget code integration added the \texttt{AUTOMATIONHUB}
-budget code across all discovery packages, enabling dashboards to
-surface UiPath-platform resources alongside the existing Meridian
-and IA-BPO resources. dynamic tag discovery feature followed with dynamic tag discovery
-using \texttt{budget\_code} filtering, BudgetCode-first discovery
-with \texttt{AppName} fallback, \texttt{citcoworks} budget code
-support, multi-region and multi-account query parameters, and
-cluster-based ECS fallback. These changes made the resource API
-significantly more resilient to infrastructure naming inconsistencies
-across the five Citco AWS accounts.
+\textbf{AutomationHub \texttt{budget\_code} and Dynamic Tag Discovery:} 
+During quieter periods in the support queue, I completed two
+CloudWatch platform JIRAs. The first added \texttt{AutomationHub}
+\texttt{budget\_code} support across all discovery packages, enabling
+dashboards to surface UiPath-platform resources alongside the existing
+Meridian and \texttt{ia-bpo} resources. For the second, I implemented a tiered
+resource matching strategy: primary matching on \texttt{budget\_code}
+tag value, falling back to \texttt{AppName} tag value, and finally a
+key-agnostic scan that matches any tag whose value contains the platform
+identifier---regardless of the tag key name. I also added multi-region
+and multi-account query parameters. Together, these changes made the
+resource API significantly more resilient to infrastructure naming
+inconsistencies across the five Citco AWS accounts.
 
 \textbf{Grafana AMG Repository Scaffold and Agentic-AI Architecture:} 
-On May~6, following Mr.\ Deotale's decision to elevate the dashboard project to
-\textbf{Critical} priority in the post-incident review, I created
-and scaffolded the \texttt{ia-it-sre-infrastructure-monitoring-amg}
+Following Mr.\ Deotale's decision to elevate the dashboard project to
+\textbf{Critical} priority in the post-incident review, I scaffolded the \texttt{ia-it-sre-infrastructure-monitoring-amg}
 repository. The initial commit established a multi-agent project
-structure: enforced LF line endings via \texttt{.gitattributes},
+structure: LF line-ending enforcement via \texttt{.gitattributes},
 pre-commit hooks with code quality tooling, and a \texttt{structlog}
-structured logging and agent audit trail. On May~7, agent skill
-definitions and role scaffolds I implemented for the multi-agent
-orchestration layer. On May~8, the Python version was upgraded from
-3.11 to 3.14, documenting GIL and free-thread status for the new
+structured logging and agent audit trail. I implemented
+agent skill definitions and role scaffolds for the multi-agent
+orchestration layer. I upgraded the Python version from
+3.11 to 3.14, documenting GIL removal and free-threaded mode status for the new
 runtime.
 
 By the end of Week~8, the first support rotation was complete,
-AUTOMATIONHUB budget code integration and dynamic tag discovery feature closed the CloudWatch platform feature set,
+the AutomationHub \texttt{budget\_code} integration and dynamic tag discovery closed the CloudWatch platform feature set,
 and the centralized AMG dashboard repository was scaffolded and ready for the full
 infrastructure build beginning in Week~9.
 
 \textbf{Key Architectural Decision:} 
-The discovery of the CITCOWORKS
-and MERIDIAN platforms sharing the \textbf{``Shared Cloud Artifacts''}
-BudgetCode was the most significant architectural finding of the week.
+The discovery of the CitcoWorks
+and Meridian platforms sharing the ``Shared Cloud Artifacts''
+\texttt{budget\_code} was the most significant architectural finding of the week.
 A naive single-stage tag filter would conflate operationally unrelated
-resources from two distinct platforms. The \texttt{AppName} discriminator
-was established as a mandatory second filter stage for these two platforms,
-a pattern that became the standard two-stage discovery architecture used
+resources from two distinct platforms. I established the \texttt{AppName} discriminator
+as a mandatory second filter stage for these two platforms;
+this pattern became the standard two-stage discovery architecture used
 throughout the inventory API in subsequent months. Additionally, five of
 the six Meridian ECS clusters had no resource tags at all, requiring a
 cluster-name-based fallback strategy to ensure complete fleet coverage.
@@ -433,67 +432,66 @@ involving the full deployment of the Grafana AMG stack, the first
 live CloudWatch alarms, a forced Grafana version migration, and the
 construction of the first three dashboard rows.
 
-\textbf{May~11 Infrastructure Deployment:} 
-On Monday May~11 I
+\textbf{Infrastructure Deployment:} 
+I
 deployed the full centralized AMG dashboard infrastructure in a single sustained
-session spanning 49 commits from 9:59~AM to 9:05~PM. The work
-began by enforcing coding standards (uv, JavaDoc-style docstrings,
+session spanning 49 commits from 9:59~AM to 9:05~PM. I began by enforcing
+coding standards (uv, JavaDoc-style docstrings,
 strict type hints) and implementing the Human-In-the-Loop gate
-with trigger rules and audit trail for agent oversight. I then
+with trigger rules and an audit trail for agent oversight. I then
 built the CloudFormation templates in sequence: Grafana AMG workspace
 with IAM role, Lambda custom resource for Grafana API provisioning,
 the Grafana dashboard JSON covering all ten rows, a CloudWatch alarms
 template with all 17 alerting rules, and the multi-environment
 CodePipeline with ChangeSet deployment and EventBridge trigger.
 I created a dedicated Grafana CFN execution role to resolve
-IAM bootstrap permission issues, and the \texttt{IamPermissionResolver}
-agent was added to automatically diagnose and fix permission errors
+IAM bootstrap permission issues, and I added the \texttt{IamPermissionResolver}
+agent to automatically diagnose and fix permission errors
 in future deployments. The day concluded by importing the Meridian
 dashboard via the Lambda provisioner and storing its JSON in
 Secrets Manager. With this deployment complete, the MSK consumer lag
-alarm was live against production traffic --- the alarm that would
-have detected the April Meridian Incident was now operational.
+alarm was live against production traffic---the alarm that would
+have detected the April Meridian production incident was now operational.
 
-\textbf{Documentation Sprint and 100\% Test Coverage (May~12):} 
-May~12 delivered the complete documentation suite: release notes,
+\textbf{Documentation Sprint and 100\% Test Coverage:} 
+I delivered the complete documentation suite: release notes,
 installation guide, architecture document (PNG diagrams replacing
 Mermaid blocks for CodeCommit rendering compatibility), process flow
 document, contribution guide, permission fixes guide, and a detailed
-user guide for all ten dashboard rows. The test suite simultaneously
+user guide for all ten dashboard rows. The test suite
 reached 99\% coverage on the agentic-AI subsystem, then 100\%
 coverage on \texttt{trigger\_rules} and \texttt{orchestrator}---a
 milestone that provided confidence in the agent dispatch layer.
 
-\textbf{SQS Panel Fixes and Grafana 12.4 Upgrade (May~13--14):} 
-On May~13, the SQS row panels (Queue Depth, Messages In-Flight,
+\textbf{SQS Panel Fixes and Grafana 12.4 Upgrade:} 
+the SQS row panels (Queue Depth, Messages In-Flight,
 Age of Oldest Message, DLQ Depth) were fixed with per-queue
 breakdowns and QueueName legends, achieving 100\% test coverage
-on the Row~2 SQS panel tests. An unplanned Grafana~10.4 to~12.4
-upgrade was then required after the AMG workspace was automatically
-updated by Amazon. The breaking changes in the Metric Insights SQL
-editor and template variable syntax consumed approximately one full
-working day on May~13--14, migrating all existing panels to the
+on the Row~2 SQS panel tests. Amazon automatically updated the AMG workspace,
+requiring an unplanned migration from Grafana~10.4 to~12.4.
+Resolving the breaking changes in the Metric Insights SQL
+editor and template variable syntax took approximately one full
+working day, migrating all existing panels to the
 stable 12.4 query model and updating the schema version to~41.
-May~14 additionally delivered the full 23-agent architecture
+This week also delivered the full 23-agent architecture
 (including \texttt{cloudwatch\_alarms\_expert},
 \texttt{amg\_deployment\_expert}, and \texttt{amg\_observability\_expert}),
 resolved the Grafana API key bootstrap chicken-and-egg issue,
 and implemented the SQS Health gauge with composite critical logic.
 
-\textbf{Lambda Row and ECS Row Completion (May~15):} 
-On Friday May~15
+\textbf{Lambda Row and ECS Row Completion:} 
 I overhauled the Lambda monitoring row: per-function breakdown for all
 panels using the Metric Insights SQL \texttt{GROUP BY} format, split
 Duration into p50 and p99 panels, paired Throttles with Concurrency,
 and introduced the \texttt{\$function} variable for interactive
-function-level drill-down. The \texttt{lda-} naming prefix was applied
-to Lambda-specific resources and the ECS Container Insights Lambda
-was removed after confirming native CloudWatch Container Insights was
+function-level drill-down. I applied the \texttt{lda-} naming prefix
+to Lambda-specific resources and removed the ECS Container Insights Lambda
+after confirming native Container Insights was
 sufficient.
 
 By the end of Week~9, the full Grafana AMG infrastructure was
 deployed and live, the MSK consumer lag alarm was operational,
-dashboard Rows~1--3 were built, and the 23-agent architecture was
+I had built dashboard Rows~1--3, and the 23-agent architecture was
 established with 100\% test coverage across the core orchestration
 layer.
 
@@ -503,16 +501,16 @@ infrastructure challenge was the Grafana API key chicken-and-egg
 problem: the provisioner Lambda needed an API key to provision
 resources, but the key had to be created in Grafana which did not
 yet exist. A hotfix series resolved this by bootstrapping the key
-separately as a one-time setup step before the full deploy. The SQS
-Health gauge composite logic was configured with precise thresholds
+separately as a one-time setup step before the full deploy. I configured the SQS
+Health gauge composite logic with precise thresholds
 reflecting the Meridian queue operating range: 0--34,999 messages
 (OK, green), 35,000--49,999 (WARNING, amber), and 50,000+
 (CRITICAL, red). These thresholds were derived from the April
-Meridian Incident peak queue depth of approximately nine million
+Meridian production incident peak queue depth of approximately nine million
 messages, setting the warning level well below the incident
 threshold while avoiding false positives during normal processing.
 A three-hour knowledge transfer workshop with Mr.\ Deotale, Mr.\ Nathaniel,
-and two additional team members (May~13, 188 minutes) provided
+and two additional team members provided
 deep context on the Meridian operational model that informed
 dashboard panel design decisions for the remainder of the co-op placement.
 
@@ -530,18 +528,17 @@ of the Grafana dashboard, resolving CloudWatch Metrics Insights
 SQL limitations, and migrating dashboard storage from Secrets
 Manager to S3 to overcome payload size constraints.
 
-\textbf{ECS, MSK, DocumentDB, Neptune, and OpenSearch Rows (May~19--20):} 
-The week opened with Row~5 (ECS APIs, ALB metrics) and Row~6 (MSK/Kafka)
-on May~19. Row~5 required a multi-iteration approach to the \texttt{\$platform}
+\textbf{ECS, MSK, DocumentDB, Neptune, and OpenSearch Rows:} 
+The week opened with Row~5 (ECS APIs, ALB metrics) and Row~6 (MSK/Kafka).
+Row~5 required a multi-iteration approach to the \texttt{\$platform}
 variable in \texttt{filterFieldsByName}: ALB resource names do not contain
 the platform string, requiring a split between Row~4 (ECS container health)
-and Row~5 (ALB traffic metrics). Row~6 MSK was migrated to Metric Insights
-SQL with per-broker and per-consumer-group breakdown, and a meridian cluster
-filter was added. On May~20, Rows~7--9 (DocumentDB, Neptune, and OpenSearch)
-were completed with SQL migration and per-instance breakdowns. A new Aurora/RDS
-Row~8 was added and the existing rows renumbered to accommodate it. The SQS
-Inventory table panel with clickable AWS Console links was introduced on
-May~20 to reduce incident response navigation time.
+and Row~5 (ALB traffic metrics). I migrated Row~6 MSK to Metric Insights
+SQL with per-broker and per-consumer-group breakdown and added a Meridian cluster
+filter. I completed Rows~7--9 (DocumentDB, Neptune, and OpenSearch)
+with SQL migration and per-instance breakdowns. I added a new Aurora/RDS
+Row~8 and renumbered the existing rows to accommodate it. I introduced the SQS
+Inventory table panel with clickable AWS Console links to reduce incident response navigation time.
 
 \textbf{Metric Insights SQL Percentile Limitation:} 
 During Lambda and ECS
@@ -550,28 +547,28 @@ duration panel work, I confirmed a fundamental Metric Insights constraint:
 functions---p50 and p99 percentiles are not available via SQL. I implemented
 a wildcard dimension workaround (\texttt{FunctionName:~["*"]}) for Lambda
 duration percentile panels, accepting the tradeoff that idle functions
-would appear in the list. This constraint was documented as a known
-limitation to prevent future re-investigation.
+would appear in the list. I documented this constraint as a known
+limitation to prevent future reinvestigation.
 
-\textbf{Secrets Manager 64~KB Limit and S3 Migration (May~25):} 
+\textbf{Secrets Manager 64~KB Limit and S3 Migration:} 
 By late
 Week~10 the CloudFormation provisioner payload grew to approximately
 14,720 lines as additional alarm templates were added, triggering
 \texttt{SecretSizeExceededException} from Secrets Manager. I migrated
 all dashboard JSON and alarm templates to S3 object storage with
-AES256 server-side encryption to comply with the
-\texttt{CITCO-S3ForceEncryptNoPublic} bucket policy. The provisioner
-Lambda was updated to fetch content via \texttt{s3:GetObject} at
+AES-256 server-side encryption to comply with the
+\texttt{CITCO-S3ForceEncryptNoPublic} bucket policy. I updated the provisioner
+Lambda to fetch content via \texttt{s3:GetObject} at
 deploy time, removing the 64~KB ceiling entirely.
 
-\textbf{Agentic AI System Refactor and 597-Test Milestone (May~22):} 
-The agentic AI subsystem underwent a major refactor on May~22:
-agents grouped into five capability tiers (infra, grafana,
-development, workflow, safety), the \texttt{aws\_config\_troubleshooter}
-role added, and all subprocess-dependent tests fixed to prevent
-hanging in CI. The test suite reached \textbf{597 tests at 100\%
-coverage}---the largest single-day test milestone of the
-co-op placement. ProvisionerVersion was bumped to 355 after two
+\textbf{Agentic AI System Refactor and 597-Test Milestone:} 
+The agentic AI subsystem underwent a major refactor:
+I regrouped agents into five capability tiers (infra, grafana,
+development, workflow, safety), added the \texttt{aws\_config\_troubleshooter}
+role, and fixed all subprocess-dependent tests to prevent
+hanging in CI. The test suite reached 597 tests at 100\%
+coverage---the largest single-day test milestone of the
+co-op placement. I incremented ProvisionerVersion to 355 after two
 sequential deploys validating the refactored architecture.
 
 By the end of Week~10, Rows~1--9 of the dashboard were built
@@ -587,8 +584,8 @@ operational burden of context-switching between platform-specific views.
 The SQS inventory table was introduced with clickable AWS Console links
 using Grafana data links, enabling one-click navigation from queue depth
 panels to the SQS console page for that specific queue. The Aurora/RDS
-row was added on May~20 as an additional row, requiring all subsequent
-row numbers to be incremented by one --- the \texttt{renumbering.md}
+row was added as an additional row, requiring all subsequent
+row numbers to be incremented by one---the \texttt{renumbering.md}
 migration document established a convention for future row additions.
 
 % ════════════════════════════════════════════════════════════
@@ -604,56 +601,54 @@ Week~11 was dedicated to completing the database monitoring rows,
 delivering the alarm and notification infrastructure, and bringing
 the dashboard to a state ready for stakeholder review.
 
-\textbf{Health Panel Completion for All Database Services (May~25):} 
-On Monday May~25, health panels were added for DocumentDB (CPU
+\textbf{Health Panel Completion for All Database Services:} 
+I added health panels for DocumentDB (CPU
 utilization with 60/80\% thresholds), Neptune DB (same threshold
 structure), RDS/Aurora (CPU thresholds with row reordering), and
 OpenSearch (Green/Degraded status derived from \texttt{ClusterStatus.green}
 metric). The OpenSearch health panel was particularly significant:
-OpenSearch was the bottleneck service in the April Meridian Incident,
+OpenSearch was the bottleneck service in the April Meridian production incident,
 and having a dedicated health indicator for it addressed the primary
-observability gap identified in the post-mortem. ECS metrics were
-enhanced to show CPU and Memory usage MAX per service ordered by
-\texttt{MAX() DESC}, making the busiest services immediately visible
-at the top of each panel.
+observability gap identified in the post-mortem. I enhanced ECS metrics to show CPU and memory usage MAX per service
+ordered by \texttt{MAX() DESC}, making the busiest services immediately
+visible at the top of each panel.
 
-\textbf{Redis/Valkey Row and Dashboard Visual Polish (May~26):} 
-The Redis/Valkey row was completed on May~26 with 11 panels covering
-the four golden signals (latency, traffic, errors, saturation), fully
-compliant with the AMG 1-query-per-panel constraint. Row files were
-renumbered to sequential order \texttt{row\_01} through \texttt{row\_13}
-for consistency. The CLI was refactored to replace the
+\textbf{Redis/Valkey Row and Dashboard Visual Polish:} 
+The Redis/Valkey row was completed with 11 panels covering
+the four golden signals (latency, traffic, errors, saturation) and fully
+compliant with the AMG 1-query-per-panel constraint. I renumbered row files to sequential order \texttt{row\_01} through
+\texttt{row\_13} for consistency. I refactored the CLI to replace the
 \texttt{--dry-run}/\texttt{--validate-only} flags with a unified
 \texttt{--validate} flag and a new \texttt{--smoke-test} option.
 Visual polish across the dashboard included Retro LCD bar gauges,
 consistent series colors across all timeseries panels, and
 \texttt{renameByRegex} transformations for clean legend names.
-MSK Row~6 was fixed to replace Bytes In with Messages Out per
+I fixed MSK Row~6 to replace Bytes In with Messages Out per
 second for more meaningful throughput visibility.
 
-\textbf{Datasource Analysis and CloudWatch Logs Integration (May~26--27):} 
+\textbf{Datasource Analysis and CloudWatch Logs Integration:} 
 I completed a datasource analysis to determine the full set of
-Grafana datasources required, verifying the conclusions via Amazon~Q.
-CloudWatch Logs and OpenSearch were added as new datasources alongside
+Grafana datasources required, verifying the datasource requirements using Amazon~Q.
+I added CloudWatch Logs and OpenSearch as new datasources alongside
 the existing CloudWatch Metrics datasource. This enabled Log-derived
 panels to be added to the dashboard in subsequent weeks.
 
-\textbf{Alarm and Notification Infrastructure (May~27--29):} 
+\textbf{Alarm and Notification Infrastructure:} 
 The
 alarms and notifications layer was delivered across three days.
-On May~27, I created a comprehensive alarms and notifications guide,
-performed an alerts gap analysis documenting existing versus required
+I created a comprehensive alarms and notifications guide,
+performed an alarms gap analysis documenting existing versus required
 coverage, parameterized the \texttt{Platform} variable in CloudWatch
 alarm names, added a \texttt{python main.py alarms} CLI command for
 SNS subscription management, and secured both SNS topics with
-\texttt{KmsMasterKeyId alias/aws/sns} encryption. On May~28, I
+\texttt{KmsMasterKeyId alias/aws/sns} encryption. I
 implemented EventBridge + Lambda integration (Option~A) for real-time
-CloudWatch alarm state in Grafana, replacing a polling approach after
-evaluating the two options against latency and cost criteria.
-On May~29, an SNS Re-Notifier Lambda was deployed for ongoing alarm
-state reminders, composite alarms were configured to aggregate
-per-service states into platform-level OK/ALARM indicators, and the
-alarm state history LCD panel I built with severity-based colors
+CloudWatch alarm state in Grafana, replacing the polling approach (Option~B) after
+evaluating both options against latency and cost criteria.
+I deployed an SNS Re-Notifier Lambda for ongoing alarm
+state reminders, configured composite alarms to aggregate
+per-service states into platform-level OK/ALARM indicators, and built the
+alarm state history LCD panel with severity-based colors
 spanning the full dashboard time range.
 
 By the end of Week~11, all 13 dashboard rows were built and deployed,
@@ -662,9 +657,9 @@ Re-Notifier Lambda was live, and the dashboard was ready for the
 Week~14 stakeholder review and final sign-off.
 
 \textbf{Alarm Architecture Decision (EventBridge vs Scheduled Lambda):} 
-On May~28, I evaluated two approaches for real-time alarm state delivery
+I evaluated two approaches for real-time alarm state delivery
 to Grafana panels: Option~A (EventBridge + Lambda) and Option~B
-(Scheduled Lambda polling at 1-minute intervals). Option~A was chosen
+(Scheduled Lambda polling at 1-minute intervals). I chose Option~A
 for its event-driven nature---alarm state changes are delivered within
 seconds of the CloudWatch alarm transition, versus up to 60 seconds of
 lag with the polling approach. The cost difference was negligible:
@@ -673,7 +668,7 @@ Lambda invocations at 1-minute intervals ($\sim$\$0.02/month). The
 EventBridge approach also aligned with the existing CodePipeline trigger
 pattern already used in the repository. Both SNS topics were secured
 with KMS encryption using \texttt{alias/aws/sns} to comply with Citco
-encryption-at-rest requirements. The May~26 first major stakeholder
+encryption-at-rest requirements. The first major stakeholder
 review confirmed the dashboard visual language and row organization were
 acceptable to the team before the final build sprint began.
 
@@ -687,30 +682,30 @@ acceptable to the team before the final build sprint began.
 \label{sec:week12}
 
 In Week~12, the focus was the second RPA production support rotation
-alongside finalising the Centralized Amazon Managed Grafana (AMG) Dashboard alarm infrastructure and completing
+alongside finalizing the AMG dashboard alarm infrastructure and completing
 EC2 dashboard rows.
 
-\textbf{RPA Production Support Rotation (Jun~1--5):} 
+\textbf{RPA Production Support Rotation:} 
 The second rotation
 followed the same North America shift pattern (11:00~AM--7:00~PM EST).
-I began each morning by reviewing the Confluence handover log from the Manila shift, then monitored the SD Portal queue, the Innovation IT email inbox, and the \texttt{IA\_INCIDENTS} Teams channel throughout the day.
+I began each morning by reviewing the Confluence handover log from the Manila team, then monitored the SD Portal queue, the Innovation IT email inbox, and the \texttt{IA\_INCIDENTS} Teams channel throughout the day.
 
 Tickets handled across the week included: MESO process status inquiries
-traced through CloudWatch logs using Run IDs (I identified a stuck process by correlating the Run ID from the JIRA ticket with the CloudWatch log stream for the relevant Lambda function); FX Closeout retrigger
-coordination (I verified the Daily565 folder state, archived stale reports before triggering the UiPath job to prevent duplicate processing); the AVCAB date format exception (I investigated the CloudWatch logs and confirmed an incorrect input date supplied by the requester, who was asked to retrigger after correction); and an Auto Rec Download CAPULA2 configuration update (I backed up \texttt{gridview.py} and \texttt{config.ini} and added the ASPECT client configuration block before restarting the service).
+traced through CloudWatch logs using Run IDs---I identified a stuck process by correlating the Run ID from the JIRA ticket with the CloudWatch log stream for the relevant Lambda function; FX Closeout retrigger
+coordination: I verified the Daily565 folder state, archived stale reports, and triggered the UiPath job to prevent duplicate processing; the AVCAB date format exception: I investigated the CloudWatch logs, confirmed an incorrect input date supplied by the requester, and asked them to retrigger after correction; and an Auto Rec Download CAPULA2 configuration update: I backed up \texttt{gridview.py} and \texttt{config.ini}, added the ASPECT client configuration block, and restarted the service.
 
-Mr.\ Leung conducted knowledge transfer sessions spanning 35~minutes on Monday, 27~minutes on Tuesday, and an extended 88-minute session on Friday, covering RPA support procedures and post-incident RCA walkthroughs for the MESO ECS autoscaling failure I encountered this week. During the support shift I also identified the MESO ECS autoscaling gap: the ECS service autoscaling policy was unconfigured, causing tasks to pile up rather than scale out. I escalated the finding and a code fix was applied by the development team, and I added an ECS task saturation alarm to the dashboard set as a direct result of this incident.
+Mr.\ Leung conducted knowledge transfer sessions spanning 35~minutes on Monday, 27~minutes on Tuesday, and 88~minutes on Friday, covering RPA support procedures and post-incident RCA walkthroughs for the MESO ECS autoscaling failure I encountered this week. During the support shift I also identified the MESO ECS autoscaling gap: the ECS service autoscaling policy was unconfigured, causing tasks to accumulate rather than scale out. I escalated the findings and the development team applied a code fix, and I added an ECS task saturation alarm to the alarm set as a direct result of this incident.
 
-Stale tickets exceeding 14 days without end-user response were closed per the IA Production Support guide. End-of-shift handover notes were posted to Confluence each evening, ensuring the Manila team had complete context to continue any open items.
+I closed stale tickets exceeding 14 days without end-user response per the IA Production Support guide and posted end-of-shift handover notes to Confluence each evening, ensuring the Manila team had complete context to continue any open items.
 
 \textbf{Alarm Tuning and CloudFormation Improvements:} 
 During quieter support periods I tuned CloudWatch alarm thresholds against
-actual DEV baseline metrics. For DocumentDB and Neptune I validated the CPU utilization thresholds (60\% warning, 80\% critical) against historical metric data to confirm they were appropriate for normal operating conditions without generating false positives. I improved the CloudFormation deploy script by adding a \texttt{--preview} mode that executes a changeset and displays the planned resource changes before applying them, and added changeset status reporting so the CI/CD pipeline could distinguish a real deployment from a no-op changeset (where no resources required updating). All 14 dashboard rows and 17 CloudWatch alarms were validated end-to-end in the DEV environment, confirming alarm state transitions fired correctly and SNS email delivery was working.
+actual DEV baseline metrics. For DocumentDB and Neptune I validated the CPU utilization thresholds (60\% warning, 80\% critical) against historical metric data to confirm they were appropriate for normal operating conditions without generating false positives. I improved the CloudFormation deploy script by adding a \texttt{--preview} mode that executes a change set and displays the planned resource changes before applying them, and added change set status reporting so the CI/CD pipeline could distinguish a real deployment from a no-op change set (where no resources required updating). All 14 dashboard rows and 17 CloudWatch alarms were validated end-to-end in the DEV environment, confirming alarm state transitions fired correctly and SNS email delivery was working.
 
 \textbf{EC2 Dashboard Rows:} 
-EC2 monitoring Rows~7--8 were completed with the \texttt{AppName} fallback pattern applied across all 83 instances. The most significant correction was fixing the EBS metric namespace: the initial implementation was querying \texttt{DiskReadOps} which does not exist in the \texttt{AWS/EC2} namespace --- the correct metric is \texttt{EBSReadOps}. I also added Fleet Status panels showing instance state distribution across all platforms, and per-instance drill-down panels using Metric Insights SQL \texttt{GROUP BY InstanceId} for CPU, memory (via CloudWatch Agent), network I/O, and disk I/O. Test coverage for the EC2 dashboard package reached 96\% across all widget types and discovery logic.
+I completed EC2 monitoring Rows~7--8 with the \texttt{AppName} fallback pattern applied across all 83 instances. The most significant correction was fixing the EBS metric namespace: the initial implementation was querying \texttt{DiskReadOps} which does not exist in the \texttt{AWS/EC2} namespace---the correct metric is \texttt{EBSReadOps}. I also added Fleet Status panels showing instance state distribution across all platforms, and per-instance drill-down panels using Metric Insights SQL \texttt{GROUP BY InstanceId} for CPU, memory (via CloudWatch Agent), network I/O, and disk I/O. Test coverage for the EC2 dashboard package reached 96\% across all widget types and discovery logic.
 
-By the end of Week~12, the second support rotation was complete, Centralized Amazon Managed Grafana (AMG) Dashboard
+By the end of Week~12, the second support rotation was complete, the AMG dashboard
 alarm infrastructure was validated, and EC2 dashboard rows were merged
 to release.
 
@@ -725,55 +720,52 @@ to release.
 
 Week~13 was the most incident-dense week of the co-op placement, beginning
 with an emergency hotfix for a regulatory deadline and continuing with
-significant Centralized Amazon Managed Grafana (AMG) Dashboard structural improvements.
+significant AMG dashboard structural improvements.
 
 \textbf{CAIS Deadline \texttt{SpnegoError:} Hotfix:} 
 The week
-opened with a critical failure in the CAIS Deadline Lambda --- an RPA automation that uploads Standard Allocation Sheets to the PDS database and generates consolidated pricing reports for alternative investment clients ---
+opened with a critical failure in the CAIS Deadline Lambda---an RPA automation that uploads Standard Allocation Sheets to the PDS database and generates consolidated pricing reports for alternative investment clients---
 \texttt{SMBAuthenticationError: SpnegoError} during UCM upload, blocking
-a regulatory CAIS filing. A seven-hour investigation on June~8 identified
+a regulatory CAIS filing. A seven-hour investigation identified
 the root cause: \texttt{constants.py} was caching credentials at module
 import time, meaning a Secrets Manager rotation that had left empty values
 during container startup caused all subsequent authentication attempts to
-fail silently with the pre-loaded empty credential. Three targeted fixes
-were applied: fail-fast UCM credential validation at startup and before each
-SMB connection attempt; a guard preventing empty \texttt{deadline\_ids}
-from generating an invalid SQL \texttt{IN()} clause; and a zip file
-existence check before attempting the UCM upload. Comprehensive unit tests
-were added for all three fixes, including mock patches for
-\texttt{trigger\_process} and \texttt{email\_function} that had been
+fail silently using the pre-loaded empty credential. I applied three targeted fixes: fail-fast UCM credential validation at startup and before each SMB connection attempt; a guard preventing empty
+\texttt{deadline\_ids} from generating an invalid SQL \texttt{IN} clause;
+and a zip file existence check before attempting the UCM upload. I added
+comprehensive unit tests for all three fixes, including mock patches for
+\texttt{trigger\_process} and \texttt{email\_function}, both of which had been
 preventing test isolation. The CAIS filing completed before the regulatory
 deadline and a full RCA was documented on Confluence.
 
 \textbf{Per-Panel Folder Refactor and SQS Dashboard:} 
 Following
-the hotfix, I completed a structural refactor of the Centralized Amazon Managed Grafana (AMG) Dashboard repository:
-110+ dashboard panels were extracted into per-panel YAML folders under
+the hotfix, I completed a structural refactor of the AMG dashboard repository:
+I extracted 110+ dashboard panels into per-panel YAML folders under
 \texttt{rows/row\_02/} through \texttt{row\_14/}, enabling independent
-panel updates without touching surrounding files. An EC2 mapper Lambda
-was deployed with EventBridge trigger, and the SQS monitoring dashboards
-went live (\textbf{960 tests passing}). The IA Infrastructure Monitoring Platform SQS feature was
+panel updates without touching surrounding files. I deployed an EC2 mapper
+Lambda with an EventBridge trigger, and the SQS monitoring dashboards
+went live (960 tests passing). The IA Infrastructure Monitoring Platform SQS feature was
 formally closed.
 
 \textbf{Inventory API Scaffold:} 
-On June~11, a Kiro spec-driven
-workflow was used to scaffold the \texttt{ia-it-sre-infrastructure-inventory}
-repository in 2.5~hours: Flask async API structure, discoverer registry
+I used a Kiro spec-driven workflow to scaffold the
+\texttt{ia-it-sre-infrastructure-inventory} repository in 2.5~hours: Flask async API structure, discoverer registry
 pattern, Pydantic response models, and alignment of \texttt{service\_type}
 names with the dashboard rows.
 
-By the end of Week~13, the CAIS regulatory filing was unblocked, Centralized Amazon Managed Grafana (AMG) Dashboard
+By the end of Week~13, the CAIS regulatory filing was unblocked, the AMG dashboard
 reached 357 tests on the refactored architecture, and the inventory API
 foundation was established.
 
 \textbf{CloudFormation Template Size Constraint:} 
-A second infrastructure
-size constraint was encountered on June~10 when the full CloudFormation
-alarm template could not be deployed inline --- the 51,200-byte inline
+I encountered a second infrastructure
+size constraint when the full CloudFormation
+alarm template could not be deployed inline---the 51,200-byte inline
 template limit was exceeded. Rather than splitting into nested stacks,
-the decision was made to upload templates to S3 and use
+I decided to upload templates to S3 and use
 \texttt{TemplateURL} references, keeping the deployment model flat and
-avoiding the CFN nested stack dependency chain that had caused rollback
+avoiding the CloudFormation nested stack dependency chain that had caused rollback
 issues in earlier test environments. The \texttt{s3:ListBucket} permission
 was required alongside \texttt{s3:GetObject} to produce meaningful error
 messages on \texttt{NoSuchKey} failures during template retrieval.
@@ -787,18 +779,18 @@ messages on \texttt{NoSuchKey} failures during template retrieval.
 \section{Week 14}
 \label{sec:week14}
 
-Week~14 delivered the final Grafana AMG dashboard deployment and formally closed the Centralized Amazon Managed Grafana (AMG) Dashboard project. This was the culmination of six weeks of intensive dashboard development and represented the single largest task in my co-op placement at 140 logged hours.
+Week~14 delivered the final AMG dashboard deployment and formally paused the project. This was the culmination of six weeks of intensive dashboard development and represented the single largest task in my co-op placement at 140 logged hours.
 
-\textbf{Deep-Link Panels for All Service Rows (June~15):} 
-On June~15 I added deep-link panels to all nine monitored service rows (Lambda, SQS, ECS, MSK, DocumentDB, Neptune, RDS, Redis, OpenSearch), connecting each resource panel directly to the relevant AWS Console page for that specific resource. I used Grafana data links with \texttt{\$\{\_\_data.fields.name\}} field interpolation to construct AWS Console deep-link URLs dynamically for each row. This addressed a recurring friction point I had personally experienced during the Week~8 and Week~12 support rotations: incident responders were manually navigating to the CloudWatch console to cross-reference alarm states with resource metrics, losing context each time they switched tabs. I also added resource inventory tables for all nine service types, each displaying key configuration metadata (memory, timeout, runtime for Lambda; cluster size and engine version for DocumentDB; instance class and Multi-AZ status for RDS) directly in the Grafana panel so operators could diagnose configuration issues without leaving the dashboard.
+\textbf{Deep-Link Panels for All Service Rows:} 
+I added deep-link panels to all nine monitored service rows (Lambda, SQS, ECS, MSK, DocumentDB, Neptune, RDS, Redis, OpenSearch), connecting each resource panel directly to the relevant AWS Console page for that specific resource. I used Grafana data links with \texttt{\$\{\_\_data.fields.name\}} field interpolation to construct AWS Console deep-link URLs dynamically for each row. This addressed a recurring friction point I had experienced during Week~8 and Week~12 support rotations: incident responders were manually navigating to the CloudWatch console to cross-reference alarm states with resource metrics, losing context with each tab switch. I also added resource inventory tables for all nine service types, each displaying key configuration metadata (memory, timeout, runtime for Lambda; cluster size and engine version for DocumentDB; instance class and Multi-AZ status for RDS) directly in the Grafana panel so operators could diagnose configuration issues without leaving the dashboard.
 
-\textbf{Row Restructuring and Visual Consistency (June~16--17):} 
-DocumentDB, Redis, and OpenSearch rows were restructured to a consistent \texttt{4+4~(w=6)} panel layout, standardising panel widths and eliminating asymmetric gaps that had accumulated during the iterative row-by-row build approach. ECS bargauge legend names were corrected to display human-readable service names rather than raw ARN strings, and ECS deep-link URL formats were fixed to use the correct AWS Console path structure. I corrected an EBS metric namespace error discovered during EC2 testing: \texttt{DiskReadOps} does not exist in \texttt{AWS/EC2} --- the correct metric is \texttt{EBSReadOps} from the \texttt{AWS/EBS} namespace. I documented the Grafana transformation ordering requirement for the alarm state history panel after discovering that applying \texttt{seriesToRows} before \texttt{filterFieldsByName} produced incorrect output, whereas reversing the order worked correctly.
+\textbf{Row Restructuring and Visual Consistency:} 
+I restructured the DocumentDB, Redis, and OpenSearch rows to a consistent \texttt{4+4~(w=6)} panel layout, standardizing panel widths and eliminating asymmetric gaps that had accumulated during the iterative row-by-row build approach. I corrected ECS bargauge legend names to display human-readable service names rather than raw ARN strings, and fixed ECS deep-link URL formats to use the correct AWS Console path structure. I documented the Grafana transformation ordering requirement for the alarm state history panel after discovering that applying \texttt{seriesToRows} before \texttt{filterFieldsByName} produced incorrect output, whereas reversing the order worked correctly.
 
-Ten new dashboard template variables were added to complete row-level interactive filtering across all nine services: \texttt{lambda\_function}, \texttt{sqs\_queue}, \texttt{ecs\_service}, \texttt{ecs\_target\_group}, \texttt{msk\_consumer\_group}, \texttt{docdb\_instance}, \texttt{rds\_instance}, \texttt{redis\_cluster}, \texttt{neptune\_instance}, and \texttt{opensearch\_domain}. This completed the interactive filtering model: every row now had both platform-level (\texttt{\$budget\_code}) and resource-level filtering. The ProvisionerVersion was incremented from 698 to 726 across five sequential deploys during the June~17 restructuring session alone, reflecting the iterative nature of the final polish work.
+I added ten new dashboard template variables to complete row-level interactive filtering across all nine services: \texttt{lambda\_function}, \texttt{sqs\_queue}, \texttt{ecs\_service}, \texttt{ecs\_target\_group}, \texttt{msk\_consumer\_group}, \texttt{docdb\_instance}, \texttt{rds\_instance}, \texttt{redis\_cluster}, \texttt{neptune\_instance}, and \texttt{opensearch\_domain}. This completed the interactive filtering model: every row now had both platform-level (\texttt{\$budget\_code}) and resource-level filtering. The ProvisionerVersion was incremented from 698 to 726 across five sequential deploys during the restructuring session alone, reflecting the iterative nature of the final polish work.
 
-\textbf{Dashboard v728 Merge and Project Closure (June~18):} 
-On June~18, I conducted the final deployment session, incrementing from v726 to \textbf{v728} with two final fixes. All four acceptance criteria were verified before the release merge: MSK consumer lag alarm live and firing against production traffic; all 14 dashboard rows rendering correctly in the AMG workspace with no broken panels; deep-links functional for all nine service types across DEV, UAT, and PROD environments; and alarm email delivery confirmed to the configured SNS distribution list. The release PR from \texttt{release/SRE} to \texttt{main} was merged, and the Centralized AMG Dashboard project was moved to Done --- the largest single task of the co-op placement, logged at exactly 140 hours across 7 weeks of intensive development.
+\textbf{Dashboard v728 Merge and Project Closure:} 
+I conducted the final deployment session, incrementing from v726 to v728 with two final fixes. All four acceptance criteria were verified before the release merge: MSK consumer lag alarm live and firing against production traffic; all 14 dashboard rows rendering correctly in the AMG workspace with no broken panels; deep-links functional for all nine service types across DEV, UAT, and PROD environments; and alarm email delivery confirmed to the configured SNS distribution list. I merged the release pull request from \texttt{release/SRE} to \texttt{main}, and I paused the Centralized AMG Dashboard project---the largest single task of the co-op placement, logged at exactly 140 hours across seven weeks of intensive development.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 15
@@ -809,49 +801,46 @@ On June~18, I conducted the final deployment session, incrementing from v726 to 
 \section{Week 15}
 \label{sec:week15}
 
-Following the Centralized Amazon Managed Grafana (AMG) Dashboard closure, Week~15 focused on post-release improvements
+Following the AMG dashboard release, Week~15 focused on post-release improvements
 to the MSK row and the delivery of six new resource mapper Lambdas.
 
 \textbf{MSK Consumer Lag Refinements:} 
-MSK consumer lag panels were
-enhanced with per-topic breakdown (previously only per-consumer-group),
-and a \texttt{GROUP BY ClusterName + ConsumerGroup + Topic} triple-axis
-structure I implemented to enable topic-level drill-down. The MSK
-cluster ARN chain regex was corrected from Python to JavaScript syntax
+I enhanced MSK consumer lag panels with per-topic breakdown
+(previously only per-consumer-group), implementing a
+\texttt{GROUP BY ClusterName + ConsumerGroup + Topic} triple-axis
+structure to enable topic-level drill-down. I corrected the MSK
+cluster ARN chain regex from Python to JavaScript syntax
 after discovering it was preventing the \texttt{\$msk\_cluster\_arn}
-variable from resolving in Grafana's template engine. MSK performance
-panel topic deep-link URL format was fixed to use the correct AWS Console
-path structure, and stable panel IDs were enforced to prevent deep-link
+variable from resolving in Grafana's template engine. I fixed the MSK performance
+panel topic deep-link URL format to use the correct AWS Console
+path structure, and enforced stable panel IDs to prevent deep-link
 breakage across dashboard redeploys.
 
 \textbf{Six Resource Mapper Lambdas:} 
-Six new mapper Lambda functions were
-deployed to the resource-mappers CloudFormation stack, each responsible for
+I deployed six new mapper Lambda functions to the resource-mappers CloudFormation stack, each responsible for
 discovering and caching one resource class: ECS target groups, DocumentDB
 clusters, RDS instances, Redis cache nodes, Neptune clusters, and OpenSearch
 domains. These mappers replaced the previous SQS Queue Mapper's
-names-pattern approach with a tag-based discovery strategy, enabling the
-Grafana \texttt{\$variable} dropdowns to be populated dynamically from live
+name-pattern approach with a tag-based discovery strategy, enabling
+Grafana \texttt{\$variable} dropdowns to populate dynamically from live
 AWS inventory rather than from static configuration lists.
 
 \textbf{Knowledge Transfer Sessions (Mr.\ Leung):} 
 Mr.\ Leung provided a 60-minute
 session on the FX Closeout process exception handling procedure, covering
 how to identify settled-vs-live position mismatches and the correct
-retrigger sequence. A follow-up session on FX Settled exception handling
-was held the following day. Both sessions were documented in Confluence for
-the next support rotation team member.
+retrigger sequence. Mr.\ Leung held a follow-up session on FX Settled exception handling the following day. I documented both sessions in Confluence for the next support rotation team member.
 
 By the end of Week~15, the MSK row was production-quality, six mapper
 Lambdas were live and populating dashboard variables, and support procedures
 for FX Closeout were formally documented.
 
 \textbf{SQS Platform Coverage Resolution:} 
-The SQS case-insensitive regex
-fix on June~22 resolved a critical coverage gap: the \texttt{ia-bpo}
+I resolved a critical coverage gap with a case-insensitive regex fix:
+the \texttt{ia-bpo}
 platform was returning only 2 of its 55 queues due to an uppercase/lowercase
-mismatch in the queue name pattern. An attempted Infinity plugin approach
-(direct S3 variable population) was abandoned after discovering an
+mismatch in the queue name pattern. I abandoned an attempted Infinity plugin approach
+(direct S3 variable population) after discovering an
 unresolvable Go HTTP client timeout in the plugin's transport layer.
 The SQS Queue Mapper Lambda approach replaced a 5-minute EventBridge
 schedule with CloudTrail-triggered invocations on \texttt{CreateQueue}
@@ -859,7 +848,7 @@ and \texttt{DeleteQueue} API calls, reducing Lambda invocations from
 approximately 8,640 per month to 2--5 per month while ensuring the
 queue inventory stayed current within minutes of infrastructure changes.
 I implemented a content-hash S3 key scheme for Lambda deployment zips
-so CloudFormation correctly detected code changes between deploys --- the
+so CloudFormation correctly detected code changes between deploys---the
 prior filename-only approach caused silent no-op deploys of updated Lambda code.
 
 % ════════════════════════════════════════════════════════════
@@ -871,39 +860,37 @@ prior filename-only approach caused silent no-op deploys of updated Lambda code.
 \section{Week 16}
 \label{sec:week16}
 
-Week~16 was the third RPA support rotation, coinciding with Canada Day (July~1),
+Week~16 was the third RPA support rotation, coinciding with Canada Day,
 alongside completion of ECS cluster discoverers for the inventory API.
 
-\textbf{RPA Production Support Rotation (June~29 -- July~3):} 
-Week~16 support
-handled several notable requests. Two Corporate Actions new client onboarding
-tasks were completed: Leeside (\texttt{LEESIDE\_Trades\_HFXCA}
+\textbf{RPA Production Support Rotation:} 
+During Week~16 support, I handled several notable requests. I completed two Corporate Actions new client onboarding
+tasks: Leeside (\texttt{LEESIDE\_Trades\_HFXCA}
 added to BPShare Mandatory/Voluntary/Ops) and Orchid Tree
 (\texttt{OrchidTree\_trades\_HFXCA} added across all three tracks). An OTC
-process inquiry for Lumyna Equity Funds identified a dependency
-on the MNL team for configuration, and coordination was established with Miko
-and Daniel for knowledge transfer. On Canada Day (Wednesday), an INNOCAP
-SAMLMOS MESO retrigger was coordinated with Mr.\ Leung: the process had failed
-overnight, was manually marked failed, and retriggered to completion.
+process inquiry for Lumyna Equity Funds revealed a dependency
+on the MNL team for configuration; I coordinated with Mr.\ Miko
+and Mr.\ Daniel for knowledge transfer. On Canada Day (Wednesday), I coordinated an INNOCAP
+SAMLMOS MESO retrigger with Mr.\ Leung: the process had failed
+overnight, I manually marked it failed on the reporting server, and retriggered it to completion.
 Mr.\ Leung conducted two extended knowledge transfer sessions: 80~minutes on
-Thursday and a joint 96-minute session with Mr.\ Deotale on Friday covering the
+Thursday and a joint 96~minute session with Mr.\ Deotale on Friday covering the
 full RPA support handover model.
 
-\textbf{ECS Variable and Health Panel Optimisation:} 
+\textbf{ECS Variable and Health Panel Optimization:} 
 During
-quieter periods, an \texttt{ecs\_cluster} dashboard variable was added for
-cluster-level filtering, and health stat panel queries were optimised by
+quieter periods, I added an \texttt{ecs\_cluster} dashboard variable for
+cluster-level filtering, and optimized health stat panel queries by
 removing the \texttt{seriesToRows} transform and replacing it with
-\texttt{ORDER BY MAX() DESC}. This change made the busiest services appear
+\texttt{ORDER BY MAX DESC}. This change made the busiest services appear
 at the top of each panel without requiring a client-side sort transform.
 
 \textbf{ECS and S3 Cache Layer:} 
-ECS cluster discoverers were
-implemented for all 22 clusters with the two-stage filter (BudgetCode
-then AppName discriminator) established in Week~6. A bi-weekly EventBridge-
-triggered S3 cache layer was added to the inventory API, reducing
-per-request latency from the 10-second boto3 enumeration to a sub-second
-cache read. A four-part log group observability feature observability solution was drafted covering
+I implemented ECS cluster discoverers for all 22 clusters
+using the two-stage filter (\texttt{budget\_code} then AppName discriminator)
+established in Week~6. I added a bi-weekly EventBridge-triggered S3 cache
+layer to the inventory API, reducing per-request latency from the
+10-second boto3 enumeration to a sub-second cache read. I drafted a four-part log group observability solution covering
 log group discovery, API endpoint, Grafana panel, and saved query generation.
 
 By the end of Week~16, the third support rotation was complete with new
@@ -912,17 +899,16 @@ inventory API S3 cache was operational.
 
 \textbf{Canada Day Operational Coverage:} 
 Working through the Canada Day
-public holiday on July~1 was necessary to maintain the INNOCAP SAMLMOS
+public holiday was necessary to maintain the INNOCAP SAMLMOS
 MESO process continuity. The process had failed overnight and required
-admin-level intervention to mark the queued items as failed before
+admin-level intervention to mark the queued items as failed in the MESO database before
 retriggering. Mr.\ Leung provided admin access and live KT on the marking
 procedure during a remote session. This experience directly motivated
-adding ECS task health monitoring to the dashboard alarm set ---
-specifically the ``desired vs running task count'' discrepancy alarm
+adding ECS task health monitoring to the dashboard alarm set---specifically the ``desired vs running task count'' discrepancy alarm
 that would surface this class of silent failure automatically.
-The two-stage BudgetCode + AppName filter pattern proved essential again
-this week: 22 ECS clusters were discovered, but the MERIDIAN and
-CITCOWORKS clusters sharing a BudgetCode prefix required the AppName
+The two-stage \texttt{budget\_code} + AppName filter pattern proved essential again
+this week: 22 ECS clusters were discovered, but the Meridian and
+CitcoWorks clusters sharing a \texttt{budget\_code} prefix required the AppName
 discriminator to be classified correctly for the dashboard rows.
 
 % ════════════════════════════════════════════════════════════
@@ -938,56 +924,52 @@ Week~17 delivered the inventory API to production readiness and established
 the X-Ray distributed tracing architecture plan.
 
 \textbf{Inventory API v1.5.0 and CI/CD Pipeline:} 
-The inventory
-API was migrated from a Flask monolith to four dedicated Lambda handlers
-behind API Gateway (v1.5.0). A \texttt{/docs} endpoint was added with
-embedded Swagger UI, and an async background refresh mechanism was
-implemented to avoid the 30-second API Gateway timeout on full inventory
-scans. The \texttt{/refresh} endpoint was introduced supporting per-platform,
-per-service, and full refresh targeting. A full CI/CD pipeline for the
-\texttt{citcodevops01} account was added with a deployment guide. All
-AWS resources were renamed to the \texttt{ia-it-sre-resources-inventory-*}
-naming convention for platform consistency. A VPN-graceful SSL degradation
-fix (v1.1.1/v1.1.2) was applied after discovering the S3 cache crashed
+I migrated the inventory API from a Flask monolith to four dedicated Lambda
+handlers behind API Gateway (v1.5.0). I added a \texttt{/docs} endpoint
+with embedded Swagger UI, and implemented an async background refresh
+mechanism to avoid the 30-second API Gateway timeout on full inventory
+scans. I introduced the \texttt{/refresh} endpoint supporting per-platform,
+per-service, and full refresh targeting. I added a full CI/CD pipeline for
+the \texttt{citcodevops01} account with a deployment guide. I renamed all AWS
+resources to the \texttt{ia-it-sre-resources-inventory-*}
+naming convention for platform consistency. I applied a VPN-graceful SSL degradation
+fix (v1.1.1/v1.1.2) after discovering the S3 cache crashed
 when run outside the Citco network.
 
 \textbf{X-Ray Distributed Tracing Architecture:} 
-BPM Flight
-Control meetings (Monday and Friday) and Blue Prism Troubleshooting sessions
-(Thursday) informed the X-Ray architecture approach. I drafted the full
+I attended BPM Flight Control meetings (Monday and Friday) and a Blue Prism Troubleshooting session
+(Thursday), which informed the X-Ray architecture approach. I drafted the full
 tracing plan covering seven service categories: Lambda (using Powertools Tracer),
 ECS (ADOT sidecar), EKS (DaemonSet), API Gateway (active tracing), 
 SQS (trace header propagation), MSK (trace propagation), 
-and EC2 (standalone daemon). The unified
-\texttt{team-requests.md} document compared structured vs unstructured
-logging patterns and documented the recommended approach for the
+and EC2 (standalone daemon). I compiled a \texttt{team-requests.md} document comparing structured vs unstructured
+logging patterns and documenting the recommended approach for the
 \texttt{ia\_meso\_process} codebase.
 
 \textbf{VPL IPV CheckpointException Follow-up:} 
-The VPL IPV
-\AE xeo pricing window \texttt{CheckpointException} pattern was identified as
+I identified the VPL IPV
+\AE xeo pricing window \texttt{CheckpointException} pattern as
 systemic across multiple VPL workflows targeting dynamically loading \AE xeo
-screens. The fix was estimated at 16 hours for selector resilience work and
-escalated to the development team due to BitBucket repository access restrictions.
+screens. I estimated the fix at 16 hours for selector resilience work and
+escalated it to the development team due to BitBucket repository access restrictions.
 
 By the end of Week~17, the inventory API was production-deployed at v1.5.0
 with CI/CD, the X-Ray architecture was formally planned across all seven service categories,
 and all 83 EC2 instances were confirmed in the live inventory.
 
 \textbf{Infinity Datasource Migration:} 
-Fourteen dashboard variables were
-migrated from the deprecated mapper Lambda approach to the Infinity
+I migrated fourteen dashboard variables from the deprecated mapper Lambda approach to the Infinity
 datasource via CloudFront, eliminating the SigV4 authentication complexity
 that had prevented direct S3 access from the AMG workspace. CloudFront
 served as an unsigned proxy with S3 origin access control, making the
 inventory JSON available to Grafana without any client-side AWS credential
-management. The X-Ray datasource UID was set to the stable value
-\texttt{xray-ia-it-sre-dev} and the CloudWatch provisioner UID fixed to
+management. I set the X-Ray datasource UID to the stable value
+\texttt{xray-ia-it-sre-dev} and fixed the CloudWatch provisioner UID to
 \texttt{cloudwatch} to match the 100+ panel references already embedded in
-the assembled dashboard JSON. The inventory API was refactored into four
+the assembled dashboard JSON. I refactored the inventory API into four
 sub-packages (\texttt{core}, \texttt{api}, \texttt{infra}, \texttt{metrics})
-and bumped to v1.4.0 on July~8, with seven S3-lifecycle expiration rules
-added per platform/service combination in v1.4.3 to manage storage costs.
+and incremented it to v1.4.0, adding seven S3 lifecycle expiration rules
+per platform/service combination in v1.4.3 to manage storage costs.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 18
@@ -1002,58 +984,53 @@ Week~18 delivered the alarm email log group deep-link system and completed
 the five-phase log group observability specification.
 
 \textbf{Alarm Email Log Group Deep-Links (log group observability feature Phase~2):} 
-The alarm
-formatter Lambda was extended to auto-construct CloudWatch Logs Console
+I extended the alarm
+formatter Lambda to auto-construct CloudWatch Logs Console
 deep-link URLs from the cached log group inventory. When an alarm fires,
 the formatted email now includes a direct link to the relevant log group
 filtered to the alarm timestamp, eliminating the need to manually navigate
-to Logs Insights and reconstruct the query. The log group URL encoding
-utility was tested for all seven platform types, handling the differences
+to Logs Insights and reconstruct the query. I tested the log group URL encoding
+utility for all seven platform types, handling the differences
 in log group naming conventions between Lambda, ECS, EC2, and MSK resources.
 
 \textbf{Grafana CloudWatch Logs Panel:} 
-A placeholder Row~17 panel was
-implemented in the Grafana dashboard using the CloudWatch Logs datasource,
+I implemented a placeholder Row~17 panel in the Grafana dashboard
+using the CloudWatch Logs datasource,
 with a \texttt{\$platform} variable filter. This provided a foundation
 for the full X-Ray tracing row planned for delivery in later weeks.
 
 \textbf{Five-Phase Log Group Observability Specification:} 
-The
-log group observability feature specification was finalised covering: Phase~1 (log group discoverer
+I finalized the
+log group observability feature specification covering: Phase~1 (log group discoverer
 Lambda), Phase~2 (inventory API \texttt{/api/log-groups} endpoint), Phase~3
 (alarm email deep-links), Phase~4 (Grafana log panel row), and Phase~5
-(CloudWatch Insights saved queries). All five phases were subsequently
-tracked as individual sub-tasks on the JIRA board.
+(CloudWatch Insights saved queries). I tracked all five phases as individual subtasks on the JIRA board.
 
 \textbf{Async Inventory and Pydantic Models:} 
-The inventory API
-async route handler architecture was validated: \texttt{asyncio.gather()}
+I validated the inventory API
+async route handler architecture: \texttt{asyncio.gather()}
 dispatching all discoverers concurrently via \texttt{ThreadPoolExecutor}
 kept full-fleet enumeration under the 10-second non-functional requirement.
-Twelve service-specific Pydantic response models were added with versioned
+I added twelve service-specific Pydantic response models with versioned
 S3 keys (\texttt{latest.json} plus timestamped history entries).
 
 By the end of Week~18, alarm emails included actionable log group deep-links,
-the inventory API reached \textbf{99\% code coverage} with a 453-test suite,
+the inventory API reached 99\% code coverage with a 453-test suite,
 and the log group observability specification was fully defined.
 
 \textbf{Dynamic Alarm Architecture and X-Ray Instrumentation:} 
-The dynamic
-alarm provisioner Lambda replaced 17 static alarm definitions with a
-data-driven approach: on each deploy it reads the full resource inventory
+I replaced the 17 static alarm definitions with a
+data-driven approach: on each deploy the provisioner Lambda reads the full resource inventory
 from S3 and creates or updates per-resource CloudWatch alarms automatically.
-Nine alarm types absent from the original static set were added, including
+I added nine alarm types absent from the original static set, including
 Lambda error rate (using a CloudWatch math expression rather than a metric
 alarm), MSK consumer lag (\texttt{SumOffsetLag} with thresholds 1,000/5,000),
-and EC2 instance and system status checks. Concurrent alarm creation was
-throttled to two \texttt{ThreadPoolExecutor} workers with an adaptive retry
+and EC2 instance and system status checks. I throttled concurrent alarm creation to two \texttt{ThreadPoolExecutor} workers with an adaptive retry
 strategy of up to 10 attempts, resolving \texttt{PutMetricAlarm} throttling
-that had previously caused partial alarm set deployments. Lambda deployment
-zip sizes grew from 9~KB to 170~KB after bundling \texttt{aws-xray-sdk}
-with \texttt{patch\_all()} auto-instrumentation. The X-Ray gap analysis
-established the baseline: CloudWatch monitoring alone provided
+that had previously caused partial alarm set deployments. Bundling \texttt{aws-xray-sdk} with \texttt{patch\_all()} auto-instrumentation grew Lambda deployment
+zip sizes from 9~KB to 170~KB. I established the X-Ray gap analysis baseline: CloudWatch monitoring alone provided
 approximately 30\% parity with Dynatrace; adding X-Ray, Application
-Signals, and the full Grafana stack raised this to 88\%.
+Signals, and the full Grafana stack would raise this to 88\%.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 19
@@ -1068,7 +1045,7 @@ Week~19 delivered the CloudWatch Logs observability layer including 30
 saved queries across all monitored platforms.
 
 \textbf{Saved Queries Generation Script (log group observability feature Phase~5):} 
-\texttt{create\_saved\_queries.py} was written to programmatically create
+I wrote \texttt{create\_saved\_queries.py} to programmatically create
 30 CloudWatch Logs Insights saved queries, covering six query types
 (recent errors, Lambda cold starts, request tracing, performance analysis,
 audit events, and resource utilization) across seven platforms. The script
@@ -1078,41 +1055,41 @@ conventions change. Running the script in DEV confirmed 748 matched log
 groups from a total of 3,423 groups in the account.
 
 \textbf{Log Group URL Utility and Alarm-to-Log-Group Mapping:} 
-The
-\texttt{shared/log\_groups.py} module was extracted into the shared
+I extracted the
+\texttt{shared/log\_groups.py} module into the shared
 utilities package, providing URL encoding, service classification from
 log group name patterns, and an alarm-to-log-group matching function
-used by the alarm email formatter. The alarms-notifications feature branch
-was merged to release, making the full alarm notification pipeline
+used by the alarm email formatter. I merged the alarms-notifications feature branch
+to release, making the full alarm notification pipeline
 (EventBridge state publisher~$\to$ SNS formatter~$\to$ HTML email with
 log group deep-link) available in the DEV environment.
 
 \textbf{SRE Extended Review Sessions:} 
-Two 60-minute SRE extended review
-sessions were held (Monday and Tuesday) with Mr.\ Deotale and the wider Innovation
-IT team. These sessions covered the full observability platform architecture,
+I held two 60-minute SRE extended review
+sessions (Monday and Tuesday) with Mr.\ Deotale and the wider Innovation
+IT team. In these sessions, we covered the full observability platform architecture,
 confirmed the resource inventory coverage, and reviewed the X-Ray
 implementation roadmap.
 
 By the end of Week~19, the CloudWatch Logs layer was operational with saved
-queries for all platforms, the alarm-to-log-group pipeline was merged,
+queries for all platforms, I had merged the alarm-to-log-group pipeline,
 and the SRE extended review confirmed the platform architecture was
 sound for the upcoming X-Ray tracing work.
 
 \textbf{Cross-Platform Variable Filter Fix:} 
-A critical dashboard correctness
-bug was discovered and fixed: when a multi-select Grafana variable had an
+I discovered and fixed a critical dashboard correctness
+bug: when a multi-select Grafana variable had an
 empty selection, \texttt{filterFieldsByName} was matching rows from all
-platforms rather than returning no results. The fix added
+platforms rather than returning no results. I added
 \texttt{allValue=\^{}\$} with a \texttt{\_\_no\_resources\_\_} sentinel
 value across all 13 multi-select variables, ensuring empty selections
 produced empty panels rather than misleading cross-platform data leakage.
-The inventory API project was renamed from \texttt{resources-inventory} to
+I renamed the inventory API project from \texttt{resources-inventory} to
 \texttt{infrastructure-inventory} to align with the platform-agnostic naming
-convention adopted in Week~17, requiring updates across all Lambda names,
+convention that I adopted in Week~17, requiring updates across all Lambda names,
 CloudFormation stacks, API Gateway stages, documentation, and AWS Console
-bookmark links. The test suite reached 562 tests at 99\% coverage (v1.5.1)
-after adding 50 Lambda API handler unit tests and 48 additional integration
+bookmark links. I grew the test suite to 562 tests at 99\% coverage (v1.5.1)
+by adding 50 Lambda API handler unit tests and 48 additional integration
 tests.
 
 % ════════════════════════════════════════════════════════════
@@ -1126,30 +1103,28 @@ tests.
 
 Week~20 was the fourth RPA support rotation, combined with authoring the
 full X-Ray distributed tracing specification suite and the SRE Platform
-\textbf{v2.19.9}
+v2.19.9
 release.
 
-\textbf{RPA Production Support Rotation (July~27--31):} 
-Tickets handled
-this week included: FX Closeout retrigger for
+\textbf{RPA Production Support Rotation:} 
+I handled the following tickets this week: FX Closeout retrigger for
 PICTET\_RPA (checked UiPath folder, archived old Daily565 reports, triggered
 and notified Ms.\ Kartina on completion); Auto Rec Download ASPECT
 client configuration (backed up \texttt{gridview.py}, added transaction and
 position columns with Mr.\ Leung verification); MESO cash
 completeness for Johansen funds (verified DB state, obtained admin access
-from Mr.\ Leung to mark pending items as failed, retriggered to completion);
+from Mr.\ Leung to mark pending items as failed on the reporting server, retriggered to completion);
 TUDOR3 daily reconciliation report (monitored Run ID progress,
-provided updates, and contacted Mr.\ Jay for an optimised query). Inactive tickets 
-exceeding the 14-day threshold were closed per the Production
+provided updates, and contacted Mr.\ Jay for an optimized query). I closed inactive tickets
+exceeding the 14-day threshold per the Production
 Support guide. Mr.\ Leung conducted KT sessions: 47~minutes on Monday,
-43~minutes on Wednesday (group with Mr.\ Deotale and Mr.\ Edmund), and an extended
-110-minute joint session with Mr.\ Jiannan covering full RPA KT for the incoming
+43~minutes on Wednesday (group with Mr.\ Deotale and Mr.\ Edmund), and a
+110~minute session with Mr.\ Jiannan covering full RPA KT for the incoming
 team member.
 
 \textbf{X-Ray Tracing Specification Suite:} 
-Seven X-Ray
-tracing sub-task specifications were authored for the \texttt{ia\_meso\_process}
-repository: Lambda Powertools X-Ray tracing specification (Lambda Powertools Tracer with \texttt{@capture\_method}
+I authored seven X-Ray tracing sub-task specifications for the
+\texttt{ia\_meso\_process} repository: Lambda Powertools X-Ray tracing specification (Lambda Powertools Tracer with \texttt{@capture\_method}
 decorators), ECS ADOT sidecar tracing specification (ECS ADOT sidecar with OpenTelemetry auto-instrumentation),
 EKS DaemonSet tracing specification (EKS DaemonSet collector), API Gateway tracing specification (API Gateway active tracing),
 SQS trace propagation specification (SQS message attribute trace propagation), MSK trace propagation specification (MSK record
@@ -1157,8 +1132,7 @@ header trace propagation), and EC2 X-Ray tracing specification (EC2 X-Ray daemon
 included implementation tasks, rollback procedures, and cost estimates.
 
 \textbf{SRE Platform v2.19.9 Release:} 
-The log group discovery feature PR
-was merged and SRE Observability Platform \textbf{v2.19.9} was released,
+I merged the log group discovery feature pull request and released SRE Observability Platform v2.19.9,
 incorporating the saved queries, log group URL utility, and alarm deep-link
 pipeline developed in Weeks~18--19.
 
@@ -1173,14 +1147,12 @@ completeness incident for the Johansen fund illustrates the typical
 resolution workflow for stuck queue items. After verifying the database
 state and CloudWatch logs confirmed items were genuinely stuck (not still
 processing), the escalation to Mr.\ Leung for admin access took approximately
-20 minutes. Items were marked failed using the admin UI, and the business
-user (Johansen) was asked to retrigger. The process ran to completion
-within 40 minutes of the retrigger. Johansen also requested standby
+20 minutes. I marked items failed on the reporting server and in the MESO database and asked the business
+user (the Johansen team) to retrigger. The process ran to completion
+within 40 minutes of the retrigger. The Johansen team also requested standby
 assistance for downloading reports from S3 if they generated without
-saving to the expected location --- this edge case was documented in
-the shift handover log for future rotations. The extended Mr.\ Jiannan RPA
-knowledge transfer session (110 minutes) transferred the full MESO
-retrigger and Corporate Actions onboarding procedures to the incoming
+saving to the expected location---I documented this edge case in the shift handover log for future rotations. The Mr.\ Jiannan RPA
+knowledge transfer session transferred the full MESO retrigger and Corporate Actions onboarding procedures to the incoming
 support team member for the September continuation period.
 
 % ════════════════════════════════════════════════════════════
@@ -1192,34 +1164,33 @@ support team member for the September continuation period.
 \section{Week 21}
 \label{sec:week21}
 
-Week~21 was the delivery-densest week of the co-op placement's second half,
-focused on a comprehensive quality and reliability improvement programme
+Week~21 was the most delivery-dense week of the co-op placement's second half,
+focused on a comprehensive quality and reliability improvement program
 for the \textbf{Ask Citco RPA} LLM agent.
 
 \textbf{Architectural Refactor and Structlog Migration:} 
-The 1,140-line
-monolithic \texttt{event\_service/function.py} was decomposed into 8
+I decomposed the 1,140-line
+monolithic \texttt{event\_service/function.py} into eight
 single-responsibility modules following the Model-View-Controller pattern.
-All \texttt{print} statements and root-logger calls across 11 Lambda
-functions were replaced with \texttt{structlog} structured key=value logging.
-Google-style docstrings with parameter and return types were added to all
-public functions, and all \texttt{sys.path.insert} hacks were removed in
-favour of a properly packaged module structure.
+I replaced all \texttt{print} statements and root-logger calls across eleven Lambda
+functions with \texttt{structlog} structured key=value logging.
+I added Google-style docstrings with parameter and return types to all
+public functions and removed all \texttt{sys.path.insert} hacks in
+favor of a properly packaged module structure.
 
 \textbf{handler\_utils Decorators and Test Milestone:} 
-A shared
-\texttt{handler\_utils} module I built providing three decorators:
+I built a shared
+\texttt{handler\_utils} module providing three decorators:
 \texttt{@log\_handler} (structured entry/exit logging with correlation IDs),
 \texttt{@scheduled\_handler} (EventBridge schedule context extraction),
 and \texttt{@cfn\_handler} (CloudFormation custom resource response handling).
-These decorators were applied to all eight Lambda handlers, eliminating
-repeated boilerplate. The test suite grew from 60\% to \textbf{100\%
-coverage (233 tests)} through this week, with ruff reporting zero lint
-issues and Bandit clean on all security checks.
+I applied these decorators to all eight Lambda handlers, eliminating
+repeated boilerplate. I grew the test suite from 60\% to 100\%
+coverage (233 tests), achieving zero Ruff lint issues and zero Bandit security findings.
 
 \textbf{Structured CFN Nested Stack:} 
-A parallel structured CloudFormation
-nested stack I built decomposing the flat 600-line template into six
+I built a structured CloudFormation
+nested stack in parallel, decomposing the flat 600-line template into six
 sub-stacks: \texttt{cfn.storage} (S3, DynamoDB), \texttt{cfn.iam} (all
 roles and policies), \texttt{cfn.lambda} (function definitions), \texttt{cfn.bedrock}
 (agent and knowledge base), \texttt{cfn.ecs} (container task definitions),
@@ -1228,11 +1199,11 @@ independent stack updates and brought the deployment model in line with
 the \texttt{ia-it-sre-infrastructure-monitoring-amg} nested stack pattern.
 
 \textbf{SRE Naming Convention and Metrics Live:} 
-The SRE
+I renamed the SRE
 infrastructure repository service names, Lambda names, S3 bucket names,
-and IAM role names were renamed from the \texttt{meridian} prefix to the
-\texttt{ia-it-sre} convention. The inventory API was confirmed publishing
-597 CloudWatch metrics live across all six platforms in DEV.
+and IAM role names from the \texttt{meridian} prefix to the
+\texttt{ia-it-sre} convention. I confirmed the inventory API was publishing
+597 CloudWatch metrics live across all six platforms in the DEV environment.
 
 By the end of Week~21, the LLM agent had reached production-quality
 code standards (100\% coverage, zero lint, zero security issues), the
@@ -1240,22 +1211,21 @@ nested CFN architecture was established, and the SRE naming convention
 was applied platform-wide.
 
 \textbf{EventBridge vs APScheduler Decision:} 
-A 59-minute architecture
-discussion with Mr.\ Leung on August~4 resolved the scheduling mechanism for
-the AExeo Report UI. APScheduler had been considered but had caused memory
-contention issues in a prior project. EventBridge Scheduler was selected
+In a 59-minute architecture
+discussion with Mr.\ Leung, we resolved the scheduling mechanism for
+the \AE xeo Report UI. We had considered APScheduler but it had caused memory
+contention issues in a prior project. We selected EventBridge Scheduler
 for its managed lifecycle ($\sim$\$1/month), stateless invocation model,
 and architectural consistency with the 5-minute alarm re-notification pattern
-already running in Centralized Amazon Managed Grafana (AMG) Dashboard. An IAM assistance session (1~hour~50~minutes)
-followed, extracting the exact permissions required from the existing
-Centralized Amazon Managed Grafana (AMG) Dashboard CloudFormation execution role:
+already running in the AMG dashboard. In a follow-up IAM assistance session (110~minutes),
+I extracted the exact permissions required from the existing
+AMG dashboard CloudFormation execution role:
 \texttt{scheduler:CreateSchedule}, \texttt{scheduler:UpdateSchedule},
 \texttt{scheduler:DeleteSchedule}, and \texttt{iam:PassRole} with the
-\texttt{lambda.amazonaws.com} trust policy. The ECS task CPU and memory
-were aligned to production values (512 CPU units / 1,024~MB) based on
-CloudWatch utilization data from the 93-day analysis window, replacing
-the development-phase values that had been left in the template
-from initial scaffolding.
+\texttt{lambda.amazonaws.com} trust policy. I aligned the ECS task CPU and memory
+to production values (512 CPU units / 1,024~MB) based on
+CloudWatch utilization data from the 93-day analysis window, replacing development-phase values that had remained in the template
+since initial scaffolding.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 22
@@ -1266,68 +1236,65 @@ from initial scaffolding.
 \section{Week 22}
 \label{sec:week22}
 
-Week~22 continued the RPA LLM Agent quality improvement programme quality programme with knowledge base
-upload tooling, Bedrock agent externalisation, and the FastAPI ECR
+Week~22 continued the RPA LLM Agent quality improvement program with knowledge base
+upload tooling, Bedrock agent externalization, and the FastAPI ECR
 image MVC refactor.
 
 \textbf{KB Content Upload CLI (\texttt{upload\_kb\_content.py}):} 
-A
-CLI tool I built to upload NAV Checklist PDFs to the Bedrock Knowledge
+I built a
+CLI tool to upload NAV Checklist PDFs to the Bedrock Knowledge
 Base S3 bucket. The tool was refactored into a \texttt{\_kb\_utils/}
 package with four modules (\texttt{auth}, \texttt{s3}, \texttt{sync},
 \texttt{bucket}), an \texttt{--env} flag with production confirmation
 prompt, a \texttt{status} subcommand that discovers Knowledge Base and
 Data Source IDs by name, and 78 tests (48 package tests + 30 CLI tests).
-KMS encryption was enforced consistently across all Athena queries, closing
+I enforced KMS encryption consistently across all Athena queries, closing
 an SSE inconsistency identified in the Week~21 audit.
 
-\textbf{Bedrock Agent Instruction Externalisation:} 
-The Bedrock agent
-instruction was externalised from an inline CloudFormation parameter to
+\textbf{Bedrock Agent Instruction Externalization:} 
+I externalized the Bedrock agent
+instruction from an inline CloudFormation parameter to
 a plain-text file (\texttt{data/bedrock-agent-instruction.txt}) read
-from S3 via a CFN Custom Resource at deploy time. This eliminated the
+from S3 via a CloudFormation Custom Resource at deploy time, eliminating the
 need to redeploy the full stack for instruction tuning iterations.
-A \texttt{status} subcommand was added to discover active Knowledge Base
+I added a \texttt{status} subcommand to discover active Knowledge Base
 and Data Source IDs from AWS by name pattern, removing the need to
 hard-code resource IDs in deployment scripts.
 
-\needspace{4\baselineskip}
 \textbf{FastAPI ECR Image MVC Refactor:} 
-The \texttt{core-smart-rpa-llm-ecr-image}
-FastAPI container underwent a full MVC refactor: the application was
-restructured into an \texttt{app/} package (routers, models, services,
-dependencies), \texttt{structlog} logging replaced the custom logger,
-\texttt{pydantic-settings} replaced manual environment variable reads,
-LDAP TLS was properly configured, and CORS origins were locked to the
+I applied a full MVC refactor to the \texttt{core-smart-rpa-llm-ecr-image}
+FastAPI container: I restructured the application into an \texttt{app/} package (routers, models, services,
+dependencies), replaced the custom logger with \texttt{structlog} logging,
+replaced manual environment variable reads with \texttt{pydantic-settings},
+configured LDAP TLS properly, and locked CORS origins to the
 Citco domain list. I built and tested a hardened Docker container image.
 
-\textbf{CodeBuild Pipeline Stabilisation:} 
-A series of CodeBuild pipeline
-failures were resolved across the week: \texttt{AWS\_ACCOUNT\_ID} retrieval
+\textbf{CodeBuild Pipeline Stabilization:} 
+I resolved a series of CodeBuild pipeline
+failures across the week: \texttt{AWS\_ACCOUNT\_ID} retrieval
 via STS lookup, \texttt{DATA\_BUCKET\_NAME} injection into the build
 environment, YAML parser colon-in-string errors in the buildspec, and
 account ID resolution from \texttt{parameters/\{env\}.json}.
 
 By the end of Week~22, the KB upload CLI was tested and functional,
-the Bedrock agent instruction was decoupled from the CFN template, and
+the Bedrock agent instruction was externalized from the CloudFormation template, and
 the FastAPI ECR image was hardened and refactored to production quality.
 
-\textbf{CodeBuild Pipeline Stabilisation Challenges:} 
-The CodeBuild
-pipeline required six separate hotfix iterations before stabilising.
-Issues resolved in sequence: \texttt{AWS\_ACCOUNT\_ID} was not
-available as a built-in variable (fixed via STS lookup); the
+\textbf{CodeBuild Pipeline Stabilization Challenges:} 
+I stabilized the CodeBuild
+pipeline through six hotfix iterations.
+I resolved the following issues in sequence: \texttt{AWS\_ACCOUNT\_ID} was not
+available as a built-in variable (I fixed this via STS lookup); the
 \texttt{DATA\_BUCKET\_NAME} environment variable was not injected into
-the build context (fixed by reading from \texttt{parameters/\{env\}.json});
+the build context (I fixed this by reading from \texttt{parameters/\{env\}.json});
 YAML parser colon-in-string errors prevented the buildspec from parsing
-(fixed by quoting affected strings); the final solution read
+(I fixed this by quoting affected strings); and I read
 \texttt{CodeAccountId} from the parameters JSON file rather than
-querying it dynamically. An ad-hoc manual report run was completed for
-Mr.\ Deotale on August~11: five AExeo report requests were submitted
+querying it dynamically. I completed an ad-hoc manual report run for Mr.\ Deotale: I submitted five \AE xeo report requests
 via the \texttt{GET /arguments} API endpoint using
 \texttt{ReportID:~100502500}, \texttt{value date:~2026-08-10}, and
 \texttt{SourceSystem:~RECON\_EBINDER}, covering TWOSIGMA, SIGMATWO,
-and TSCONSOL clients. All five reports were verified as delivered to
+and TSCONSOL clients. I confirmed all five reports were delivered to
 the production S3 bucket.
 
 % ════════════════════════════════════════════════════════════
@@ -1340,59 +1307,55 @@ the production S3 bucket.
 \label{sec:week23}
 
 Week~23 was one of the most productive delivery weeks of the co-op placement,
-completing the RPA LLM Agent quality improvement programme quality sprint, instrumenting X-Ray tracing across
+completing the RPA LLM Agent quality improvement sprint, instrumenting X-Ray tracing across
 the LLM agent, delivering Citco-branded alarm emails for the AMG platform,
-and making initial progress on the Infrastructure Monitoring Dashboard Enterprise Dashboard.
+and making initial progress on the Enterprise Infrastructure Monitoring Dashboard.
 
 \textbf{280 Tests at 100\% Coverage and ircoekb Fixes:} 
-The week
-opened on August~17 with the MVC refactor branch merged to release, bringing
-the test suite to \textbf{280 tests at 100\% coverage}. The ircoekb Lambda
-timeout was increased from 300s to 900s based on the 93-day log analysis.
-An SSL hotfix was applied to skip certificate verification for internal Citco
+I merged the MVC refactor branch to release, bringing
+the test suite to 280 tests at 100\% coverage. I increased the ircoekb Lambda
+timeout from 300s to 900s based on the 93-day log analysis.
+I applied an SSL hotfix to skip certificate verification for internal Citco
 SDM endpoints (\texttt{nosec B501} annotations added for the known internal
-trust exception). Five dead scripts were archived into \texttt{\_archive/}.
-On August~18, the Bedrock agent instruction was further externalised, usage
-report emails were completely redesigned as pivot-table HTML reports with
-Citco brand colours (\texttt{\#002D72} navy), 32 cfn-lint warnings were
-resolved, and \texttt{eval()} calls were replaced with \texttt{json.loads()}
-across the codebase. On August~19, Pydantic validation models, tenacity
+trust exception). I archived five dead scripts into \texttt{\_archive/}.
+I further externalized the Bedrock agent instruction, redesigned usage
+report emails as pivot-table HTML reports with
+Citco brand colors, resolved 32 cfn-lint warnings,
+and replaced \texttt{eval} calls with \texttt{json.loads}
+across the codebase. I implemented Pydantic validation models, tenacity
 exponential backoff, an SSM kill switch, and six CloudWatch alarms for all
-scheduled Lambda functions I implemented.
+scheduled Lambda functions.
 
-\textbf{/839/842: X-Ray Tracing Instrumentation:} 
-Lambda Powertools
+\textbf{X-Ray Tracing Instrumentation:} 
+I applied Lambda Powertools
 \texttt{@tracer.capture\_lambda\_handler} and \texttt{@tracer.capture\_method}
-decorators were applied to all Lambda functions on August~19. A cold-start
-fix was required for functions that load S3 data at module import time ---
-these cannot be instrumented at the class-method level without triggering
-before the tracer initialises. A \texttt{tracing.md} file documenting every
-decorated and undecorated function with rationale was added. The ECS ADOT
-sidecar X-Ray tracing spec and SQS trace header propagation spec were also authored for the \texttt{ia\_meso\_process} BitBucket
-repository, and a new ECS ADOT sidecar instrumentation spec was written for
+decorators to all Lambda functions. Some functions that load S3 data at module import time required a cold-start
+fix---these cannot be instrumented at the class-method level without triggering
+before the tracer is initialized. I added a \texttt{tracing.md} file documenting every
+decorated and undecorated function with rationale. I also authored the ECS ADOT
+sidecar X-Ray tracing spec and SQS trace header propagation spec for the \texttt{ia\_meso\_process} BitBucket
+repository, and a new ECS ADOT sidecar instrumentation spec for
 the \texttt{core-smart-rpa-llm-ecr-image} container.
 
 \textbf{Citco-Branded HTML Alarm Emails and Notifications CLI:} 
-On August~20--21, alarm email delivery was migrated from SES to Citco SMTP
-using the \texttt{TOIA-SMTP-Credentials} Secrets Manager secret. File-based
-HTML templates were introduced with Citco branding and per-platform digest
+I migrated alarm email delivery from SES to Citco SMTP
+using the \texttt{TOIA-SMTP-Credentials} Secrets Manager secret. I introduced file-based HTML templates with Citco branding and per-platform digest
 format. I implemented composite alarm re-notification with 5-minute cadence,
 with suppression logic preventing warning re-notifications when a critical
-sibling alarm is already active. IAM was corrected: missing
-\texttt{cloudwatch:DescribeAlarms} resource scope, stale SES permissions
-removed, and \texttt{kms:Decrypt} added for the SMTP credentials KMS key.
-Three feature branches (mapper decommission, composite re-notification, SMTP
-emails) were merged to release and then to main on August~21.
+sibling alarm is already active. I corrected IAM permissions: I added the missing
+\texttt{cloudwatch:DescribeAlarms} resource scope, removed stale SES permissions,
+and added \texttt{kms:Decrypt} for the SMTP credentials KMS key.
+I merged three feature branches (mapper decommission, composite re-notification, SMTP
+emails) to release and then to main.
 
-\textbf{and Infrastructure Monitoring Dashboard:} 
-A dedicated \texttt{GET /api/log-groups}
-endpoint was added to the inventory API (log group observability feature Phase~2), enabling alarm
-emails to include per-resource log group deep-links. Infrastructure Monitoring Dashboard received its
-initial commit as a new \texttt{ia\_infrastructure\_dashboard} BitBucket
+\textbf{Infrastructure Monitoring Dashboard:} 
+I added a dedicated \texttt{GET /api/log-groups}
+endpoint to the inventory API (log group observability feature Phase~2), enabling alarm
+emails to include per-resource log group deep-links. I created the initial commit for the Infrastructure Monitoring Dashboard as a new \texttt{ia\_infrastructure\_dashboard} BitBucket
 repository, with an \texttt{@citco/core + @citco/theme} migration plan
 documented to align the Enterprise Dashboard with Citco's component library.
 
-By the end of Week~23, RPA LLM Agent quality improvement programme reached full production quality, X-Ray
+By the end of Week~23, the RPA LLM Agent quality improvement program reached full production quality, X-Ray
 tracing was instrumented end-to-end in the LLM agent, Citco SMTP alarm
 emails were live, and three major AMG features were merged to main.
 
@@ -1407,29 +1370,27 @@ emails were live, and three major AMG features were merged to main.
 
 Week~24 was the fifth and final RPA production support rotation, combined with structured knowledge transfer to the team, active frontend development on the Enterprise Dashboard, and planning for the Mitacs BSI extension.
 
-\textbf{RPA Production Support Rotation (Aug~24--28):} 
-The final rotation followed the standard North America shift pattern (11:00~AM--7:00~PM EST). I handled 5 SD tickets and 3 ad-hoc escalations across the week, with one ticket escalated to the database team.
+\textbf{RPA Production Support Rotation:} 
+The final rotation followed the standard North America shift pattern (11:00~AM--7:00~PM EST). I handled five SD tickets and three ad-hoc escalations across the week, with one ticket escalated to the database team.
 
-\textit{Monday August~24:} I handled four items. For SD~\#15462793 (Auto Rec Download SFTP config), I located the configuration file on the UiPath production share server, created a backup in the rollback folder, and updated the location to the new UCM path. For SD~\#15475037 (FA Audit Pack, Davidson Kempener missing reports), I investigated via Confluence and confirmed the client is part of the ``Big 19'' --- a designated client group for which the Realized-Unrealized report cannot be run by design. I informed the user of this constraint. For SD~\#15475196 (Ops Transfers, CPPIB file not picked up), I identified trailing whitespace in the Master tab that was preventing file detection, removed it, and confirmed the file was subsequently picked up by the scheduled trigger. I also handled three ad-hoc MESO runs (Run IDs \texttt{e6081e47}, \texttt{69a7396e}, \texttt{94b20ea0}) for ARISAIG PARTNERS and OPENDOOR funds that had been stuck in \texttt{PENDING} status for over six days --- I marked all three as \texttt{FAILED} and emailed the affected teams to retrigger.
+\textit{Monday:} I handled four items. For the Auto Rec Download SFTP config, I located the configuration file on the UiPath production share server, created a backup in the rollback folder, and updated the location to the new UCM path. For the FA Audit Pack (Davidson Kempener missing reports), I investigated via Confluence and confirmed the client is part of the ``Big 19''---a designated client group for which the Realized-Unrealized report cannot be run by design. I informed the user of this constraint. For the Ops Transfers ticket (CPPIB file not picked up), I identified trailing whitespace in the Master tab that was preventing file detection, removed it, and confirmed the file was subsequently picked up by the scheduled trigger. I also handled three ad-hoc MESO runs for ARISAIG\_PARTNERS and OPENDOOR funds that had been stuck in \texttt{PENDING} status for over six days---I marked all three as \texttt{FAILED} on the reporting server and emailed the affected teams to retrigger.
 
-\textit{Tuesday August~25:} For SD~\#15481540 (MESO blank reports after a production pipeline fix), I confirmed the fix commit was deployed and coordinated with Mr.\ Leung to handle the retrigger. The task was stuck in \texttt{KILLED} status --- a state where the server treats the task as incomplete and blocks retrigger until it is manually marked as \texttt{FAILED} first. Mr.\ Leung marked it \texttt{FAILED} and triggered the rerun, which completed successfully. I communicated the resolution to the requesting team. For SD~\#15483114, investigation revealed a database-related exception in the RPA bot logs. I documented my findings and emailed Jay with the logs and investigation steps; Jay confirmed and escalated to the DB team.
+\textit{Tuesday:} For the MESO blank reports ticket (after a production pipeline fix), I confirmed the fix commit was deployed and coordinated with Mr.\ Leung to handle the retrigger. The task was stuck in \texttt{KILLED} status---a state where the server treats the task as incomplete and blocks retrigger until someone manually marks it as \texttt{FAILED} in the MESO database first. Mr.\ Leung marked it \texttt{FAILED} and triggered the rerun, which completed successfully. I communicated the resolution to the requesting team. For the final ticket, my investigation revealed a database-related exception in the RPA bot logs. I documented my findings and emailed Mr.\ Jay with the logs and investigation steps; he confirmed and escalated to the DB team.
 
-\textit{Thursday August~27:} I triggered the AVCAB queue with the \texttt{-LOG} suffix for SONA/PICTET Corporate Actions as per the standard procedure, and followed the FX Closeout trigger procedure for SONA. Both resolved without issue.
+\textit{Thursday:} I triggered the AVCAB queue with the \texttt{-LOG} suffix for SONA/PICTET Corporate Actions as per the standard procedure, and followed the FX Closeout trigger procedure for SONA. Both resolved without issue.
 
-\textit{Friday August~28 --- \AE xeo Reports Incident:} The most complex incident of the week involved scheduled reports for TWOSIGMA, SIGMATWO, and TSCONSOL clients. Early reports had delivered but the regular scheduled reports had not. Mr.\ Leung asked for my help and we worked the investigation together over a call. I had previously assisted Mr.\ Deotale with a similar case on August~11 (triggering reports via Postman). Mr.\ Leung initially investigated through CloudWatch log analytics, searching by job ID in the MESO request database --- a needle-in-a-haystack approach. I suggested narrowing the investigation via the \AE xeo Report ID instead: on the reporting server, each triggered report generates a unique ID that tracks exactly what happened to that specific report, rather than scanning the entire MESO process log. When I checked the reporting server using the Report ID, I found ``no response from \AE xeo server'' --- the reports had failed because of a reporting server error, not a MESO pipeline issue. Mr.\ Leung confirmed this was the root cause and no further MESO investigation was needed.
+\textit{Friday---\AE xeo Reports Incident:} The most complex incident of the week involved scheduled reports for TWOSIGMA, SIGMATWO, and TSCONSOL clients. Early reports had delivered but the regular scheduled reports had not. Mr.\ Leung asked for my help and we worked the investigation together over a call. I had previously assisted Mr.\ Deotale with a similar case (triggering reports via Postman). Mr.\ Leung initially investigated through CloudWatch log analytics, searching by job ID in the MESO request database---an exhaustive log-scanning approach. I suggested narrowing the investigation via the \AE xeo Report ID instead: on the reporting server, each triggered report generates a unique ID that tracks exactly what happened to that specific report, rather than scanning the entire MESO process log. When I checked the reporting server using the Report ID, I found ``no response from \AE xeo server''---the reports had failed because of a reporting server error, not a MESO pipeline issue. Mr.\ Leung confirmed this was the root cause and no further MESO investigation was needed.
 
-To deliver the reports manually, Mr.\ Leung triggered them via the Postman API. Once the reporting server showed completion and MESO confirmed the runs were consolidated, the reports were available in the S3 bucket. I helped Mr.\ Leung download them and we attempted to transfer to the shared drive, but were unable to retrieve the shared-drive password after several attempts. We instead delivered the reports to business users via Microsoft Teams (files were too large for email). Throughout the incident I assisted with the RCA, delivery coordination, and follow-up communication with the business team.
+To deliver the reports manually, Mr.\ Leung triggered them via the Postman API. Once the reporting server showed completion and MESO confirmed the runs were consolidated, the reports were available in the S3 bucket. I helped Mr.\ Leung download them and we attempted to transfer to the shared drive, but we were unable to retrieve the shared-drive password after several attempts. We instead delivered the reports to business users via Microsoft Teams (files were too large for email). Throughout the incident, I assisted with the RCA, delivery coordination, and follow-up communication with the business team.
 
-\textbf{Knowledge Transfer Handover Sessions:} 
-I conducted structured handover sessions with Mr.\ Leung and Ms.\ Labos covering the full operational model for all systems I had built. For the Grafana dashboard I walked through how to read the Health Overview alarm states, when to escalate a CRITICAL alarm versus attempt self-healing, and how to use the alarm state history panel to identify recurring failures. I reviewed the alarm runbooks I had written, explaining the per-service threshold rationale in detail (for example, why the MSK \texttt{EstimatedMaxTimeLag} threshold is set at 10,000 messages and what operating conditions would cause it to fire). For the Inventory API I covered the stack deployment ordering (CloudFormation stacks must be deployed in dependency order), the environment promotion procedure from DEV to UAT to PROD, and how to manually invalidate the S3 cache if a new AWS resource is added before the next scheduled EventBridge refresh. Written handover notes for all three systems were published to Confluence.
 
 \textbf{Enterprise Dashboard and Inventory API Development:} 
 During non-support hours I continued active development across two repositories. In \texttt{ia-it-sre-infrastructure-inventory} I implemented two new observability API handlers for X-Ray service map data and CloudWatch Alarms, providing the backend endpoints that the Infrastructure Monitoring Dashboard frontend will consume. I also migrated the repository to \texttt{uv} virtual environments, pinned Python~3.14, and exported a \texttt{requirements.txt} for compatibility with the CodeCommit CI pipeline.
 
-In \texttt{ml-rpa-status-llm-agent} I completed a four-phase Lambda handler standardisation refactor: Phase~1 deleted four legacy shim handlers and updated CloudFormation \texttt{Handler} references; Phase~2 renamed \texttt{function.py} to the conventional \texttt{handler.py} and deleted two additional shims; Phase~3 extracted the Athena extraction logic and renamed the ALB and Athena handler modules for clarity; Phase~4 marked all tasks complete and staged the remaining \texttt{function.py} deletions. I also tested the GPT-5.6 Luna model on the DEV Bedrock agent and added a CORA process PDF to the Knowledge Base S3 bucket under \texttt{RPA Processes/CORA/}. A deploy fix resolved a CloudFormation changeset hang caused by a \texttt{uv} dependency group issue and a missing boto3 timeout on the changeset wait call.
+In \texttt{ml-rpa-status-llm-agent} I completed a four-phase Lambda handler standardization refactor: Phase~1 deleted four legacy shim handlers and updated CloudFormation \texttt{Handler} references; Phase~2 renamed \texttt{function.py} to the conventional \texttt{handler.py} and deleted two additional shims; Phase~3 extracted the Athena extraction logic and renamed the ALB and Athena handler modules for clarity; Phase~4 marked all tasks complete and staged the remaining \texttt{function.py} deletions. I also tested the GPT-5.6 Luna model on the DEV Bedrock agent and added a CORA process PDF to the Knowledge Base S3 bucket under \texttt{RPA Processes/CORA/}. I resolved a CloudFormation change set hang caused by a \texttt{uv} dependency group issue and a missing boto3 timeout on the change set wait call.
 
 \textbf{Mitacs BSI Extension Planning:} 
-The Mitacs BSI renewal for Sep~1--Dec~31, 2026 was confirmed. I prepared a scope document for Mr.\ Deotale covering four deferred workstreams: X-Ray tracing production enablement (currently DEV-only, pending UAT/PROD approval); log-group discovery API endpoint and Grafana panel integration (Phase~3 of the observability plan); the two Enterprise Dashboard pages; and RPA LLM Agent production hardening. By the end of Week~24, all handover documentation was live on Confluence and four workstreams were formally scoped for the extension.
+Citco confirmed the Mitacs BSI renewal for September 2026. I prepared a scope document for Mr.\ Deotale covering four deferred workstreams: X-Ray tracing production enablement (currently DEV-only, pending UAT/PROD approval); log-group discovery API endpoint and Grafana panel integration (Phase~3 of the observability plan); the two Enterprise Dashboard pages; and RPA LLM Agent production hardening. By the end of Week~24, all handover documentation was live on Confluence and four workstreams were formally scoped for the extension.
 
 % ════════════════════════════════════════════════════════════
 % WEEK 25
@@ -1440,18 +1401,15 @@ The Mitacs BSI renewal for Sep~1--Dec~31, 2026 was confirmed. I prepared a scope
 \section{Week 25}
 \label{sec:week25}
 
-August~31 marked the final day of the co-op placement, and I used it for structured operational handover and formal closure across all active workstreams.
+Week~25 marked the final day of the co-op placement, and I used it for structured operational handover and formal closure across all active workstreams.
 
 \textbf{Final Knowledge Transfer and Operational Handover:} 
-I held a formal handover session with Mr.\ Leung and Ms.\ Labos covering the full operational model for the infrastructure monitoring platform I had built. The session walked through the dashboard operating model in detail: how to interpret the Health Overview row's colour-coded stat tiles, when a CRITICAL alarm warrants immediate escalation versus self-heal investigation, and how to use the alarm state history panel to distinguish a transient spike from a sustained failure. I transferred ownership of the alarm runbooks, documenting per-service threshold rationale (for example, why MSK \texttt{EstimatedMaxTimeLag} is set to 10,000 messages rather than a lower value, and what the Meridian Incident peak of nine million messages implies about the operating range). I handed over the inventory API deployment guide covering stack ordering, environment promotion from DEV to UAT to PROD, and how to manually invalidate the S3 cache if a new resource is added between scheduled cache refresh cycles.
-
-\textbf{Scope Review for Mitacs BSI Extension:} 
-I met with Mr.\ Deotale for a formal scope review of the Sep--Dec~2026 Mitacs BSI extension. We confirmed the four workstreams deferred from this placement: X-Ray tracing production enablement (pending UAT/PROD approval), log-group discovery API endpoint and Grafana panel integration, the Infrastructure Inventory Dashboard and Infrastructure Monitoring Dashboard as two new pages in the \texttt{ia-config-portal}, and RPA LLM Agent production hardening. I briefed Mr.\ Deotale on the technical state of each workstream, including which branches were merged and which were still in progress, so the extension engagement could begin without a cold start.
+I held a formal handover session with Mr.\ Leung and Ms.\ Labos covering the full operational model for the infrastructure monitoring platform I had built. In the session, I walked through the dashboard operating model in detail: how to interpret the Health Overview row's color-coded stat tiles, when a CRITICAL alarm warrants immediate escalation versus self-heal investigation, and how to use the alarm state history panel to distinguish a transient spike from a sustained failure. I transferred ownership of the alarm runbooks, documenting per-service threshold rationale (for example, why MSK \texttt{EstimatedMaxTimeLag} is set to 10,000 messages rather than a lower value, and what the Meridian production incident peak of nine million messages implies about the operating range). I handed over the inventory API deployment guide covering stack ordering, environment promotion from DEV to UAT to PROD, and how to manually invalidate the S3 cache if a new resource appears between scheduled cache refresh cycles.
 
 \textbf{Final Technical Handover with Ms.\ Venkataraman and Mr.\ Vadla:} 
-I reviewed the Enterprise Dashboard BFF API contract with Ms.\ Venkataraman and Mr.\ Vadla, ensuring they understood the Inventory API endpoint schemas, the panel configuration JSON structure I had designed for the Infrastructure Monitoring Dashboard, and the \texttt{@citco/core} and \texttt{@citco/theme} component library migration plan I had documented. This alignment session ensured the portal team could continue frontend development against the existing API without needing to reverse-engineer my design decisions.
+I reviewed the Enterprise Dashboard BFF API contract with Ms.\ Venkataraman and Mr.\ Vadla, ensuring they understood the Inventory API endpoint schemas, the panel configuration JSON structure I had designed for the Infrastructure Monitoring Dashboard, and the \texttt{@citco/core} and \texttt{@citco/theme} component library migration plan I had documented. This alignment session ensured the portal team could continue frontend development against the existing API without needing to reconstruct my design decisions independently.
 
-By August~31, the full 900-hour co-op placement was complete. All deliverables were operational in production, handover documentation was live on Confluence, and four workstreams were formally scoped and ready to continue in the September extension.
+By the end of Week~25, the full 900-hour co-op placement was complete. All deliverables were operational in production, handover documentation was live on Confluence, and I had formally scoped four workstreams for continuation in the September extension.
 
 % Keep all floats within this chapter
 \FloatBarrier

@@ -37,7 +37,7 @@ The primary goals of the co-op placement project were as follows:
 
     \item \textbf{Automate AWS service discovery and inventory.} Replace manual
           Confluence-maintained Lambda lists with a programmatic, always-current
-          inventory API that enumerates all deployed AWS services per platform
+          inventory API that enumerates all deployed AWS resources per platform
           and exposes them via REST endpoints for use by the dashboard and other
           downstream tooling.
 
@@ -86,9 +86,9 @@ Build unified CloudWatch dashboards covering all six
 platforms --- \texttt{automationhub}, \texttt{bpm}, \texttt{citcoworks},
 \texttt{ia-bpo}, \texttt{meridian}, and \texttt{rpacfs1} --- across Lambda,
 EC2, ECS, EKS, SQS, and supporting AWS services. Implement a tag-based
-resource discovery pipeline using BudgetCode as the primary filter and
+resource discovery pipeline using budget\_code as the primary filter and
 AppName as the mandatory fallback discriminator for the
-\texttt{meridian}/\texttt{citcoworks} shared BudgetCode ambiguity.
+\texttt{meridian}/\texttt{citcoworks} shared budget\_code ambiguity.
 
 \textbf{Deliverables:} 
 CloudWatch dashboards for all six platforms; a
@@ -132,9 +132,9 @@ population impractical.
 
 \textbf{Scope:} 
 Build a Flask REST API that dynamically discovers all
-deployed AWS services per platform across all six IA platforms. Implement
+deployed AWS resources per platform across all six IA platforms. Implement
 a discoverer registry pattern for extensibility, a two-stage tag filter
-to resolve the \texttt{meridian}/\texttt{citcoworks} BudgetCode ambiguity,
+to resolve the \texttt{meridian}/\texttt{citcoworks} budget\_code ambiguity,
 and an S3-backed cache layer to keep enumeration latency within the
 API Gateway 30-second timeout.
 
@@ -267,13 +267,13 @@ objectives.
 
 \begin{itemize}
     \item \textbf{Dynamic discovery}: The API returns a current,
-          accurate list of deployed AWS services per platform at query
+          accurate list of deployed AWS resources per platform at query
           time, enabling Grafana template variables to reflect the live
           fleet without manual updates.
 
     \item \textbf{Tag disambiguation}: Resources from the
           \texttt{meridian} and \texttt{citcoworks} platforms are
-          correctly separated despite sharing the same BudgetCode
+          correctly separated despite sharing the same budget\_code
           tag value.
 
     \item \textbf{Extensibility}: New platforms or AWS service types
