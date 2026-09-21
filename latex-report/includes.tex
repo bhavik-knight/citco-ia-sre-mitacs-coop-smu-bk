@@ -141,14 +141,14 @@
 \renewcommand\subsection{\Needspace*{32pt}\@startsection{subsection}{2}{\z@}%
   {-10pt \@plus -2pt \@minus -2pt}%
   {4pt \@plus 2pt}%
-  {\fontsize{12}{12}\selectfont\fontseries{b}\selectfont\color{smubrand}}}
+  {\fontsize{12}{12}\selectfont\bfseries\color{smubrand}}}
 
-% --- Subsubsection (Level 3) — 11pt bold maroon ---
+% --- Subsubsection (Level 3) — 12pt bold maroon ---
 % 28pt = heading + 1 line minimum
 \renewcommand\subsubsection{\Needspace*{28pt}\@startsection{subsubsection}{3}{\z@}%
   {-8pt \@plus -2pt \@minus -2pt}%
   {2pt \@plus 1pt}%
-  {\fontsize{12}{12}\selectfont\fontseries{b}\selectfont\color{smubrand}}}
+  {\fontsize{12}{12}\selectfont\bfseries\color{smubrand}}}
 
 % --- Chapter Heading — 16pt bold maroon, centered, ALL CAPS ---
 % Remove \clearpage from chapter command — chapters continue on same page
@@ -294,6 +294,10 @@
 
 % TOC depth: show chapters (level 0) and sections (level 1) only
 \setcounter{tocdepth}{1}
+
+% Numbering depth: number chapters, sections, subsections only (level 2)
+% Subsubsections (level 3) appear unnumbered — bold maroon heading, no x.y.z.w prefix
+\setcounter{secnumdepth}{2}
 
 % Rename "Contents" → "Table of Contents"
 \renewcommand{\contentsname}{Table of Contents}

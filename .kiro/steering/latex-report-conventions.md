@@ -135,7 +135,7 @@ When referring to Work Streams in text:
 
 ```bash
 export PATH="$PATH:/c/Users/bbhagat/scoop/apps/miktex/25.12/texmfs/install/miktex/bin/x64"
-cd latex-report && xelatex -interaction=nonstopmode main.tex
+cd latex-report && pdflatex -interaction=nonstopmode main.tex
 ```
 
-Run twice for TOC/references to resolve properly. Uses XeLaTeX (not pdflatex) to load real Calibri and Consolas from C:/Windows/Fonts/.
+Run twice for TOC/references to resolve properly. Uses pdflatex with Carlito font (open-source Calibri equivalent) and Inconsolata for monospace.

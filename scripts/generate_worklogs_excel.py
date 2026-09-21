@@ -334,6 +334,37 @@ if abs(mtg_budget_remaining) > 0.01:
             )
             break
 
+# ── SPLIT HELPER: break any chunk > 4h into ≤4h sub-rows ────────────────────
+MAX_CHUNK_HRS = 4.0
+
+def split_chunks(
+    chunks: list[tuple[str, list[str], float, str]],
+) -> list[tuple[str, list[str], float, str]]:
+    """
+    Split any work chunk whose hours exceed MAX_CHUNK_HRS into multiple
+    consecutive rows of at most MAX_CHUNK_HRS each.  The first sub-row
+    keeps all bullets; subsequent sub-rows carry the same task name and
+    type but an empty bullet list so the description cell is not repeated.
+    Total hours are preserved exactly.
+    """
+    result: list[tuple[str, list[str], float, str]] = []
+    for task, bullets, hrs, ttype in chunks:
+        if hrs <= MAX_CHUNK_HRS or hrs == 0.0:
+            result.append((task, bullets, hrs, ttype))
+            continue
+        remaining = hrs
+        first = True
+        while remaining > 0:
+            chunk_h = round_quarter(min(MAX_CHUNK_HRS, remaining))
+            # Last sub-row: absorb any rounding residual
+            if remaining - chunk_h < 0.25:
+                chunk_h = round_quarter(remaining)
+            result.append((task, bullets if first else [], chunk_h, ttype))
+            remaining = round(remaining - chunk_h, 2)
+            first = False
+    return result
+
+
 # ── BUILD EXCEL ────────────────────────────────────────────────────────────
 wb = Workbook()
 ws = wb.active
@@ -423,6 +454,9 @@ for wn in sorted(weeks_map.keys()):
             for i, (t, b, _, typ) in enumerate(chunks)
         ]
 
+    # ── Split any chunk > 4h into ≤4h sub-rows ──────────────────
+    chunks = split_chunks(chunks)
+
     for task_name, bullets, hrs, ttype in chunks:
         is_support = ttype == "support"
         is_dev_support = ttype == "dev_support"  # dev work during support week — 0h row
@@ -457,24 +491,27 @@ for wn in sorted(weeks_map.keys()):
     # ── Meetings row (FT non-support weeks with meetings only) ───────────
     if mtg_total > 0 and wn not in PT_WEEKS and wn not in SUPPORT_WEEKS:
         mtg_desc = mtg_description(wn, mtg_total)
-        ws.row_dimensions[row_num].height = 143
+        # Split meeting hours into ≤4h sub-rows too
+        mtg_chunks = split_chunks([("Meetings & Standups", [mtg_desc], mtg_total, "meeting")])
+        for m_idx, (_, m_bullets, m_hrs, _) in enumerate(mtg_chunks):
+            ws.row_dimensions[row_num].height = 143
+            for col in range(1, 7):
+                ws.cell(row=row_num, column=col).fill = fill(MEETING_FILL)
 
-        for col in range(1, 7):
-            ws.cell(row=row_num, column=col).fill = fill(MEETING_FILL)
+            c = ws.cell(row=row_num, column=3, value="Meetings & Standups")
+            c.font = Font(name="Calibri", size=12, color=BLACK, bold=True, italic=True)
+            c.alignment = la()
 
-        c = ws.cell(row=row_num, column=3, value="Meetings & Standups")
-        c.font = Font(name="Calibri", size=12, color=BLACK, bold=True, italic=True)
-        c.alignment = la()
+            # First sub-row gets full description; subsequent rows are blank
+            c = ws.cell(row=row_num, column=4, value=m_bullets[0] if m_bullets else "")
+            c.font = Font(name="Calibri", size=12, color=BLACK)
+            c.alignment = la()
 
-        c = ws.cell(row=row_num, column=4, value=mtg_desc)
-        c.font = Font(name="Calibri", size=12, color=BLACK)
-        c.alignment = la()
+            c = ws.cell(row=row_num, column=5, value=m_hrs)
+            c.font = Font(name="Calibri", size=12, color=BLACK)
+            c.alignment = ca()
 
-        c = ws.cell(row=row_num, column=5, value=mtg_total)
-        c.font = Font(name="Calibri", size=12, color=BLACK)
-        c.alignment = ca()
-
-        row_num += 1
+            row_num += 1
 
     # ── Merge Week / Dates / Weekly Hours columns ─────────────────────
     week_row_end = row_num - 1
