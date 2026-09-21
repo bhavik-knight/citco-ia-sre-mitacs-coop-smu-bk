@@ -3,10 +3,9 @@
 Build pipeline for SMU MCDA Major Project Report.
 
 Steps:
-  1. Generate WorkLogs Excel from daily markdown files
-  2. Compile cover_letter.tex → PDF (xelatex)
-  3. Compile main.tex → PDF (xelatex × 3 passes + biber)
-  4. Copy PDFs to output/
+  1. Compile cover_letter.tex → PDF (xelatex)
+  2. Compile main.tex → PDF (xelatex × 3 passes + biber)
+  3. Copy PDFs to output/
 
 Run:
     uv run python build_reports.py
@@ -14,10 +13,11 @@ Run:
 Output files:
     output/BhavikBhagat_A00494758_CoverLetter.pdf
     output/BhavikBhagat_A00494758_MajorReport.pdf
-    output/BhavikBhagat_A00494758_WorkLogs.xlsx
+
+Note: WorkLogs.xlsx is generated separately via:
+    uv run python scripts/generate_worklogs_excel.py
 """
 import shutil
-import subprocess
 import sys
 from pathlib import Path
 
@@ -41,17 +41,6 @@ logger = get_logger("MainPipeline")
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     logger.info("pipeline_started", output_dir=str(OUTPUT_DIR))
-
-    # ── 1. Generate WorkLogs Excel ────────────────────────────────────
-    logger.info("step_generate_worklogs")
-    result = subprocess.run(
-        ["uv", "run", "python", "scripts/generate_worklogs_excel.py"],
-        cwd=ROOT_DIR,
-    )
-    if result.returncode != 0:
-        logger.error("worklogs_generation_failed")
-    else:
-        logger.info("worklogs_generated")
 
     # ── 2. Compile LaTeX ──────────────────────────────────────────────
     builder = LaTeXBuilder(latex_dir=LATEX_DIR)

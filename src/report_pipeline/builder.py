@@ -30,7 +30,7 @@ class LaTeXBuilder:
 
     def compile_cover_letter(self) -> bool:
         logger.info("compiling_cover_letter", source=str(COVER_LETTER_TEX.name))
-        run_command(["xelatex", "-interaction=nonstopmode", COVER_LETTER_TEX.name], cwd=self.latex_dir)
+        run_command(["pdflatex", "-interaction=nonstopmode", COVER_LETTER_TEX.name], cwd=self.latex_dir)
         return _latex_ok(self.latex_dir, COVER_LETTER_TEX.stem)
 
     def compile_main_report(self) -> bool:
@@ -38,7 +38,7 @@ class LaTeXBuilder:
 
         # Pass 1 — generate .aux and .bcf files
         logger.info("compiling_main_report_pass1", source=str(MAIN_REPORT_TEX.name))
-        run_command(["xelatex", "-interaction=nonstopmode", MAIN_REPORT_TEX.name], cwd=self.latex_dir)
+        run_command(["pdflatex", "-interaction=nonstopmode", MAIN_REPORT_TEX.name], cwd=self.latex_dir)
         if not _latex_ok(self.latex_dir, stem):
             logger.error("pass1_no_pdf_produced")
             return False
@@ -49,10 +49,10 @@ class LaTeXBuilder:
 
         # Pass 2 — incorporate .bbl, update \ref and \pageref
         logger.info("compiling_main_report_pass2", source=str(MAIN_REPORT_TEX.name))
-        run_command(["xelatex", "-interaction=nonstopmode", MAIN_REPORT_TEX.name], cwd=self.latex_dir)
+        run_command(["pdflatex", "-interaction=nonstopmode", MAIN_REPORT_TEX.name], cwd=self.latex_dir)
 
         # Pass 3 — stabilise \pageref{LastPage} and ToC page numbers
         logger.info("compiling_main_report_pass3", source=str(MAIN_REPORT_TEX.name))
-        run_command(["xelatex", "-interaction=nonstopmode", MAIN_REPORT_TEX.name], cwd=self.latex_dir)
+        run_command(["pdflatex", "-interaction=nonstopmode", MAIN_REPORT_TEX.name], cwd=self.latex_dir)
 
         return _latex_ok(self.latex_dir, stem)

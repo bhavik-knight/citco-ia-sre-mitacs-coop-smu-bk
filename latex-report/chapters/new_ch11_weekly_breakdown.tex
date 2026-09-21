@@ -71,10 +71,10 @@ By the end of Week~2, I had a working knowledge of the full AWS services landsca
 \section{Week 3}
 \label{sec:week3}
 
-Week~3 was when I transitioned from learning to active delivery, with my first assigned task: the CTI CloudWatch Pipeline Dashboard. This was a CloudWatch pipeline health dashboard for the \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure} repository, specifically targeting the CAIS Pricing Extract (CTI) submission pipeline.
+Week~3 was when I transitioned from learning to active delivery, with my first assigned task: the CTI CloudWatch Pipeline Dashboard. This was a CloudWatch pipeline health dashboard for the \texttt{rpacfs1-cais-pricing-\allowbreak{}extract-genai-infrastructure} repository, specifically targeting the CAIS Pricing Extract (CTI) submission pipeline.
 
 \textbf{Dashboard Implementation and Metrics Instrumentation:}
-I began implementing the dashboard. I first added CloudWatch metrics instrumentation to the \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure} codebase to track CTI submission activity through the pipeline. Rather than placing metrics calls inline throughout the business logic, I refactored the instrumentation into a dedicated metrics module, which made the instrumentation testable and maintainable independently of the pipeline logic. I created the Pipeline Health Dashboard itself with CloudWatch native widgets covering the core health signals for the CAIS pricing extract workflow. I updated the \texttt{.gitignore} to exclude virtual environment directories, pytest cache, and test artifacts---basic repository hygiene that the codebase was missing. I also updated the dashboard configuration to meet the acceptance criteria I had been given: 1-hour metric granularity, a 7-day time range, and auto-refresh enabled so the team would see live pipeline status without manual page refreshes.
+I began implementing the dashboard. I first added CloudWatch metrics instrumentation to the \texttt{rpacfs1-cais-pricing-\allowbreak{}extract-genai-infrastructure} codebase to track CTI submission activity through the pipeline. Rather than placing metrics calls inline throughout the business logic, I refactored the instrumentation into a dedicated metrics module, which made the instrumentation testable and maintainable independently of the pipeline logic. I created the Pipeline Health Dashboard itself with CloudWatch native widgets covering the core health signals for the CAIS pricing extract workflow. I updated the \texttt{.gitignore} to exclude virtual environment directories, pytest cache, and test artifacts---basic repository hygiene that the codebase was missing. I also updated the dashboard configuration to meet the acceptance criteria I had been given: 1-hour metric granularity, a 7-day time range, and auto-refresh enabled so the team would see live pipeline status without manual page refreshes.
 
 \textbf{Logs Insights Investigation Widget:}
 I added a technical investigation layer: a CloudWatch Logs Insights widget that enabled operators to drill into raw Lambda execution logs when the health metrics indicated a problem. The Logs Insights widget used a pattern-matched query against the \texttt{/aws/lambda/} log group prefix to surface error patterns directly in the dashboard, rather than requiring the operator to navigate to CloudWatch Logs and write a query manually. I added screenshots of the Logs Insights query setup to the pull request description so the team could reproduce the configuration in other environments.
@@ -240,7 +240,7 @@ submodules for long-term maintainability.
 On the most commit-dense day of the co-op placement with 39 commits
 across two repositories---I set up the centralized \texttt{ia-resources-monitoring}
 repository. I migrated all three monitoring packages (Lambda, EC2, and the API)
-from \texttt{rpacfs1-cais-pricing-extract-genai-infrastructure}
+from \texttt{rpacfs1-cais-pricing-\allowbreak{}extract-genai-infrastructure}
 into this dedicated repository. I established code quality tooling:
 Ruff linting, mypy type checking, deptry dependency hygiene, and
 pre-commit hooks. I introduced the \texttt{ia\_paths.py} module to

@@ -1,0 +1,52 @@
+# Submission 2 — Feedback Response
+
+**Student:** Bhavik Kantilal Bhagat | A00494758
+**Program:** MSc Computing and Data Analytics, Saint Mary's University
+**Submission:** Mentor Submission 2 (September 2026)
+**Previous Score:** 55/100 (Submission 1)
+
+---
+
+## How I Addressed Each Feedback Point
+
+
+| #  | Feedback                                                                                                  | How Addressed                                                                                                                                                                                                                                                                                                                                                                            |
+| ---- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1  | **Cover Page** — font size for course number, A-number, and other details should match the sample report | Revised title page so that all cover page elements (course number MCDA 5585/5586, A-number, name, supervisors, degree) use a consistent 20pt bold Calibri hierarchy, matching the sample report formatting. Labels ("Submitted By:", "under the guidance of:") are in 14pt italic.                                                                                                       |
+| 2  | **Mr./Ms. prefixes** — use appropriate prefixes for all individuals mentioned by name                    | All named individuals now carry correct prefixes throughout the report: Dr. Pawan Lingras, Mr. Kishor Deotale, Mr. Ho Hoi Leung, Ms. Kristia Marie Labos, Mr. Sridhar Vadla, Ms. Soundarya Venkataraman. Verified across all 15 chapters.                                                                                                                                                |
+| 3  | **Certificate** — content and structure should follow the sample report exactly                          | Certificate page restructured to match the sample: single certifying paragraph followed by two-column signature blocks (Academic Supervisor left, Industry Supervisor right) with dotted signature lines and full institutional addresses.                                                                                                                                               |
+| 4  | **Remove unnecessary headers** from the report                                                            | All orphan or redundant section headers removed. Created a box around text as per the sample report.                                                                                                                                                                                                                                                                                     |
+| 5  | **Table of Contents** — font color should be black; only headings up to the second level                 | TOC font color is now black throughout (`\color{black}` applied to all TOC entries). Depth limited to level 1 (`\setcounter{tocdepth}{1}`), showing only chapters and sections — no subsections in TOC.                                                                                                                                                                                 |
+| 6  | **List of Figures and List of Tables** — numbered starting from 1                                        | Both lists now start from 1 and are numbered sequentially. List of Figures: Figures 1–14. List of Tables: Tables 1–13. Verified in the compiled PDF.                                                                                                                                                                                                                                   |
+| 7  | **Page numbers** — should be black or grey, not red                                                      | Page footer numbers are now rendered in grey (`#7F7F7F`). Maroon/red colour is reserved exclusively for chapter titles, section headings, and figure/table labels. Verified programmatically against the compiled PDF.                                                                                                                                                                   |
+| 8  | **Excessive blank space on page 7** — move next section up                                               | Spacing adjustments applied, and no excessive gaps. If gap appears that is because only chapter/section heading could fit on that page at bottom without content for that section on the same page -- hence pushed to new page. Reviewed entire document for similar orphan space issues.                                                                                             |
+| 9  | **JIRA ticket numbers** — do not provide meaningful context, please remove                               | All`IISS-xxx` numbered ticket references removed from the report body. The only remaining JIRA reference is a board name mention in Week 1 context ("the Citco JIRA board (IISS project)") which provides contextual meaning for the reader, not a ticket number.                                                                                                                        |
+| 10 | **"Three insights…" heading** — move so heading and text begin on the same page                         | `\Needspace*` directive applied before the "Key Insights" subsection heading in Chapter 8 to ensure the heading and its following content always appear on the same page. Verified in compiled PDF — heading and all three insights appear together on page 31. (covered by #8)                                                                                                         |
+| 11 | **Section 8.3 table placement** — tables should be within the section where they are discussed           | Requirements tables (Functional Requirements, Non-Functional Requirements) are now placed directly within their respective subsections (8.3.1 and 8.3.2) where they are introduced and discussed, not in a separate stub subsection.                                                                                                                                                     |
+| 12 | **Separate subsections for only 1–2 lines** — combine short subsections with related sections           | Reviewed all chapters. Short stub subsections merged into their parent sections. Every subsection now contains substantive content — at minimum a full paragraph plus supporting detail.                                                                                                                                                                                                |
+| 13 | **Implementation section** — revise to describe personal work in first person                            | Chapter 10 (Implementation & Architecture) is completely revised. Language changed to first-person throughout: "I implemented…", "I configured…", "I developed…", "I built…", "I added…". 29+ first-person action statements confirmed. Diagrams retained as they were original deliverables created during the placement (confirmed acceptable per clarification email).           |
+| 14 | **Weekly Implementation** — each week should contain approximately one full page of content              | Chapter 11 expanded to 1,415 lines across 25 weeks. Full-time weeks (5–24) average 1–1.5 pages each. Part-time weeks (1–4) contain detailed content proportional to the 10–20h/week schedule confirmed by Dr. Pawan Lingras. Structure follows: context → technical work → outcomes per week. Also, Chapter 11 Weekley Implementation is revised, and chaged to first person tone. |
+| 15 | **Work Logs** — tasks >4 hours should be broken into smaller realistic time blocks                       | All tasks in WorkLogs.xlsx are ≤4 hours. Verified programmatically: 0 tasks exceed 4 hours across all 25 weeks. Weeks 4–5 onwards (flagged in clarification email) have 10–19 tasks per week with granular descriptions. Total: 900 hours across 25 weeks.                                                                                                                            |
+| 16 | **Appendix with feedback table**                                                                          | Feedback appendix added to the Cover Letter (Page 2) with a formatted table containing Date, Score, and full Feedback columns. All 16 feedback bullet points from Submission 1 are included.                                                                                                                                                                                             |
+
+---
+
+## Additional Improvements (Beyond Feedback)
+
+- **Heading bold consistency:** All subsection (x.y.z) and subsubsection headings now use  (Calibri-Bold) consistently — previously it was causing lighter rendering at the subsection level.
+- **Subsubsection numbering:** 4th-level headings (used only in Chapter 10) are now unnumbered as they are navigational labels within a subsection, not independent numbered sections.
+- **Long technical terms:** They are fixed to prevent page-width overflow (e.g. `rpacfs1-cais-pricing-extract-genai-infrastructure`).
+- **Table numbering:** Sequential table numbering verified — Tables 1–13 with no gaps.
+
+---
+
+## Submission Bundle
+
+
+| File                                      | Description                            |
+| ------------------------------------------- | ---------------------------------------- |
+| `BhavikBhagat_A00494758_CoverLetter.pdf`  | Cover letter + feedback appendix table |
+| `BhavikBhagat_A00494758_MajorReport.pdf`  | Main project report (124 pages)        |
+| `BhavikBhagat_A00494758_MajorReport.docx` | Word format of report                  |
+| `BhavikBhagat_A00494758_WorkLogs.xlsx`    | Weekly work logs (900 hours, 25 weeks) |
+| `BhavikBhagat_A00494758_WorkLogs.pdf`     | PDF export of work logs                |

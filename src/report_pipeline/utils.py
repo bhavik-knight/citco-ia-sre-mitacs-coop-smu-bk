@@ -10,7 +10,7 @@ logger = get_logger("PipelineUtils")
 def run_command(cmd: list[str], cwd: Path) -> bool:
     """Execute a shell command in a specified directory with structured JSON logging."""
     logger.info("executing_command", command=" ".join(cmd), cwd=str(cwd))
-    res = subprocess.run(cmd, cwd=str(cwd), capture_output=True, text=True)
+    res = subprocess.run(cmd, cwd=str(cwd), capture_output=True, text=True, encoding="utf-8", errors="replace")
     # MiKTeX exits with code 1 for "check for updates" nag — treat as success
     # Real failures produce no PDF and have actual error messages
     miktex_nag = "major issue: So far, you have not checked for MiKTeX updates" in res.stderr
