@@ -52,7 +52,7 @@ instrumentation required to characterize service health:
           immediate attention.
 
     \item \textbf{Saturation} --- \emph{How full is the service?}
-          Saturation is the signal most relevant to the April~17,~2026
+          Saturation is the most relevant signal to the April~17,~2026,
           Meridian incident. It is measured as Lambda concurrent
           execution count relative to the account concurrency limit,
           ECS task CPU and memory utilization, MSK consumer lag (the
@@ -64,7 +64,7 @@ instrumentation required to characterize service health:
 
 Figure~\ref{fig:request_flow} illustrates how a request flows through
 the monitored services, exposing each of the four golden signals at
-different stages of the request lifecycle.
+various stages of the request lifecycle.
 
 \begin{figure}[ht]
 \centering
@@ -278,13 +278,13 @@ Three capabilities remain \textbf{permanently outside the AWS-native reach}:
 Davis~AI causal analysis (proprietary ML, no AWS equivalent); automatic
 baselining (Dynatrace learns per-service baselines over weeks; AWS alarms
 require manual thresholds); and session replay (full DOM capture, not
-available in any OSS tool). These account for approximately 9--10\% of
+available in any OSS tool). These account for 9--10\% of
 the functional gap that no combination of AWS tools can close.
 
 \paragraph{Adopted stack.}
 The PoC I delivered in this co-op placement corresponds to the
 \textbf{CloudWatch + Grafana + X-Ray} column: 60\% parity at approximately
-\$77/month. Application Signals (the path to 80\% parity) requires deploying
+\$77/month. Application Signals (the path to 80\% parity) require deploying
 an ADOT sidecar on each ECS service and is scoped as post-placement work.
 The gap-to-tooling mapping contextualizes what the PoC does and does not cover throughout the Implementation chapter. This methodological foundation---combining golden signals, gap analysis, and parity assessment---established the engineering rationale for every implementation decision.
 

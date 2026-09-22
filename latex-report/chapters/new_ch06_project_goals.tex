@@ -78,7 +78,7 @@ Chapter~\ref{chap:implementation}.
 \textbf{Current State:} 
 No CloudWatch dashboards existed for any of the six
 IA platforms. Lambda function health was monitored only through the AWS
-Console on an ad-hoc basis. No tag-based resource discovery was in place
+Console on an ad-hoc basis. No tag-based resource discovery was in place,
 and the Lambda inventory was maintained manually on Confluence.
 
 \textbf{Scope:} 
@@ -149,7 +149,7 @@ CloudWatch metrics publishing; Lambda deployment via API Gateway.
 \textbf{Current State:} 
 The IA-SRE team operates a Follow the Sun support
 model with shifts across Manila (APAC), Dublin (EMEA), and Halifax (NA).
-The NA slot (11~AM--7~PM~EST) rotated weekly among the four NA-based
+The NA slot (11~AM--7~PM~EST) rotates weekly among the four NA-based
 SRE team members.
 
 \textbf{Scope:} 
@@ -172,7 +172,7 @@ The \textbf{Ask Citco RPA} chatbot was a
 production RAG pipeline using Amazon Bedrock (Claude), OpenSearch
 Serverless (1024-dim FAISS/HNSW vectors), and 11 Lambda functions
 ingesting from SharePoint, Databricks, and the BPM API. The system
-had multiple known reliability issues including a recurring KB sync
+had multiple known reliability issues, including a recurring KB sync
 timeout and several production bugs identified via CloudWatch log analysis.
 
 \textbf{Scope:} 
@@ -217,7 +217,7 @@ config-driven panel components; continuing in Sep--Dec~2026 extension.
 \label{sec:acceptance_criteria}
 
 
-The following criteria defined whether each deliverable met its stated
+The following criteria define whether each deliverable met its stated
 objectives.
 
 \subsection{IA Infrastructure Monitoring Platform}
@@ -317,8 +317,8 @@ objectives.
 
 \begin{itemize}
     \item \textbf{Architecture plan}: A comprehensive implementation plan
-          covering gap analysis, technology decisions, API design, and
-          task breakdown is produced before implementation begins.
+          ---covering gap analysis, technology decisions, API design, and
+          task breakdown---is produced before implementation begins.
 
     \item \textbf{Backend API design}: New Lambda handlers designed
           with request/response schemas and IAM permissions documented.

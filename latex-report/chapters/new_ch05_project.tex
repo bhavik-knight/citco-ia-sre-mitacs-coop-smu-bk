@@ -32,15 +32,14 @@ until they had already caused downstream business impact.
 \label{sec:cais_silent_outage}
 
 In early 2026, the GenAI pipeline (a Citco Alternative Investment Services --- CAIS Pricing Pipeline)
-under the \texttt{rpacfs1} platform stopped delivering output for
-nearly a month without a single alert firing. The root cause
+under the \texttt{rpacfs1} platform stopped delivering output for a month without a single alert firing. The root cause
 was gradual exhaustion of an external API token, which
 caused downstream Lambda invocations to drop to zero while upstream functions kept running, making the pipeline
 appear healthy. The outage was detected only when business users reported
 missing pricing data. The post-mortem
 identified the absence of throughput alarms, SQS queue depth monitoring,
 and end-to-end output verification as the root causes of the failure going
-unnoticed. A sub-task was assigned directly to me as the immediate
+unnoticed. A sub-task was assigned directly to me as immediate
 remediation and became the starting point for the full monitoring program.
 
 \subsection{The Meridian Incident (Apr~2026)}
@@ -145,7 +144,7 @@ the development team with documented findings.
 
 \subsection{Work Stream 5: RPA LLM Agent --- Ask Citco RPA}
 
-This work stream involved a production quality and reliability improvement
+This work stream involved a production-quality and reliability improvement
 program for the \textbf{Ask Citco RPA} chatbot --- a RAG pipeline using
 Amazon Bedrock, OpenSearch Serverless, and 11 Lambda functions. The scope
 covered production bug resolution, code quality improvements, structured

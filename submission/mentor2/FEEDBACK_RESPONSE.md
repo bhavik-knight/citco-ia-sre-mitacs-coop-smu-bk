@@ -33,10 +33,48 @@
 
 ## Additional Improvements (Beyond Feedback)
 
-- **Heading bold consistency:** All subsection (x.y.z) and subsubsection headings now use  (Calibri-Bold) consistently — previously it was causing lighter rendering at the subsection level.
+- **Heading bold consistency:** All subsection (x.y.z) and subsubsection headings now use `\bfseries` (Calibri-Bold) consistently — previously `\fontseries{b}` was causing lighter rendering at the subsection level.
 - **Subsubsection numbering:** 4th-level headings (used only in Chapter 10) are now unnumbered as they are navigational labels within a subsection, not independent numbered sections.
-- **Long technical terms:** They are fixed to prevent page-width overflow (e.g. `rpacfs1-cais-pricing-extract-genai-infrastructure`).
+- **Long technical terms:** `\allowbreak{}` added inside long `\texttt{}` identifiers to prevent page-width overflow (e.g. `rpacfs1-cais-pricing-extract-genai-infrastructure`).
 - **Table numbering:** Sequential table numbering verified — Tables 1–13 with no gaps.
+- **URL hyperlink color:** References URLs now render in standard blue (hyperlinks) rather than maroon, consistent with web conventions.
+
+---
+
+## Grammarly & Language Corrections (Post-Submission 1)
+
+The report was reviewed against Grammarly and a peer language review (Christine, Sep 21, 2026). The following corrections were applied:
+
+| # | Location | Correction |
+|---|----------|------------|
+| 1 | Ch1 Acknowledgements | `explore new technology stack` → `explore a new technology stack` (missing article) |
+| 2 | Ch3 Team Composition | `The co-op period team comprised` → `The team during the co-op period comprised` (word order) |
+| 3 | Ch4 Tools | `CloudWatch Container Insights enabled to surface` → `enabled for task-level CPU and memory telemetry` (ambiguous phrasing) |
+| 4 | Ch4 Tools | `Universal database client` → `Universal database clients` (plural); dropped `across the platforms` |
+| 5 | Ch5 Project | `production quality and reliability improvement` → `production-quality and reliability improvement` (compound adjective hyphen) |
+| 6 | Ch6 Project Goals | Architecture plan bullet — added em dashes around list to clarify `plan...is produced` subject-verb |
+| 7 | Ch7 Learning Goals | `dual competency development expected` → `expected dual competency development` (word order) |
+| 8 | Ch9 Methodologies | `signal most relevant to the April 17, 2026` → `most relevant signal to the April 17, 2026,` (word order + comma after year) |
+| 9 | Ch10 Implementation | `I added on introduced` → `that I added uses a` (broken verb removed) |
+| 10 | Ch10 Implementation | `Lambda-backed CloudFormation provisioner I deployed` → `provisioner that I deployed` (relative clause added) |
+| 11 | Ch10 Implementation | `at the scale required` → `at the required scale` (word order) |
+| 12 | Ch10 Implementation | `provisioner bootstrap --- acceptable` → `provisioner bootstrap, which is acceptable` (dangling modifier fixed) |
+| 13 | Ch10 Implementation | `One lightweight ALB call per library` → `ALB calls` (plural) |
+| 14 | Ch11 Weekly Breakdown | `The first added AutomationHub` → `In the first, I added AutomationHub`; `platform JIRAs` → `platform updates` (JIRA reference removed) |
+| 15 | Ch11 Weekly Breakdown | `80-minute session` — added `an` before for grammatical article |
+| 16 | Ch11 Weekly Breakdown | `commit-dense day` → `highest-commit day` (informal → formal) |
+| 17 | Ch11 Weekly Breakdown | `I merged the release/SRE branch to master` → `into main` (correct git preposition and branch name) |
+| 18 | Ch11 Weekly Breakdown | `Each morning I reviewed` → `Each morning, I reviewed` (comma after introductory phrase) |
+| 19 | Ch11 Weekly Breakdown | `datasource` → `data source` (two words) — standardized consistently across all chapters |
+| 20 | Ch11 Weekly Breakdown | `re-notification` → `renotification` (American English, no hyphen needed) |
+| 21 | Ch11 Weekly Breakdown | `grew the test suite from 60%` → `increased test coverage from 60%` |
+| 22 | Ch11 Weekly Breakdown | `grew the test suite to 562 tests` → `increased the test suite to 562 tests` |
+| 23 | Ch11 Weekly Breakdown | `timeseries panels` → `time-series panels` (compound adjective hyphen) |
+| 24 | Ch11 Weekly Breakdown | `files were too large for email` → `too large to send by email` (rephrased parenthetical) |
+| 25 | Ch11 Weekly Breakdown | `140 hours` reference removed from Week 14 summary |
+| 26 | Ch13 Achievements | `sub-30-second automated alerting...qualitative step change` → `automated alerting in under 30 seconds...substantial improvement` |
+| 27 | Ch13 Achievements | `April 17, 2026 Meridian incident` → `April 17, 2026, Meridian incident` (comma after year) |
+| 28 | Ch15 Future Work | `2--3 hour window` → `2--3-hour window` (compound adjective hyphen) |
 
 ---
 

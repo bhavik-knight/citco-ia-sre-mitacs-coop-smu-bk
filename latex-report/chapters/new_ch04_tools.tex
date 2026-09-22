@@ -30,14 +30,14 @@ develop the inventory API, and support RPA production operations.
           workspaces, and Lambda functions via parameterized YAML templates.
 
     \item \textbf{AWS Lambda} --- Serverless compute service hosting
-          the automation workloads across all six platforms, and used
+          the automation workloads across all six platforms and used
           as the runtime for the CloudFormation alarm provisioner and
           the resource inventory API.
 
     \item \textbf{Amazon ECS (Elastic Container Service)} ---
           Container orchestration service used to run the Meridian
-          platform services. CloudWatch Container Insights was enabled
-          to surface task-level CPU and memory telemetry.
+          platform services. CloudWatch Container Insights enabled
+          for task-level CPU and memory telemetry.
 
     \item \textbf{Amazon MSK (Managed Streaming for Apache Kafka)} ---
           Managed Kafka service used as the Meridian event pipeline
@@ -192,9 +192,9 @@ develop the inventory API, and support RPA production operations.
           API performance and throughput for the inventory REST API
           under simulated concurrent request loads.
 
-    \item \textbf{DBeaver} --- Universal database client used to inspect
-          and query RDS, DocumentDB, and other database services across
-          the platforms during incident investigation and development.
+    \item \textbf{DBeaver} --- Universal database clients used to inspect
+          and query RDS, DocumentDB, and other database services during
+          incident investigation and development.
 
     \item \textbf{PowerShell / Shell Scripts} --- Scripting environments
           used to automate deployment tasks, run AWS CLI commands, and
@@ -238,7 +238,7 @@ develop the inventory API, and support RPA production operations.
           \texttt{tasks.md}) and agentic code generation for the
           inventory API.
 
-    \item \textbf{Amazon Q} --- AWS integrated code assistant used
+    \item \textbf{Amazon Q} --- AWS-integrated code assistant used
           for inline boto3 completions and project-level
           context retrieval.
 
@@ -279,7 +279,7 @@ develop the inventory API, and support RPA production operations.
 
     \item \textbf{Microsoft Teams} --- Primary communication platform
           used for daily standups, sprint planning meetings, technical
-          discussions with the SRE team, and screensharing during
+          discussions with the SRE team, and screen sharing during
           incident investigation and pair debugging sessions.
 
     \item \textbf{Microsoft Outlook} --- Email client used for formal

@@ -111,11 +111,10 @@ infrastructure cost of this design: routing log events from all IA Lambda
 functions into a centralized processing layer would require \textbf{106
 metric subscription filters}---one per function per metric
 dimension---across the six platforms. While technically
-feasible from a CloudWatch service quota perspective, this approach was
-ultimately blocked by an IAM permission boundary constraint:
+feasible from a CloudWatch service quota perspective, this approach was blocked by an IAM permission boundary constraint:
 the \texttt{logs:PutSubscriptionFilter} action was not granted within the
 IA team's scoped permission set, preventing programmatic creation of
-subscription filters at the scale required.
+subscription filters at the required scale.
 
 This investigation also evaluated five distinct approaches to out-of-memory
 (OOM) detection for Lambda functions: (1) parsing \texttt{REPORT}
@@ -170,7 +169,7 @@ on May~11--12, 2026.
 
 \subsubsection{SQS Registry Architecture}
 
-The SQS monitoring feature I added on introduced a
+The SQS monitoring feature that I added uses a
 \textbf{registry-based architecture with a three-tier fallback model} for
 resilient SQS queue data retrieval. The three tiers operated as follows:
 
@@ -423,7 +422,7 @@ the IA-SRE team's email distribution list. Alarm categories include:
 \subsubsection{Layer 4: Infrastructure-as-Code Provisioner}
 
 The IaC layer is a \textbf{Lambda-backed CloudFormation provisioner}
-I deployed via AWS SAM. I designed it to address a specific scaling
+that I deployed via AWS SAM. I designed it to address a specific scaling
 constraint: with 119~Lambda functions, a static CloudFormation template
 defining one alarm per function would contain $119 \times (\text{alarm
 types per function})$ resources, rapidly approaching the CloudFormation
@@ -898,7 +897,7 @@ reduced steady-state run time from 291 seconds average to approximately
 
 \begin{enumerate}
     \item \textbf{Phase 1 --- Library-level change detection ($\sim$25s
-          for all 49 libraries).} One lightweight ALB call per library
+          for all 49 libraries).} One lightweight ALB calls per library
           using a SharePoint \texttt{filter=Modified gt \{last\_synced\_at\}}
           query. Zero results means the entire library is unchanged and
           is skipped with no further I/O.
@@ -1000,8 +999,8 @@ as a formal follow-on work item.
 During this co-op placement I began extending the existing
 \texttt{ia-config-portal} application with two new dashboard pages.
 I completed a comprehensive \textbf{architectural implementation plan}
-(Infrastructure Monitoring Dashboard-IMPLEMENTATION-PLAN.md) and started
-initial implementation. I am continuing this development during the co-op
+(Infrastructure Monitoring Dashboard-IMPLEMENTATION-PLAN.md) and began 
+the initial implementation. I am continuing this development during the co-op
 extension period (Sep--Dec~2026).
 
 \subsection{Planning Document Deliverable}
@@ -1034,7 +1033,7 @@ The primary deliverable I produced for this work stream is a comprehensive
 
 Through my Work Stream~2 dashboard work, I identified approximately
 60\% Dynatrace feature parity, but I also identified 45 architectural limitations.
-The most critical gaps I found that are driving the custom UI proposal:
+The most critical gaps that are driving the custom UI proposal:
 
 \begin{tabularx}{\textwidth}{@{\hspace{\tabcolsep}}>{\centering\arraybackslash}p{0.05\textwidth}>{\raggedright\arraybackslash}X>{\centering\arraybackslash}p{0.12\textwidth}@{\hspace{\tabcolsep}}}
 \caption{Critical Grafana AMG Limitations Identified} \label{tab:grafana_limitations} \\
@@ -1175,7 +1174,7 @@ Secrets Manager secret values. The Lambda function began failing with
 The Lambda execution role now requires \texttt{s3:GetObject} on the
 template bucket, broadening its IAM surface slightly. The
 \texttt{GetObject} call adds approximately 50~ms of latency to the
-provisioner bootstrap --- acceptable for a deploy-time operation
+provisioner bootstrap, which is acceptable for a deploy-time operation
 that runs infrequently.
 
 \subsection{Decision 2: AppName Tag as Mandatory Secondary Discriminator}
