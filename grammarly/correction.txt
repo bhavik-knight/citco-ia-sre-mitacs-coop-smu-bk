@@ -1,0 +1,249 @@
+[2026-09-21 5:08 p.m.] Christine: Page 2 · Acknowledgment
+
+Original:
+
+“His mentorship gave me the opportunity to explore new technology stack that had not previously been adopted for SRE at Citco…”
+
+Corrected:
+
+“His mentorship gave me the opportunity to explore a new technology stack that had not previously been adopted for SRE at Citco…”
+
+Reason: The singular countable noun “stack” requires an article.
+
+Page 3 · Certificate
+
+Original:
+
+“has completed the projects in fulfilling the course requirements.”
+
+Corrected:
+
+“has completed the projects in fulfilment of the course requirements.”
+
+Reason: The original phrasing is grammatically awkward. The correction uses a more natural academic expression.
+
+Page 11 · Team responsibilities
+
+Original:
+
+“The co-op period team comprised the following members:”
+
+Corrected:
+
+“The team during the co-op period comprised the following members:”
+
+Reason: The revised word order is clearer and more natural.
+
+Page 39 · SQS registry architecture
+
+Original:
+
+“The SQS monitoring feature I added on introduced a registry-based architecture…”
+
+Corrected:
+
+“The SQS monitoring feature I added introduced a registry-based architecture…”
+
+Reason: “Added on” is unnecessary and makes the sentence awkward.
+
+Page 51 · Inventory API
+
+Original:
+
+“I implemented a two-stage filterin both the CitcoWorksECSDiscoverer and MeridianECSDiscoverer.”
+
+Corrected:
+
+“I implemented a two-stage filter in both the CitcoWorksECSDiscoverer and MeridianECSDiscoverer.”
+
+Reason: Missing space between “filter” and “in.”
+
+Page 61 · Infrastructure provisioner
+
+Original:
+
+“The IaC layer is a Lambda-backed CloudFormation provisionerI deployed via AWS SAM.”
+
+Corrected:
+
+“The IaC layer is a Lambda-backed CloudFormation provisioner I deployed via AWS SAM.”
+
+Reason: Missing space between “provisioner” and “I.”
+
+Page 65 · Custom UI dashboards
+
+Original:
+
+“I completed a comprehensive architectural implementation plan (Infrastructure Monitoring Dashboard-IMPLEMENTATION-PLAN.md) and started initial implementation.”
+
+Suggested correction:
+
+“I completed a comprehensive architectural implementation plan (Infrastructure Monitoring Dashboard-IMPLEMENTATION-PLAN.md) and began the initial implementation.”
+
+Reason: “Began the initial implementation” reads more naturally in formal academic writing.
+
+Page 67 · AWS database study
+
+Original:
+
+“DynamoDB (schema less design, partition key selection, and the trade-offs between strongly and eventually consistent reads)”
+
+Corrected:
+
+“DynamoDB (schema-less design, partition key selection, and the trade-offs between strongly consistent and eventually consistent reads)”
+
+Reason: “Schema-less” should be hyphenated, and the consistency descriptions should be parallel.
+
+Page 75 · Week 8
+
+Original:
+
+“The first added AutomationHub budget_code support across all discovery packages…”
+
+Suggested correction:
+
+“The first change added AutomationHub budget_code support across all discovery packages…”
+
+Reason: The original wording is missing a clear subject for the action.
+
+Page 83 · Week 16
+
+Original:
+
+“Mr. Leung conducted two extended knowledge transfer sessions: 80 minutes on Thursday and a joint 96 minute session with Mr. Deotale on Friday…”
+
+Corrected:
+
+“Mr. Leung conducted two extended knowledge-transfer sessions: an 80-minute session on Thursday and a joint 96-minute session with Mr. Deotale on Friday…”
+
+Reason: Hyphenate compound modifiers such as “80-minute” and “96-minute,” and use parallel phrasing.
+
+Page 94 · Week 21
+
+Original:
+
+“I grew the test suite from 60% to 100% coverage (233 tests), achieving zero Ruff lint issues and zero Bandit security findings.”
+
+Suggested correction:
+
+“I increased test coverage from 60% to 100% (233 tests), achieving zero Ruff linting issues and zero Bandit security findings.”
+
+Reason: “Increased test coverage” is more precise and natural than “grew the test suite” when describing a percentage.
+
+Page 99 · Week 24
+
+Original:
+
+“We instead delivered the reports to business users via Microsoft Teams (files were too large for email).”
+
+Suggested correction:
+[2026-09-21 5:08 p.m.] Christine: “We instead delivered the reports to business users via Microsoft Teams because the files were too large to send by email.”
+
+Reason: Integrating the parenthetical explanation makes the sentence flow more smoothly in formal writing.
+
+Page 104 · Business value
+
+Original:
+
+“This improvement from multi-hour manual detection to sub-30-second automated alerting represents a qualitative step change…”
+
+Suggested correction:
+
+“This improvement, from detection delays of several hours to automated alerting in under 30 seconds, represents a substantial change…”
+
+Reason: The revised sentence is easier to read and avoids the awkward compound expression “step change.”
+[2026-09-21 5:09 p.m.] Christine: . Additional issues to correct throughout the report
+
+These are recurring language and formatting issues that should be addressed consistently.
+
+Issue
+
+  
+
+Recommendation
+
+
+
+
+“co-op placement” / “co‐op placement”
+
+  
+
+Use one consistent hyphenation style throughout.
+
+
+
+
+“workstream” / “work stream”
+
+  
+
+Choose one form and apply it consistently.
+
+
+
+
+“follow the sun” / “Follow-the-Sun”
+
+  
+
+Standardize the capitalization and hyphenation when referring to the support model.
+
+
+
+
+“after-thought”
+
+  
+
+Correct to “afterthought” (page 24).
+
+
+
+
+“real-time” / “real time”
+
+  
+
+Use “real-time” when it functions as a compound adjective, such as “real-time monitoring.”
+
+
+
+
+“timeseries”
+
+  
+
+Use “time series” as a noun and “time-series” as a compound modifier.
+
+
+
+
+“screensharing”
+
+  
+
+Prefer “screen sharing” in formal academic writing.
+
+
+
+
+“codebase” / “code base”
+
+  
+
+Choose one spelling and use it consistently.
+[2026-09-21 5:10 p.m.] Christine: Important proofreading observations
+
+Beyond grammar and spelling, I noticed several matters that deserve a final check before submission.
+
+Terminology consistency: The report alternates between “CloudWatch Metric Insights SQL,” “Metrics Insights SQL,” and “Metric Search API.” Confirm that the intended AWS terminology is used consistently.
+
+Numbering consistency: Some sections refer to different dashboard row counts, including 13, 14, and 17 rows. Make sure the counts are clearly distinguished by the relevant development stage.
+
+Technical wording: Phrases such as “production quality,” “full production quality,” and “production-ready” should be used consistently and only where the described status supports them.
+
+References: Several URLs in the extracted reference list appear to contain unusual spacing or broken formatting. Check the actual PDF hyperlinks and reference formatting to ensure that they work correctly.
+
+Academic tone: Some expressions, such as “chicken-and-egg problem,” “eagle-eye view,” and “commit-dense day,” are informal. They may be retained when appropriate, but more formal alternatives would improve the overall academic tone.
+
