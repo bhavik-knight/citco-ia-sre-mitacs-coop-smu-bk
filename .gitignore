@@ -30,6 +30,24 @@ latex-report/*.blg
 latex-report/*.fdb_latexmk
 latex-report/*.fls
 latex-report/*.synctex.gz
+latex-report/*.bcf
+latex-report/*.run.xml
+latex-report/*.lof
+latex-report/*.lot
+
+# One-off worklog fix scripts (root level)
+add_bullets.py
+enhance_worklogs.py
+fix_early_weeks.py
+fix_remaining.py
+fix_support_weeks.py
+rebuild_worklogs.py
+split_4h.py
+update_worklogs.py
+
+# One-off migration scripts
+scripts/fix_name_prefixes.py
+scripts/remove_jira_refs.py
 
 # Generated Build Outputs
 output/

@@ -1,112 +1,131 @@
-# 🎓 SMU MCDA Major Project Report & Submission Automation Pipeline
+# SMU MCDA Major Project Report — Bhavik Kantilal Bhagat
 
-> **Automated PDF, DOCX, and WorkLog Generation Pipeline for Saint Mary's University MCDA 5585 / 5586 Major Internship Project Report.**
-
----
-
-## 📌 Project Context & Overview
-
-- **Student Name**: Bhavik Kantilal Bhagat (Student ID: `A00494758`)
-- **Degree Program**: Master of Science in Computing and Data Analytics (MCDA)
-- **University**: Department of Mathematics & Computing Science, Saint Mary's University, Halifax, NS
-- **Academic Supervisor**: Dr. Pawan Lingras
-- **Industry Partner**: **Citco Technology Management Canada Limited (CTM)**
-- **Industry Supervisor / Manager**: Mr. Kishor Deotale
-- **Official Project Title**: *Intelligent Automation and Reliability Engineering for Financial Services*
-- **Internship Duration & Scope**: March 15, 2026 – August 31, 2026 (Total 900 Hours)
+> LaTeX-based academic report for the Saint Mary's University MCDA 5585 / 5586 Major Internship Project, documenting a 900-hour co-op placement at Citco Technology Management (CTM), Halifax, NS.
 
 ---
 
-## 🏛️ Report Architecture & Formatting
+## Project Context
 
-This report follows the formal **Neeyati Mehta benchmark structure** required by the MCDA program guidelines:
-
-### Visual Design & Branding Tokens
-- **Primary Accent Color**: Official Saint Mary's University Maroon (`#8A0027` / `RGB(138, 0, 39)`).
-- **Typography**: Primary serif `Charter (bch)` paired with `Latin Modern Teletype (lmtt)` for code snippets.
-- **Running Headers & Footers**: Crisp black running headers with total page numbering (`X of Y` via `LastPage`).
-- **Logo Integration**: High-resolution SMU header logo configured on a single-page compact title page layout.
-- **Dual-Signature Certificate**: Formatted signature blocks for Dr. Pawan Lingras and Mr. Kishor Deotale.
+| Field | Value |
+|-------|-------|
+| Student | Bhavik Kantilal Bhagat (`A00494758`) |
+| Program | MSc Computing and Data Analytics (MCDA), Saint Mary's University |
+| Academic Supervisor | Dr. Pawan Lingras |
+| Industry Partner | Citco Technology Management (CTM), Halifax, NS |
+| Industry Supervisor | Mr. Kishor Deotale |
+| Project Title | *Intelligent Automation and Reliability Engineering for Financial Services* |
+| Internship Period | March 15 – August 31, 2026 (900 hours) |
+| Funding | Mitacs BSI IT49539 |
 
 ---
 
-## 📁 Repository Directory Structure
+## Repository Structure
 
-```text
-citco-report/
-├── config/                     # Centralized Configuration Package
-│   ├── __init__.py
-│   └── settings.py             # Global pathlib.Path constants & build settings
-├── src/                        # Python Source Package (PEP 8 Compliant)
-│   └── report_pipeline/
-│       ├── __init__.py
-│       ├── builder.py          # Multi-pass LaTeXBuilder compilation service
-│       ├── converter.py        # DocxConverter PDF-to-DOCX transformation service
-│       ├── logger.py           # Structlog ISO-timestamped JSON logger
-│       └── utils.py            # Subprocess & filesystem utilities
-├── latex-report/               # Modular LaTeX Source Files
-│   ├── includes.tex            # Centralized packages, color tokens & macro definitions
-│   ├── main.tex                # Master LaTeX document
-│   ├── cover_letter.tex        # SMU MCDA Formal Cover Letter & Feedback History Table
-│   ├── figures/                # Visual graphics & branding assets (smu_logo.png)
-│   ├── pages/                  # Front matter (title_page, certificate, abstract, acknowledgements)
-│   ├── chapters/               # 10 Core Report Chapters (Introduction .. Conclusion)
-│   └── appendices/             # Supplementary materials & work logs table
-├── tests/                      # Automated Test Suite
-│   ├── __init__.py
-│   └── test_pipeline.py        # Pytest pipeline tests
-├── work-logs/                  # Internship 900-Hour Activity Log Directory (.gitkeep preserved)
-├── logs/                       # Application Runtime Script Execution Logs (structlog)
-├── output/                     # Final 5-File Submission Bundle Target
-├── pyproject.toml              # Modern Python dependency & test configuration
-└── build_reports.py            # CLI Entry Point to compile and bundle reports
+```
+citco-ia-sre-mitacs-coop-smu-bk/
+├── latex-report/               # LaTeX source files
+│   ├── main.tex                # Master document entry point
+│   ├── cover_letter.tex        # Cover letter + feedback appendix
+│   ├── includes.tex            # Packages, colors, fonts, heading styles
+│   ├── references.bib          # BibTeX bibliography
+│   ├── pages/                  # Front matter (title, certificate, acknowledgements)
+│   ├── chapters/               # 15 chapters (ch01–ch15)
+│   ├── appendices/             # Appendix A (Work Logs) + Appendix B (Glossary)
+│   └── figures/                # Images and diagrams
+├── submission/
+│   └── mentor2/                # Final 5-file submission bundle + FEEDBACK_RESPONSE.md
+├── grammarly/                  # Grammarly corrections tracking
+│   ├── correction.txt          # Raw corrections from peer review
+│   └── corrections_table.md    # Structured corrections table with status
+├── feedback/                   # Mentor feedback files
+├── knowledge-base/             # Project context, hotfix notes, dashboards
+├── work-logs/                  # Weekly work log markdown files
+├── src/                        # Python report pipeline utilities
+├── config/                     # Pipeline configuration
+├── pyproject.toml              # Python project config (uv)
+└── build_reports.py            # CLI build script
 ```
 
 ---
 
-## 🚀 Automated Submission Pipeline
+## Submission Bundle
 
-The build pipeline is automated via `build_reports.py` and produces the **strict 5-file MCDA graduation submission bundle** inside `output/`:
+The final 5-file submission bundle lives in `submission/mentor2/`:
 
-1. `CoverLetter.pdf`: Formal cover letter with student declaration & feedback history appendix.
-2. `Project_Report.pdf`: Compiled 20-page LaTeX report with complete TOC and hyperref navigation.
-3. `Project_Report.docx`: Converted, fully editable Word document version.
-4. `WorkLogs.xlsx`: Detailed 900-hour weekly timesheets & task breakdown.
-5. `WorkLogs.pdf`: Exported PDF copy of the timesheets.
+| File | Description |
+|------|-------------|
+| `BhavikBhagat_A00494758_CoverLetter.pdf` | Cover letter with feedback appendix table |
+| `BhavikBhagat_A00494758_MajorReport.pdf` | Main report (129 pages, LaTeX compiled) |
+| `BhavikBhavat_A00494758_MajorReport.docx` | Word format (manually formatted) |
+| `BhavikBhagat_A00494758_WorkLogs.xlsx` | 900-hour weekly work logs |
+| `BhavikBhagat_A00494758_WorkLogs.pdf` | PDF export of work logs |
 
 ---
 
-## ⚡ Quickstart & Setup
+## Building the Report
 
 ### Prerequisites
-- Python 3.12+
-- `uv` package manager (`curl -sSf https://astral.sh/uv/install.sh | sh`)
-- `pdflatex` (TeX Live / Flatpak TeX distribution)
 
-### Installation
+- MiKTeX (Windows) or TeX Live (Linux/macOS) with XeLaTeX
+- Calibri font installed (system font, required for XeLaTeX)
+- `uv` for Python tooling
+
+### Compile LaTeX PDF
+
 ```bash
-# Clone repository
-git clone git@github.com:bhavik-knight/citco-ia-sre-mitacs-coop-smu-bk.git
-cd citco-ia-sre-mitacs-coop-smu-bk
+export PATH="$PATH:/c/Users/bbhagat/scoop/apps/miktex/25.12/texmfs/install/miktex/bin/x64"
+cd latex-report
 
-# Install dependencies using uv
-uv sync
+# Run twice for TOC/references to resolve
+xelatex -interaction=nonstopmode main.tex
+biber main
+xelatex -interaction=nonstopmode main.tex
+xelatex -interaction=nonstopmode main.tex
 ```
 
-### Build Submission Bundle
-```bash
-# Execute automated build pipeline
-uv run python build_reports.py
-```
+### Compile Cover Letter
 
-### Run Tests
 ```bash
-# Run pytest test suite
-uv run pytest
+cd latex-report
+xelatex -interaction=nonstopmode cover_letter.tex
 ```
 
 ---
 
-## 📄 License & Confidentiality
+## Report Structure
 
-Notice: The underlying technical framework, SRE automation scripts, and financial technology operational processes documented in this report are proprietary to **Citco Technology Management Canada Limited**. Academic submission is restricted to authorized Saint Mary's University faculty and evaluators.
+| Chapter | Title |
+|---------|-------|
+| 1 | About Citco |
+| 2 | Executive Summary |
+| 3 | Team Composition & Responsibilities |
+| 4 | Tools & Technologies |
+| 5 | Project Overview |
+| 6 | Project Goals & Deliverables |
+| 7 | Learning Goals |
+| 8 | Requirements Elicitation |
+| 9 | Methodologies |
+| 10 | Implementation & Architecture |
+| 11 | Weekly Implementation Breakdown |
+| 12 | Conclusions |
+| 13 | Achievements & Business Value |
+| 14 | Challenges & Mitigations |
+| 15 | Future Work |
+| A | Appendix (Work Logs + Glossary) |
+
+---
+
+## Key Design Decisions
+
+- **Font**: Calibri (via fontspec/XeLaTeX) — matches Word document formatting
+- **Color**: SMU Maroon `#8A0027` for all headings, links, and labels
+- **TOC depth**: Chapters and sections only (`tocdepth=1`)
+- **Numbering depth**: Chapters, sections, subsections (`secnumdepth=2`); subsubsections unnumbered
+- **Page numbers**: Grey `#7F7F7F` footer
+- **URL color**: Standard blue hyperlinks in references
+
+---
+
+## License & Confidentiality
+
+The SRE automation scripts and financial technology operational processes documented in this report are proprietary to Citco Technology Management Canada Limited. Academic submission is restricted to authorized Saint Mary's University faculty and evaluators.
