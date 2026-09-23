@@ -1,0 +1,105 @@
+% ============================================================
+% APPENDIX B: GLOSSARY OF TERMS AND ABBREVIATIONS
+% ============================================================
+
+\subsection{Glossary of Terms and Abbreviations}
+\label{sec:glossary}
+
+The following table defines the key abbreviations, acronyms, AWS service names, and
+Citco-specific platform terms used throughout this report.
+
+\vspace{0.5em}
+
+\begingroup
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.3}
+{\rowcolors{2}{tablerowA}{tablerowB}
+\begin{longtable}{@{\hspace{\tabcolsep}}>{\bfseries}p{0.22\textwidth}p{0.72\textwidth}@{\hspace{\tabcolsep}}}
+
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Term / Abbreviation}} & \textcolor{white}{\textbf{Definition}} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{smubrand}\textcolor{white}{\textbf{Term / Abbreviation}} & \textcolor{white}{\textbf{Definition (continued)}} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+
+%% ── AWS SERVICES ──────────────────────────────────────────
+\multicolumn{2}{l}{\textit{\textbf{AWS Services}}} \\
+\hline
+AMG & Amazon Managed Grafana — a fully managed Grafana service for building observability dashboards backed by AWS data sources. \\
+CloudFormation & AWS Infrastructure-as-Code service for provisioning and managing AWS resources via declarative YAML/JSON templates. \\
+CloudWatch & AWS native observability service providing metrics collection, log storage, alarms, and dashboards for all AWS services. \\
+ECS & Amazon Elastic Container Service — a managed container orchestration service for running Docker containers on AWS. \\
+ECR & Amazon Elastic Container Registry — a managed Docker image registry for storing and versioning container images. \\
+EKS & Amazon Elastic Kubernetes Service — a managed Kubernetes service for running containerized workloads. \\
+IAM & AWS Identity and Access Management — service for managing user, role, and policy-based access to AWS resources. \\
+MSK & Amazon Managed Streaming for Apache Kafka — a fully managed Apache Kafka service for real-time data streaming. \\
+RDS & Amazon Relational Database Service — managed relational database service supporting MySQL, PostgreSQL, and Aurora. \\
+S3 & Amazon Simple Storage Service — scalable object storage used for data lakes, backups, and Lambda deployment packages. \\
+SAM & AWS Serverless Application Model — an extension of CloudFormation that simplifies packaging and deploying Lambda-based applications. \\
+SNS & Amazon Simple Notification Service — pub/sub messaging service that fans out alarm notifications to email and Lambda subscribers. \\
+SQS & Amazon Simple Queue Service — managed message queue service used as a trigger mechanism between Lambda functions. \\
+SSM & AWS Systems Manager Parameter Store — service for storing configuration values and non-sensitive secrets as named parameters. \\
+X-Ray & AWS distributed tracing service that generates service maps and trace waterfalls for Lambda, ECS, and API Gateway requests. \\
+
+%% ── SRE / OBSERVABILITY ───────────────────────────────────
+\multicolumn{2}{l}{\textit{\textbf{SRE and Observability}}} \\
+\hline
+ADOT & AWS Distro for OpenTelemetry — AWS-maintained distribution of the OpenTelemetry collector for ECS/EKS distributed tracing. \\
+APM & Application Performance Monitoring — software category providing end-to-end visibility into application health and performance. \\
+Error Budget & The permitted amount of unreliability before an SLO is breached; calculated as \(1 - \text{SLO target}\). \\
+Four Golden Signals & The SRE framework's minimum instrumentation set: Latency, Traffic, Errors, and Saturation. \\
+IaC & Infrastructure-as-Code — the practice of managing cloud resources through version-controlled declarative configuration files. \\
+SLI & Service Level Indicator — a specific metric that measures one of the four golden signals for a service (e.g., Lambda error rate). \\
+SLO & Service Level Objective — the target threshold set on an SLI that defines acceptable system performance (e.g., error rate $<$1\%). \\
+SRE & Site Reliability Engineering — a software engineering approach to operations focused on reliability, scalability, and automation. \\
+
+%% ── CITCO PLATFORMS & TERMS ───────────────────────────────
+\multicolumn{2}{l}{\textit{\textbf{Citco Platforms and Internal Terms}}} \\
+\hline
+\AE xeo & Citco's cloud-based Treasury platform providing centralized wire approval and fund movement visibility. \\
+AutomationHub & UiPath-based RPA platform hosted in Citco's AWS environment; one of the six IA budget\_code platforms. \\
+BPM & Blue Prism platform — the legacy RPA tool hosting daily, monthly, and quarterly fund operations automation at Citco. \\
+budget\_code & An AWS resource tag used by Citco to attribute cloud resources to a specific platform or cost center (e.g., \texttt{rpacfs1}, \texttt{ia-bpo}). \\
+CAIS & Citco Alternative Investment Services — regulatory CAIS pricing pipeline under the \texttt{rpacfs1} platform. \\
+CitcoWorks & Citco's internal operations platform using Amazon Neptune for entity graph storage and event routing. \\
+CTM & Citco Technology Management — the internal technology division of the Citco Group, where this internship was based. \\
+Follow-the-Sun & Citco's 24/7 RPA production support model rotating across Manila (APAC), Dublin (EMEA), and Halifax (NA) shifts. \\
+ia-bpo & One of the six IA budget\_code platforms at Citco, hosting Blue Prism-triggered Lambda automation processes. \\
+IA-IT-SRE & Intelligent Automation IT Site Reliability Engineering — the team and infrastructure scope of this internship. \\
+Meridian & Citco's event processing platform for daily statements and reconciliations, using MSK Kafka and OpenSearch. \\
+MESO & Month-End Statement Operations — Citco's automated month-end reconciliation and reporting pipeline. \\
+rpacfs1 & One of the six IA budget\_code platforms at Citco, hosting the CAIS Pricing Extract GenAI pipeline. \\
+SD Portal & Service Desk Portal — the internal ticketing system used for RPA L2 support triage and incident management. \\
+UiPath & Cloud/on-premises RPA platform used for new automation development at Citco, operated via UiPath Orchestrator. \\
+VPL & Virtual Position Ledger — Citco's daily fund valuation process with a 5:00 PM EST processing deadline. \\
+
+%% ── GENERAL TECHNICAL TERMS ───────────────────────────────
+\multicolumn{2}{l}{\textit{\textbf{General Technical Terms}}} \\
+\hline
+API & Application Programming Interface — a set of protocols and endpoints that enable software components to communicate. \\
+BSI & Mitacs Business Strategy Internship — the funding program under which this co-op placement was conducted. \\
+CI/CD & Continuous Integration / Continuous Deployment — automated pipeline for building, testing, and deploying software changes. \\
+CTI & CloudWatch Template Infrastructure — the internal name for the CAIS Pricing Extract pipeline dashboard delivered in Week 3. \\
+KT & Knowledge Transfer — structured sessions used to onboard team members to a platform, process, or codebase. \\
+LLM & Large Language Model — a deep learning model trained on large text corpora, used in the Ask Citco RPA chatbot. \\
+MCDA & Master of Science in Computing and Data Analytics — the SMU graduate program under which this internship was completed. \\
+MSK consumer lag & The number of messages in a Kafka topic that have not yet been consumed by a consumer group; a key SLI for Meridian health. \\
+OOM & Out of Memory — a Lambda function failure mode caused by exceeding the allocated memory limit during execution. \\
+PoC & Proof of Concept — a partial implementation built to validate technical feasibility before full-scale deployment. \\
+RAG & Retrieval-Augmented Generation — an LLM architecture that augments responses with context retrieved from a knowledge base. \\
+RCA & Root Cause Analysis — a structured post-incident investigation process to identify the underlying failure cause. \\
+RPA & Robotic Process Automation — software automation of repetitive, rule-based tasks using Blue Prism or UiPath platforms. \\
+SMU & Saint Mary's University — the academic institution in Halifax, Nova Scotia, where this MCDA program is based. \\
+TDD & Test-Driven Development — a software practice where tests are written before the code they verify. \\
+WS & Work Stream — one of the six parallel workstreams (WS1--WS6) pursued during this co-op placement. \\
+
+\hline
+\end{longtable}}
+\endgroup

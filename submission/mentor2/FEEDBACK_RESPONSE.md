@@ -84,7 +84,86 @@ The report was reviewed against Grammarly and a peer language review (Christine,
 | File                                      | Description                            |
 | ------------------------------------------- | ---------------------------------------- |
 | `BhavikBhagat_A00494758_CoverLetter.pdf`  | Cover letter + feedback appendix table |
-| `BhavikBhagat_A00494758_MajorReport.pdf`  | Main project report (124 pages)        |
+| `BhavikBhagat_A00494758_MajorReport.pdf`  | Main project report (129 pages)        |
 | `BhavikBhagat_A00494758_MajorReport.docx` | Word format of report                  |
 | `BhavikBhagat_A00494758_WorkLogs.xlsx`    | Weekly work logs (900 hours, 25 weeks) |
 | `BhavikBhagat_A00494758_WorkLogs.pdf`     | PDF export of work logs                |
+
+---
+
+## Appendix B — Glossary of Terms and Abbreviations
+
+A glossary appendix was added to the report (Appendix B) to assist readers unfamiliar with AWS, SRE, and Citco-specific terminology.
+
+### AWS Services
+
+| Term | Definition |
+|------|-----------|
+| AMG | Amazon Managed Grafana — fully managed Grafana service for observability dashboards |
+| CloudFormation | AWS Infrastructure-as-Code service for provisioning resources via YAML/JSON templates |
+| CloudWatch | AWS native observability service for metrics, logs, alarms, and dashboards |
+| ECS | Amazon Elastic Container Service — managed container orchestration |
+| ECR | Amazon Elastic Container Registry — managed Docker image registry |
+| EKS | Amazon Elastic Kubernetes Service — managed Kubernetes |
+| IAM | AWS Identity and Access Management |
+| MSK | Amazon Managed Streaming for Apache Kafka |
+| RDS | Amazon Relational Database Service |
+| S3 | Amazon Simple Storage Service |
+| SAM | AWS Serverless Application Model — Lambda deployment extension of CloudFormation |
+| SNS | Amazon Simple Notification Service — pub/sub alarm fan-out |
+| SQS | Amazon Simple Queue Service — managed message queue |
+| SSM | AWS Systems Manager Parameter Store |
+| X-Ray | AWS distributed tracing service |
+
+### SRE and Observability
+
+| Term | Definition |
+|------|-----------|
+| ADOT | AWS Distro for OpenTelemetry — distributed tracing collector |
+| APM | Application Performance Monitoring |
+| Error Budget | Permitted unreliability before SLO breach; calculated as 1 minus SLO target |
+| Four Golden Signals | SRE minimum instrumentation: Latency, Traffic, Errors, Saturation |
+| IaC | Infrastructure-as-Code |
+| SLI | Service Level Indicator — specific metric measuring one golden signal |
+| SLO | Service Level Objective — target threshold on an SLI |
+| SRE | Site Reliability Engineering |
+
+### Citco Platforms and Internal Terms
+
+| Term | Definition |
+|------|-----------|
+| AutomationHub | UiPath-based RPA platform; one of the six IA budget_code platforms |
+| BPM | Blue Prism — legacy RPA tool at Citco |
+| budget_code | AWS resource tag attributing resources to a platform or cost centre |
+| CAIS | Citco Alternative Investment Services pricing pipeline |
+| CitcoWorks | Citco operations platform using Amazon Neptune for entity graph storage |
+| CTM | Citco Technology Management — internal technology division |
+| Follow-the-Sun | 24/7 RPA support model rotating across Manila, Dublin, and Halifax |
+| ia-bpo | One of the six IA budget_code platforms |
+| IA-IT-SRE | Intelligent Automation IT Site Reliability Engineering team |
+| Meridian | Citco event processing platform using MSK Kafka and OpenSearch |
+| MESO | Month-End Statement Operations — automated month-end reconciliation pipeline |
+| rpacfs1 | One of the six IA budget_code platforms hosting the CAIS Pricing Extract pipeline |
+| SD Portal | Service Desk Portal — internal ticketing system for RPA L2 support |
+| UiPath | Cloud/on-premises RPA platform for new automation at Citco |
+| VPL | Virtual Position Ledger — daily fund valuation process with 5 PM EST deadline |
+
+### General Technical Terms
+
+| Term | Definition |
+|------|-----------|
+| API | Application Programming Interface |
+| BSI | Mitacs Business Strategy Internship |
+| CI/CD | Continuous Integration / Continuous Deployment |
+| KT | Knowledge Transfer |
+| LLM | Large Language Model |
+| MCDA | Master of Science in Computing and Data Analytics (SMU) |
+| MSK consumer lag | Kafka messages awaiting consumption; primary SLI for Meridian health |
+| OOM | Out of Memory — Lambda failure from exceeding memory allocation |
+| PoC | Proof of Concept |
+| RAG | Retrieval-Augmented Generation — LLM architecture with knowledge base retrieval |
+| RCA | Root Cause Analysis |
+| RPA | Robotic Process Automation — Blue Prism or UiPath automated workflows |
+| SMU | Saint Mary University, Halifax, Nova Scotia |
+| TDD | Test-Driven Development |
+| WS | Work Stream — one of six parallel workstreams (WS1-WS6) |
