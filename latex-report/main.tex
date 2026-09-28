@@ -75,12 +75,16 @@
 % Chapter 15: Future Work
 \input{chapters/new_ch15_future_work}
 
+% Suppress sections from TOC for appendix — show only chapter entry
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+
 % Appendices
 \appendix
 \input{appendices/work_logs}
 \input{appendices/glossary}
 
-% Bibliography / References
-\printbibliography[heading=bibintoc, title={References}]
+% References as A.3 inside the Appendix chapter
+\section{References}
+\printbibliography[heading=none]
 
 \end{document}
