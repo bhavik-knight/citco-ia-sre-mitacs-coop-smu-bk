@@ -1014,10 +1014,6 @@ kept full-fleet enumeration under the 10-second non-functional requirement.
 I added twelve service-specific Pydantic response models with versioned
 S3 keys (\texttt{latest.json} plus timestamped history entries).
 
-By the end of Week~18, alarm emails included actionable log group deep-links,
-the inventory API reached 99\% code coverage with a 453-test suite,
-and the log group observability specification was fully defined.
-
 \textbf{Dynamic Alarm Architecture and X-Ray Instrumentation:} 
 I replaced the 17 static alarm definitions with a
 data-driven approach: on each deploy the provisioner Lambda reads the full resource inventory

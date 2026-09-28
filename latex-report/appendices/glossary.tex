@@ -2,7 +2,7 @@
 % APPENDIX B: GLOSSARY OF TERMS AND ABBREVIATIONS
 % ============================================================
 
-\subsection{Glossary of Terms and Abbreviations}
+\section{Glossary of Terms and Abbreviations}
 \label{sec:glossary}
 
 The following table defines the key abbreviations, acronyms, AWS service names, and
@@ -14,15 +14,15 @@ Citco-specific platform terms used throughout this report.
 \setlength{\tabcolsep}{6pt}
 \renewcommand{\arraystretch}{1.3}
 {\rowcolors{2}{tablerowA}{tablerowB}
-\begin{longtable}{@{\hspace{\tabcolsep}}>{\bfseries}p{0.22\textwidth}p{0.72\textwidth}@{\hspace{\tabcolsep}}}
+\begin{longtable}{@{\hspace{\tabcolsep}}>{\bfseries}p{0.18\textwidth}p{0.76\textwidth}@{\hspace{\tabcolsep}}}
 
 \hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Term / Abbreviation}} & \textcolor{white}{\textbf{Definition}} \\
+\rowcolor{smubrand}\textcolor{white}{\textbf{Term}} & \textcolor{white}{\textbf{Definition}} \\
 \hline
 \endfirsthead
 
 \hline
-\rowcolor{smubrand}\textcolor{white}{\textbf{Term / Abbreviation}} & \textcolor{white}{\textbf{Definition (continued)}} \\
+\rowcolor{smubrand}\textcolor{white}{\textbf{Term}} & \textcolor{white}{\textbf{Definition (continued)}} \\
 \hline
 \endhead
 
@@ -49,6 +49,7 @@ SSM & AWS Systems Manager Parameter Store — service for storing configuration 
 X-Ray & AWS distributed tracing service that generates service maps and trace waterfalls for Lambda, ECS, and API Gateway requests. \\
 
 %% ── SRE / OBSERVABILITY ───────────────────────────────────
+\pagebreak
 \multicolumn{2}{l}{\textit{\textbf{SRE and Observability}}} \\
 \hline
 ADOT & AWS Distro for OpenTelemetry — AWS-maintained distribution of the OpenTelemetry collector for ECS/EKS distributed tracing. \\
@@ -65,10 +66,11 @@ SRE & Site Reliability Engineering — a software engineering approach to operat
 \hline
 \AE xeo & Citco's cloud-based Treasury platform providing centralized wire approval and fund movement visibility. \\
 AutomationHub & UiPath-based RPA platform hosted in Citco's AWS environment; one of the six IA budget\_code platforms. \\
-BPM & Blue Prism platform — the legacy RPA tool hosting daily, monthly, and quarterly fund operations automation at Citco. \\
+BPM & Business Process Management — a discipline for modeling, automating, and optimizing business workflows; also used at Citco to refer to the Blue Prism platform that hosts fund operations automation processes. \\
 budget\_code & An AWS resource tag used by Citco to attribute cloud resources to a specific platform or cost center (e.g., \texttt{rpacfs1}, \texttt{ia-bpo}). \\
 CAIS & Citco Alternative Investment Services — regulatory CAIS pricing pipeline under the \texttt{rpacfs1} platform. \\
 CitcoWorks & Citco's internal operations platform using Amazon Neptune for entity graph storage and event routing. \\
+CFS & Citco Fund Services — the Citco business line providing fund administration, accounting, and investor services to hedge funds and alternative investment managers globally. \\
 CTM & Citco Technology Management — the internal technology division of the Citco Group, where this internship was based. \\
 Follow-the-Sun & Citco's 24/7 RPA production support model rotating across Manila (APAC), Dublin (EMEA), and Halifax (NA) shifts. \\
 ia-bpo & One of the six IA budget\_code platforms at Citco, hosting Blue Prism-triggered Lambda automation processes. \\

@@ -142,26 +142,6 @@ signal quality of the alarms is validated, and the false-positive rate
 is well-characterized. The auto-healing agent can therefore be implemented against a
 tested alarm baseline rather than a hypothetical one.
 
-This progression --- detect first, then automate remediation --- is the
-correct sequence for building reliable auto-healing in a regulated financial
-services environment, where an incorrectly triggered service restart during
-a VPL pricing window or a CAIS Deadline processing run would itself
-constitute a production incident.
-
-
-\section{RPA Bot CloudWatch Integration}
-\label{sec:future_rpa_cw}
-
-Two follow-on stories in my JIRA backlog propose bridging the Blue Prism
-(BPM) and UiPath Cloud operational metrics into CloudWatch via a polling
-Lambda function. The Lambda would query the Blue Prism API and UiPath
-Orchestrator API on a configurable schedule, emit custom CloudWatch metrics
-for queue depth, bot session count, and process error rates, and feed those
-metrics into the existing Grafana dashboard infrastructure. This would close
-the last remaining visibility gap: the current dashboard covers the AWS
-infrastructure layer comprehensively but has no visibility into the RPA
-execution layer above it.
-
 
 \section{Error Budget Burn-Rate Alerting}
 \label{sec:future_error_budget}
