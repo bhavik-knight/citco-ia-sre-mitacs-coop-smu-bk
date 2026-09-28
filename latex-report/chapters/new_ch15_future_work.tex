@@ -149,20 +149,6 @@ a VPL pricing window or a CAIS Deadline processing run would itself
 constitute a production incident.
 
 
-\section{RPA Bot CloudWatch Integration}
-\label{sec:future_rpa_cw}
-
-Two follow-on stories in my JIRA backlog propose bridging the Blue Prism
-(BPM) and UiPath Cloud operational metrics into CloudWatch via a polling
-Lambda function. The Lambda would query the Blue Prism API and UiPath
-Orchestrator API on a configurable schedule, emit custom CloudWatch metrics
-for queue depth, bot session count, and process error rates, and feed those
-metrics into the existing Grafana dashboard infrastructure. This would close
-the last remaining visibility gap: the current dashboard covers the AWS
-infrastructure layer comprehensively but has no visibility into the RPA
-execution layer above it.
-
-
 \section{Error Budget Burn-Rate Alerting}
 \label{sec:future_error_budget}
 
